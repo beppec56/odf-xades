@@ -1,0 +1,313 @@
+General infos
+============
+This is a proof of concept project for an extension performing custom digital signature
+with OOo.
+This is only a portion of the UI side of the whole stuff.
+
+You need ant (http://ant.apache.org) installed and a Java compiler version 1.5 is suggested.
+I used only with Sun's JSE, I didn't check with gjc.
+
+The Java compliance level is 1.6, change your Eclipse setting if necessary.
+
+Ant is required to build the extension, the used version for testing was 1.7.0,
+minimum requested version is 1.6.
+
+Eclipse is suggested as the development environment.
+
+You need an OpenOffice.org 3.0 installed, and an optional OpenOffice.org SDK.
+
+The whole code is licensed under the EUPL V.1.1 or any later version.
+
+If you'd like to use the code for your project remember to change the UNO component
+name to whatever is more suitable for you. The same apply to the Java
+packages. Use the suggestions available on OOo Development guide
+(see http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/WritingUNO/File_Naming_Conventions for details).
+
+Using Eclipse to edit the project
+=================================
+
+To create an Eclipse workspace:
+
+1) create an empty directory to be used as Eclipse work space, or use your own.
+
+2) start Eclipse and assign the empty directory as the working space.
+
+3) with root the directory containing this file and using 'Create project form 
+   existing source' Eclipse project creation selection, create three new
+   Java projects in the workspace, each one using the directory:
+   
+   doc							contains this file and other general information, among it there is
+   								the manual and the full text of the licenses (only in English and
+   								Italian you may check for your language on the European Union
+   								web.
+
+   extension_conf_files 		contains extension specific files and the main ant build.xml file.
+   								It a simple Eclipse project.
+   								
+   signature_component			Java source for the signature component dispatch UNO object,
+								the first jar package built.
+
+   signature_options_comp		source for the UNO object that manages the extension configuration options,
+   								e.g. the ones acessed through Tools > Options... OpenOffice.org menu
+   								command.
+   			
+   sync_job_comp  				source for the job component UNO object, the interceptor and
+   								dispatch object implementing the intercepting OOo commands feature.
+   								
+   singleton_var_comp			source for the UNO singleton component. It is a component instatiated
+   								only once per every OpenOffice.org session.
+   								Contains global variables and the global Logger for the extension.
+   								
+   web							Contains the web pages for the project at forge.osor.eu
+   
+   l10n							contains the localization source data, used to generate the correct
+   								xml structured file to be used in the extension.
+
+In order to build the extension you need to check out doc, extension_conf_files, signature_component,
+signature_options_comp, sync_job_comp, singleton_var_comp.
+The main build.xml file for ant is extension_conf_files/build.xml.
+
+4) You will have to set two Classpath Variables, which point to related OOo locations,
+   platform-dependent:
+   
+   
+   - OOO3_URE_LIBS : 	needed to address the following libs: juh.jar, jurt.jar, ridl.jar;
+   						for the Windows platform the value is:
+   						<OOo3 installation dir>\URE\java
+						for the Linux platform the value is:
+   						<OOo3 installation dir>/basis-link/ure-link/share/java
+
+   - OOO3_LIBS :		needed to address the following libs: jut.jar,unoil.jar;
+   						for the Windows platform the value is:
+   						<OOo3 installation dir>\Basis\program\classes
+   						for the Linux platform the value is:
+   						<OOo3 installation dir>/basis-link/program/classes
+
+   	A third variable points to the <OOo installation dir>; it is not nedded for
+   	successfully building the projects, but may be it will be needed in the future, and
+   	we add it also for reference purpose:
+   	
+   - OOO_HOME :			for the Windows platform the value is (usually):
+   						C:/Programmi/OpenOffice.org 3
+						for the Linux platform the value is (usually):
+						/opt/openoffice.org3
+
+Each project includes a build.xml Ant file; you have to provide, similarly to
+classpath variables, the values for three properties used in these files.
+Or you can set them inside Eclipse in the global Ant->Runtime configuration.
+
+If you are using Ant outside Eclipse too, you can provide the values in a
+build.<platform>.properties file, named according the platform:
+for Linux: build.Linux-i386.properties 
+for Windows XP: build.Windows XP-x86.properties 
+
+The build.xml properties are the following:
+
+   - ooosdk : 			The path to the OOO SDK installation
+   						for the Windows platform the value is (usually):
+   						C:\Programmi\OpenOffice.org 3\Basis\sdk
+
+   						for the Linux platform is:
+   						<OOo3 installation dir>/basis-link/sdk
+
+   - ooo_ure_classes_path: 	for the Windows platform the value is:
+   		           			<OOo3 installation dir>\URE\java
+  						for the Linux platform the value is:
+   						<OOo3 installation dir>/basis-link/ure-link/share/java
+
+   - ooo_classes_path : 	for the Windows platform the value is:
+   			   				<OOo3 installation dir>\Basis\program\classes
+   		       		for the linux platform the value is:
+   						<OOo3 installation dir>/basis-link/program/classes
+ 
+
+
+5) the project extension_conf_files contains the main build.xml file.
+   Go to that directory and issue the command:
+
+   ant build-extension
+
+   the full extension will be built in the same directory.
+   This build can be started from inside Eclipse by using:
+   
+   a) open the main build.xml (cnipa_signature_extension/build.xml)
+   b) menu: Run > External Tools > Run As > Ant Build...
+   
+6) step 5) is required in order to work with Eclipse, since the jar file needed is build with ant only
+
+7) In Eclipse now add the following jar files:
+
+	- for project sync_job_comp add  signature_component/dist/lib/signature_component.jar 
+
+8) IMPORTANT NOTE: when you issue the command from the command line:
+
+   ant build-arch
+   then issue the command:
+
+   ant build-extension
+
+   last, when back in Eclipse, you need:
+   - force a refresh for the signature_component project container;
+   - force a clean (Project > Clean > Clean all projects...)
+     in order to re-synchronize the Eclipse workspace with the existing jar file
+
+9) the default target for the main extension/build.xml file is deploy-local, I use it
+   to employ the semi-automatic  update of extension available in OOo. Change it
+   to suit your installation, if needed.
+   Using:
+   ant build-arch-zip
+   will build the zip archive plus the extension. 
+
+10) the ant default target is deploy-local, I used it because in this way I have the extension installed
+   from my local web deployment. Change the default target in build.xml to the one that best suits you.
+
+11) Info on debug on Java:
+    http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/WritingUNO/Debugging
+    Look for "Component Debugging"
+    
+    To enable the debug for multiple UNO object use the following, on two separate lines on
+    Tools > Options... Java, select the Java to be used and add to the parameters list dialog:
+
+    -Xdebug
+ 	-Xrunjdwp:transport=dt_socket,server=y,suspend=n
+ 	
+ 	This will allocate a dynamic port every time it's needed. From Eclipse you can then connect to the JVM.
+
+ 	Infos on JPDA for Java 6 can be found here (2008-11-09):
+ 	http://java.sun.com/javase/6/docs/technotes/guides/jpda/conninv.html#Invocation
+   
+Information on testing it
+=========================
+The extension requires OOo 3.0 to be installed.
+
+It would be a good idea install the extension on a 'no production' installation, that is an OOo
+installation not used for production jobs.
+With this kind of installation you can install the extension as shared, so it will be installed in the main
+OOo repository different than the 'production' installation. 
+Besides, if you manipulate the extension installation scripts, if something goes wrong you risk
+to cripple your OOo local configuration directory, that will need to be deleted to regain control
+of the whole thing.
+
+The best way to install/update the extension is to use the following sequence in a console window
+(this one is referred to GNU/Linux):
+
+1) go to the OOo binary installation directory, under OOo 3.0 it should be <OOo root installation>/program
+(e.g. /opt/openoffice.org3/program)
+
+2) verify that OOo is closed, as well as the quickstarter
+
+3) from a command line issue the command:
+./unopkg add -v -f <directory where the extension live>/xades_signature_extension.oxt
+(in Windows simply use the same command line as above without the './' at the beginning)
+
+4) then, to see the logging from the JVM, start office from the same directory with:
+   ./soffice&
+   I didn't search a way to have the same log under Windows.
+   
+   This log will be removed in the extension released.
+
+Under Windows I only installed the extension: it worked.
+
+5) if something goes wrong with the extension (for example OOo enters in a crash/restart/crash... loop) you
+   need to remove the extension issue the following in the command line:
+
+   ./unopkg remove it.plio.ext.xades_signature_extension
+   
+   that will remove the extension completely.
+
+6) When installed, the extension can be enebled / disabled from the Tools > Extension Manager... dialog.
+   IMPORTANT: before changing the state, be it Enable or Disable, ALL the document windows in OOo
+   MUST be closed. Furthermore, OOo needs to be restarted after every state change. 
+   If you fail to do so, the initialization is not carried out properly.
+
+Debugging Java extensions with Eclipse
+======================================
+
+Configuring OpenOffice.org
+==========================
+First, you need to add parameters to the JVM started by OpenOffice.org.
+The parameter for Java 1.5 and up are:
+
+-agentlib:jdwp=transport=dt_socket,address=8200,server=y,suspend=n
+
+To change them, open the OOo options dialog and then the Java configuration item.
+Click on the Parameters button and add the parameter (a single one).
+If the need arise, you can use a different address for the trnsport, 8200 is the
+one that best suits my needs (see below for address issues).
+
+In order to apply the parameter, you need to restart OOo (the quickstarter too).
+This parameter will make OpenOffice.org JVM listen on the 8020 port of the local
+machine.
+
+The Java parameters (1.6) are documented here:
+http://java.sun.com/javase/6/docs/technotes/guides/jpda/conninv.html
+
+IMPORTANT!
+==========
+This parameter seems to affect the ability to install extension, since in that case
+it seems, as of 2009-03-18, that more then one JVM is started when installing,
+all of them trying to acquire the same address.
+A more simple solution would be to change the Java start parameter above, setting
+it as:
+
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=n
+
+In this case the address is chosen when Java starts, it will be printed on the
+console when starting.
+Remember that OOo will start the JVM when first needed.
+Starting a Wizard (File > Wizards > Letter) should do the trick. 
+
+Starting the debug mode from Eclipse
+====================================
+As of Eclipse 3.4.2
+Open the Run > Open Debug Configurations... dialog menu.
+Create a new Remote Java Application with the following parameters:
+
+    * Connection type: Standard (Socket Attach)
+    * Host: localhost
+    * Port: (insert here the address you choose in the step above, or
+    		the one printed out when the JVM started)
+    * Sources: your project directory should be selected
+
+Then run the extension from OpenOffice.org (using a Basic macro or
+anything else) and then start the newly created debug configuration.
+It may be possible that the connection can't be fetched at the first
+time because OOo starts the JVM only when it's needed. After a first
+run, the started JVM won't be stopped and the port will still be opened.
+
+The repository
+==============
+The repository is devided into the following sections.
+
+trunk			the main code flow, this is when all the modifications
+				done by the developers merge.
+				When a code revision is ready to be delivered, but
+				for last bug fix, it's branched into 'branches'.
+				
+workspaces		the developers workspace area, where every developer
+				writes debugs and tests the features he/her implements.
+				Workspaces should be stable before being merged into
+				trunk.
+
+branches		where the release preparation is done before shipping.
+
+tags			Where a finished version lives. Usually the shipped
+				versions are here.
+
+Ideal sequence to be followed:
+
+tags                                                                               /->release -activity stops -o
+                                                                                   |
+branches                                                    /-> prerelase---- OK! -/--- bug fixing---->
+                                                            |
+           /->-- jum-doe-xx------>------>\                  |
+           |                             |               version
+workspaces /->- joe-doe-01 ----->\------>|>----/-------\   branched
+           |                     |       |     ^       |   for shipping
+           ^                  merge      |    resync   |    |
+           |                     v       v     |       v    |
+trunk => > / --------->---->-----\--->---\-->--/-------\----/
+
+========================= &&&&&&&&&&&& =========================
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli

@@ -1,0 +1,40 @@
+
+Things still to do, in no particular order:
+
+The Save and Save As... message alerting the user of a signature deletion have not been implemented yet.
+
+check what happens when the extension is disabled: we need to deregister frame interceptor and jobs before anything else.
+It seems that the correct procedure to disable the extension is:
+- close all opened documents in OOo
+- disable the extension
+- close OOo
+Then restart OOo. At this moment the extension is disabled correctly.
+
+If you try to disable the extension when some documents are opened on OOo, then OOo locks up (freezes); and
+you need to kill the OOo process.
+
+It seems that the digital signature push button on the properties dialog, tab general doesn't obey to the Command disable chain.
+
+It seems that only one interceptor per .uno: protocol command is possible
+(see http://api.openoffice.org/servlets/ReadMsg?list=dev&msgNo=19308 )
+So it's needed another interceptor to check what happens. Duplicate current one and install/uninstall
+with menu command (installs many time, uninstall last installed first). 
+
+ant build.xml files need to be edited to a platform aware status: currently they are GNU/Linux only
+
+revising the exceptions: none is thrown by the code
+
+Check to see what happens when trying to save a file with double signature: OOo and CNIPA.
+
+The frame is not refreshed in the interceptor (class DispatchInterceptor), not sure what happens here, need
+to do checking on behavior.
+For example building another extension with another dispatch interceptor and see what happens there
+
+Determine what to do with a listener (disposing method of the broadcaster and tell the listener we are about to be disposed off?
+How to tell them?)
+
+Check what needs to be done while checking for save dispatch from inside another dispatch in the case the file is still unsaved
+(e.g. 'has no location' in OOo terms). Currently it should be saved directly, the extension only stops and tells the user
+to do it. 
+
+Update the build.xml ant structure in order to build under Windows
