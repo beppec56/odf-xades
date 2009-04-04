@@ -1,0 +1,204 @@
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+
+<!--
+add comments here.........
+
+ATTENTION:
+the default target must be removed
+
+-->
+<project name="singleton_var_comp" default="build-jar" basedir=".">
+	<property name="project_name" value="singleton_var_comp" />
+	<description>
+        Build the jar file ${project_name}.jar.
+    </description>
+	<echo>Build the jar file ${project_name}.jar.</echo>
+	<!-- set global properties for this build -->
+
+	<!--
+	grab option file for platform 
+	platform file are:
+	Linux: build.Linux-i386.properties
+	-->
+	<echo message="${project_name}: platform specific file is: build.${os.name}-${os.arch}.properties."/>
+	<property file="build.${os.name}-${os.arch}.properties" />
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="build-eclipse" location="bin"/>
+	<property name="dist" location="dist" />
+	<property name="extension_jar_file" value="${project_name}.uno.jar" />
+	<!--
+		the OOo SDK root path, used for the custom loader
+		edit to suit your installation
+
+	 The variable ooosdk should be set in the Eclipse IDE, Ant variables, or in a
+	 build.${os.name}-${os.arch}.properties file.
+	 See README file in doc project.
+	-->
+	
+	<property name="ooosdk" value="$ooosdk" />
+	<available file="${ooosdk}" type="dir" property="ooosdk.available" value="false" />
+	<fail message="No OOo sdk available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
+		<condition>
+			<not>
+				<isset property="ooosdk.available" />
+			</not>
+		</condition>
+	</fail>
+		
+	<!--
+	 The variable ooo_ure_classes_path should be set in the Eclipse IDE, Ant variables, or in a
+	 build.${os.name}-${os.arch}.properties file.
+	 See README file in doc project.
+	-->
+	<property name="ooo_ure_classes_path" value="$ooo_ure_classes_path" />
+	<available file="${ooo_ure_classes_path}" type="dir" property="ooo_classes_path.available" value="false" />
+	<fail message="No OOo URE classes available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
+		<condition>
+			<not>
+				<isset property="ooo_classes_path.available" />
+			</not>
+		</condition>
+	</fail>
+
+	<!--
+	 The variable ooo_classes_path should be set in the Eclipse IDE, Ant variables, or in a
+	 build.${os.name}-${os.arch}.properties file.
+	 See README file in doc project.
+	 -->
+	<property name="ooo_classes_path" value="$ooo_classes_path" />
+	<available file="${ooo_classes_path}" type="dir" property="ooo_classes_path.available" value="false" />
+	<fail message="No OOo classes available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
+		<condition>
+			<not>
+				<isset property="ooo_classes_path.available" />
+			</not>
+		</condition>
+	</fail>
+
+	<!-- directory to zip for archive -->
+	<property name="archr" location="to-be-zipped" />
+	<property name="arch" location="${archr}/${project_name}-${version}" />
+
+	<dependset>
+		<srcfilelist dir="${xades_myclass_path}" files="signature_component.uno.jar" />
+		<targetfilelist dir="${dist}/lib" files="${extension_jar_file}" />
+	</dependset>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<property name="my_ooo_classes_path" value="${src}/../../signature_options_comp/dist/lib" />
+		<available file="${my_ooo_classes_path}" type="dir" property="my_ooo_classes_path.available" value="false" />
+		<fail message="No signature_option_comp classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
+			<condition>
+				<not>
+					<isset property="my_ooo_classes_path.available" />
+				</not>
+			</condition>
+		</fail>
+		<javac  debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
+			<classpath>
+				<pathelement path="${ooo_ure_classes_path}/juh.jar" />
+				<pathelement path="${ooo_ure_classes_path}/jurt.jar" />
+				<pathelement path="${ooo_classes_path}/jut.jar" />
+				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
+				<pathelement path="${ooo_classes_path}/unoil.jar" />
+				<pathelement path="${my_ooo_classes_path}/signature_options_comp.uno.jar" />
+			</classpath>
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+
+		<!--
+			copy helper classes from OOo SDK
+			Disable the whole section if the stand alone capability is not needed
+		-->
+		<copy todir="${build}" failonerror="false">
+			<fileset dir="${ooosdk}/classes">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<!-- end of copy helper classes from OOo SDK -->
+
+	</target>
+
+	<target name="build-jar" depends="compile" description="generate the distribution">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}/lib" />
+		<!-- Put everything in ${build} into the .jar file -->
+		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
+			<!-- build the manifest file on-line -->
+			<manifest>
+				<attribute name="Built-By" value="http://www.acca-esse.it" />
+				<attribute name="Specification-Title" value="Firma digitale CNIPA" />
+				<attribute name="Specification-Version" value="${spec_version}" />
+				<attribute name="Specification-Vendor" value="http://www.plio.it" />
+				<attribute name="Implementation-Title" value="signature_options_comp" />
+				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
+				<attribute name="Ant-Version" value="${ant.version}" />
+				<attribute name="UNO-Type-Path" value="" />
+				<attribute name="RegistrationClassName" value="it.plio.ext.xades.RegisterServices" />
+				<attribute name="Class-Path" value="signature_options_comp.uno.jar" />
+				<!--
+					the following is needed to start via java -jar namefile.jar
+					the main class load a loader to start the user class correctly in OOo
+					environment.
+					See
+					Documentation/DevGuide/ProUNO/Java/Transparent_Use_of_Office_UNO_Components
+					on OOo wiki for details
+
+					Disable the whole section if the stand alone capability is not needed
+				-->
+				<!-- attribute name="Main-Class" value="com.sun.star.lib.loader.Loader" />
+				<section name="com/sun/star/lib/loader/Loader.class">
+					<this attribute is the real user start class -->
+					<!-- attribute name="Application-Class" value="it.plio.ext.xades.MainStandAloneDebug" />
+				</section -->
+				<!-- end of section to start via java -jar namefile.jar -->
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- dependency of description.xml from build number -->
+	<dependset>
+		<srcfilelist dir="${basedir}" files="build.number" />
+		<targetfilelist dir="${extension_dest_dir}" files="description.xml" />
+	</dependset>
+
+	<target name="clean" description="clean up the project">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${archr}" />
+		<delete dir="${build-eclipse}" />
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete dir="${extension_dest_dir}" />
+	</target>
+
+</project>
