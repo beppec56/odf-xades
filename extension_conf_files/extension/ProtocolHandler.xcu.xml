@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<oor:component-data oor:name="ProtocolHandler"
+		    oor:package="org.openoffice.Office"
+		    xmlns:oor="http://openoffice.org/2001/registry"
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<node oor:name="HandlerSet">
+		<!-- name of the Java class implementing the handler -->
+		<node oor:name="it.plio.ext.xades.signature.SignatureHandler" oor:op="replace">
+			<!--
+			    protocol name can be anything, it MUST be in the class defined as HandlerSet name.
+			    In this case it is defined in static field:
+			    it.plio.ext.xades.SignatureHandler:m_ProtocolBaseUrl
+			-->
+			<prop oor:name="Protocols" oor:type="oor:string-list">
+				<value>it.plio.ext.xades.comp.SignatureHandler:*</value>
+			</prop>
+		</node>
+		<!-- node oor:name="it.plio.ext.xades.jobs.sync.SyncJob" oor:op="replace" -->
+			<!--
+			    protocol name can be anything, it MUST be in the class defined as HandlerSet name.
+			    In this case it is defined in static field:
+			    it.plio.ext.xades.SignatureHandler:m_ProtocolBaseUrl
+			-->
+			<!-- prop oor:name="Protocols" oor:type="oor:string-list">
+				<value>it.plio.ext.xades.comp.SyncJob:*</value>
+			</prop>
+		</node -->
+	</node>
+</oor:component-data>

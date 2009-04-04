@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>	
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<oor:component-schema xml:lang="en-US" oor:package="@WEBIDENTBASE@.@NAME@" oor:name="Configuration"
+	xmlns:oor="http://openoffice.org/2001/registry"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<templates>
+		<group oor:name="Frame">
+			<prop oor:name="URL" oor:type="xs:string"/>		
+			<prop oor:name="SignatureStatus" oor:type="xs:int"/>
+			<!-- add other elements as needed -->		
+		</group>
+		<group oor:name="Message">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true"/>
+		</group>
+		<group oor:name="FileResource">
+			<prop oor:name="Url" oor:type="xs:string" oor:localized="true"/>
+		</group>
+	</templates>
+	<component>
+		<group oor:name="SignatureOptionsParameters">
+			<info>
+				<author>Giuseppe Castagno (aka beppec56)</author>
+				<desc></desc>
+			</info>
+			<!-- a sample comment -->
+			<prop oor:name="TestNumericValue" oor:type="xs:int">
+				<info>
+					<author>beppec56</author>
+					<desc>test for radio buttons.</desc>
+				</info>
+				<constraints>
+					<enumeration oor:value="0">
+						<info>
+							<desc></desc>
+						</info>
+					</enumeration>
+					<enumeration oor:value="1">
+						<info>
+							<desc></desc>
+						</info>
+					</enumeration>
+					<enumeration oor:value="2">
+						<info>
+							<desc></desc>
+						</info>
+					</enumeration>
+				</constraints>
+				<value>0</value>
+			</prop>
+			<prop oor:name="TestBooleanValue" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>Test for checkbox</desc>
+				</info>
+				<value>false</value>
+			</prop>
+			<prop oor:name="GeneralCNIPA_URL" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>URL where the Italian CA list resides. Defaul value as indicated below.
+					The default value, current as 2008-11-21 is shown.
+					</desc>
+				</info>
+				<value>http://www.cnipa.gov.it/site/_files/lista%20dei%20certificati.html</value>
+			</prop>
+			<!-- logging properties -->
+			<prop oor:name="EnableInfoLevel" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>true to enable the Level.INFO in logging</desc>
+				</info>
+				<value>true</value>
+			</prop>
+			<prop oor:name="EnableWarningLevel" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>true to enable the Level.WARNING in logging</desc>
+				</info>
+				<value>true</value>
+			</prop>
+			<prop oor:name="EnableConsoleOutput" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>True to enable the Console output</desc>
+				</info>
+				<value>true</value>
+			</prop>
+			<prop oor:name="EnableFileOutput" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>True to enable the file log output</desc>
+				</info>
+				<value>true</value>
+			</prop>
+			<prop oor:name="LogFilePath" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>Path on system where the file will be written to. Defaults to $HOME directory of user if field is empty</desc>
+				</info>
+				<value></value>
+			</prop>
+			<prop oor:name="FileRotationCount" oor:type="xs:int">
+				<info>
+					<author>beppec56</author>
+					<desc>maximum number of filepresent atthe same time. Minimum 1 maximum 100</desc>
+				</info>
+				<constraints>
+					<minInclusive oor:value="1">
+		 				<info>
+							<desc>Specifies the minimum allowed value.</desc>
+						</info>
+					</minInclusive>
+					<maxInclusive oor:value="100">
+		 				<info>
+							<desc>Specifies the maximum value allowed.</desc>
+						</info>
+					</maxInclusive>				
+				</constraints>
+				<value>3</value>
+			</prop>
+			<prop oor:name="MaxFileSize" oor:type="xs:int">
+				<info>
+					<author>beppec56</author>
+					<desc>The log file maximum size in bytes, minimum is 1.000 max is 100.000</desc>
+				</info>
+				<constraints>
+					<minInclusive oor:value="1000">
+		 				<info>
+							<desc>Specifies the minimum allowed value.</desc>
+						</info>
+					</minInclusive>
+					<maxInclusive oor:value="100000">
+		 				<info>
+							<desc>Specifies the maximum value allowed.</desc>
+						</info>
+					</maxInclusive>				
+				</constraints>
+				<value>50000</value>
+			</prop>
+			<!-- end of logging properties -->
+		</group>
+		<!-- set oor:name="SignatureOptionsParameters" oor:node-type="SignatureOptionsParameter">
+			<info>
+				<author>Giuseppe Castagno (aka beppec56)</author>
+				<desc>Contains the options (Tools > Options) for XAdES digital signatures</desc>
+			</info>
+		</set -->
+		<set oor:name="Frames" oor:node-type="Frame"/>		
+		<set oor:name="FileResources" oor:node-type="FileResource"/>
+		<set oor:name="Messages" oor:node-type="Message"/>
+	</component>
+</oor:component-schema>

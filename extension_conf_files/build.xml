@@ -1,0 +1,554 @@
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+
+<!--
+add comments here.........
+
+ATTENTION:
+the default target must be removed or adapted to the environment
+
+build-extension
+
+-->
+<project name="ooo_xades_sign_it" default="deploy-home" basedir=".">
+	<description>
+        build the ooo_xades_sign_it extension (main build).
+    </description>
+	<!-- set global properties for this build -->
+	<property name="project_name" value="ooo_xades_sign_it" />
+	<property name="support_files" value="extension_conf_files" />
+	<property name="doc_dir" value="${basedir}/../doc" />
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+
+	<!--
+		first build signature_component.jar
+		the build the extension
+	-->
+
+	<buildnumber />
+	<!--
+		next line is to avoid "modified in the future" warning
+		may be is not needed for slower PC machine
+	-->
+	<sleep milliseconds="2000" />
+
+	<!-- properties used when building/deploying the extension -->
+	<!-- version used for updating the extension, displayed on OOo interface -->
+	<property name="version" value="0.0.14" />
+	<property name="longversion" value="${version}.${build.number}" />
+	<property name="spec_version" value="1.0.0" />
+
+	<property name="webidentbase" value="it.plio.ext" />
+	<!-- local (intranet you may change them to suit you ) web properties -->
+	<property name="webhost" value="http://192.168.3.6" />
+	<property name="webpath" value="w2/acca-esse.it/dwnld/ooohs/extensions" />
+	<property name="copywebpath" value="/var/www/${webpath}" />
+
+	<!-- minimum OOo version -->
+	<property name="ooominversion" value="3.0" />
+
+	<!-- base name of the extension file -->
+	<property name="ext_name" value="ooo_xades_sign_it" />
+
+	<!-- web repository subdirectory -->
+	<property name="wbme" value="${ext_name}" />
+
+	<!--
+		==========================================================
+		WARNING:
+		in case the properties:
+		${webidentbase}
+		${ext_name}
+		are modified, change the value in constant:
+		it.plio.ext.xades.ooo.GlobConstant.m_sEXT_NAME
+		accordingly, otherwise the configuration management inside the
+		extension won't work anymore.
+		==========================================================
+	-->
+	<!-- extension subdirectories -->
+	<property name="ico" value="/icons" />
+	<property name="img" value="/images" />
+	<property name="meta" value="/META-INF" />
+	<property name="oui" value="/Office/UI" />
+	<property name="pdesc" value="/pkg-desc" />
+	<property name="lic" value="/registration" />
+	<property name="option_gui" value="/dialogs" />
+
+	<property name="extension_dir" location="extension" />
+	<property name="extension_dest_dir" location="build" />
+	<property name="extension_file" value="${ext_name}.oxt" />
+	<property name="extension_jar_file" value="${project_name}.jar" />
+	<property name="readme_it" value="release-notes_it.txt" />
+	<property name="readme_en" value="release-notes_en.txt" />
+	<!-- directory to zip for archive -->
+	<property name="archr" location="../to-be-zipped" />
+	<property name="tar_dest" location="../tgz-files" />
+	<property name="arch" location="${archr}/${project_name}-${version}" />
+	<property name="archv" location="${archr}/${project_name}-${version}-${build.number}" />
+
+	<property name="doc_dir" value="doc"/>
+	<property name="license_dir" value="${doc_dir}/licenses"/>
+	<property name="third_party_license" value="${license_dir}/third_parties"/>
+
+	<property name="sig_options_comp" value="signature_options_comp"/>
+	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
+	<property name="sig_options_comp_jar" value="${sig_options_comp}.uno.jar"/>
+
+	<property name="sing_comp" value="singleton_var_comp"/>
+	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
+	<property name="sing_comp_jar" value="${sing_comp}.uno.jar"/>
+
+	<property name="sig_comp" value="signature_component"/>
+	<property name="sig_comp_dir" value="${sig_comp}/dist"/>
+	<property name="sig_comp_jar" value="${sig_comp}.uno.jar"/>
+
+	<property name="job_comp" value="sync_job_comp"/>
+	<property name="job_comp_dir" value="${job_comp}/dist"/>
+	<property name="job_comp_jar" value="${job_comp}.uno.jar"/>	
+
+	<target name="build-jar" description="generate the subproject jar">
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${sig_options_comp}/build.xml" />
+			</filelist>
+		</subant>
+		
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${sing_comp}/build.xml" />
+			</filelist>
+		</subant>
+		
+		<!-- IMPORTANT! the following projects reference classes from ${sig_options_comp} 
+			must be build AFTER -->
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${sig_comp}/build.xml" />
+			</filelist>
+		</subant>
+		
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${job_comp}/build.xml" />
+			</filelist>
+		</subant>
+		
+	</target>
+
+	<target name="prepare-extension" depends="build-jar" description="copy the jar to the extension and builds the extension package">
+		<!-- prepare first component jar -->
+		<!--- begin subtask -->	
+
+		<!-- make dest dir -->
+		<echo>Now prepare extension stuff</echo>
+		
+		<mkdir dir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${job_comp_dir}/lib/${job_comp_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sing_comp_dir}/lib/${sing_comp_jar}" todir="${extension_dest_dir}" />
+		<copy todir="${extension_dest_dir}${ico}">
+			<!-- the icons files -->
+			<fileset dir="${extension_dir}${ico}">
+				<include name="**/signet_11x16_*.bmp" />
+			</fileset>
+		</copy>
+
+		<copy todir="${extension_dest_dir}${img}">
+			<!-- the icons files -->
+			<fileset dir="${extension_dir}${img}">
+				<include name="**/*.bmp" />
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+
+		<!-- copy metafile -->
+		<copy todir="${extension_dest_dir}${meta}">
+			<fileset dir="${extension_dir}${meta}">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${extension_dest_dir}${pdesc}">
+			<fileset dir="${extension_dir}${pdesc}">
+				<include name="**/*.txt" />
+			</fileset>
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+
+		<copy todir="${extension_dest_dir}${lic}">
+			<fileset dir="${extension_dir}${lic}">
+				<include name="**/*.txt" />
+			</fileset>
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+
+		<copy todir="${extension_dest_dir}${lic}">
+			<fileset dir="${license_dir}">
+				<include name="**/*.txt" />
+			</fileset>
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+
+		<copy todir="${extension_dest_dir}${option_gui}">
+			<fileset dir="${extension_dir}${option_gui}">
+				<include name="**/*.xdl" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		
+		<!-- prepare configuration files -->
+		<!-- copy licenses from documentation project -->
+		<copy file="${license_dir}/EUPL v.1.1 - Preamble.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - Preamble.pdf" />
+		<copy file="${license_dir}/EUPL v.1.1 - Licence.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - Licence.pdf" />
+		<copy file="${license_dir}/EUPL v.1.1 - Preambolo.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - Preambolo.pdf" />
+		<copy file="${license_dir}/EUPL v.1.1 - licenza.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - licenza.pdf" />		
+
+		<!-- copy third parties licenses (if needed) -->
+
+		<!-- copy the configuration files -->
+		<!-- copy Office/UI -->
+		<copy file="${extension_dir}${oui}/BaseWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/BaseWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/BasicIDEWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/BasicIDEWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/CalcWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/CalcWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/DrawWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/DrawWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/ImpressWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/ImpressWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/MathWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/MathWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/StartModuleWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/StartModuleWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}${oui}/WriterWindowState.xcu.xml" tofile="${extension_dest_dir}${oui}/WriterWindowState.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		
+		<!-- main extension configuration files -->
+		<copy file="${extension_dir}/AddonConfiguration.xcs.xml" tofile="${extension_dest_dir}/AddonConfiguration.xcs">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}/AddonConfiguration.xcu.xml" tofile="${extension_dest_dir}/AddonConfiguration.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}/AddonMessages.xcu.xml" tofile="${extension_dest_dir}/AddonMessages.xcu">
+			<filterset>
+			<filter token="WEBIDENTBASE" value="${webidentbase}" />
+			<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}/Addons.xcu.xml" tofile="${extension_dest_dir}/Addons.xcu" />
+		<filterset>
+			<filter token="WEBIDENTBASE" value="${webidentbase}" />
+			<filter token="NAME" value="${ext_name}" />
+		</filterset >
+		<copy file="${extension_dir}/ProtocolHandler.xcu.xml" tofile="${extension_dest_dir}/ProtocolHandler.xcu" />
+		<filterset>
+			<filter token="WEBIDENTBASE" value="${webidentbase}" />
+			<filter token="NAME" value="${ext_name}" />
+		</filterset >
+		<copy file="${extension_dir}/SynchronousJob.xcu.xml" tofile="${extension_dest_dir}/SynchronousJob.xcu" />
+		<filterset>
+			<filter token="WEBIDENTBASE" value="${webidentbase}" />
+			<filter token="NAME" value="${ext_name}" />
+		</filterset >
+		<copy file="${extension_dir}/DisableCommands.xcu.xml" tofile="${extension_dest_dir}/DisableCommands.xcu" >
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<copy file="${extension_dir}/OptionsDialog.xcu.xml" tofile="${extension_dest_dir}/OptionsDialog.xcu">
+			<filterset>
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+			</filterset >
+		</copy>
+		<!--- end of subtask -->
+	</target>
+
+	<!-- dependency of description.xml from build number -->
+	<dependset>
+		<srcfilelist dir="${basedir}" files="build.number" />
+		<targetfilelist dir="${extension_dest_dir}" files="description.xml" />
+	</dependset>
+
+	<target name="build-extension" depends="prepare-extension" description="copy the jar to the extension">
+		<!-- prepare the file description.xml, from src-description.xml, changing tokens -->
+		<copy file="${extension_dir}/src-description.xml" tofile="${extension_dest_dir}/description.xml">
+			<filterset>
+				<filter token="VERSION" value="${longversion}" />
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+				<filter token="OOOMINVER" value="${ooominversion}" />
+				<filter token="WEBHOST" value="${webhost}" />
+				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WBME" value="${wbme}" />
+			</filterset >
+		</copy>
+
+		<zip basedir="${extension_dest_dir}" destfile="${extension_file}" />
+	</target>
+
+	<!-- -->
+
+	<target name="deploy-home" depends="clean, prepare-extension" description="deploy extension in user's home directory">
+		<!-- prepare the file description.xml, from src-description.xml, changing tokens -->
+		<copy file="${extension_dir}/src-description.xml" tofile="${extension_dest_dir}/description.xml">
+			<filterset>
+				<filter token="VERSION" value="${longversion}" />
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+				<filter token="OOOMINVER" value="${ooominversion}" />
+				<filter token="WEBHOST" value="${webhost}" />
+				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WBME" value="${wbme}" />
+			</filterset >
+		</copy>
+
+		<zip basedir="${extension_dest_dir}" destfile="${extension_file}" />
+
+		<!-- the following line is to simplify the first add of the extension (disable if not needed) -->
+		<copy file="${extension_file}" todir="${user.home}" />
+	</target>
+
+	<target name="deploy-web-local" depends="deploy-home" description="deploy extension in local intranet: http://192.168.3.6">
+		<!-- prepare the file description.xml, from src-description.xml, changing tokens -->
+		<copy file="${extension_dir}/src-description.xml" tofile="${extension_dest_dir}/description.xml">
+			<filterset>
+				<filter token="VERSION" value="${longversion}" />
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+				<filter token="OOOMINVER" value="${ooominversion}" />
+				<filter token="WEBHOST" value="${webhost}" />
+				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WBME" value="${wbme}" />
+			</filterset >
+		</copy>
+
+		<zip basedir="${extension_dest_dir}" destfile="${extension_file}" />
+
+		<mkdir dir="${copywebpath}/${wbme}" />
+		<!-- to avoid "modified in the future" warning -->
+		<sleep milliseconds="900" />
+		<dependset>
+			<srcfilelist dir="${extension_dest_dir}" files="description.xml" />
+			<targetfilelist dir="${copywebpath}/${wbme}" files="${ext_name}.update.xml" />
+		</dependset>
+
+		<copy file="${extension_dir}/src-update.xml" tofile="${copywebpath}/${wbme}/${ext_name}.update.xml">
+			<filterset>
+				<filter token="VERSION" value="${longversion}" />
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+				<filter token="WEBHOST" value="${webhost}" />
+				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WBME" value="${wbme}" />
+			</filterset >
+		</copy>
+
+		<copy file="${extension_file}" tofile="${copywebpath}/${wbme}/${extension_file}" />
+		<!-- copy realease description files -->
+		<copy file="${extension_dir}/${readme_en}" tofile="${copywebpath}/${wbme}/${readme_en}" />
+		<copy file="${extension_dir}/${readme_it}" tofile="${copywebpath}/${wbme}/${readme_it}" />
+
+	</target>
+
+	<!-- cleans all, reverse order wrt build -->
+	<target name="clean" description="clean up the project">
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${job_comp}/build.xml" />
+			</filelist>
+		</subant>
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${sig_comp}/build.xml" />
+			</filelist>
+		</subant>
+
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${sig_options_comp}/build.xml" />
+			</filelist>
+		</subant>
+
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${sing_comp}/build.xml" />
+			</filelist>
+		</subant>
+
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<!-- delete dir="${archr}" />
+		<delete dir="${build}" />
+		<delete dir="${dist}" / -->
+		<delete dir="${extension_dest_dir}" />
+	</target>
+
+	<!-- target name="build-arch-sub" depends="clean,build-extension" description="aux target to build the zip archive of the project" -->
+	<target name="build-arch-sub" depends="clean" description="NOTE: broken target! - aux target to build the zip archive of the project">
+		<delete dir="${arch}" />
+		<mkdir dir="${arch}" />
+		<!-- copy src files -->
+		<copy todir="${arch}/${sig_comp}">
+			<fileset dir="${basedir}/../${sig_comp}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${arch}/${job_comp}">
+			<fileset dir="${basedir}/../${job_comp}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<!-- copy extension specific files -->
+		<copy todir="${arch}/${support_files}/extension">
+			<fileset dir="${extension_dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<!-- copy images work directory -->
+		<copy todir="${arch}/${support_files}/images-working-area">
+			<fileset dir="${extension_dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		
+		<!-- delete file="${arch}/${support_files}/extension/${extension_jar_file}" / -->
+
+		<copy todir="${arch}/${support_files}/extension">
+			<filelist dir="${extension_dir}">
+				<file name="src-description.xml" />
+				<file name="src-update.xml" />
+				<file name="release-notes_it.txt" />
+				<file name="release-notes_en.txt" />
+				<file name="AddonConfiguration.xcs.xml"/>
+				<file name="AddonConfiguration.xcu.xml"/>
+				<file name="AddonMessages.xcu.xml"/>
+				<file name="Addons.xcu.xml"/>
+				<file name="ProtocolHandler.xcu.xml"/>
+				<file name="SynchronousJob.xcu.xml"/>
+				<file name="AsynchronousJob.xcu.xml"/>
+				<file name="DisableCommands.xcu.xml"/>
+			</filelist>
+		</copy>
+
+		<copy file="${basedir}/localization-master.ods" tofile="${arch}/${support_files}/localization-master.ods" />
+		<copy file="${basedir}/COPYING" tofile="${arch}/${support_files}/COPYING" />
+		<copy file="${basedir}/README" tofile="${arch}/${support_files}/README" />
+		<copy file="${basedir}/build.xml" tofile="${arch}/${support_files}/build.xml" />
+		<copy file="${basedir}/build.number" tofile="${arch}/${support_files}/build.number" />
+		<copy file="${basedir}/${extension_file}" tofile="${arch}/${support_files}/${extension_file}" />
+
+		<!-- copy documentation files -->
+		<copy todir="${arch}/doc/">
+			<fileset dir="${doc_dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${tar_dest}"/>
+		<zip basedir="${archr}" destfile="${tar_dest}/${project_name}-${version}.zip" />
+		<!-- tar basedir="${archr}" destfile="${tar_dest}/${project_name}-${version}.tar"/ -->
+	</target>
+	
+	<target name="build-arch-zip" depends="build-arch-sub"  description="build the zip archive of the project, only versioning">
+		
+		<!-- bzip2 src="${tar_dest}/${project_name}-${version}.tar" destfile="${tar_dest}/${project_name}-${version}.tar.bz2" / -->
+		<delete file="${tar_dest}/${project_name}-${version}.tar" />
+
+		<delete dir="${archr}" />
+	</target>
+
+	<!-- target name="build-arch" depends="build-arch-sub"  description="build the tar.bz2 archive of the project, only versioning">
+		
+		<bzip2 src="${tar_dest}/${project_name}-${version}.tar" destfile="${tar_dest}/${project_name}-${version}.tar.bz2" />
+		<delete file="${tar_dest}/${project_name}-${version}.tar" />
+
+		<delete dir="${archr}" />
+	</target -->
+
+	<!-- target name="build-arch-v" depends="build-arch-sub"  description="build the tar.bz2 archive of the project, versioning + build number">
+		
+		<bzip2 src="${tar_dest}/${project_name}-${version}.tar" destfile="${tar_dest}/${project_name}-${version}-${build.number}.tar.bz2" />
+		<delete file="${tar_dest}/${project_name}-${version}.tar" />
+
+		<delete dir="${archr}" />		
+	</target -->
+</project>

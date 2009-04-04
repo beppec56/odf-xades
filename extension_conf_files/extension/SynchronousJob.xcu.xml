@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<oor:component-data oor:name="Jobs"
+		    oor:package="org.openoffice.Office"
+		    xmlns:oor="http://openoffice.org/2001/registry"
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<node oor:name="Jobs">
+		<node oor:name="SyncSignatureHandlerJob" oor:op="replace">
+			<prop oor:name="Service">
+				<value>it.plio.ext.xades.jobs.sync.SyncJob</value>
+				<!--  value>it.plio.ext.xades.SignatureHandler</value -->
+			</prop>
+			<node oor:name="Arguments">
+				<prop oor:name="arg_1" oor:type="xs:string" oor:op="replace">
+					<value>val_1</value>
+				</prop>
+				<prop oor:name="arg_2" oor:type="xs:string" oor:op="replace">
+					<value>second argument: arg_2</value>
+				</prop>
+			</node>
+		</node>
+	</node>
+	<node oor:name="Events">
+		<!--
+		    Called after a document window has been shown for the first time
+		    after launching the application.
+		    used for single time initialization of the jobs
+		    For example deleting the previous OOo instance temporary data from the registry
+		-->
+		<!-- node oor:name="onFirstVisibleTask" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node -->
+		<!--
+		This event is needed because it's used to start all the thing that our extension
+		needs: the static logger (called by the sigleton service) and the singleton UNO object
+		Itself.
+		 -->
+		<node oor:name="OnStartApp" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+		<!-- currently disabled, methods needed only partially implemented. 
+		seems that the Save URL needs some property passed down on.
+		<node oor:name="OnViewCreated" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node> -->
+		<!-- after the document loading is finished, check the digital signature and put the results on the registry -->
+		<node oor:name="OnLoad" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+		<node oor:name="OnSaveDone" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+		<node oor:name="OnSaveAsDone" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+		<node oor:name="OnUnload" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+		<!--
+			Application is going to be closed
+			delete the temporary data from the registry
+		-->
+		<node oor:name="OnCloseApp" oor:op="fuse">
+			<node oor:name="JobList">
+				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>
+			</node>
+		</node>
+	</node>
+</oor:component-data>

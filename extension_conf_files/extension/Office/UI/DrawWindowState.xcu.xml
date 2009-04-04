@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    GNU General Public License Version 3 or any later version
+    ===========================================================
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry"
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    oor:name="DrawWindowState"
+		    oor:package="org.openoffice.Office.UI">
+	<node oor:name="UIElements">
+		<node oor:name="States">
+			<node oor:name="private:resource/toolbar/addon_it.plio.ext.xades.OfficeToolBar" oor:op="replace">
+				<prop oor:name="UIName" oor:type="xs:string" oor:localized="true">
+					<value xml:lang="en">XAdES (IT) Signature</value>
+					<value xml:lang="it">Firma XAdES (IT)</value>
+				</prop>
+				<prop oor:name="Visible" oor:type="xs:boolean">
+					<info>
+						<desc>Specifies if the user interface element is visible.</desc>
+					</info>
+					<value>true</value>
+				</prop>
+				<prop oor:name="Docked" oor:type="xs:boolean">
+					<info>
+						<desc>Specifies if the user interface element is currently docked.</desc>
+					</info>
+					<value>true</value>
+				</prop>
+				<prop oor:name="DockingArea" oor:type="xs:int">
+					<info>
+						<desc>Specifies the docking area to which a user interface element belongs to. Only valid if 'Docked' is true. Top docking area=0, bottom=1, left=2, right=3.</desc>
+					</info>
+					<value>3</value>
+				</prop>            
+            	<prop oor:name="Locked" oor:type="xs:boolean">
+                	<info>
+                    	<desc>A locked user interface element cannot be moved or undocked by the user. This property is only active when the user interface element is in a docked state.</desc>
+                	</info>
+                	<value>true</value>
+            	</prop>
+            	<prop oor:name="Size" oor:type="xs:string">
+                	<info>
+                    	<desc>Specifies the size of a floating user interface element in pixel. The real size can differ if the layout manager decides to resize it due to current circumenstances. Width and height must be splitted by an comma.</desc>
+                	</info>
+                	<value>26,26</value>
+            	</prop>            
+			</node>
+		</node>
+	</node>
+</oor:component-data>

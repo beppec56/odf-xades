@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    GNU General Public License Version 3 or any later version
+    ===========================================================
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<oor:component-data
+			xmlns:oor="http://openoffice.org/2001/registry"
+	 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 		oor:name="BaseWindowState"
+	 		oor:package="org.openoffice.Office.UI">
+	<node oor:name="UIElements">
+		<node oor:name="States">
+			<node oor:name="private:resource/toolbar/addon_it.plio.ext.cnipa.OfficeToolBar" oor:op="replace">
+				<prop oor:name="UIName" oor:type="xs:string" oor:localized="true">
+					<value xml:lang="en">CNIPA digital signature...</value>
+					<value xml:lang="it">Firma digitale CNIPA...</value>
+				</prop>
+			</node>
+		</node>
+	</node>
+</oor:component-data>

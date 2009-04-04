@@ -1,0 +1,877 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+
+-->
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  oor:package="@WEBIDENTBASE@.@NAME@" oor:name="Configuration" >
+	<node oor:name="Messages">
+		<!--
+		    these are the localization strings.
+		    it's still a work in progress...
+
+		    File automatically generated.
+		    Please DO NOT EDIT MANUALLY!
+		-->
+		<!--
+		    name of the extension, ignored when accessing the menu. To be put manually in description.xml file
+		-->
+		<node oor:name="id_descr" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Standard Digital Signature</value>
+				<value xml:lang="it">Firma digitale standard XAdES (IT)</value>
+			</prop>
+		</node>
+		<!--
+		    general id for cancel button
+		-->
+		<node oor:name="id_cancel" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Cancel</value>
+				<value xml:lang="it">Annulla</value>
+			</prop>
+		</node>
+		<!--
+		    general id for OK button
+		-->
+		<node oor:name="id_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Ok</value>
+				<value xml:lang="it">Ok</value>
+			</prop>
+		</node>
+		<!--
+		    about box menu, not used in messages, for translation only
+		-->
+		<node oor:name="id_about_menu" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">About XAdES (IT) Digital Signature...</value>
+				<value xml:lang="it">Informazioni su firma digitale XAdES (IT)...</value>
+			</prop>
+		</node>
+		<!--
+		    about box
+		-->
+		<node oor:name="id_about_title" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">About XAdES (IT) Digital Signature</value>
+				<value xml:lang="it">Informazioni su firma digitale XAdES (IT)</value>
+			</prop>
+		</node>
+		<node oor:name="id_about_mex" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signature extension
+(@WEBIDENTBASE@.@NAME@)
+Licensed under EUPL version 1.1 or later
+Copyright 2009 Giuseppe Castagno
+Copyright 2009 Roberto Resoli
+
+Proof of concept for XAdES (IT) digital signature extension
+user interface.
+</value>
+				<value xml:lang="it">Estensione per firma digitale modalità XAdES (IT).
+(@WEBIDENTBASE@.@NAME@)
+Concesso in licenza a norma dell'EUPL versione 1.1 o
+successiva
+Copyright 2009 Giuseppe Castagno
+Copyright 2009 Roberto Resoli
+
+'Proof of concept' per l'interfaccia dell'estensione  della firma
+digitale tipo XAdES, implementazione italiana.
+</value>
+			</prop>
+		</node>
+		<!--
+		    digital signature selection dialog
+		-->
+		<node oor:name="id_sel_dsig" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Select Digital Signature Types</value>
+				<value xml:lang="it">Seleziona il tipo di firma digitale</value>
+			</prop>
+		</node>
+		<node oor:name="id_sel_dsig_xades" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signatures...</value>
+				<value xml:lang="it">Firme digitali XAdES (IT)...</value>
+			</prop>
+		</node>
+		<node oor:name="id_sel_dsig_ooo" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">OpenOffice.org Digital Signatures...</value>
+				<value xml:lang="it">Firme digitali OpenOffice.org...</value>
+			</prop>
+		</node>
+		<!--
+		    signature toolbar messages (partly from svx/source/stbctrls/stbctrls.src, id RID_SVXSTR_XMLSEC_SIG_NOT_OK )
+		-->
+		<node oor:name="id_toolbar_disabled" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">You should save the document before it can be signed</value>
+				<value xml:lang="it">Il documento deve essere salvato prima di poter essere firmato</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_NOSIGNATURES
+		-->
+		<node oor:name="id_toolbar_nosign" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signature: The document is not signed. You may sign this document.</value>
+				<value xml:lang="it">Firma XAdES (IT): il documento non è firmato. Potete firmare questo documento.</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_SIGNATURES_OK
+		-->
+		<node oor:name="id_toolbar_sign_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signature: The document signature is OK.</value>
+				<value xml:lang="it">Firma XAdES (IT): la firma del documento è valida</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_SIGNATURES_NOTVALIDATED
+		-->
+		<node oor:name="id_toolbar_sign_no_cert" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signature: The document signature is OK, but the certificates could not be validated.</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_SIGNATURES_BROKEN
+		-->
+		<node oor:name="id_toolbar_sign_broken" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">XAdES (IT) Digital Signature: The document signature does not match the document content. We strongly recommend you to do not trust this document.</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_SIGNATURES_INVALID
+		-->
+		<node oor:name="id_toolbar_doc_modified" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The document is modified. You should save it before sign.</value>
+			</prop>
+		</node>
+		<!--
+		    GlobConstant.SIGNATURESTATE_UNKNOWN
+		-->
+		<node oor:name="id_toolbar_doc_unknown" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The document signature status is unknown. The document is loading and signature is being checked.</value>
+			</prop>
+		</node>
+		<!--
+		    Credits
+		-->
+		<node oor:name="id_credits" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Credits
+Giuseppe Castagno, developer
+Roberto Resoli, developer
+</value>
+				<value xml:lang="it">Credits
+Giuseppe Castagno, developer
+Roberto Resoli, developer
+</value>
+			</prop>
+		</node>
+		<!--
+		    Display license button
+		-->
+		<node oor:name="id_show_license" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Show license</value>
+				<value xml:lang="it">Mostra licenza</value>
+			</prop>
+		</node>
+		<!--
+		    License display dialog title
+		-->
+		<node oor:name="id_title_show_license" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Extension license</value>
+				<value xml:lang="it">Licenza dell'estensione</value>
+			</prop>
+		</node>
+		<!--
+		    Push button on dialog tree of certificates present in docum.
+		-->
+		<node oor:name="id_pb_verif_sign" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Verify signature</value>
+				<value xml:lang="it">Verifica firma</value>
+			</prop>
+		</node>
+		<!--
+		    button to add certificates
+		-->
+		<node oor:name="id_pb_add_cert" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Add...</value>
+				<value xml:lang="it">Aggiungi firma...</value>
+			</prop>
+		</node>
+		<node oor:name="id_pb_rem_cert" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Remove</value>
+				<value xml:lang="it">Rimuove firma</value>
+			</prop>
+		</node>
+		<node oor:name="id_pb_count_sign" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Countersignature...</value>
+				<value xml:lang="it">Controfirma...</value>
+			</prop>
+		</node>
+		<node oor:name="id_title_cert_tree" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Qualified digital signatures (XadES IT)</value>
+				<value xml:lang="it">Firme digitali qualificate (XAdES CNIPA)</value>
+			</prop>
+		</node>
+		<node oor:name="id_title_cert_treew" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The following have signed the document content:</value>
+				<value xml:lang="it">Il documento è stato firmato da:</value>
+			</prop>
+		</node>
+		<!--
+		    Main license of the extension
+		-->
+		<node oor:name="id_main_license" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">                      European Union Public Licence
+                                  V. 1.1
+
+                    EUPL © the European Community 2007
+
+This European Union Public Licence (the “EUPL”) applies to the Work or Software
+(as defined below) which is provided under the terms of this Licence. Any use of the
+Work, other than as authorised under this Licence is prohibited (to the extent such use
+is covered by a right of the copyright holder of the Work).
+
+The Original Work is provided under the terms of this Licence when the Licensor (as
+defined below) has placed the following notice immediately following the copyright
+notice for the Original Work:
+
+                      Licensed under the EUPL V.1.1
+
+or has expressed by any other mean his willingness to license under the EUPL.
+
+1. Definitions
+==============
+
+In this Licence, the following terms have the following meaning:
+
+- The Licence: this Licence.
+
+- The Original Work or the Software: the software distributed and/or communicated
+by the Licensor under this Licence, available as Source Code and also as Executable
+Code as the case may be.
+
+- Derivative Works: the works or software that could be created by the Licensee,
+based upon the Original Work or modifications thereof. This Licence does not define
+the extent of modification or dependence on the Original Work required in order to
+classify a work as a Derivative Work; this extent is determined by copyright law
+applicable in the country mentioned in Article 15.
+
+- The Work: the Original Work and/or its Derivative Works.
+
+- The Source Code: the human-readable form of the Work which is the most
+convenient for people to study and modify.
+
+- The Executable Code: any code which has generally been compiled and which is
+meant to be interpreted by a computer as a program.
+
+- The Licensor: the natural or legal person that distributes and/or communicates the
+Work under the Licence.
+
+- Contributor(s): any natural or legal person who modifies the Work under the
+Licence, or otherwise contributes to the creation of a Derivative Work.
+
+- The Licensee or “You”: any natural or legal person who makes any usage of the
+Software under the terms of the Licence.
+
+- Distribution and/or Communication: any act of selling, giving, lending, renting,
+distributing, communicating, transmitting, or otherwise making available, on-line or
+off-line, copies of the Work or providing access to its essential functionalities at the
+disposal of any other natural or legal person.
+
+2. Scope of the rights granted by the Licence
+=============================================
+
+The Licensor hereby grants You a world-wide, royalty-free, non-exclusive, sublicensable
+licence to do the following, for the duration of copyright vested in the
+Original Work:
+
+- use the Work in any circumstance and for all usage,
+
+- reproduce the Work,
+
+- modify the Original Work, and make Derivative Works based upon the Work,
+
+- communicate to the public, including the right to make available or display the
+Work or copies thereof to the public and perform publicly, as the case may be,
+the Work,
+
+- distribute the Work or copies thereof,
+
+- lend and rent the Work or copies thereof,
+
+- sub-license rights in the Work or copies thereof.
+Those rights can be exercised on any media, supports and formats, whether now
+known or later invented, as far as the applicable law permits so.
+
+In the countries where moral rights apply, the Licensor waives his right to exercise his
+moral right to the extent allowed by law in order to make effective the licence of the
+economic rights here above listed.
+
+The Licensor grants to the Licensee royalty-free, non exclusive usage rights to any
+patents held by the Licensor, to the extent necessary to make use of the rights granted
+on the Work under this Licence.
+
+3. Communication of the Source Code
+===================================
+
+The Licensor may provide the Work either in its Source Code form, or as Executable
+Code. If the Work is provided as Executable Code, the Licensor provides in addition a
+machine-readable copy of the Source Code of the Work along with each copy of the
+Work that the Licensor distributes or indicates, in a notice following the copyright
+notice attached to the Work, a repository where the Source Code is easily and freely
+accessible for as long as the Licensor continues to distribute and/or communicate the
+Work.
+
+4. Limitations on copyright
+===========================
+
+Nothing in this Licence is intended to deprive the Licensee of the benefits from any
+exception or limitation to the exclusive rights of the rights owners in the Original
+Work or Software, of the exhaustion of those rights or of other applicable limitations
+thereto.
+
+5. Obligations of the Licensee
+==============================
+
+The grant of the rights mentioned above is subject to some restrictions and obligations
+imposed on the Licensee. Those obligations are the following:
+
+Attribution right: the Licensee shall keep intact all copyright, patent or trademarks
+notices and all notices that refer to the Licence and to the disclaimer of warranties.
+The Licensee must include a copy of such notices and a copy of the Licence with
+every copy of the Work he/she distributes and/or communicates. The Licensee must
+cause any Derivative Work to carry prominent notices stating that the Work has been
+modified and the date of modification.
+
+Copyleft clause: If the Licensee distributes and/or communicates copies of the
+Original Works or Derivative Works based upon the Original Work, this Distribution
+and/or Communication will be done under the terms of this Licence or of a later
+version of this Licence unless the Original Work is expressly distributed only under
+this version of the Licence. The Licensee (becoming Licensor) cannot offer or impose
+any additional terms or conditions on the Work or Derivative Work that alter or
+restrict the terms of the Licence.
+
+Compatibility clause: If the Licensee Distributes and/or Communicates Derivative
+Works or copies thereof based upon both the Original Work and another work
+licensed under a Compatible Licence, this Distribution and/or Communication can be
+done under the terms of this Compatible Licence. For the sake of this clause,
+“Compatible Licence” refers to the licences listed in the appendix attached to this
+Licence. Should the Licensee’s obligations under the Compatible Licence conflict
+with his/her obligations under this Licence, the obligations of the Compatible Licence
+shall prevail.
+
+Provision of Source Code: When distributing and/or communicating copies of the
+Work, the Licensee will provide a machine-readable copy of the Source Code or
+indicate a repository where this Source will be easily and freely available for as long
+as the Licensee continues to distribute and/or communicate the Work.
+
+Legal Protection: This Licence does not grant permission to use the trade names,
+trademarks, service marks, or names of the Licensor, except as required for
+reasonable and customary use in describing the origin of the Work and reproducing
+the content of the copyright notice.
+
+6. Chain of Authorship
+======================
+
+The original Licensor warrants that the copyright in the Original Work granted
+hereunder is owned by him/her or licensed to him/her and that he/she has the power
+and authority to grant the Licence.
+
+Each Contributor warrants that the copyright in the modifications he/she brings to the
+Work are owned by him/her or licensed to him/her and that he/she has the power and
+authority to grant the Licence.
+
+Each time You accept the Licence, the original Licensor and subsequent Contributors
+grant You a licence to their contributions to the Work, under the terms of this
+Licence.
+
+7. Disclaimer of Warranty
+=========================
+
+The Work is a work in progress, which is continuously improved by numerous
+contributors. It is not a finished work and may therefore contain defects or “bugs”
+inherent to this type of software development.
+
+For the above reason, the Work is provided under the Licence on an “as is” basis and
+without warranties of any kind concerning the Work, including without limitation
+merchantability, fitness for a particular purpose, absence of defects or errors,
+accuracy, non-infringement of intellectual property rights other than copyright as
+stated in Article 6 of this Licence.
+
+This disclaimer of warranty is an essential part of the Licence and a condition for the
+grant of any rights to the Work.
+
+8. Disclaimer of Liability
+==========================
+
+Except in the cases of wilful misconduct or damages directly caused to natural
+persons, the Licensor will in no event be liable for any direct or indirect, material or
+moral, damages of any kind, arising out of the Licence or of the use of the Work,
+including without limitation, damages for loss of goodwill, work stoppage, computer
+failure or malfunction, loss of data or any commercial damage, even if the Licensor
+has been advised of the possibility of such damage. However, the Licensor will be
+liable under statutory product liability laws as far such laws apply to the Work.
+
+9. Additional agreements
+========================
+
+While distributing the Original Work or Derivative Works, You may choose to
+conclude an additional agreement to offer, and charge a fee for, acceptance of support,
+warranty, indemnity, or other liability obligations and/or services consistent with this
+Licence. However, in accepting such obligations, You may act only on your own
+behalf and on your sole responsibility, not on behalf of the original Licensor or any
+other Contributor, and only if You agree to indemnify, defend, and hold each
+Contributor harmless for any liability incurred by, or claims asserted against such
+Contributor by the fact You have accepted any such warranty or additional liability.
+
+10. Acceptance of the Licence
+=============================
+
+The provisions of this Licence can be accepted by clicking on an icon “I agree”
+placed under the bottom of a window displaying the text of this Licence or by
+affirming consent in any other similar way, in accordance with the rules of applicable
+law. Clicking on that icon indicates your clear and irrevocable acceptance of this
+Licence and all of its terms and conditions.
+
+Similarly, you irrevocably accept this Licence and all of its terms and conditions by
+exercising any rights granted to You by Article 2 of this Licence, such as the use of
+the Work, the creation by You of a Derivative Work or the Distribution and/or
+Communication by You of the Work or copies thereof.
+
+11. Information to the public
+=============================
+
+In case of any Distribution and/or Communication of the Work by means of electronic
+communication by You (for example, by offering to download the Work from a
+remote location) the distribution channel or media (for example, a website) must at
+least provide to the public the information requested by the applicable law regarding
+the Licensor, the Licence and the way it may be accessible, concluded, stored and
+reproduced by the Licensee.
+
+12. Termination of the Licence
+==============================
+
+The Licence and the rights granted hereunder will terminate automatically upon any
+breach by the Licensee of the terms of the Licence.
+
+Such a termination will not terminate the licences of any person who has received the
+Work from the Licensee under the Licence, provided such persons remain in full
+compliance with the Licence.
+
+13. Miscellaneous
+=================
+
+Without prejudice of Article 9 above, the Licence represents the complete agreement
+between the Parties as to the Work licensed hereunder.
+
+If any provision of the Licence is invalid or unenforceable under applicable law, this
+will not affect the validity or enforceability of the Licence as a whole. Such provision
+will be construed and/or reformed so as necessary to make it valid and enforceable.
+
+The European Commission may publish other linguistic versions and/or new versions
+of this Licence, so far this is required and reasonable, without reducing the scope of
+the rights granted by the Licence. New versions of the Licence will be published with
+a unique version number.
+
+All linguistic versions of this Licence, approved by the European Commission, have
+identical value. Parties can take advantage of the linguistic version of their choice.
+
+14. Jurisdiction
+================
+
+Any litigation resulting from the interpretation of this License, arising between the
+European Commission, as a Licensor, and any Licensee, will be subject to the
+jurisdiction of the Court of Justice of the European Communities, as laid down in
+article 238 of the Treaty establishing the European Community.
+
+Any litigation arising between Parties, other than the European Commission, and
+resulting from the interpretation of this License, will be subject to the exclusive
+jurisdiction of the competent court where the Licensor resides or conducts its primary
+business.
+
+15. Applicable Law
+==================
+
+This Licence shall be governed by the law of the European Union country where the
+Licensor resides or has his registered office.
+
+This licence shall be governed by the Belgian law if:
+
+- a litigation arises between the European Commission, as a Licensor, and any
+Licensee;
+
+- the Licensor, other than the European Commission, has no residence or
+registered office inside a European Union country.
+                                   ===
+
+                                 Appendix
+           “Compatible Licences” according to article 5 EUPL are:
+              
+              - GNU General Public License (GNU GPL) v. 2
+
+             - Open Software License (OSL) v. 2.1, v. 3.0
+
+                   - Common Public License v. 1.0
+
+                   - Eclipse Public License v. 1.0
+
+                           - Cecill v. 2.0
+</value>
+				<value xml:lang="it">                     Licenza Pubblica dell'Unione europea
+                                   V 1.1
+
+                          EUPL © Comunità europea 2007 
+
+La presente Licenza Pubblica dell'Unione europea ("EUPL") si applica a tutte le
+opere o programmi per elaboratore, come definiti in prosieguo, forniti alle condizioni
+di cui alla presente licenza. È vietata l'utilizzazione dell'opera in forme diverse da
+quelle autorizzate dalla presente licenza (nella misura in cui tale utilizzazione sia 
+riservata in via esclusiva al titolare dei diritti d'autore sull'opera).
+
+L'opera originaria è fornita alle condizioni della presente licenza quando il licenziante 
+(come definito in prosieguo) ha posto la seguente dicitura immediatamente dopo
+l'indicazione del copyright sull'opera originale:
+
+                  Concesso in licenza a norma dell'EUPL v.1.1
+
+ovvero abbia espresso con qualunque altro mezzo la propria volontà di cederlo in
+licenza alle condizioni dell'EUPL.
+
+1. Definizioni
+==============
+
+Nella presente Licenza i seguenti termini sono così definiti:
+
+- Licenza: la presente Licenza.
+
+- Opera originaria o Programma per elaboratore: il programma per elaboratore
+distribuito o comunicato dal licenziante alle condizioni della presente licenza, sotto
+forma di codice sorgente e, a seconda dei casi, anche sotto forma di Codice
+eseguibile.
+
+- Opere derivate: le opere o il programma per elaboratore che possono essere creati
+dal licenziatario sulla base dell'opera originaria o di una sua modificazione. La
+presente licenza non definisce quale grado di modificazione o di dipendenza rispetto
+all'opera originaria sia prescritto per caratterizzare un'opera come Opera derivata; tale
+questione è disciplinata dalla legge sul diritto d'autore applicato nel paese designato
+all'articolo 15.
+
+- Opera: l'opera originaria e le opere da essa derivate.
+
+- Codice sorgente: forma leggibile dell'opera che risulta più appropriata per essere
+studiata e modificata dall'uomo.
+
+- Codice eseguibile: il codice che, in genere, è stato compilato e che è destinato a
+essere eseguito come programma da un elaboratore.
+
+- Licenziante: la persona fisica o giuridica o l'ente che distribuisce o comunica l'opera
+secondo i termini della licenza.
+
+- Contributore (contributori): la persona fisica o giuridica o l'ente che modifica
+l'opera secondo i termini della licenza o altrimenti contribuisce alla creazione di
+un'opera derivata.
+
+- Licenziatario: la persona fisica o giuridica o l'ente che fa uso del programma per
+elaboratore secondo i termini della licenza.
+
+- Distribuzione e/o Comunicazione: la vendita, la cessione a titolo gratuito, il prestito,
+la locazione, la distribuzione, la comunicazione, la trasmissione o qualsiasi altro atto
+finalizzato a mettere copie dell'opera a disposizione di altre persone fisiche o
+giuridiche, o fornire loro accesso alle sue funzionalità essenziali, on-line o off-line.
+
+2. Estensione dei diritti concessi dalla licenza
+================================================
+
+Il Licenziante concede al Licenziatario, per tutta la durata del diritto d'autore
+sull'opera originaria, una licenza mondiale, gratuita, non esclusiva, a sua volta
+cedibile in sub-licenza, che conferisce il diritto di compiere gli atti seguenti:
+
+- utilizzare l'Opera in qualsiasi circostanza e per ogni utilizzo,
+
+- riprodurre l'Opera,
+
+- modificare l'Opera originaria e creare Opere derivate basate su di essa,
+
+- comunicare al pubblico, anche mediante messa a disposizione o esposizione
+dell'Opera o di copie di essa e, a seconda dei casi, rappresentare l'Opera in
+forma pubblica,
+
+- distribuire l'Opera o copie di essa,
+
+- cedere in prestito e in locazione l'Opera o copie di essa,
+
+- concedere in sub-licenza i diritti sull'opera o copie di essa.
+
+I diritti suddetti possono essere esercitati con qualsiasi mezzo di comunicazione, su
+qualsiasi supporto e in qualsiasi formato, attualmente noto o che sarà successivamente
+inventato, nella misura consentita dal diritto applicabile.
+
+Nei paesi in cui si applicano i diritti morali di autore, il Licenziante rinuncia al diritto
+di esercitare i suoi diritti morali nella misura consentita dalla legge affinché la
+cessione in licenza dei diritti patrimoniali sopra indicati possa produrre tutti i suoi
+effetti.
+
+Il Licenziante concede al Licenziatario, a titolo gratuito e non esclusivo, il diritto di
+utilizzare qualsiasi brevetto detenuto dal Licenziante, nella misura necessaria
+all'esercizio dei diritti di utilizzazione dell'Opera concessi dalla presente licenza.
+
+3. Comunicazione del codice sorgente
+====================================
+
+Il licenziante può fornire l'Opera o sotto forma di Codice sorgente o come Codice
+eseguibile. Se l'opera è fornita come Codice eseguibile, il Licenziante fornisce, in
+aggiunta, una copia leggibile dall'elaboratore del Codice sorgente dell'Opera a corredo
+di ogni copia dell'Opera da lui distribuita oppure indica, in un avviso che segue
+l'indicazione dei diritti d'autore apposta sull'Opera, un archivio in cui il Codice
+sorgente è facilmente e gratuitamente accessibile per tutto il periodo in cui il
+Licenziante distribuisce o comunica l'opera.
+
+4. Limitazioni del diritto d'autore
+===================================
+
+Nessuna clausola della presente Licenza è finalizzata a impedire al Licenziatario di
+beneficiare di tutte le eccezioni o limitazioni applicabili ai diritti esclusivi dei titolari
+dei diritti sul Programma per elaboratore o sull'Opera originaria, dell'esaurimento di
+tali diritti o di qualsiasi altra limitazione applicabile.
+
+5. Obblighi del licenziatario
+=============================
+
+La concessione dei diritti sopra indicati è soggetta ad alcune restrizioni e obblighi in
+capo al Licenziatario. Gli obblighi sono i seguenti:
+
+Diritto di attribuzione: il Licenziatario lascia intatti tutti gli avvisi relativi ai diritti
+d'autore, ai brevetti o ai marchi e tutte le indicazioni che fanno riferimento alla
+Licenza e all'esclusione della garanzia. Ogni copia dell'Opera che il Licenziatario
+distribuisce o comunica deve essere corredata di una copia di tali avvisi e di una copia
+della Licenza. Su tutte le Opere derivate il Licenziatario deve apporre o far apporre
+avvisi ben visibili indicanti che l'Opera è stata modificata e la data della
+modificazione.
+
+Clausola 'copyleft': se il Licenziatario distribuisce o comunica copie delle Opere
+originarie o delle Opere derivate basate sull'Opera originaria, la distribuzione o
+comunicazione ha luogo nell'osservanza delle clausole della presente Licenza o di una
+sua versione successiva a meno che l'Opera originaria venga esplicitamente distribuita
+solo nel quadro della presente versione della Licenza. Il Licenziatario (che in tal caso
+diventa Licenziante) non può offrire né imporre termini o condizioni ulteriori
+sull'Opera o sulle Opere derivate che alterino o restringano le condizioni della
+Licenza.
+
+Clausola di compatibilità: se il Licenziatario distribuisce o comunica le Opere
+derivate o copie delle Opere derivate basate sull'Opera originaria o su altra opera
+concessa in licenza secondo le condizioni di una Licenza compatibile, la
+Distribuzione o Comunicazione può avvenire nell'osservanza delle clausole della
+licenza compatibile. Ai fini dell'applicazione della presente clausola, l'espressione
+Licenza compatibile si riferisce alle licenze enumerate nell'allegato della presente
+Licenza. In caso di conflitto tra gli obblighi del Licenziatario a norma della Licenza
+compatibile e i suoi obblighi a norma della presente Licenza, prevalgono gli obblighi
+prescritti dalla Licenza compatibile.
+
+Fornitura del Codice sorgente: se distribuisce o comunica copie dell'Opera, il
+Licenziatario fornirà copia del Codice sorgente in formato leggibile dall'elaboratore
+oppure indicherà un archivio in cui tale Codice sorgente è facilmente e liberamente
+accessibile, per tutto il tempo in cui distribuisce o comunica l'Opera.
+
+Tutela dei diritti: la presente Licenza non autorizza a fare uso di nomi commerciali,
+di marchi distintivi di prodotti o servizi o dei nomi dei licenzianti, se non nei limiti
+necessari ad una utilizzazione ragionevole e conforme agli usi per descrivere l'origine
+dell'Opera e riprodurre il contenuto dell'avviso relativo al diritto d'autore.
+
+6. Autori e contributori
+=======================
+
+Il Licenziante originario garantisce che i diritti d'autore sull'Opera originaria concessi
+a norma della presente Licenza sono di sua proprietà ovvero gli sono concessi in
+licenza e che dispone del diritto e del potere di concedere la Licenza.
+
+Ciascun Contributore garantisce che i diritti d'autore sulle modifiche che egli apporta
+all'opera sono di sua proprietà o che gli sono concessi in licenza e che dispone del
+diritto e del potere di concedere la Licenza.
+
+Ogni volta che accettate la Licenza, il Licenziante originario e i Contributori
+successivi vi concedono una licenza sui loro contributi all'Opera, secondo le
+condizioni della presente Licenza.
+
+7. Esclusione della garanzia
+============================
+
+L'Opera è un'opera in divenire, che viene costantemente migliorata grazie all'apporto
+di diversi contributori. Non si tratta di un'opera finita e può pertanto contenere difetti
+o errori inerenti a questo tipo di sviluppo di programmi per elaboratori.
+
+Per tale ragione, l'Opera è concessa in Licenza "così com'è" e senza garanzie di alcun
+genere, ivi incluse, ma senza limitarsi a queste, quelle relative all'utilizzazione
+commerciale, all'idoneità a soddisfare una determinata funzione, all'assenza di difetti
+o errori, all'accuratezza, all'efficacia, alla non violazione di diritti di proprietà
+intellettuale diversi dal diritto d'autore come indicato all'articolo 6 della presente
+Licenza.
+
+La presente esclusione di garanzia costituisce parte integrante della Licenza e
+condizione per la concessione di qualsiasi diritto sull'Opera.
+
+8. Esclusione di responsabilità
+===============================
+
+Salvi i casi di comportamenti dolosi o di danni direttamente arrecati a persone fisiche,
+in nessun caso il Licenziante può essere ritenuto responsabile per i danni, di qualsiasi
+natura, diretti o indiretti, materiali o morali, derivanti dalla Licenza o
+dall'utilizzazione dell'Opera, ivi compresi, ma senza limitarsi a questi, i danni per
+perdita di avviamento, interruzione del lavoro, guasto o malfunzionamento
+dell'elaboratore, perdita di dati e qualsiasi danno commerciale, anche nel caso in cui il
+Licenziante fosse stato informato che tali danni avrebbero potuto verificarsi. Tuttavia,
+il licenziante sarà tenuto responsabile a norma delle leggi sulla responsabilità da
+prodotto in quanto applicabili all'Opera.
+
+9. Altre pattuizioni
+====================
+
+All'atto della distribuzione dell'Opera originaria o delle Opere derivate, avrete facoltà
+di stipulare pattuizioni aggiuntive al fine di offrire, a titolo oneroso, assistenza,
+garanzia, indennità o assumere altre responsabilità o fornire altri servizi compatibili
+con la presente Licenza. Tuttavia, nell'accettare tali obbligazioni, agirete
+esclusivamente in nome proprio e sotto propria esclusiva responsabilità, e non in
+nome del Licenziante originario o di qualsiasi altro Contributore, e solo
+subordinatamente all'assunzione di impegno risarcire, difendere e tenere indenne
+ciascun Contributore da eventuali responsabilità o richieste risarcitorie rivolte allo
+stesso Contributore in conseguenza delle garanzie o responsabilità aggiuntive da voi
+assunte.
+
+10. Accettazione della licenza
+==============================
+
+Le clausole della presente Licenza possono essere accettate cliccando sull'icona
+Accetto posta sotto una finestra che fa apparire il testo della presente Licenza o
+prestando consenso in qualsiasi altro modo simile, conformemente alle disposizioni di
+legge applicabili. Cliccando su tale icona manifesterete la chiara e irrevocabile
+accettazione della presente Licenza e di tutti i suoi termini e condizioni.
+
+Analogamente accetterete irrevocabilmente la presente Licenza e tutti i suoi termini e
+condizioni esercitando uno qualsiasi dei diritti a voi concessi dall'articolo 2 della
+presente Licenza, quali l'utilizzazione da parte vostra dell'Opera, la creazione di
+un'Opera derivata o la distribuzione o comunicazione dell'Opera o di copie di essa.
+
+11. Informazione del pubblico
+=============================
+
+Se procederete a distribuzione o comunicazione dell'opera mediante strumenti di
+comunicazione elettronica (ad esempio, offrendo di scaricare l'Opera da un luogo
+remoto) il canale di distribuzione o i mezzi di comunicazione (ad esempio un sito
+web) dovranno fornire al pubblico come minimo le informazioni prescritte dalla
+normativa applicabile in relazione al Licenziante, alla Licenza e al modo con cui essa
+può essere resa accessibile, accettata, conservata e riprodotta da parte del
+Licenziatario.
+
+12. Cessazione della licenza
+============================
+
+La licenza e i diritti da essa concessi cesseranno automaticamente di avere effetto ove
+il Licenziatario violi una qualsiasi delle condizioni previste dalla Licenza.
+
+Tale cessazione non comporterà cessazione delle Licenze concesse a persone che
+abbiano ricevuto l'opera dal Licenziatario a norma della Licenza, sempreché tali
+persone ottemperino integralmente alle clausole della Licenza stessa.
+
+13. Varie
+=========
+
+Ferme restando le disposizioni dell'articolo 9, la Licenza costituisce l'accordo
+integrale tra le parti in merito all'Opera qui concessa in Licenza.
+
+Le clausole della Licenza che risultino nulle o non possano essere fatte valere in base
+alla normativa applicabile non incideranno sulla validità o sull'azionabilità della
+
+Licenza nel suo complesso. Le clausole in questione saranno interpretate o modificate
+nella misura necessaria a renderle valide e azionabili.
+
+La Commissione europea può pubblicare altre versioni linguistiche e/o nuove versioni
+della presente Licenza, nella misura in cui ciò è necessario e ragionevole, senza
+ridurre la portata dei diritti accordati dalla presente Licenza. Le nuove versioni della
+Licenza saranno pubblicate con un numero di versione unico.
+
+Tutte le versioni linguistiche della presente Licenza approvate dalla Commissione
+europea hanno lo stesso valore. Le parti possono utilizzare la versione linguistica di
+loro scelta.
+
+14. Foro competente
+===================
+
+Per qualsiasi controversia in ordine all'interpretazione della presente Licenza che
+insorga tra la Commissione europea nella qualità di Licenziante e il Licenziatario è
+competente la Corte di giustizia delle Comunità europee, a norma dell'articolo 238 del
+trattato che istituisce la Comunità europea.
+
+Per qualsiasi controversia che insorga tra parti diverse dalla Commissione europea, in
+ordine all'interpretazione della presente Licenza è esclusivamente competente il
+tribunale del luogo in cui il Licenziante risiede o esercita la sua attività principale.
+
+15. Legge applicabile
+=====================
+
+La presente Licenza è disciplinata dalla legge dello Stato membro dell'Unione
+europea nel quale il Licenziante risiede o ha la propria sede sociale.
+La presente Licenza è disciplinata dalla legge belga:
+
+- ove insorga controversia tra la Commissione europea nella qualità di
+Licenziante e un qualsiasi Licenziatario;
+
+- ove il Licenziante, diverso dalla Commissione europea, non risieda o non
+abbia la propria sede sociale in uno Stato membro dell'Unione europea.
+
+                                 ===
+                              Appendice
+            "Licenze compatibili" ai sensi dell'articolo 5 EUPL sono le
+             seguenti:
+
+            - GNU General Public License (GNU GPL) v. 2
+
+            - Open Software License (OSL) v. 2.1, v. 3.0
+
+            - Common Public License v. 1.0
+
+            - Eclipse Public License v. 1.0
+
+            - Cecill v. 2.0
+</value>
+			</prop>
+		</node>
+	</node>
+</oor:component-data>

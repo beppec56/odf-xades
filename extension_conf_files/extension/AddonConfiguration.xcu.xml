@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<!-- this file contains the default installation configuration -->
+<oor:component-data oor:package="@WEBIDENTBASE@.@NAME@" oor:name="Configuration"
+	xmlns:oor="http://openoffice.org/2001/registry"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+	<!-- this value has a default of 3 when the extension is first installed -->
+	<node oor:name="SignatureOptionsParameters">
+		<!--
+			Default set in .xcs.xml configuration file 
+		-->
+	</node>
+	<node oor:name="FileResources">
+	</node>
+	<node oor:name="Frames">
+	<!-- contains the frame description, delete when closing -->
+	</node>
+</oor:component-data>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="Registry" script:language="StarBasic">REM  *****  BASIC  *****
+REM LGPL V 2.1 license apply
+REM Author Giuseppe Castagno [giuseppe.castagno@acca-esse.eu]
+REM							 [beppec56@openoffice.org]
+REM some lines of code: Copyright (C) 2006-2007 Paolo Mantovani
+REM OOo minimum version: 2.4, in case of older version the
+REM PDF output filter FilterData values will be ignored...
+
+option explicit
+
+&apos;dichiarato in AddonConfiguration.xcs/xcu
+Const CONFIG_KEY As String = &quot;/it.plio.ext.xades.Configuration/&quot;
+
+&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
+&apos; funzione di lettura dei parametri del filtro
+&apos; esportazione PDF
+Function GetPDFExportParms
+	GetPDFExportParms() = GetRegistryKeyContent( &quot;org.openoffice.Office.Common/Filter/PDF/Export&quot; )
+end function
+
+&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
+Function GetAPreset(sTheKey as string, Optional bforUpdate as Boolean )
+	If IsMissing(bforUpdate) Then
+		GetAPreset() = GetRegistryKeyContent( CONFIG_KEY &amp; &quot;SignatureOptionsParameters/&quot; &amp; sTheKey )
+	Else
+		GetAPreset() = GetRegistryKeyContent( CONFIG_KEY &amp; &quot;SignatureOptionsParameters/&quot; &amp; sTheKey, bforUpdate )
+	End If
+end function
+
+Sub displayParameters()
+	Dim aKey as object
+	
+	aKey = GetRegistryKeyContent( CONFIG_KEY &amp; &quot;SignatureOptionsParameters/&quot;)
+
+	xray aKey
+
+end sub
+
+&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
+Function GetDialogParms()
+	GetDialogParms() = GetRegistryKeyContent( CONFIG_KEY &amp; &quot;DialogParameters&quot;, true )
+end function
+
+&apos;______________________________________________________________________________
+&apos; questa subroutine è codice Copyright (C) 2006-2007 Paolo Mantovani
+Function GetResString(sID As String) As String
+Dim oRegKey As Object
+
+	On error goto ErrH:
+	oRegKey = GetRegistryKeyContent( CONFIG_KEY &amp; &quot;Messages/&quot;)
+
+	GetResString = oRegKey.getByName(sID).Text
+	Exit Function
+
+ErrH:
+	GetResString = sID
+	on error goto 0
+
+End Function
+
+&apos;______________________________________________________________________________
+&apos; questa subroutine è codice Copyright (C) 2006-2007 Paolo Mantovani
+&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
+&apos; got from BasicAddonBuilder
+&apos; Loads the text resources in a dialog and controls
+&apos; The text to replace must correspond to the registry key name 
+&apos; and will be replaced with the key content
+&apos; (see the file AddonsConfiguration.xcu in this package, section &quot;Messages&quot;.
+&apos;
+&apos; Notice that only dialog title, control labels and
+&apos; control help-texts  will be replaced
+Sub LocalizeDialog(oDialog As Object)
+
+Dim aControls()
+Dim oControlModel As Object
+Dim sLabel As String
+Dim sHelpText As String
+Dim I As Integer
+
+On Error Resume Next
+	
+	aControls() = oDialog.getControls()
+	
+	sLabel = oDialog.Title
+	oDialog.Title = GetResString(sLabel)
+	
+	For I = LBound(aControls) To UBound(aControls)
+		oControlModel = aControls(I).Model
+		sLabel = oControlModel.Label
+		oControlModel.Label = GetResString(sLabel)
+&apos;		sHelpText = oControlModel.HelpText
+&apos;		oControlModel.HelpText = GetResString(sHelpText)
+	Next I
+	
+End Sub
+
+private Sub checkpdfa(oParmsX as object)
+	dim bDummyValue as boolean
+
+	On error goto errorcheck
+	bDummyValue = oParmsX.SelectPdfVersion
+	bIsPDFACapable = true
+errorcheck:
+	on error goto 0
+end sub
+
+private sub checklinks(oParmsX as object)
+	dim bDummyValue as boolean
+
+	On error goto errorcheck
+	bDummyValue = oParmsX.ExportLinksRelativeFsys
+	bIsLinkCapable = true
+errorcheck:
+	on error goto 0
+end sub
+
+
+private sub checkprivate(oParmsX as object)
+	dim bDummyValue as boolean
+
+	On error goto errorcheck
+	bDummyValue = oParmsX.hsChangeFontName
+	bDummyValue = oParmsX.hsEmbedAllFonts
+	bHasPrivateProp = true
+errorcheck:
+	on error goto 0
+end sub
+
+&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
+&apos;&apos; controlla se il parametro di esportazione PDFA è già presente
+&apos; nel filtro
+Sub CheckOOoCapabilities()
+	dim oParmsF as object
+	bIsPDFACapable = false
+	bIsLinkCapable = false
+	bHasPrivateProp = false
+	oParmsF = GetPDFExportParms()
+	checkpdfa( oParmsF )
+	checklinks( oParmsF )
+	checkprivate( oParmsF )
+end sub
+</script:module>

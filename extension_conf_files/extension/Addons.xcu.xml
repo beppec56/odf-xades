@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<oor:component-data
+	xmlns:oor="http://openoffice.org/2001/registry"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oor:package="org.openoffice.Office"
+	oor:name="Addons"	>
+	<node oor:name="AddonUI">
+		<!-- toolbar standard aggiunta -->
+		<node oor:name="OfficeToolBar">
+			<node oor:name="it.plio.ext.xades.OfficeToolBar" oor:op="replace">
+				<node oor:name="button1" oor:op="replace">
+					<prop oor:name="Context" oor:type="xs:string">
+						<value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.drawing.DrawingDocument,com.sun.star.presentation.PresentationDocument</value>
+					</prop>
+					<prop oor:name="URL" oor:type="xs:string">
+						<value>it.plio.ext.xades.comp.SignatureHandler:SignDialogTB</value>
+					</prop>
+					<prop oor:name="ImageIdentifier" oor:type="xs:string">
+						<value>%origin%/images/writer-unknown</value>
+						<!-- value/ -->
+					</prop>
+					<prop oor:name="Title" oor:type="xs:string"  oor:localized="true">
+						<!-- value xml:lang="en">this string should be updated dynamically while the application is running</value -->
+						<value>...</value>
+					</prop>
+					<prop oor:name="Target" oor:type="xs:string">
+						<value>_self</value>
+					</prop>
+					<prop oor:name="ControlType" oor:type="xs:string">
+						<value>ImageButton</value>
+					</prop>
+				</node>
+			</node>
+		</node>
+
+		<!-- menu standard (File) -->
+		<!--
+		    inserisce nel menu File (dopo proprietà, prima della firma standard)
+		    per spiegazioni vedere il file:
+		    officecfg/registry/schema/org/openoffice/Office/Addons.xcs
+		    nel codice sorgente di OOo
+		-->
+		<node oor:name="OfficeMenuBarMerging">
+			<node oor:name="it.plio.ext.xades.PopupMenu" oor:op="replace">
+				<node oor:name="S1" oor:op="replace">
+					<!--
+					    per il merge point vedere in:
+					    - sw/uiconfig/swriter/menubar/menubar.xml (dove si ha la formazione del menu in Writer, come esempio)
+					    - officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu (dove i singoli menu sono descritti)
+					    - framework/source/uielement/menubarmerger.cxx alcune delle voci disponibili per il merge dei menu
+					    entrambi nel codice sorgente di OOo
+					-->
+					<prop oor:name="MergePoint">
+						<!-- significa il menu File (.uno:PickList) > Digital Signatures... ( .uno:Signature )-->
+						<value>.uno:PickList\.uno:Signature</value>
+					</prop>
+					<prop oor:name="MergeCommand">
+						<!-- valori possibili per MergeCommand:
+							AddAfter	dopo il target
+							AddBefore	prima del target
+							Replace		al posto del target (e lo ripristina togliendo la estensione)
+							Remove		
+						-->
+						<value>AddAfter</value>
+					</prop>
+					<prop oor:name="MergeFallback">
+						<!-- valori possibili per MergeFallback
+							AddPath
+							Ignore
+						-->
+						<value>AddPath</value>
+					</prop>
+					<prop oor:name="MergeContext">
+						<!-- contesto: vale per i tipi di documenti -->
+						<value/>
+					</prop>
+					<node oor:name="MenuItems">
+						<node oor:name="m1" oor:op="replace">
+							<!-- comando standard OOo, presente in tutti i contesti  -->
+							<prop oor:name="Context" oor:type="xs:string">
+								<value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.drawing.DrawingDocument,com.sun.star.presentation.PresentationDocument</value>
+							</prop>
+							<prop oor:name="ImageIdentifier" oor:type="xs:string">
+								<value/>
+							</prop>
+							<prop oor:name="URL" oor:type="xs:string">
+								<value>it.plio.ext.xades.comp.SignatureHandler:SignDialog</value>
+							</prop>
+							<prop oor:name="Title" oor:type="xs:string"  oor:localized="true">
+								<value>Digital signatures XAdES (IT) mode...</value>
+								<value xml:lang="en">Digital signatures XAdES (IT) mode...</value>
+								<value xml:lang="it">Firme digitale modo XAdES (IT)...</value>
+							</prop>
+							<prop oor:name="Target" oor:type="xs:string">
+								<value>_self</value>
+							</prop>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+
+		<node oor:name="OfficeHelp">
+			<node oor:name="it.plio.ext.xades.OfficeHelp" oor:op="replace">
+				<prop oor:name="Context" oor:type="xs:string">
+					<value></value>
+				</prop>
+				<prop oor:name="URL" oor:type="xs:string">
+					<value>it.plio.ext.xades.comp.SignatureHandler:HelpAbout</value>
+				</prop>
+				<prop oor:name="ImageIdentifier" oor:type="xs:string">
+					<value></value>
+				</prop>
+				<prop oor:name="Title" oor:type="xs:string" oor:localized="true">
+					<value xml:lang="en">About XADES (IT) digital signature...</value>
+					<value xml:lang="it">Informazioni su firma digitale XADES (IT)...</value>
+					<value xml:lang="fr">A propos de signature numérique XADES (IT)...</value>
+				</prop>
+				<prop oor:name="Target" oor:type="xs:string">
+					<value>_self</value>
+				</prop>
+			</node>
+		</node>
+	</node>
+</oor:component-data>

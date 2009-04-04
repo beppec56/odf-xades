@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<!DOCTYPE oor:component-data SYSTEM "../../../../component-update.dtd">
+<oor:component-data oor:name="OptionsDialog" oor:package="org.openoffice.Office"
+	xmlns:oor="http://openoffice.org/2001/registry"
+	xmlns:xs="http://www.w2.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <node oor:name="Nodes">
+    <node oor:name="@WEBIDENTBASE@.@NAME@.options.node" oor:op="fuse">
+      <prop oor:name="Label">
+		<value xml:lang="en">XAdES (IT) Standard Digital Signature</value>
+		<value xml:lang="it">Firma digitale standard XAdES (IT)</value>
+      </prop>
+      <!-- thepage for node -->
+      <prop oor:name="OptionsPage">
+        <value>%origin%/dialogs/root_node.xdl</value>
+      </prop>
+      <prop oor:name="AllModules">
+        <value>true</value>
+      </prop>
+      <prop oor:name="GroupId">
+        <value>@WEBIDENTBASE@.@NAME@.options.node.group</value>
+      </prop>
+      <prop oor:name="GroupIndex">
+        <value>0</value>
+      </prop>
+      <node oor:name="Leaves">
+      <!--  note: seems Leaves are examined in reverse order -->
+        <!-- leaf for logging options -->
+        <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Logging" oor:op="fuse">
+          <prop oor:name="Id">
+            <value>@WEBIDENTBASE@.@NAME@.logging</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">Logging</value>
+            <value xml:lang="it">Logging</value>1
+          </prop>
+          <prop oor:name="OptionsPage">
+            <value>%origin%/dialogs/leaf_logging.xdl</value>
+          </prop>
+          <prop oor:name="EventHandlerService">
+            <value>it.plio.ext.xades.options.ManageLoggingOptions</value>
+          </prop>
+          <prop oor:name="GroupId">
+            <value>@WEBIDENTBASE@.@NAME@.options.node</value>
+          </prop>
+          <prop oor:name="GroupIndex">
+            <value>0</value>
+          </prop>
+        </node>
+        <!-- end leaf for logging options -->      
+        <!-- leaf for general options -->
+        <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Generali" oor:op="fuse">
+          <prop oor:name="Id">
+            <value>@WEBIDENTBASE@.@NAME@.general</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">General</value>
+            <value xml:lang="it">Generali</value>1
+          </prop>
+          <prop oor:name="OptionsPage">
+            <value>%origin%/dialogs/leaf_general.xdl</value>
+          </prop>
+          <prop oor:name="EventHandlerService">
+            <value>it.plio.ext.xades.options.ManageGeneralOptions</value>
+          </prop>
+          <prop oor:name="GroupId">
+            <value>@WEBIDENTBASE@.@NAME@.options.node</value>
+          </prop>
+          <prop oor:name="GroupIndex">
+            <value>0</value>
+          </prop>
+        </node>
+        <!-- end leaf for general options -->
+      </node>
+    </node>
+  </node>
+</oor:component-data> 

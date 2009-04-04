@@ -1,0 +1,8 @@
+Estensione per firma digitale
+modalità XAdES (IT).
+(@WEBIDENTBASE@.@NAME@)
+Licenza GPL versione 3 o versioni successive
+Copyright (c) 2009 Giuseppe Castagno
+
+Proof of concept per l'interfaccia dell'estensione
+della firma digitale tipo XAdES (IT).

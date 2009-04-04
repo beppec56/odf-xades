@@ -1,0 +1,68 @@
+Readme for extension_conf_files project.
+
+License information: see doc subproject (e.g. trunk/doc )
+
+To build
+========
+
+You need ant (http://ant.apache.org) installed and a java compiler Java 1.5 is suggested.
+Used ant 1.7.0 for testing.
+
+You need an OpenOffice.org installed, and an optional OpenOffice.org SDK.
+
+Edit the file build.xml in this root directory of the distribution and edit the
+value of properties 'ooosdk' and 'ooo_classes_path' to suit your installation.
+
+ooosdk is needed to include the start-up code. 
+
+If the ooosdk is not present, ...
+
+Localization
+============
+
+The string to be localized are in document localization-master.ods.
+The button "Export messages" export the messages to "AddonMessages.xcu.xml" file.
+
+The file path is fixed inside the macro. 
+Please have a look at the macro (Main.Main() ) contained in the file.
+
+The option dialog is localized using the standard dialog localization,
+through basi IDE.
+
+Building
+========
+
+The build.xml file in this directory is the main ant build file.
+
+Running it you will be able to build the entire extension.
+
+For details see README in doc project.
+
+Some Details
+============
+
+The path it_plio_xades_options contains the options dialog pages
+edited by Macro Dialog Editor in OOo Macro IDE.
+
+They should be saved to extension/dialogs as single dialog, for options management.
+
+The management of this library needs same care
+As of today, 2009-04-03 ,in case you need to edit the option dialog, this library should
+read in OOo in a tricky way:
+1. first copy it in another place
+2. then remove the .svn subdirectory that exist there
+3. import into OOo into your personal basic library
+4. close OOo
+5. goto the  personal basic library (in Debian Linux it's something in the form of:
+<home dir>/.openoffice.org/3/user/basic)
+6. remove the subdirectory it_plio_ext_xades_options you find here
+7. substitute it manually with the same directory you cleaned of .svn subdirectory at
+point 2.
+
+You can start to modify the dialog or add a new one.
+
+To save the dialog use: "Export Dialog" button
+
+========================= &&&&&&&&&&&& =========================
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli

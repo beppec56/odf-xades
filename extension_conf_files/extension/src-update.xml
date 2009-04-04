@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<description
+   xmlns="http://openoffice.org/extensions/update/2006"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+  <version value="@VERSION@" />
+  <identifier value="@WEBIDENTBASE@.@NAME@"/>
+  <update-download>
+    <src xlink:href="@WEBHOST@/@WEBPATH@/@WBME@/@NAME@.oxt" />
+  </update-download>
+</description> 

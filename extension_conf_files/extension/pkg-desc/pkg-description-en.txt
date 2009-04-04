@@ -1,0 +1,5 @@
+Digital signature extension
+XAdES modality, Italian standard.
+(@WEBIDENTBASE@.@NAME@)
+License GPL version 3 or later.
+Copyright (c) 2009 Giuseppe Castagno

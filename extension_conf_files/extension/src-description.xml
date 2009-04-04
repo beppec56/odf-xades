@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) as published
+    by the European Community, either version 1.1 of the License,
+    or any later version.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<description xmlns="http://openoffice.org/extensions/description/2006" 
+	     xmlns:d="http://openoffice.org/extensions/description/2006"
+	     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <version value="@VERSION@" />
+  <identifier value="@WEBIDENTBASE@.@NAME@"/>
+  <!-- platform is used for C/C++ compiled extensions, this one is 
+  		OS-independent, in any case it's here for reference only 
+       platform value="windows_x86,solaris_sparc" / -->  
+  <dependencies >
+    <OpenOffice.org-minimal-version value="@OOOMINVER@" d:name="OpenOffice.org @OOOMINVER@"/>
+  </dependencies>
+  <!-- 
+  	the automatic update is disabled
+  	need to check if the update is allowed for security reason
+  	e.g. the extension was tampered
+  	Add a note on manual: "This extension does not update automatically and MUST not"
+  	or something similar.
+  	-->
+  <!-- update-information>
+    <src xlink:href="@WEBHOST@/@WEBPATH@/@WBME@/@NAME@.update.xml" />
+  </update-information -->
+  <!-- registration temporarily disabled -->
+  <!-- registration>
+    <simple-license  accept-by="admin" default-license-id="en" suppress-on-update="true" >
+      <license-text xlink:href="registration/EUPL_v.1.1-Licence.txt" lang="en" license-id="en" />
+      <license-text xlink:href="registration/EUPL_v.1.1-licenza.txt" lang="it" />
+    </simple-license>
+  </registration -->
+  <display-name>	
+	  <name lang="it">Firma digitale standard XAdES (IT)</name>
+	  <name lang="en">XAdES (IT) Standard Digital Signature</name>
+  </display-name>
+  <publisher>
+	  <name xlink:href="http://www.plio.it"
+		lang="it">PLIO</name>
+	  <name xlink:href="http://www.plio.it" 
+		lang="en">PLIO</name>
+  </publisher>
+  <!-- release notes not yet used by Extension manager -->
+  <release-notes>
+	  <src xlink:href="@WEBHOST@/@WEBPATH@/@WBME@/release-notes_it.txt" lang="it" />
+	  <src xlink:href="@WEBHOST@/@WEBPATH@/@WBME@/release-notes_en.txt" lang="en" />
+  </release-notes>
+</description>
