@@ -12,13 +12,17 @@ The Java compliance level is 1.6, change your Eclipse setting if necessary.
 Ant is required to build the extension, the used version for testing was 1.7.0,
 minimum requested version is 1.6.
 
-Eclipse is suggested as the development environment.
+Eclipse is suggested as the development environment. We are currently using version 3.4.2.
+
+You will also need the SVN plugin for Eclipse, see http://subclipse.tigris.org
+for details. 
 
 You need an OpenOffice.org 3.0 installed, and an optional OpenOffice.org SDK.
 
-The whole code is licensed under the EUPL V.1.1 or any later version.
+The whole code is licensed according to EUPL V.1.1 or any later version.
+The documentation is licensed according to Creative Commons Attribution Share Alike 2.5. 
 
-If you'd like to use the code for your project remember to change the UNO component
+If you'd like to reuse the code for your project remember to change the UNO component
 name to whatever is more suitable for you. The same apply to the Java
 packages. Use the suggestions available on OOo Development guide
 (see http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/WritingUNO/File_Naming_Conventions for details).
@@ -30,47 +34,13 @@ To create an Eclipse workspace:
 
 1) create an empty directory to be used as Eclipse work space, or use your own.
 
-2) start Eclipse and assign the empty directory as the working space.
+2) start Eclipse and assign the empty directory as the working space, through Eclipse,
+   checkout this project (doc) in your workspace (just for better consultation)
+   and prepare the Eclipse main environment for build as explained in point below.
 
-3) with root the directory containing this file and using 'Create project form 
-   existing source' Eclipse project creation selection, create three new
-   Java projects in the workspace, each one using the directory:
-   
-   doc							contains this file and other general information, among it there is
-   								the manual and the full text of the licenses (only in English and
-   								Italian you may check for your language on the European Union
-   								web.
+3) In Eclipse you will have to set two Classpath Variables, which point to related OOo locations,
+   platform-dependent (Eclipse main menu: Windows > Preferences... Java > Build Path > Classpath Variables):
 
-   extension_conf_files 		contains extension specific files and the main ant build.xml file.
-   								It a simple Eclipse project.
-   								
-   signature_component			Java source for the signature component dispatch UNO object,
-								the first jar package built.
-
-   signature_options_comp		source for the UNO object that manages the extension configuration options,
-   								e.g. the ones acessed through Tools > Options... OpenOffice.org menu
-   								command.
-   			
-   sync_job_comp  				source for the job component UNO object, the interceptor and
-   								dispatch object implementing the intercepting OOo commands feature.
-   								
-   singleton_var_comp			source for the UNO singleton component. It is a component instatiated
-   								only once per every OpenOffice.org session.
-   								Contains global variables and the global Logger for the extension.
-   								
-   web							Contains the web pages for the project at forge.osor.eu
-   
-   l10n							contains the localization source data, used to generate the correct
-   								xml structured file to be used in the extension.
-
-In order to build the extension you need to check out doc, extension_conf_files, signature_component,
-signature_options_comp, sync_job_comp, singleton_var_comp.
-The main build.xml file for ant is extension_conf_files/build.xml.
-
-4) You will have to set two Classpath Variables, which point to related OOo locations,
-   platform-dependent:
-   
-   
    - OOO3_URE_LIBS : 	needed to address the following libs: juh.jar, jurt.jar, ridl.jar;
    						for the Windows platform the value is:
    						<OOo3 installation dir>\URE\java
@@ -86,20 +56,23 @@ The main build.xml file for ant is extension_conf_files/build.xml.
    	A third variable points to the <OOo installation dir>; it is not nedded for
    	successfully building the projects, but may be it will be needed in the future, and
    	we add it also for reference purpose:
-   	
+
    - OOO_HOME :			for the Windows platform the value is (usually):
    						C:/Programmi/OpenOffice.org 3
 						for the Linux platform the value is (usually):
 						/opt/openoffice.org3
 
-Each project includes a build.xml Ant file; you have to provide, similarly to
-classpath variables, the values for three properties used in these files.
+Each working project includes a build.xml Ant file; you have to provide, similarly
+to classpath variables, the values for three properties used in these files.
 Or you can set them inside Eclipse in the global Ant->Runtime configuration.
 
 If you are using Ant outside Eclipse too, you can provide the values in a
 build.<platform>.properties file, named according the platform:
 for Linux: build.Linux-i386.properties 
-for Windows XP: build.Windows XP-x86.properties 
+for Windows XP: build.Windows XP-x86.properties.
+
+If you build using 'Run > External Tools > Run as > Ant build', then the latter
+above is the way to go.
 
 The build.xml properties are the following:
 
@@ -119,11 +92,52 @@ The build.xml properties are the following:
    			   				<OOo3 installation dir>\Basis\program\classes
    		       		for the linux platform the value is:
    						<OOo3 installation dir>/basis-link/program/classes
- 
 
+4)  After that you can continue to checkout the needed subprojects in the order given below, the subprojects
+	contain the files Eclipse needs for correct project initialization, so use the default provided.
 
-5) the project extension_conf_files contains the main build.xml file.
-   Go to that directory and issue the command:
+	The Eclipse projects are:
+
+	extension_conf_files, signature_options_comp, singleton_var_comp, signature_component, sync_job_comp,
+	
+	After that, if all is ok and 'Build Automatically' is checked, Eclipse will compile the Java projects
+	as soon as they are checked-out.
+	This operation will check the code, but to build the extension you need to build all under ant.
+	
+	Follow point 5) below to complete the building procedure.
+	
+	Following is a brief description of the projects:
+   
+   doc							contains this file and other general information, among it there is
+   								the manual and the full text of the licenses (only in English and
+   								Italian you may check for your language on the European Union
+   								web.
+
+   extension_conf_files 		contains extension specific files and the main ant build.xml file.
+   								It a simple Eclipse project.
+
+   signature_component			Java source for the signature component dispatch UNO object,
+								the first jar package built.
+
+   signature_options_comp		source for the UNO object that manages the extension configuration options,
+   								e.g. the ones accessed through Tools > Options... OpenOffice.org menu
+   								command.
+
+   sync_job_comp  				source for the job component UNO object, the interceptor and
+   								dispatch object implementing the intercepting OOo commands feature.
+
+   singleton_var_comp			source for the UNO singleton component. It is a component instatiated
+   								only once per every OpenOffice.org session.
+   								Contains global variables and the global Logger for the extension.
+
+   web							Contains the web pages for the project at forge.osor.eu
+
+   l10n							contains the localization source data, used to generate the correct
+   								xml structured file to be used in the extension.
+
+5) To build from the operating sistem command line (if you checked out as explained in a
+   unique workspace), go to project extension_conf_files, it contains the main ant
+   build.xml file and issue the command:
 
    ant build-extension
 
