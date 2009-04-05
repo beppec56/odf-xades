@@ -20,6 +20,10 @@
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
 <!DOCTYPE oor:component-data SYSTEM "../../../../component-update.dtd">
+<!-- 
+	The structure of this file is detailed at:
+	http://localhost:8085/source/xref/Current/officecfg/registry/schema/org/openoffice/Office/OptionsDialog.xcs
+ -->
 <oor:component-data oor:name="OptionsDialog" oor:package="org.openoffice.Office"
 	xmlns:oor="http://openoffice.org/2001/registry"
 	xmlns:xs="http://www.w2.org/2001/XMLSchema"
@@ -44,30 +48,6 @@
         <value>0</value>
       </prop>
       <node oor:name="Leaves">
-      <!--  note: seems Leaves are examined in reverse order -->
-        <!-- leaf for logging options -->
-        <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Logging" oor:op="fuse">
-          <prop oor:name="Id">
-            <value>@WEBIDENTBASE@.@NAME@.logging</value>
-          </prop>
-          <prop oor:name="Label">
-            <value xml:lang="en-US">Logging</value>
-            <value xml:lang="it">Logging</value>1
-          </prop>
-          <prop oor:name="OptionsPage">
-            <value>%origin%/dialogs/leaf_logging.xdl</value>
-          </prop>
-          <prop oor:name="EventHandlerService">
-            <value>it.plio.ext.xades.options.ManageLoggingOptions</value>
-          </prop>
-          <prop oor:name="GroupId">
-            <value>@WEBIDENTBASE@.@NAME@.options.node</value>
-          </prop>
-          <prop oor:name="GroupIndex">
-            <value>0</value>
-          </prop>
-        </node>
-        <!-- end leaf for logging options -->      
         <!-- leaf for general options -->
         <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Generali" oor:op="fuse">
           <prop oor:name="Id">
@@ -91,6 +71,29 @@
           </prop>
         </node>
         <!-- end leaf for general options -->
+        <!-- leaf for logging options -->
+        <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Logging" oor:op="fuse">
+          <prop oor:name="Id">
+            <value>@WEBIDENTBASE@.@NAME@.logging</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">Logging</value>
+            <value xml:lang="it">Logging</value>1
+          </prop>
+          <prop oor:name="OptionsPage">
+            <value>%origin%/dialogs/leaf_logging.xdl</value>
+          </prop>
+          <prop oor:name="EventHandlerService">
+            <value>it.plio.ext.xades.options.ManageLoggingOptions</value>
+          </prop>
+          <prop oor:name="GroupId">
+            <value>@WEBIDENTBASE@.@NAME@.options.node</value>
+          </prop>
+          <prop oor:name="GroupIndex">
+            <value>1</value>
+          </prop>
+        </node>
+        <!-- end leaf for logging options -->      
       </node>
     </node>
   </node>
