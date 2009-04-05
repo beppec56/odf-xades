@@ -52,10 +52,10 @@
 	  <name lang="en">XAdES (IT) Standard Digital Signature</name>
   </display-name>
   <publisher>
-	  <name xlink:href="http://www.plio.it"
-		lang="it">PLIO</name>
-	  <name xlink:href="http://www.plio.it" 
-		lang="en">PLIO</name>
+	  <name xlink:href="http://forge.osor.eu/projects/ooo-xadessig-it"
+		lang="it">Sito Internet del progetto</name>
+	  <name xlink:href="http://forge.osor.eu/projects/ooo-xadessig-it" 
+		lang="en">The project Internet site</name>
   </publisher>
   <!-- release notes not yet used by Extension manager -->
   <release-notes>
