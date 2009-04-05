@@ -56,6 +56,7 @@ public class DigitalSignatureHelper {
     public DigitalSignatureHelper(XComponentContext _context) {
     	
     	m_logger = new XDynamicLogger(this, _context);
+    	m_logger.enableLogging();
     	m_logger.info("ctor","");
     }
 
@@ -74,15 +75,15 @@ public class DigitalSignatureHelper {
 						xSubStore.dispose();
 					}
 				} catch (InvalidStorageException e) {
-					e.printStackTrace();
+					m_logger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (NoSuchElementException e) {
-					e.printStackTrace();
+					m_logger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
+					m_logger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (StorageWrappedTargetException e) {
-					e.printStackTrace();
+					m_logger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (IOException e) {
-					e.printStackTrace();
+					m_logger.warning("fillElementList", aElements[i]+" missing", e);
 				}
 			}
 		}
@@ -106,8 +107,10 @@ public class DigitalSignatureHelper {
 			try {
 				sVersion = (String)xPropset.getPropertyValue("Version");
 			} catch (UnknownPropertyException e) {
+				m_logger.warning("createElemeList", "Version missing", e);
 				//no problem if not existent
 			} catch (WrappedTargetException e) {
+				m_logger.warning("createElemeList", "Version missing", e);
 			}
 			if(sVersion.length() != 0)
 				m_logger.log("Version is: "+sVersion); // this should be 1.2 or more
@@ -128,21 +131,24 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList", "Pictures substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList", "Pictures substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList", "Pictures substorage missing", e);
 		}
 
     	//OLE
+		String sElementName = "";
+		
 		try {
-			XStorage xSubStore = xThePackage.openStorageElement("ObjectReplacements", ElementModes.READ);
-			fillElementList(xSubStore, aElements,"ObjectReplacements"+"/", true);
+			sElementName = "ObjectReplacements";
+			XStorage xSubStore = xThePackage.openStorageElement(sElementName, ElementModes.READ);
+			fillElementList(xSubStore, aElements,sElementName+"/", true);
 			xSubStore.dispose();
 			
 			//Object folders
@@ -158,19 +164,19 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.severe("createElemeList", sElementName+" missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList",  sElementName+" missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList",  sElementName+" missing", e);
 		} catch (NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.severe("createElemeList", "", e);
+			m_logger.warning("createElemeList", "", e);
 		}
     	return aElements;
     }

@@ -122,6 +122,10 @@ public class XDynamicLogger {
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_WARNING, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);
 	}
 
+	public void warning(String _theMethod, String _message, Exception ex) {
+		log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex);
+	}
+
 	public void severe(String _theMethod, String _message) {
 		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE,  m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod, _message);
 	}
@@ -136,6 +140,10 @@ public class XDynamicLogger {
 	 * @param ex
 	 */
 	public void severe(String _theMethod, String _message, Exception ex) {
+		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, _message, ex);
+	}
+
+	private void log_exception(int n_TheLevel, String _theMethod, String _message, Exception ex) {
 		String stack = "\n"+ex.toString();
 
 		StackTraceElement[] ste = ex.getStackTrace();
@@ -143,9 +151,11 @@ public class XDynamicLogger {
 			for(int i = 0; i < ste.length; i++)
 				stack = stack+"\n\t"+ste[i].toString();
 
-		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod, ex.getLocalizedMessage()+stack);
+		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod +" "+_message, ex.getLocalizedMessage()+stack);
 	}
 
+
+	
 	public void disableLogging() {
 		m_bLogEnabled = false;
 	}

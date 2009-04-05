@@ -25,6 +25,7 @@ package it.plio.ext.xades.ooo.ui;
 
 import java.util.LinkedList;
 
+import it.plio.ext.xades.ooo.GlobConstant;
 import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.xades.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
@@ -138,8 +139,7 @@ public class DialogCertificateTree extends BasicDialog implements
 //fill string for graphics
 		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( context );
 		if(xPkgInfo != null) {
-			String sLoc = xPkgInfo
-			.getPackageLocation( "it.plio.ext.xades_signature_extension" );
+			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
 			if(sLoc != null){
 				String aSize = "_26.png"; //for large icons toolbar
 //				String aSize = "_16.png"; //for small icons toolbar

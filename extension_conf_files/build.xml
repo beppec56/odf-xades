@@ -41,22 +41,17 @@ build-extension
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
 
-	<!--
-		first build signature_component.jar
-		the build the extension
-	-->
-
-	<buildnumber />
+	<!-- buildnumber / -->
 	<!--
 		next line is to avoid "modified in the future" warning
 		may be is not needed for slower PC machine
 	-->
-	<sleep milliseconds="2000" />
+	<!-- sleep milliseconds="2000" / -->
 
 	<!-- properties used when building/deploying the extension -->
 	<!-- version used for updating the extension, displayed on OOo interface -->
 	<property name="version" value="0.0.14" />
-	<property name="longversion" value="${version}.${build.number}" />
+	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
 	<property name="webidentbase" value="it.plio.ext" />
