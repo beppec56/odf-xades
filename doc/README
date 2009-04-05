@@ -107,32 +107,37 @@ The build.xml properties are the following:
 	Follow point 5) below to complete the building procedure.
 	
 	Following is a brief description of the projects:
+	
+	art							contains the artwork for this project.
+								It's a project with lots of binary, checkout only if necessary.
+								The artwork needed for building the extension is in project extension_conf_files.
+								This one is to work on art only.
    
-   doc							contains this file and other general information, among it there is
+	doc							contains this file and other general information, among it there is
    								the manual and the full text of the licenses (only in English and
    								Italian you may check for your language on the European Union
    								web.
 
-   extension_conf_files 		contains extension specific files and the main ant build.xml file.
+	extension_conf_files 		contains extension specific files and the main ant build.xml file.
    								It a simple Eclipse project.
 
-   signature_component			Java source for the signature component dispatch UNO object,
+	signature_component			Java source for the signature component dispatch UNO object,
 								the first jar package built.
 
-   signature_options_comp		source for the UNO object that manages the extension configuration options,
+	signature_options_comp		source for the UNO object that manages the extension configuration options,
    								e.g. the ones accessed through Tools > Options... OpenOffice.org menu
    								command.
 
-   sync_job_comp  				source for the job component UNO object, the interceptor and
+	sync_job_comp  				source for the job component UNO object, the interceptor and
    								dispatch object implementing the intercepting OOo commands feature.
 
-   singleton_var_comp			source for the UNO singleton component. It is a component instatiated
+	singleton_var_comp			source for the UNO singleton component. It is a component instatiated
    								only once per every OpenOffice.org session.
    								Contains global variables and the global Logger for the extension.
 
-   web							Contains the web pages for the project at forge.osor.eu
+	web							Contains the web pages for the project at forge.osor.eu
 
-   l10n							contains the localization source data, used to generate the correct
+	l10n						contains the localization source data, used to generate the correct
    								xml structured file to be used in the extension.
 
 5) To build from the operating sistem command line (if you checked out as explained in a
