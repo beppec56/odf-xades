@@ -49,7 +49,7 @@
 					</info>
 					<value>3</value>
 				</prop>            
-				<prop oor:name="Locked" oor:type="xs:boolean">
+            	<prop oor:name="Locked" oor:type="xs:boolean">
                 	<info>
                     	<desc>A locked user interface element cannot be moved or undocked by the user. This property is only active when the user interface element is in a docked state.</desc>
                 	</info>

@@ -68,16 +68,28 @@ public class XDynamicLogger {
 		m_sOwnerClass =  _theOwner.getClass().getName();		
 	}
 
-	public void ctor() {
+	/**
+	 * outputs a log with the class hex hash+class full name + "<init>"
+	 * @param _theMethod
+	 */
+public void ctor() {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init>");
 	}
 
+	/**
+	 * outputs a log with the class hex hash+class full name + "<init>" + a message
+	 * @param _theMethod
+	 */
 	public void ctor(String _message) {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init> "+_message);
 	}
 
+	/**
+	 * outputs a log with the class hex hash + one message
+	 * @param _theMethod
+	 */
 	public void log(String _message) {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "", _message);
@@ -97,16 +109,29 @@ public class XDynamicLogger {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "exiting " + _theMethod, _message);
 	}
+
+	/**
+	 * outputs a log with the class hex hash + two message
+	 * @param _theMethod
+	 */
 	public void log(String _theMethod, String _message) {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, _theMethod, _message);
 	}
 
+	/**
+	 * outputs a log with the class hex hash + one message
+	 * @param _theMethod
+	 */
 	public void info(String _theMethod) {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, _theMethod, "");
 	}
 
+	/**
+	 * outputs a log with the class hex hash+class full name + two messages
+	 * @param _theMethod
+	 */
 	public void info(String _theMethod, String _message) {
 		if(m_bLogEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);

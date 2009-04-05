@@ -135,7 +135,6 @@
 				<prop oor:name="Title" oor:type="xs:string" oor:localized="true">
 					<value xml:lang="en">About XADES (IT) digital signature...</value>
 					<value xml:lang="it">Informazioni su firma digitale XADES (IT)...</value>
-					<value xml:lang="fr">A propos de signature numérique XADES (IT)...</value>
 				</prop>
 				<prop oor:name="Target" oor:type="xs:string">
 					<value>_self</value>

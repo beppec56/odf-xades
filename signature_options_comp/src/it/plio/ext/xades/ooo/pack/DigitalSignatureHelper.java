@@ -95,12 +95,23 @@ public class DigitalSignatureHelper {
      * @param _thePackage
      * @return
      */
-    private Vector<String> createElemeList(Object _othePackage) {
-
+    private Vector<String> createElemeList(Object _othePackage, XStorage _xStorage) {
+    	//TODO: check for ODF 1.0 structure, see what to do in that case.
     	Vector<String> aElements = new Vector<String>(20);
 
     	//print the storage ODF version
-    	XStorage xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
+    	
+    	XStorage xThePackage;
+    	if(_xStorage == null ){
+    		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
+    		m_logger.info("createElemeList", "use the URL storage");
+    		Utilities1.showInterfaces(this,xThePackage);
+    	}
+    	else {
+    		xThePackage = _xStorage;
+    		m_logger.info("createElemeList", "use the document storage");
+    	}
+ 
     	XPropertySet xPropset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, _othePackage);
 		if(xPropset != null) { // grab the version
 			String sVersion = "1.0";
@@ -131,30 +142,45 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.warning("createElemeList", "Pictures substorage missing", e);
+			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "Pictures substorage missing", e);
+			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "Pictures substorage missing", e);
+			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
 		}
 
     	//OLE
 		String sElementName = "";
 		
 		try {
-			sElementName = "ObjectReplacements";
-			XStorage xSubStore = xThePackage.openStorageElement(sElementName, ElementModes.READ);
-			fillElementList(xSubStore, aElements,sElementName+"/", true);
-			xSubStore.dispose();
+			try {
+				sElementName = "ObjectReplacements";
+				XStorage xSubStore = xThePackage.openStorageElement(sElementName, ElementModes.READ);
+				fillElementList(xSubStore, aElements,sElementName+"/", true);
+				xSubStore.dispose();
+			}
+			catch (IOException e) {
+				//no problem if not existent
+				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+			} catch (StorageWrappedTargetException e) {
+				// TODO Auto-generated catch block
+				//no problem if not existent
+				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				//no problem if not existent
+				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+			}
 			
 			//Object folders
 			String aObjectName = new String("Object ");
 			String[] aObjName = xThePackage.getElementNames();
 			for(int i = 0; i < aObjName.length; i++) {
+				sElementName = aObjName[i];
 				if((aObjName[i].indexOf(aObjectName) != -1) && xThePackage.isStorageElement(aObjName[i]))  {
 					XStorage xAnotherSubStore = xThePackage.openStorageElement(aObjName[i], ElementModes.READ);
 					fillElementList(xAnotherSubStore, aElements,aObjName[i]+"/", true);
@@ -164,15 +190,15 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.severe("createElemeList", sElementName+" missing", e);
+			m_logger.severe("createElemeList", "\""+sElementName+"\""+" missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList",  sElementName+" missing", e);
+			m_logger.warning("createElemeList", "\""+sElementName+" missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList",  sElementName+" missing", e);
+			m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
 		} catch (NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
@@ -188,8 +214,9 @@ public class DigitalSignatureHelper {
      * @param _xMCF
      * @param _xCompCtx
      */
-    public void verifyDocumentSignature(String aTheDocURL, XMultiComponentFactory _xMCF, XComponentContext _xCompCtx) {
-    	try {	
+    public void verifyDocumentSignature(XStorage _xStorage, String aTheDocURL, XMultiComponentFactory _xMCF, XComponentContext _xCompCtx) {
+    	try {
+    		// try from url
 			Object oObj = _xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", _xCompCtx);
 			if(oObj != null) {
 				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)
@@ -199,7 +226,8 @@ public class DigitalSignatureHelper {
 	            args[1] = ElementModes.READ;
 	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);
 
-	            Vector<String> aElements = createElemeList(oMyStorage);
+//	            Vector<String> aElements = createElemeList(oMyStorage, null); // force the use of the package object
+	            Vector<String> aElements = createElemeList(oMyStorage, _xStorage);
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
 	            	m_logger.log(aElements.get(i));	            	
@@ -224,15 +252,15 @@ public class DigitalSignatureHelper {
 	           		}
 	        		catch (IOException e) {
 	        			//no problem if not existent
-	        			e.printStackTrace();
+	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		} catch (StorageWrappedTargetException e) {
 	        			// TODO Auto-generated catch block
 	        			//no problem if not existent
-	        			e.printStackTrace();
+	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		} catch (IllegalArgumentException e) {
 	        			// TODO Auto-generated catch block
 	        			//no problem if not existent
-	        			e.printStackTrace();
+	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		}
 	           	}
 	            

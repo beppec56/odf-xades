@@ -426,14 +426,17 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
  * whole stuff
  * some part of the storage throw an IOError exception, something that doesn't happen
  * if the package is opened anew using the URL
+ */
 						XStorage xStorage = null;
 						XStorageBasedDocument xDocStorage =
 									(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xModel );
 
 						xStorage = xDocStorage.getDocumentStorage();
 						if(xStorage != null)
-							System.out.println("We have storage available!");
-*/							
+							m_logger.info("execute"+"We have storage available!");
+						
+						Utilities.showInterfaces(this, xStorage);
+							
 						/**
 						 * we can read the file and check if a CNIPA signature
 						 * TODO start a thread to do the job? may be creating a
@@ -451,7 +454,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 //						initThisFrameData( xModel.getURL(), true );
 						
 //new methos						
-						initThisDocumentURLData(null, xModel.getURL(), true, xFrame);
+						initThisDocumentURLData(xStorage, xModel.getURL(), true, xFrame);
 					}
 				}/* else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
 					// delete the single frame data
@@ -693,7 +696,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 //						Thread.sleep( 20 ); //simulates the time needed to check signatures
 						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xContext);
 //						aCls.examinePackageODT(aURL, m_xServiceManager, m_xComponentContext);
-						aCls.verifyDocumentSignature(aURL, m_xServiceManager, m_xContext);
+						aCls.verifyDocumentSignature(_xStorage, aURL, m_xServiceManager, m_xContext);
 /*					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
