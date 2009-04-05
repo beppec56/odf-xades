@@ -1,0 +1,30 @@
+copy with:
+
+scp [-r] file_or_dir beppec56@shell.forge.osor.eu:../../groups/ooo-xadessig-it/www 
+the web is at:
+
+cd /home/groups/ooo-xadessig-it/www/
+
+
+
+The original index html page,
+
+The root:
+Dear OSOR user,
+
+This is a little page to explain how you can create your own website following some simple instructions below.
+
+    * Connnect with an ssh client to the follow address: shell.forge.osor.eu
+    * Insert the username and password (the one you use to log in the forge)
+    * change directory with the following comand: 'cd /home/groups/ooo-xadessig-it/www/'
+    * You can start modifing the 'index.html' and create your own style and your own page.
+
+ 
+
+Please if you have any problems feel free to send an email at info[at]osor.eu.
+
+Thank you.
+
+Kind regards,
+
+The OSOR Team.
