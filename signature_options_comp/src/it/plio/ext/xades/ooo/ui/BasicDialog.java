@@ -24,6 +24,8 @@
 package it.plio.ext.xades.ooo.ui;
 
 
+import it.plio.ext.xades.logging.XDynamicLogger;
+
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.AdjustmentEvent;
 import com.sun.star.awt.FocusEvent;
@@ -100,13 +102,15 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	protected XFrame									m_xParentFrame		= null;
 	protected XComponent								m_xComponent		= null;
 	protected Rectangle									m_rectParentWindow	= null;
+	protected XDynamicLogger							m_logger;
 
 	public BasicDialog(XFrame _xFrame, XComponentContext _xContext,
 			XMultiComponentFactory _xMCF) {
-		// printlnName("ctor");
 		m_xContext = _xContext;
 		m_xMCF = _xMCF;
 		m_xParentFrame = _xFrame;
+		m_logger = new XDynamicLogger(this, _xContext);
+		m_logger.ctor();
 		// from the frame get the parent window and set the window peer
 		if (m_xParentFrame == null) {
 			Object oDesktop = null;

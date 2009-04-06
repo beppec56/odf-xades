@@ -35,6 +35,7 @@ import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -70,6 +71,42 @@ public class DialogAbout extends BasicDialog {
 		m_aRegAcc.dispose();
 	}
 
+	/**
+	 * static function: non thread safe, to be called only once per application 
+	 * @param _xFrame
+	 * @param _xCC
+	 * @param _axMCF
+	 * @return
+	 */
+	public static short showDialog( XFrame _xFrame, XComponentContext _xCC, XMultiComponentFactory _axMCF) {
+		DialogAbout aDialog1 =
+			new DialogAbout( _xFrame, _xCC, _axMCF );
+		try {
+			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
+			//get the parente window data
+//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
+//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
+			int BiasX = 100;
+			int BiasY = 30;
+//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
+//			XWindow xWindow = m_xFrame.getContainerWindow();
+//			XWindowPeer xPeer = xWindow.
+			aDialog1.initialize(BiasX,BiasY);
+//center the dialog
+			return aDialog1.executeDialog();
+		}
+		catch (com.sun.star.uno.RuntimeException e) {
+			e.printStackTrace();
+		} catch (BasicErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
 	public void initialize(int _nPosX, int _nPosY) throws Exception {
 		initialize( m_xParentWindow, _nPosX, _nPosY );
 	}

@@ -24,11 +24,13 @@
 package it.plio.ext.xades.ooo.options;
 
 import it.plio.ext.xades.ooo.options.SingleControlDescription.ControlTypeCode;
+import it.plio.ext.xades.ooo.ui.DialogAbout;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -123,8 +125,7 @@ public class ManageGeneralOptions extends ManageOptions  {
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nAboutButton].m_sControlName)) {
 // activate the about dialog box
-            	
-            	
+            	DialogAbout.showDialog(null, m_xComponentContext, m_xMultiComponentFactory);
             }
             else if (sName.equals(ArrayOfControls[m_nBrowseInternetButton].m_sControlName)) {
             	m_logger.info("browse the Internet for a URL");

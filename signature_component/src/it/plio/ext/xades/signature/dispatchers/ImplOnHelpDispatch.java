@@ -55,37 +55,7 @@ public class ImplOnHelpDispatch extends ImplDispatchAsynch {
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-
-		// TODO Auto-generated method stub
-		m_logger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);		
-		showAboutBox();
-	}
-
-	private void showAboutBox() {
-		DialogAbout aDialog1 =
-			new DialogAbout( m_xFrame, m_xCC, m_axMCF );
-		try {
-			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
-			//get the parente window data
-//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
-//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
-			int BiasX = 100;
-			int BiasY = 30;
-//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
-//			XWindow xWindow = m_xFrame.getContainerWindow();
-//			XWindowPeer xPeer = xWindow.
-			aDialog1.initialize(BiasX,BiasY);
-//center the dialog
-			aDialog1.executeDialog();
-		}
-		catch (com.sun.star.uno.RuntimeException e) {
-			e.printStackTrace();
-		} catch (BasicErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		m_logger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);
+		DialogAbout.showDialog(m_xFrame, m_xCC, m_axMCF);
 	}
 }

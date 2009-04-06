@@ -23,6 +23,7 @@
 
 package it.plio.ext.xades.ooo.options;
 
+import it.plio.ext.xades.Utilities;
 import it.plio.ext.xades.logging.XDynamicLogger;
 
 import com.sun.star.awt.ActionEvent;
@@ -250,7 +251,7 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	  if (m_xContainer == null)
 	    throw new com.sun.star.uno.Exception(
 	      "Could not get XControlContainer from window.", this);
-
+	  
 	  //iterate through the controls on this page and
 	  //for each grab the parameter and set the value
 	  m_logger.log("loadData", "examine "+ArrayOfControls.length+" controls");
@@ -285,7 +286,6 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
     	switch(ArrayOfControls[i].m_eTheCode) {
     	case EDIT_TEXT_INT:
     		//call the get method and assign the text to the control
-//    		Utilities.showProperties(xProp);
     		int nValue = m_xOptionsConfigAccess.getNumber(ArrayOfControls[i].m_sPropertyName);
     		//This handler supports only text controls, which are named "Pattern Field"
     		//in the dialog editor. We set the "Text" property.
@@ -293,7 +293,6 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
     		break;
     	case EDIT_TEXT:
     		//call the get method and assign the text to the control
-//    		Utilities.showProperties(xProp);
     		String sValue = m_xOptionsConfigAccess.getText(ArrayOfControls[i].m_sPropertyName);
     		//This handler supports only text controls, which are named "Pattern Field"
     		//in the dialog editor. We set the "Text" property.
@@ -302,7 +301,6 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
     		break;
     	case CHECK_BOX:
     		//in this case we need the boolean property of the control
-//    		Utilities.showProperties(xProp);
     		xProp.setPropertyValue("State",
     				new Short(
     						m_xOptionsConfigAccess.getBoolean(ArrayOfControls[i].m_sPropertyName) ?
@@ -318,7 +316,6 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
     		break;
     	case RADIO_BUTTON:
     		//this is different, so...
-//    		Utilities.showProperties(xProp);
     		//...we grab the value from the registry, an integer
     		int	nState = m_xOptionsConfigAccess.getNumber(ArrayOfControls[i].m_sPropertyName);
     		int nThisControlState =  ArrayOfControls[i].m_nTheRadioButtonPosition;
