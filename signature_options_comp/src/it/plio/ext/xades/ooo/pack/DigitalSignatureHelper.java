@@ -227,14 +227,14 @@ public class DigitalSignatureHelper {
 	            args[1] = ElementModes.READ;
 	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);
 
-//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
-	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
+	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
 	            	m_logger.log(aElements.get(i));	            	
 	            }
 // using the created element list, test the file signature	            
-	         
+
 // just for testing, try to open the META-INF substorage for writing (test possibility to write the signature file)
 //grab the storage interface
 	           	XStorage xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );

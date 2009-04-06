@@ -208,7 +208,7 @@ public class SingletonGlobalVariables extends WeakBase
 		theDocumentList.clear();	
 
 		if(m_nCanLogMyself)
-			m_log.info("dispose");
+			m_log.info("");
 		myFileHandl.close();
 	}
 
