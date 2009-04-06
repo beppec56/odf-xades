@@ -71,6 +71,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XModifiable;
 import com.sun.star.bridge.XInstanceProvider;
 
+import it.plio.ext.xades.Utilities;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.xades.dispatchers.threads.ImplXAdESThread;
 import it.plio.ext.xades.logging.XDynamicLogger;
@@ -82,7 +83,6 @@ import it.plio.ext.xades.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.xades.ooo.ui.DialogCertificateTree;
 //import it.plio.ext.xades.ooo.ui.DialogListCertificates;
-import it.plio.ext.xades.utilities.Utilities;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
 

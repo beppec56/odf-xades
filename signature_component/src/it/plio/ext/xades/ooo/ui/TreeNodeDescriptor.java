@@ -23,7 +23,7 @@
 
 package it.plio.ext.xades.ooo.ui;
 
-import it.plio.ext.xades.utilities.Utilities;
+import it.plio.ext.xades.Utilities;
 
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -21,7 +21,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.utilities;
+package it.plio.ext.xades;
 
 import it.plio.ext.xades.ooo.GlobConstant;
 

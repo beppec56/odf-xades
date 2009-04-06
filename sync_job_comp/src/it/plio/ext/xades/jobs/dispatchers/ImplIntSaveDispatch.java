@@ -23,11 +23,11 @@
 
 package it.plio.ext.xades.jobs.dispatchers;
 
+import it.plio.ext.xades.Utilities;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.xades.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.xades.jobs.sync.GlobConstantJobs;
 import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.utilities.Utilities;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;

@@ -25,13 +25,13 @@ package it.plio.ext.xades.jobs.sync;
 
 import java.util.Date;
 
+import it.plio.ext.xades.Utilities;
 import it.plio.ext.xades.logging.XDynamicLogger;
 import it.plio.ext.xades.ooo.GlobConstant;
 import it.plio.ext.xades.ooo.GlobalVariables;
 import it.plio.ext.xades.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.xades.singleton.SigletonGlobalVarConstants;
 import it.plio.ext.xades.singleton.SingletonGlobalVariables;
-import it.plio.ext.xades.utilities.Utilities;
 import it.plio.ext.xades.ooo.pack.DigitalSignatureHelper;
 
 import com.sun.star.awt.Rectangle;

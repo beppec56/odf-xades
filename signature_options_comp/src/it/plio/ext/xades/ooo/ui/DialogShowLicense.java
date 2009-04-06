@@ -23,8 +23,8 @@
 
 package it.plio.ext.xades.ooo.ui;
 
+import it.plio.ext.xades.Utilities;
 import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.xades.utilities.Utilities;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XDialog;

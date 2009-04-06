@@ -23,32 +23,19 @@
 
 package it.plio.ext.xades.ooo.registry;
 
-import it.plio.ext.xades.logging.XDynamicLogger;
 import it.plio.ext.xades.ooo.ConfigurationAccess;
 import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.utilities.Utilities;
 
-//import com.sun.star.beans.Property;
-//import com.sun.star.beans.XHierarchicalPropertySet;
-//import com.sun.star.beans.XProperty;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
-//import com.sun.star.container.XHierarchicalNameAccess;
 import com.sun.star.container.XNameAccess;
-//import com.sun.star.frame.XFrame;
-//import com.sun.star.frame.XFramesSupplier;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
-//import com.sun.star.lang.XMultiServiceFactory;
-//import com.sun.star.lib.uno.helper.Factory;
-//import com.sun.star.uno.Any;
-import com.sun.star.uno.Any;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-//import com.sun.star.uno.XInterface;
 
 public class MessageConfigurationAccess extends ConfigurationAccess implements XComponent {
 

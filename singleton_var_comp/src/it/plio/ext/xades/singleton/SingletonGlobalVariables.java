@@ -222,17 +222,6 @@ public class SingletonGlobalVariables extends WeakBase
 			m_log.info("removeEventListener");				
 	}
 
-	private static String getTimeMs() {
-		Date aDate = new Date();
-		String time = String.format( "%20d ", aDate.getTime() );
-		return time.substring( 14,17 ) +"."+ time.substring( 17 );
-	}
-
-	// ////////////////debug methods
-	private String getHashHex() {
-		return getTimeMs() + String.format( "%8H", hashCode() );
-	}
-	
 	public void indentify() {
 //		logger.info(getHashHex());
 		if(m_nCanLogMyself)

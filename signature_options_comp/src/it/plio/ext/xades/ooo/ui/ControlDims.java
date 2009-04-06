@@ -23,7 +23,7 @@
 
 package it.plio.ext.xades.ooo.ui;
 
-import it.plio.ext.xades.utilities.Utilities;
+import it.plio.ext.xades.Utilities;
 
 /**
  * costanti riprese da svtools/inc/controldims.hrc standard per GUI OOo

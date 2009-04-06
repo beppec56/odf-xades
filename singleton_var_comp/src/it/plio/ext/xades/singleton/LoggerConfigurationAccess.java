@@ -23,8 +23,6 @@
 
 package it.plio.ext.xades.singleton;
 
-import it.plio.ext.xades.logging.XDynamicLogger;
-
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.Exception;

@@ -23,10 +23,8 @@
 
 package it.plio.ext.xades.singleton;
 
-import it.plio.ext.xades.ooo.ConfigurationAccess;
 import it.plio.ext.xades.ooo.GlobConstant;
 
-import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;

@@ -26,7 +26,6 @@ package it.plio.ext.xades;
 import java.util.logging.Logger;
 
 import it.plio.ext.xades.signature.SignatureHandler;
-import it.plio.ext.xades.utilities.Utilities;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;

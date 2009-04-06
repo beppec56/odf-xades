@@ -23,8 +23,6 @@
 
 package it.plio.ext.xades.logging;
 
-import java.util.logging.Level;
-
 import it.plio.ext.xades.ooo.GlobConstant;
 
 import com.sun.star.logging.XLogger;
