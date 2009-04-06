@@ -23,27 +23,19 @@
 
 package it.plio.ext.xades.ooo.ui;
 
-import it.plio.ext.xades.*;
-import it.plio.ext.xades.signature.SignatureHandler;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.AdjustmentEvent;
-import com.sun.star.awt.AdjustmentType;
-import com.sun.star.awt.FocusChangeReason;
 import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.ItemEvent;
 import com.sun.star.awt.KeyEvent;
 import com.sun.star.awt.MouseEvent;
-import com.sun.star.awt.PosSize;
-import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.SpinEvent;
 import com.sun.star.awt.TextEvent;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XAdjustmentListener;
 import com.sun.star.awt.XButton;
-import com.sun.star.awt.XCheckBox;
-import com.sun.star.awt.XComboBox;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlContainer;
 import com.sun.star.awt.XControlModel;
@@ -56,10 +48,6 @@ import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XListBox; // import
 // com.sun.star.awt.XMessageBoxFactory;
 import com.sun.star.awt.XMouseListener;
-import com.sun.star.awt.XPointer;
-import com.sun.star.awt.XReschedule;
-import com.sun.star.awt.XScrollBar;
-import com.sun.star.awt.XSpinField;
 import com.sun.star.awt.XSpinListener;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XTextListener;
@@ -69,17 +57,12 @@ import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.TreeExpansionEvent;
-import com.sun.star.awt.tree.XMutableTreeDataModel;
-import com.sun.star.awt.tree.XMutableTreeNode;
-import com.sun.star.awt.tree.XTreeControl;
 import com.sun.star.awt.tree.XTreeExpansionListener;
-import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XIndexContainer;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNameContainer;
-import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFramesSupplier;
 import com.sun.star.frame.XModel;
@@ -88,15 +71,8 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XSingleServiceFactory;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.ucb.XFileIdentifierConverter;
-import com.sun.star.uno.AnyConverter;
-import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.util.XMacroExpander;
-import com.sun.star.util.XNumberFormats;
-import com.sun.star.util.XNumberFormatsSupplier;
 
 /**
  * classe base per le finestre di dialogo in OOo API firma digitale CNIPA

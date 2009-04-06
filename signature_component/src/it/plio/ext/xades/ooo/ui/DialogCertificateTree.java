@@ -29,11 +29,7 @@ import it.plio.ext.xades.ooo.GlobConstant;
 import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.xades.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
-import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentKODocument;
-import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
 import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentOK;
-import it.plio.ext.xades.utilities.Utilities;
-
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -56,19 +52,14 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.deployment.PackageInformationProvider;
 import com.sun.star.deployment.XPackageInformationProvider;
 import com.sun.star.frame.XFrame;
-import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
-import com.sun.star.uno.Any;
-import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
 import com.sun.star.view.XSelectionChangeListener;
-import com.sun.star.view.XSelectionSupplier;
 
 /**
  * @author beppe
@@ -88,7 +79,9 @@ public class DialogCertificateTree extends BasicDialog implements
 	//graphic indications
 	private String sSignatureOK = null; //signature ok
 	private String sSignatureNotValidated = null; //signature ok, but certificate not valid
+	@SuppressWarnings("unused")
 	private String sSignatureBroken = null; //signature does not mach content: document changed after signature
+	@SuppressWarnings("unused")
 	private String sSignatureInvalid = null; //signature cannot be validated
 
 	private String sCertificateValid = null; //
@@ -100,6 +93,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	// the following two fields are needed to be able to change
 	// the font at run-time
 	private Object				m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
+	@SuppressWarnings("unused")
 	private XTextComponent		m_xDisplElement;					// the XTextComponent interface of the control
 																	// of the above model
 	private XMutableTreeNode m_aTheOldNode = null;

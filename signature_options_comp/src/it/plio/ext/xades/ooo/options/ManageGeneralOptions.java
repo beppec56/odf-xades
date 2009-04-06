@@ -122,22 +122,9 @@ public class ManageGeneralOptions extends ManageOptions  {
             // just in case the listener has been added to several controls,
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nAboutButton].m_sControlName)) {
-            	m_logger.info("About button pressed");
-/*//determina il certificato su cui si è posizionati          	
-            	int nSelected = xCertList.getSelectedItemPos();
-            	if(nSelected != -1) {
-            		DialogDisplayCertificate aDialog1 =
-            			new DialogDisplayCertificate(m_xParentFrame, super.m_xContext, super.m_xMCF) ; 		
-            		try {
-            			aDialog1.initialize(
-            					-(DigSignDlgDims.TD_WIDTH()-DigSignDlgDims.DS_WIDTH())/2,
-            					ControlDims.RSC_CD_PUSHBUTTON_HEIGHT, nSelected);
-            		} catch (BasicErrorException e) {
-            			e.printStackTrace();
-            		}
-            		aDialog1.executeDialog();
-            	}
-            	//...*/
+// activate the about dialog box
+            	
+            	
             }
             else if (sName.equals(ArrayOfControls[m_nBrowseInternetButton].m_sControlName)) {
             	m_logger.info("browse the Internet for a URL");
