@@ -50,8 +50,9 @@
       <node oor:name="Leaves">
         <!-- leaf for general options -->
         <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Generali" oor:op="fuse">
+        <!-- the following id is used by the extension manager to retrieve the option leaf -->
           <prop oor:name="Id">
-            <value>@WEBIDENTBASE@.@NAME@.general</value>
+            <value>@WEBIDENTBASE@.@NAME@</value>
           </prop>
           <prop oor:name="Label">
             <value xml:lang="en-US">General</value>
@@ -73,8 +74,9 @@
         <!-- end leaf for general options -->
         <!-- leaf for logging options -->
         <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.Logging" oor:op="fuse">
+        <!-- the following id is used by the extension manager to retrieve the option leaf -->
           <prop oor:name="Id">
-            <value>@WEBIDENTBASE@.@NAME@.logging</value>
+            <value>@WEBIDENTBASE@.@NAME@</value>
           </prop>
           <prop oor:name="Label">
             <value xml:lang="en-US">Logging</value>
