@@ -21,7 +21,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.pack;
+package it.plio.ext.xades;
 
 import it.plio.ext.xades.ooo.GlobConstant;
 
@@ -36,7 +36,7 @@ import com.sun.star.beans.PropertyValue;
 import java.util.*;
 
 /**
- * 
+ * Class added to have the utilities function in the package with no need for external libraries
  * @author beppe
  */
 public class Utilities1 {

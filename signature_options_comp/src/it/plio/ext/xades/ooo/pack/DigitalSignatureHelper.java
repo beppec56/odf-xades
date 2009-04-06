@@ -38,6 +38,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.lang.*;
 import com.sun.star.uno.XComponentContext;
 
+import it.plio.ext.xades.Utilities1;
 import it.plio.ext.xades.logging.XDynamicLogger;
 
 import java.util.Vector;
