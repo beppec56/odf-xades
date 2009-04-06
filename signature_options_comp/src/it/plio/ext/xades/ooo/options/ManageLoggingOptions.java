@@ -23,7 +23,6 @@
 
 package it.plio.ext.xades.ooo.options;
 
-import it.plio.ext.xades.Utilities1;
 import it.plio.ext.xades.ooo.options.SingleControlDescription.ControlTypeCode;
 
 import com.sun.star.awt.ActionEvent;
@@ -36,7 +35,6 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.uno.Any;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;

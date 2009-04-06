@@ -181,26 +181,44 @@ public void ctor() {
 	}
 
 //enable/disable, set level
+	/**
+	 * disable logging completely, severe level as well
+	 */
 	public void disableLogging() {
 		m_bLogEnabled = false;
 	}
 	
+	/**
+	 * enable all logging
+	 */
 	public void enableLogging() {
 		m_bLogEnabled = true;
 	}
 	
+	/**
+	 * enable INFO level only
+	 */
 	public void enableInfo() {
 		m_bInfoEnabled = true;
 	}
 
+	/**
+	 * disable INFO level only
+	 */
 	public void disableInfo() {
 		m_bInfoEnabled = false;		
 	}
 
+	/**
+	 * enable WARNING level only
+	 */
 	public void enableWarning() {
 		m_bWarningEnabled = true;
 	}
 
+	/**
+	 * disable WARNING level only
+	 */
 	public void disableWarning() {
 		m_bWarningEnabled = false;
 		
