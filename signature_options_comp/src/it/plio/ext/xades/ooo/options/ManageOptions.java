@@ -66,7 +66,8 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 
     //name of the single options page
     protected String m_sOptionPagename = "page_unused_for bugs";
-
+    protected XControlContainer 	m_xContainer;
+    
     /**
      * 
      * @param xCompContext
@@ -244,9 +245,9 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	 
 	  //To acces the separate controls of the window we need to obtain the
 	  //XControlContainer from window implementation
-	  XControlContainer xContainer = (XControlContainer) UnoRuntime.queryInterface(
+		m_xContainer = (XControlContainer) UnoRuntime.queryInterface(
 	    XControlContainer.class, aWindow);
-	  if (xContainer == null)
+	  if (m_xContainer == null)
 	    throw new com.sun.star.uno.Exception(
 	      "Could not get XControlContainer from window.", this);
 
@@ -257,7 +258,7 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	    //load the values from the registry
 		  
 		//grab the current control
-	    XControl xControl = xContainer.getControl(ArrayOfControls[i].m_sControlName);
+	    XControl xControl = m_xContainer.getControl(ArrayOfControls[i].m_sControlName);
 
 	    if (xControl == null) {
 	    	m_logger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
@@ -307,7 +308,7 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
     						m_xOptionsConfigAccess.getBoolean(ArrayOfControls[i].m_sPropertyName) ?
     								(short)1 : (short)0));
     		if(ArrayOfControls[i].m_xAnItemListener != null) {
-    			XControl xCbControl = xContainer.getControl( ArrayOfControls[i].m_sControlName );
+    			XControl xCbControl = m_xContainer.getControl( ArrayOfControls[i].m_sControlName );
     			XCheckBox xCb = (XCheckBox) UnoRuntime.queryInterface( XCheckBox.class, xCbControl );
     		// 	An ActionListener will be notified on the activation of the
     		// button...
@@ -330,7 +331,7 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
       		break;
      	case PUSH_BUTTON:
     		if(ArrayOfControls[i].m_xAnActionListener != null) {
-    			XControl xButtonControl = xContainer.getControl( ArrayOfControls[i].m_sControlName );
+    			XControl xButtonControl = m_xContainer.getControl( ArrayOfControls[i].m_sControlName );
     			XButton xButton = (XButton) UnoRuntime.queryInterface( XButton.class, xButtonControl );
     		// 	An ActionListener will be notified on the activation of the
     		// button...

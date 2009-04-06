@@ -23,6 +23,7 @@
 
 package it.plio.ext.xades.ooo.options;
 
+import it.plio.ext.xades.Utilities1;
 import it.plio.ext.xades.ooo.options.SingleControlDescription.ControlTypeCode;
 
 import com.sun.star.awt.ActionEvent;
@@ -30,7 +31,13 @@ import com.sun.star.awt.ItemEvent;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
 import com.sun.star.awt.XItemListener;
+import com.sun.star.beans.PropertyVetoException;
+import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.uno.Any;
+import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -64,6 +71,8 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		super(xCompContext, m_nNumberOfControls, "leaf_logging");//leaf refers to OOo documentation about
 															// extension options
 		m_logger.enableLogging();// disabled in base class
+		m_logger.disableInfo();
+		m_logger.disableWarning();
 		m_logger.ctor();
 		//prepare the list of controls on the page
 
@@ -130,6 +139,26 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		return false;
 	}
 
+	protected void loadData(com.sun.star.awt.XWindow aWindow)
+	  throws com.sun.star.uno.Exception {
+		super.loadData(aWindow);
+//when return from load, we should have the container initialized, so activate the right state
+		//for the subordinate controls
+		if(m_xContainer != null) {
+			//retrieve the file control checkbox
+			XControl xControl = m_xContainer.getControl(ArrayOfControls[m_nEnableFileCtl].m_sControlName);
+	        XControlModel xControlModel = xControl.getModel();
+	        XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xControlModel);
+// check the state and set a boolean accordingly
+	        boolean bEnable = AnyConverter.toInt(xPSet.getPropertyValue("State")) == 1;			
+			enableOneFileControl(bEnable,m_nLogFilePathIdxTF);
+			enableOneFileControl(bEnable,m_nBrowseSystemPathPB);
+			enableOneFileControl(bEnable,m_nLogFileCountTF);
+			enableOneFileControl(bEnable,m_nLogFileSizeTF);
+		}
+		else
+			m_logger.severe("enableTheFileControls", "there is no window!");
+	}
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
 	 */
@@ -148,6 +177,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             	m_logger.info("browse the system for a path");
                 //...
             	//... implement the function...
+            	
             }
             else {
             	m_logger.info("Activated: "+sName);            	
@@ -173,13 +203,25 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class, rIEvent.Source);
             XControlModel xControlModel = xControl.getModel();
             XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xControlModel);
+            
+//FIXME DEBUG            Utilities1.showProperties(xControlModel, xPSet);
+            
             String sName = (String) xPSet.getPropertyValue("Name");
             // just in case the listener has been added to several controls,
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nEnableFileCtl].m_sControlName)) {
-            	m_logger.info("check box of file changed state");
+//            	m_logger.info("check box of file changed state");
                 //...
             	//... implement the function: enable/disable the rest of the controls
+            	// retrieve the status of the control
+                int nState = AnyConverter.toInt(xPSet.getPropertyValue("State"));
+
+//FIXME DEBUg                m_logger.info("itemStateChanged","State is "+nState);
+
+                enableTheFileControls(( nState == 0 ) ? false : true); 
+
+            	// if the control is active, enables the relevant controls else disable them            	
+            	            	
             }
             else {
             	m_logger.info("Activated: "+sName);            	
@@ -192,7 +234,42 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // com.sun.star.uno.Exception
         	m_logger.severe("", "", ex);
         }		
-		
-		
+	}
+
+	protected void enableOneFileControl(boolean _bEnable, int _index) {
+		XControl xControl = m_xContainer.getControl(ArrayOfControls[_index].m_sControlName);
+        XControlModel xControlModel = xControl.getModel();
+        XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xControlModel);
+        try {
+			xPSet.setPropertyValue("Enabled", new Boolean((_bEnable) ? true : false));
+		} catch (UnknownPropertyException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("enableOneFileControl", "", e);
+		} catch (PropertyVetoException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("enableOneFileControl", "", e);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("enableOneFileControl", "", e);
+		} catch (WrappedTargetException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("enableOneFileControl", "", e);
+		}
+	}
+	/**
+	 * 
+	 * @param _bEnable true enable the four controls the file checkbox enables/disables
+	 */
+	protected void enableTheFileControls(boolean _bEnable) {
+// retrieve the controls
+		//grab the current control
+		if(m_xContainer != null) {
+			enableOneFileControl(_bEnable,m_nLogFilePathIdxTF);
+			enableOneFileControl(_bEnable,m_nBrowseSystemPathPB);
+			enableOneFileControl(_bEnable,m_nLogFileCountTF);
+			enableOneFileControl(_bEnable,m_nLogFileSizeTF);
+		}
+		else
+			m_logger.severe("enableTheFileControls", "there is no window!");
 	}
 }

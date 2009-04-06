@@ -48,6 +48,8 @@ public class XDynamicLogger {
 	protected String m_sOwnerClassHashHex;
 	protected XLogger m_xLogger;
 	protected boolean	m_bLogEnabled = false;
+	protected boolean 	m_bInfoEnabled = true;
+	protected boolean 	m_bWarningEnabled = true;
 
 	/**
 	 * Class for logger.
@@ -73,7 +75,7 @@ public class XDynamicLogger {
 	 * @param _theMethod
 	 */
 public void ctor() {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init>");
 	}
 
@@ -82,7 +84,7 @@ public void ctor() {
 	 * @param _theMethod
 	 */
 	public void ctor(String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init> "+_message);
 	}
 
@@ -91,22 +93,22 @@ public void ctor() {
 	 * @param _theMethod
 	 */
 	public void log(String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "", _message);
 	}
 
 	public void entering(String _theMethod) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "entering "+_theMethod, "");
 	}
 
 	public void entering(String _theMethod, String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "entering "+_theMethod, _message);
 	}
 
 	public void exiting(String _theMethod, String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "exiting " + _theMethod, _message);
 	}
 
@@ -115,7 +117,7 @@ public void ctor() {
 	 * @param _theMethod
 	 */
 	public void log(String _theMethod, String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, _theMethod, _message);
 	}
 
@@ -124,7 +126,7 @@ public void ctor() {
 	 * @param _theMethod
 	 */
 	public void info(String _theMethod) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, _theMethod, "");
 	}
 
@@ -133,22 +135,23 @@ public void ctor() {
 	 * @param _theMethod
 	 */
 	public void info(String _theMethod, String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);
 	}
 
 	public void warning(String _theMethod) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bWarningEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_WARNING,  m_sOwnerClassHashHex, _theMethod, "");
 	}
 
 	public void warning(String _theMethod, String _message) {
-		if(m_bLogEnabled)
+		if(m_bLogEnabled && m_bWarningEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_WARNING, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);
 	}
 
 	public void warning(String _theMethod, String _message, Exception ex) {
-		log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex);
+		if(m_bLogEnabled && m_bWarningEnabled)
+			log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex);
 	}
 
 	public void severe(String _theMethod, String _message) {
@@ -179,13 +182,29 @@ public void ctor() {
 		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod +" "+_message, ex.getLocalizedMessage()+stack);
 	}
 
-
-	
+//enable/disable, set level
 	public void disableLogging() {
 		m_bLogEnabled = false;
 	}
 	
 	public void enableLogging() {
 		m_bLogEnabled = true;
-	}	
+	}
+	
+	public void enableInfo() {
+		m_bInfoEnabled = true;
+	}
+
+	public void disableInfo() {
+		m_bInfoEnabled = false;		
+	}
+
+	public void enableWarning() {
+		m_bWarningEnabled = true;
+	}
+
+	public void disableWarning() {
+		m_bWarningEnabled = false;
+		
+	}
 }
