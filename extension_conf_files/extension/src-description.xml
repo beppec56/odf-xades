@@ -47,6 +47,11 @@
       <license-text xlink:href="registration/EUPL_v.1.1-licenza.txt" lang="it" />
     </simple-license>
   </registration -->
+  <!-- the following will work on OOo 3.1 and up -->
+  <extension-description>
+	<src xlink:href="pkg-desc/pkg-description-en.txt" lang="en" />
+    <src xlink:href="pkg-desc/pkg-description-it.txt" lang="en" />
+  </extension-description>
   <display-name>	
 	  <name lang="it">Firma digitale standard XAdES (IT)</name>
 	  <name lang="en">XAdES (IT) Standard Digital Signature</name>
