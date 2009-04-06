@@ -96,7 +96,7 @@ public class DigitalSignatureHelper {
      * @param _thePackage
      * @return
      */
-    private Vector<String> createElemeList(Object _othePackage, XStorage _xStorage) {
+    private Vector<String> makeTheElementList(Object _othePackage, XStorage _xStorage) {
     	//TODO: check for ODF 1.0 structure, see what to do in that case.
     	Vector<String> aElements = new Vector<String>(20);
 
@@ -227,8 +227,8 @@ public class DigitalSignatureHelper {
 	            args[1] = ElementModes.READ;
 	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);
 
-//	            Vector<String> aElements = createElemeList(oMyStorage, null); // force the use of the package object
-	            Vector<String> aElements = createElemeList(oMyStorage, _xStorage);
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
+	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
 	            	m_logger.log(aElements.get(i));	            	
