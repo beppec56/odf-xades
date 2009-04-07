@@ -3,8 +3,8 @@
     Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
 
     The Contents of this file are made available subject to
-    the terms of European Union Public License (EUPL) as published
-    by the European Community version 1.1.
+    the terms of European Union Public License (EUPL) version 1.1
+    as published by the European Community.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the EUPL.
@@ -23,7 +23,7 @@
  <manifest:file-entry manifest:full-path="singleton_var_comp.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="signature_component.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="sync_job_comp.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
- <!-- next element it's deprecated in 3.1, to be removed -->
+ <!-- next element it's deprecated in 3.1, to be removed... -->
  <manifest:file-entry manifest:full-path="pkg-desc/pkg-description-it.txt" manifest:media-type="application/vnd.sun.star.package-bundle-description"/>
  <manifest:file-entry manifest:full-path="Addons.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
  <manifest:file-entry manifest:full-path="AddonConfiguration.xcs" manifest:media-type="application/vnd.sun.star.configuration-schema"/>
