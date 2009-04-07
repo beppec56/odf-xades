@@ -5,8 +5,7 @@
 
     The Contents of this file are made available subject to
     the terms of European Union Public License (EUPL) as published
-    by the European Community, either version 1.1 of the License,
-    or any later version.
+    by the European Community version 1.1.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the EUPL.
@@ -81,7 +80,7 @@
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">XAdES (IT) Digital Signature extension
 (@WEBIDENTBASE@.@NAME@)
-Licensed under EUPL version 1.1 or later
+Licensed under EUPL version 1.1.
 Copyright 2009 Giuseppe Castagno
 Copyright 2009 Roberto Resoli
 
@@ -90,8 +89,7 @@ user interface.
 </value>
 				<value xml:lang="it">Estensione per firma digitale modalità XAdES (IT).
 (@WEBIDENTBASE@.@NAME@)
-Concesso in licenza a norma dell'EUPL versione 1.1 o
-successiva
+Concesso in licenza a norma dell'EUPL versione 1.1.
 Copyright 2009 Giuseppe Castagno
 Copyright 2009 Roberto Resoli
 

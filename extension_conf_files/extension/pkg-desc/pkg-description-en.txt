@@ -1,7 +1,7 @@
 Digital signature extension
 XAdES modality, Italian standard.
 (@WEBIDENTBASE@.@NAME@)
-License GPL version 3 or later.
+Licensed under the EUPL V.1.1.
 Copyright (c) 2009 Giuseppe Castagno
 Copyright (c) 2009 Roberto Resoli
 

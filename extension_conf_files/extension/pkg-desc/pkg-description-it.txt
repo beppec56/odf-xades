@@ -1,7 +1,7 @@
 Estensione per firma digitale
 modalità XAdES (IT).
 (@WEBIDENTBASE@.@NAME@)
-Licenza GPL versione 3 o versioni successive
+Concesso in licenza a norma della EUPL V.1.1.
 Copyright (c) 2009 Giuseppe Castagno
 Copyright (c) 2009 Roberto Resoli
 
