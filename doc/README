@@ -139,6 +139,8 @@ The build.xml properties are the following:
 
 	l10n						contains the localization source data, used to generate the correct
    								xml structured file to be used in the extension.
+   								
+	scratch						contains stuff used to carry on the developing job. 						   								
 
 5) To build from the operating sistem command line (if you checked out as explained in a
    unique workspace), go to project extension_conf_files, it contains the main ant
