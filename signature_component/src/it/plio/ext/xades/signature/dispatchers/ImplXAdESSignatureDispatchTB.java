@@ -3,9 +3,8 @@
  *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
  *  
  *  The Contents of this file are made available subject to
- *  the terms of European Union Public License (EUPL) as published
- *  by the European Community, either version 1.1 of the License,
- *  or any later version.
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the EUPL.
@@ -157,7 +156,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			else
 				m_logger.info("No singleton data");
 			
-			Utilities.showInterfaces(this, oObj);
+//			Utilities.showInterfaces(this, oObj);
 // obtain the property service
 
 // set an integer property, just to check
