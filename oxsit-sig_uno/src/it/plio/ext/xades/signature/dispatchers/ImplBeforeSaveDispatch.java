@@ -22,9 +22,9 @@
 
 package it.plio.ext.xades.signature.dispatchers;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.xades.dispatchers.ImplDispatchSynch;
-import it.plio.ext.xades.ooo.GlobConstant;
-//import it.plio.ext.xades.ooo.ui.DialogListCertificates;
+//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XFrame;

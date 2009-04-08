@@ -22,10 +22,10 @@
 
 package it.plio.ext.xades.jobs.dispatchers;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.xades.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.xades.dispatchers.threads.OnewayDispatchExecutor;
 import it.plio.ext.xades.jobs.sync.GlobConstantJobs;
-import it.plio.ext.xades.ooo.GlobConstant;
 
 import java.util.Collection;
 import java.util.HashMap;

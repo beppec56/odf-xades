@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo;
+package it.plio.ext.oxsit.ooo;
 
 /**
  * this class contains the global variables needed by all this implemenatation
@@ -107,7 +107,7 @@ public class GlobConstant {
 	public static final String	m_sMAX_FILE_SIZE	 							= "MaxFileSize";// int
 
 	//// for singleton and XLogger
-	public static final String m_sSINGLETON_SERVICE = "it.plio.ext.xades.singleton.GlobalVariables";
+	public static final String m_sSINGLETON_SERVICE = "it.plio.ext.oxsit.singleton.GlobalVariables";
 	public static final String m_sSINGLETON_SERVICE_INSTANCE = "/singletons/"+m_sSINGLETON_SERVICE;
 	
 	public static final int	m_nLOG_LEVEL_FINE									= 0;

@@ -22,6 +22,8 @@
 
 package it.plio.ext.xades.ooo.ui;
 
+import it.plio.ext.oxsit.ooo.ui.ControlDims;
+
 public class CertifTreeDlgDims {
 	private static int m_nDsWidth = 350; //minimum value
 	private static int m_nDsHeigh = 200; //minimum value

@@ -24,8 +24,10 @@ package it.plio.ext.xades.ooo.ui;
 
 import java.util.LinkedList;
 
-import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.BasicDialog;
+import it.plio.ext.oxsit.ooo.ui.ControlDims;
 import it.plio.ext.xades.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.xades.ooo.ui.test.SignatureStateInDocumentOK;

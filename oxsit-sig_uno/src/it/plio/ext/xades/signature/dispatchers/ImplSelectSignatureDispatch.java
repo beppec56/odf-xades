@@ -22,9 +22,9 @@
 
 package it.plio.ext.xades.signature.dispatchers;
 
+import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.xades.dispatchers.ImplDispatchSynch;
-import it.plio.ext.xades.logging.XDynamicLogger;
 import it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes;
 import it.plio.ext.xades.ooo.ui.DialogInformation;
 import it.plio.ext.xades.ooo.ui.DialogQuery;
@@ -100,7 +100,7 @@ public class ImplSelectSignatureDispatch extends ImplDispatchAsynch implements
 				// yes save the current document
 				com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
 				aParseURL[0] = new com.sun.star.util.URL();
-				aParseURL[0].Complete = it.plio.ext.xades.ooo.GlobConstant.m_sUNO_SAVE_AS_URL_COMPLETE;
+				aParseURL[0].Complete = it.plio.ext.oxsit.ooo.GlobConstant.m_sUNO_SAVE_AS_URL_COMPLETE;
 				com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];
 
 				com.sun.star.frame.XDispatchProvider xProvider = (com.sun.star.frame.XDispatchProvider) UnoRuntime

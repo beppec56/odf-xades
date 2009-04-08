@@ -22,13 +22,13 @@
 
 package it.plio.ext.xades;
 
-import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.xades.ooo.registry.ToolbarButtonTitleRegistryAccess;
-import it.plio.ext.xades.ooo.ui.DialogAbout;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.registry.ToolbarButtonTitleRegistryAccess;
+import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 import it.plio.ext.xades.ooo.ui.DialogCertificateTree;
 import it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes;
-//import it.plio.ext.xades.ooo.ui.DialogListCertificates;
+//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 import it.plio.ext.xades.utilities.OOoServerInfo;
 
 import com.sun.star.frame.XDesktop;

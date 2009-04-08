@@ -98,7 +98,7 @@ public class SignatureStateInDocument {
 		// for every string meant for the multi fixed text display
 		// devise a method to change the character font strike
 		// the first character in the string marks the stroke type
-		// (see function: it.plio.ext.xades.ooo.ui.TreeNodeDescriptor.EnableDisplay(boolean) for
+		// (see function: it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.EnableDisplay(boolean) for
 		// for information on how they are interpreted):
 		// b	the string will be in bold
 		// B

@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui;
 
-import it.plio.ext.xades.Utilities;
+import it.plio.ext.oxsit.Utilities;
 
 /**
  * costanti riprese da svtools/inc/controldims.hrc standard per GUI OOo

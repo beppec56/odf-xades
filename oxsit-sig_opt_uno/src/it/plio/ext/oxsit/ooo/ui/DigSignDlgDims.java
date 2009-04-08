@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui;
 
 
 /**

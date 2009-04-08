@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.options;
+package it.plio.ext.oxsit.ooo.options;
 
-import it.plio.ext.xades.ooo.options.SingleControlDescription.ControlTypeCode;
-import it.plio.ext.xades.ooo.ui.DialogAbout;
+import it.plio.ext.oxsit.ooo.options.SingleControlDescription.ControlTypeCode;
+import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.XControl;
@@ -44,7 +44,7 @@ public class ManageGeneralOptions extends ManageOptions  {
 
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageGeneralOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.xades.options.ManageGeneralOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageGeneralOptions" };
 
     private int m_nAboutButton = 0;
     private int m_nBrowseInternetButton = 0;

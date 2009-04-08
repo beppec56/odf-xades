@@ -70,18 +70,18 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XModifiable;
 import com.sun.star.bridge.XInstanceProvider;
 
-import it.plio.ext.xades.Utilities;
+import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.xades.dispatchers.threads.ImplXAdESThread;
-import it.plio.ext.xades.logging.XDynamicLogger;
-import it.plio.ext.xades.ooo.GlobConstant;
 import it.plio.ext.xades.signature.dispatchers.DocumentURLStatusHelper;
 import it.plio.ext.xades.singleton.SigletonGlobalVarConstants;
 import it.plio.ext.xades.singleton.SingletonGlobalVariables;
-import it.plio.ext.xades.ooo.pack.TestWriteDigitalSignature;
-import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.xades.ooo.ui.DialogCertificateTree;
-//import it.plio.ext.xades.ooo.ui.DialogListCertificates;
+//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
 
@@ -148,7 +148,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 
 		m_logger.info("ctor (1)");
 
-		final String sSingletonService = "/singletons/it.plio.ext.xades.singleton.GlobalVariables";
+		final String sSingletonService = "/singletons/it.plio.ext.oxsit.singleton.GlobalVariables";
 		try {
 			Object oObj = xContext.getValueByName(sSingletonService);
 			if(oObj != null)

@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.logging;
+package it.plio.ext.oxsit.logging;
 
 import java.util.logging.Formatter;
 import java.util.logging.Handler;

@@ -24,10 +24,10 @@ package it.plio.ext.xades.signature;
 
 import java.util.Date;
 
-import it.plio.ext.xades.logging.XDynamicLogger;
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes;
-//import it.plio.ext.xades.ooo.ui.DialogListCertificates;
+//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 import it.plio.ext.xades.signature.dispatchers.ImplBeforeSaveAsDispatch;
 import it.plio.ext.xades.signature.dispatchers.ImplBeforeSaveDispatch;
 import it.plio.ext.xades.signature.dispatchers.ImplXAdESSignatureDispatch;

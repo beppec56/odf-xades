@@ -22,8 +22,8 @@
 
 package it.plio.ext.xades.singleton;
 
-import it.plio.ext.xades.logging.LocalLogFormatter;
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.logging.LocalLogFormatter;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -144,7 +144,7 @@ public class SingletonGlobalVariables extends WeakBase
 
 		m_LoggerConfigAccess = new LoggerParametersAccess(_ctx);
 		
-		m_log = Logger.getLogger("it.plio.ext.xades");		
+		m_log = Logger.getLogger("it.plio.ext.oxsit");		
 		m_log.setUseParentHandlers(false);//disables the console output of the root logger
 
 		getLoggingConfiguration();

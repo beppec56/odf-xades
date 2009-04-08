@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo;
+package it.plio.ext.oxsit.ooo;
 
-import it.plio.ext.xades.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
 
 import java.util.Collection;
 import java.util.Date;

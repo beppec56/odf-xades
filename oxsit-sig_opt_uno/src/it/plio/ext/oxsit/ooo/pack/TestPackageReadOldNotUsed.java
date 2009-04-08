@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.pack;
+package it.plio.ext.oxsit.ooo.pack;
 
 import com.sun.star.beans.Property;
 import com.sun.star.beans.UnknownPropertyException;

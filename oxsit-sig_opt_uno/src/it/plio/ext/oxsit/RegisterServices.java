@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades;
+package it.plio.ext.oxsit;
 
-import it.plio.ext.xades.ooo.options.ManageGeneralOptions;
-import it.plio.ext.xades.ooo.options.ManageLoggingOptions;
+import it.plio.ext.oxsit.ooo.options.ManageGeneralOptions;
+import it.plio.ext.oxsit.ooo.options.ManageLoggingOptions;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;

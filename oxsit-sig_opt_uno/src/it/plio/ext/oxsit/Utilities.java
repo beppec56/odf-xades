@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades;
+package it.plio.ext.oxsit;
 
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.beans.*;
 import com.sun.star.container.*;

@@ -20,11 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.registry;
+package it.plio.ext.oxsit.ooo.registry;
 
-import it.plio.ext.xades.logging.XDynamicLogger;
-import it.plio.ext.xades.ooo.ConfigurationAccess;
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.ooo.ConfigurationAccess;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;

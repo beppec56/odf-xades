@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui;
 
 import com.sun.star.awt.XItemListener;
 import com.sun.star.beans.XPropertySet;

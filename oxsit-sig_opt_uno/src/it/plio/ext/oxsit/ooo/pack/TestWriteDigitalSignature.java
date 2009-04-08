@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.pack;
+package it.plio.ext.oxsit.ooo.pack;
 
 import java.util.Vector;
 

@@ -27,8 +27,8 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.xades.dispatchers.ImplDispatchSynch;
-import it.plio.ext.xades.ooo.GlobConstant;
 
 /**
  * @author beppe

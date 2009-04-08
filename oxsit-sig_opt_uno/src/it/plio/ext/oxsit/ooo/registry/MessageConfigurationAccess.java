@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.registry;
+package it.plio.ext.oxsit.ooo.registry;
 
-import it.plio.ext.xades.ooo.ConfigurationAccess;
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.ConfigurationAccess;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;

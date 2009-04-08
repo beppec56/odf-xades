@@ -62,7 +62,7 @@
             <value>%origin%/dialogs/leaf_general.xdl</value>
           </prop>
           <prop oor:name="EventHandlerService">
-            <value>it.plio.ext.xades.options.ManageGeneralOptions</value>
+            <value>it.plio.ext.oxsit.options.ManageGeneralOptions</value>
           </prop>
           <prop oor:name="GroupId">
             <value>@WEBIDENTBASE@.@NAME@.options.node</value>
@@ -86,7 +86,7 @@
             <value>%origin%/dialogs/leaf_logging.xdl</value>
           </prop>
           <prop oor:name="EventHandlerService">
-            <value>it.plio.ext.xades.options.ManageLoggingOptions</value>
+            <value>it.plio.ext.oxsit.options.ManageLoggingOptions</value>
           </prop>
           <prop oor:name="GroupId">
             <value>@WEBIDENTBASE@.@NAME@.options.node</value>

@@ -22,8 +22,8 @@
 
 package it.plio.ext.xades.signature.dispatchers;
 
-import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.ooo.GlobalVariables;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.GlobalVariables;
 
 import com.sun.star.lang.XEventListener;
 import com.sun.star.uno.XComponentContext;

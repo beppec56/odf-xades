@@ -24,14 +24,14 @@ package it.plio.ext.xades.jobs.sync;
 
 import java.util.Date;
 
-import it.plio.ext.xades.Utilities;
-import it.plio.ext.xades.logging.XDynamicLogger;
-import it.plio.ext.xades.ooo.GlobConstant;
-import it.plio.ext.xades.ooo.GlobalVariables;
+import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.GlobalVariables;
+import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.xades.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.xades.singleton.SigletonGlobalVarConstants;
 import it.plio.ext.xades.singleton.SingletonGlobalVariables;
-import it.plio.ext.xades.ooo.pack.DigitalSignatureHelper;
 
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.WindowAttribute;
@@ -121,7 +121,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	// protected XMultiComponentFactory m_xRemoteServiceManager = null;
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
-	private final String sSingletonService = "/singletons/it.plio.ext.xades.singleton.GlobalVariables";
+	private final String sSingletonService = "/singletons/it.plio.ext.oxsit.singleton.GlobalVariables";
 	private SingletonGlobalVariables globalSign_data = null;
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;

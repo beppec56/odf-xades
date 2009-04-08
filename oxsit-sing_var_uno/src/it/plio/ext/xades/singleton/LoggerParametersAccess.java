@@ -22,7 +22,7 @@
 
 package it.plio.ext.xades.singleton;
 
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;

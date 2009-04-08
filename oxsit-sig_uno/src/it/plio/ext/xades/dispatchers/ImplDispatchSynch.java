@@ -23,7 +23,7 @@
 package it.plio.ext.xades.dispatchers;
 
 
-import it.plio.ext.xades.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;

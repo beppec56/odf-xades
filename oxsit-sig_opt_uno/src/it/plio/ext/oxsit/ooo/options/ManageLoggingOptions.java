@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.options;
+package it.plio.ext.oxsit.ooo.options;
 
-import it.plio.ext.xades.ooo.options.SingleControlDescription.ControlTypeCode;
+import it.plio.ext.oxsit.ooo.options.SingleControlDescription.ControlTypeCode;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.ItemEvent;
@@ -48,7 +48,7 @@ import com.sun.star.uno.XComponentContext;
 public class ManageLoggingOptions extends ManageOptions  implements XItemListener {
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageLoggingOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.xades.options.ManageLoggingOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageLoggingOptions" };
 
     private int m_nBrowseSystemPathPB = 0;
 	private int m_nEnableFileCtl; // the file enable/disable check box

@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.pack;
+package it.plio.ext.oxsit.ooo.pack;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -37,8 +37,8 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.lang.*;
 import com.sun.star.uno.XComponentContext;
 
-import it.plio.ext.xades.Utilities;
-import it.plio.ext.xades.logging.XDynamicLogger;
+import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.logging.XDynamicLogger;
 
 import java.util.Vector;
 

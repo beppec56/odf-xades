@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.logging;
+package it.plio.ext.oxsit.logging;
 
-import it.plio.ext.xades.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.logging.XLogger;
 import com.sun.star.uno.UnoRuntime;

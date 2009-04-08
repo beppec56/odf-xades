@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui;
 
-import it.plio.ext.xades.Utilities;
-import it.plio.ext.xades.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XDialog;

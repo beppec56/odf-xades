@@ -55,12 +55,12 @@ import com.sun.star.util.URL;
 import com.sun.star.util.XModifiable;
 import com.sun.star.util.XURLTransformer;
 
+import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
-import it.plio.ext.xades.logging.XDynamicLogger;
-import it.plio.ext.xades.ooo.GlobConstant;
 import it.plio.ext.xades.signature.dispatchers.DocumentURLStatusHelper;
 import it.plio.ext.xades.ooo.ui.DialogCertificateTree;
-//import it.plio.ext.xades.ooo.ui.DialogListCertificates;
+//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 
 /**
  * @author beppe
@@ -125,8 +125,8 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		try {
 			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
 			aParseURL[0] = new com.sun.star.util.URL();
-			aParseURL[0].Complete = it.plio.ext.xades.ooo.GlobConstant.m_sSIGN_PROTOCOL_BASE_URL
-			+ it.plio.ext.xades.ooo.GlobConstant.m_sSIGN_DIALOG_PATH_TB;
+			aParseURL[0].Complete = it.plio.ext.oxsit.ooo.GlobConstant.m_sSIGN_PROTOCOL_BASE_URL
+			+ it.plio.ext.oxsit.ooo.GlobConstant.m_sSIGN_DIALOG_PATH_TB;
 			com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];
 
 			com.sun.star.frame.XDispatchProvider xProvider = (com.sun.star.frame.XDispatchProvider) UnoRuntime
