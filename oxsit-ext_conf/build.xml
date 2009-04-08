@@ -64,7 +64,7 @@ build-extension
 	<property name="ooominversion" value="3.0" />
 
 	<!-- base name of the extension file -->
-	<property name="ext_name" value="ooo_xades_sign_it" />
+	<property name="ext_name" value="${project_friendly_name}" />
 
 	<!-- web repository subdirectory -->
 	<property name="wbme" value="${ext_name}" />
