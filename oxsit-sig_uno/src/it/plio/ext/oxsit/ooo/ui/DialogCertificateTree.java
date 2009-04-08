@@ -137,8 +137,8 @@ public class DialogCertificateTree extends BasicDialog implements
 		if(xPkgInfo != null) {
 			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
 			if(sLoc != null){
-				String aSize = "_26.png"; //for large icons toolbar
-//				String aSize = "_16.png"; //for small icons toolbar
+//				String aSize = "_26.png"; //for large icons toolbar
+				String aSize = "_16.png"; //for small icons toolbar
 				String m_imagesUrl = sLoc + "/images";
 //main, depends from application, for now. To be changed
 				//TODO change to a name not depending from the application
@@ -158,7 +158,7 @@ public class DialogCertificateTree extends BasicDialog implements
 		fillLocalizedString();
 		// the next value should be read from configuration
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
-		CertifTreeDlgDims.setDialogSize(360, 210);
+		CertifTreeDlgDims.setDialogSize(310, 180, 0);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					CertifTreeDlgDims.dsTextFieldWith(),
 					2,
 					"", sEmptyText, true, true, false, false);
-			
+
 	//now change its background color
 			XPropertySet xPSet = (XPropertySet) UnoRuntime
 						.queryInterface( XPropertySet.class, oEdit );
@@ -258,7 +258,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					XTextComponent.class, xTFControl);
 	
 			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB1(),
+					CertifTreeDlgDims.DS_COL_PB2(),
 //					CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
@@ -267,7 +267,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					(short) PushButtonType.STANDARD_value);
 	
 			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB2(),
+					CertifTreeDlgDims.DS_COL_PB3(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					sAdd,
@@ -275,20 +275,20 @@ public class DialogCertificateTree extends BasicDialog implements
 					(short) PushButtonType.STANDARD_value);
 	
 			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB3(),
+					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					sRemove,
 					m_sBtn_RemoveCertLabel,
 					(short) PushButtonType.STANDARD_value);
 			
-			insertButton(this,
+/*			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					sCountSig,
 					m_sBtn_AddCountCertLabel,
-					(short) PushButtonType.STANDARD_value);
+					(short) PushButtonType.STANDARD_value);*/
 			
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB5(),

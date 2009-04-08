@@ -26,7 +26,8 @@ import it.plio.ext.oxsit.ooo.ui.ControlDims;
 
 public class CertifTreeDlgDims {
 	private static int m_nDsWidth = 350; //minimum value
-	private static int m_nDsHeigh = 200; //minimum value
+	private static int m_nDsHeigh = 190; //minimum value
+	private static int m_nDsTreeWidth = 110; //minimum value
 
 	public static final int TD_SP_INNERBORDER_LEFT = 3;
 	public static final int TD_SP_INNERBORDER_RIGHT = 3;
@@ -34,7 +35,7 @@ public class CertifTreeDlgDims {
 	public static final int TD_SP_INNERBORDER_BOTTOM = 3;
 	public static final int SEP_FL_SPACE_Y = 6;
 
-	public static void setDialogSize(int nDs_Width, int nDs_Heigh) {
+	public static void setDialogSize(int nDs_Width, int nDs_Heigh, int nDs_TreeWidth) {
 		m_nDsHeigh = nDs_Heigh;
 //check for correct values
 		/*
@@ -50,10 +51,10 @@ public class CertifTreeDlgDims {
 		else
 			m_nDsWidth = minWith;
 //height minimun is 200
-		if(nDs_Heigh > 190)
+		if(nDs_Heigh > m_nDsHeigh)
 			m_nDsHeigh = nDs_Heigh;
-		else
-			m_nDsHeigh = 190;
+		if(nDs_TreeWidth > m_nDsTreeWidth)
+			m_nDsTreeWidth = nDs_TreeWidth;
 	}
 	
 	public static int dsBtnWidthCertTree() {
@@ -172,11 +173,12 @@ public class CertifTreeDlgDims {
 	}
 
 	public static int dsTextFieldWith() {
+//		return m_nDsTreeWidth;
 		return m_nDsWidth-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT-dsTextFieldColumn();
 	}	
 
 	public static int dsTextFieldColumn() {
-		return (m_nDsWidth/2-
+		return (m_nDsWidth/3-
 				dsTextFieldSpacing());
 	}
 
