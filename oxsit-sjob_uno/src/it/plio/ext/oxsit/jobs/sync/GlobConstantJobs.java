@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.jobs.sync;
+package it.plio.ext.oxsit.jobs.sync;
 
 /** this class contains the global variables needed by all this implemenatation
  * 

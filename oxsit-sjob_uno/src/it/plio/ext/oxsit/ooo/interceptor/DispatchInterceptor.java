@@ -20,11 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.ooo.interceptor;
+package it.plio.ext.oxsit.ooo.interceptor;
 
-import it.plio.ext.xades.jobs.dispatchers.ImplIntSaveAsDispatch;
-import it.plio.ext.xades.jobs.dispatchers.ImplIntSaveDispatch;
-import it.plio.ext.xades.jobs.sync.GlobConstantJobs;
+import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveAsDispatch;
+import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveDispatch;
+import it.plio.ext.oxsit.jobs.sync.GlobConstantJobs;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;

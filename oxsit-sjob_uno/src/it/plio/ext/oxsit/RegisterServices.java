@@ -19,9 +19,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades;
+package it.plio.ext.oxsit;
 
-import it.plio.ext.xades.jobs.sync.SyncJob;
+import it.plio.ext.oxsit.jobs.sync.SyncJob;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;

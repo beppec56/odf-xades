@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.jobs.sync;
+package it.plio.ext.oxsit.jobs.sync;
 
 import java.util.Date;
 
@@ -28,10 +28,10 @@ import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
+import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
 import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
-import it.plio.ext.xades.ooo.interceptor.DispatchInterceptor;
 
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.WindowAttribute;
