@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="OOO3_URE_LIBS/juh.jar" />
+	<classpathentry kind="var" path="OOO3_URE_LIBS/juh.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/jurt.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/jut.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/ridl.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/unoil.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/signature_options_comp"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/singleton_var_comp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_opt_uno"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sing_var_uno"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
