@@ -34,7 +34,8 @@ build-extension
     </description>
 	<!-- set global properties for this build -->
 	<property name="project_name" value="ooo_xades_sign_it" />
-	<property name="support_files" value="extension_conf_files" />
+	<property name="project_friendly_name" value="oxsit" />
+	<property name="support_files" value="${project_friendly_name}-ext_conf" />
 	<property name="doc_dir" value="${basedir}/../doc" />
 	<property name="src" location="src" />
 	<property name="build" location="build" />
@@ -105,13 +106,13 @@ build-extension
 	<property name="license_dir" value="${doc_dir}/licenses"/>
 	<property name="third_party_license" value="${license_dir}/third_parties"/>
 
-	<property name="sig_options_comp" value="signature_options_comp"/>
+	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>
 	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
-	<property name="sig_options_comp_jar" value="${sig_options_comp}.uno.jar"/>
+	<property name="sig_options_comp_jar" value="${project_friendly_name}_sig_opt.uno.jar"/>
 
-	<property name="sing_comp" value="singleton_var_comp"/>
+	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
-	<property name="sing_comp_jar" value="${sing_comp}.uno.jar"/>
+	<property name="sing_comp_jar" value="${project_friendly_name}_sing_var.uno.jar"/>
 
 	<property name="sig_comp" value="signature_component"/>
 	<property name="sig_comp_dir" value="${sig_comp}/dist"/>

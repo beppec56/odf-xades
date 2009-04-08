@@ -27,11 +27,12 @@ the default target must be removed
 
 -->
 <project name="oxsit-sig_opt_uno" default="build-jar" basedir=".">
-	<property name="project_name" value="oxsit-sig_opt_uno" />
+	<property name="project_friendly_name" value="oxsit" />	
+	<property name="project_name" value="${project_friendly_name}-sig_opt_uno" />
 	<description>
-        Build the jar file ${project_name}.jar.
+        Build the jar file ${project_friendly_name}_sig_opt.uno.jar.
     </description>
-	<echo>Build the jar file ${project_name}.jar.</echo>
+	<echo>Build the jar file ${project_friendly_name}_sig_opt.uno.jar.</echo>
 	<!-- set global properties for this build -->
 
 	<!--
@@ -45,7 +46,7 @@ the default target must be removed
 	<property name="build" location="build" />
 	<property name="build-eclipse" location="bin"/>
 	<property name="dist" location="dist" />
-	<property name="extension_jar_file" value="oxsit-sig_opt.uno.jar" />
+	<property name="extension_jar_file" value="${project_friendly_name}_sig_opt.uno.jar" />
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
@@ -148,13 +149,13 @@ the default target must be removed
 				<attribute name="Specification-Title" value="Firma digitale CNIPA" />
 				<attribute name="Specification-Version" value="${spec_version}" />
 				<attribute name="Specification-Vendor" value="http://www.plio.it" />
-				<attribute name="Implementation-Title" value="oxsit-sig_opt_uno" />
+				<attribute name="Implementation-Title" value="${project_name}" />
 				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
 				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.xades.RegisterServices" />
-				<attribute name="Class-Path" value="oxsit-sig_opt.uno.jar" />
+				<attribute name="Class-Path" value="" />
 				<!--
 					the following is needed to start via java -jar namefile.jar
 					the main class load a loader to start the user class correctly in OOo
