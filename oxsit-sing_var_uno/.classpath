@@ -7,6 +7,6 @@
 	<classpathentry kind="var" path="OOO3_LIBS/jut.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/ridl.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/unoil.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/signature_options_comp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_opt_uno"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
