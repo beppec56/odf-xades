@@ -75,11 +75,11 @@ import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
+import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
 import it.plio.ext.xades.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.xades.dispatchers.threads.ImplXAdESThread;
 import it.plio.ext.xades.signature.dispatchers.DocumentURLStatusHelper;
-import it.plio.ext.xades.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.xades.singleton.SingletonGlobalVariables;
 import it.plio.ext.xades.ooo.ui.DialogCertificateTree;
 //import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 

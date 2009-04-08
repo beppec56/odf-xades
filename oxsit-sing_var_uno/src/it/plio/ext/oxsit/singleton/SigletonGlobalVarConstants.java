@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.singleton;
+package it.plio.ext.oxsit.singleton;
 
 /**
  * this class contains the global variables needed by the singleton implementation

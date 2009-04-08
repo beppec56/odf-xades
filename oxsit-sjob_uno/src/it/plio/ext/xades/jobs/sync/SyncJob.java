@@ -29,9 +29,9 @@ import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
+import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
+import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
 import it.plio.ext.xades.ooo.interceptor.DispatchInterceptor;
-import it.plio.ext.xades.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.xades.singleton.SingletonGlobalVariables;
 
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.WindowAttribute;

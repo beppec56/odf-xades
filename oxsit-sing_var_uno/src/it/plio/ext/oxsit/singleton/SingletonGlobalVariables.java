@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades.singleton;
+package it.plio.ext.oxsit.singleton;
 
 import it.plio.ext.oxsit.logging.LocalLogFormatter;
 import it.plio.ext.oxsit.ooo.GlobConstant;

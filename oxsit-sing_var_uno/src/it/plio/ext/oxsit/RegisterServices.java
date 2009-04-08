@@ -20,9 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.xades;
+package it.plio.ext.oxsit;
 
-import it.plio.ext.xades.singleton.SingletonGlobalVariables;
+import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
