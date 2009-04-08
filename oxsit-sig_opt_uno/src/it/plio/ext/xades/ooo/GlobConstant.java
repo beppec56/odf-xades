@@ -41,7 +41,7 @@ public class GlobConstant {
 	/// base of configuration item
 	public static final String m_sWEBIDENTBASE = "it.plio.ext"; // extension owner, used in building it,
 																// same name, same meaning in extension_conf_files/build.xml
-	public static final String m_sEXT_NAME ="ooo_xades_sign_it"; //name of the extension, used in building it,
+	public static final String m_sEXT_NAME ="oxsit"; //name of the extension, used in building it,
 																		// same name, same meaning in extension_conf_files/build.xml
 	public static final String m_sEXTENSION_IDENTIFIER = m_sWEBIDENTBASE+"."+m_sEXT_NAME;
 	public static final String m_sEXTENSION_BASE_KEY = "/"+m_sWEBIDENTBASE+"."+ m_sEXT_NAME;
