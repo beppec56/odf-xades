@@ -30,7 +30,7 @@
 			    officecfg/registry/schema/org/openoffice/Office/UI/WindowState.xcs
 			    which holds the configuration
 			-->
-			<node oor:name="private:resource/toolbar/addon_it.plio.ext.xades.OfficeToolBar" oor:op="replace">
+			<node oor:name="private:resource/toolbar/addon_it.plio.ext.oxsit.OfficeToolBar" oor:op="replace">
 				<prop oor:name="UIName" oor:type="xs:string" oor:localized="true">
 					<value xml:lang="en">XAdES (IT) Signature</value>
 					<value xml:lang="it">Firma XAdES (IT)</value>

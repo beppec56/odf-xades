@@ -22,9 +22,9 @@
 
 package it.plio.ext.xades.jobs.dispatchers;
 
+import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
+import it.plio.ext.oxsit.dispatchers.threads.OnewayDispatchExecutor;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.xades.dispatchers.threads.IDispatchImplementer;
-import it.plio.ext.xades.dispatchers.threads.OnewayDispatchExecutor;
 import it.plio.ext.xades.jobs.sync.GlobConstantJobs;
 
 import java.util.Collection;
@@ -142,7 +142,7 @@ public class ImplIntSignatureDispatch extends WeakBase implements XDispatch,
 					XURLTransformer.class, obj );
 			xTransformer.parseStrict( aParseURL );
 
-			m_nReturnValue = it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes.OOoSignatureSelected;
+			m_nReturnValue = it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes.OOoSignatureSelected;
 			// Ask it for right dispatch object for our URL.
 			// Force given frame as target for following dispatch by using "",
 			// it's the same as "_self".
@@ -174,7 +174,7 @@ public class ImplIntSignatureDispatch extends WeakBase implements XDispatch,
 						println( "interrupted" );
 					}
 
-					if (m_nReturnValue == it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes.CNIPASignatureSelected) {
+					if (m_nReturnValue == it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes.CNIPASignatureSelected) {
 						// dispatch the sign stuff (asyncronous)
 						aParseURL[0].Complete = GlobConstant.m_sSIGN_PROTOCOL_BASE_URL
 								+ GlobConstant.m_sSIGN_DIALOG_PATH;
@@ -235,7 +235,7 @@ public class ImplIntSignatureDispatch extends WeakBase implements XDispatch,
 						} else
 							printlnName( "No dispatcher for " + aParseURL[0].Complete );
 						return;
-					} else if (m_nReturnValue == it.plio.ext.xades.ooo.ui.DialogChooseSignatureTypes.NoSignatureSelected)
+					} else if (m_nReturnValue == it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes.NoSignatureSelected)
 						return; // no signature
 				} else
 					printlnName( "No dispatcher for " + aParseURL[0].Complete );

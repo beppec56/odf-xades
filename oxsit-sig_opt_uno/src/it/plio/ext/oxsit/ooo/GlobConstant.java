@@ -57,7 +57,7 @@ public class GlobConstant {
 	 * the following constant are used in ProtocolHandler.xcu(.xml) and
 	 * Addon.xcu(.xml) in the extension pay attention before modifiying !
 	 */
-	public static final String	m_sSIGN_PROTOCOL_BASE_URL				= m_sWEBIDENTBASE + ".xades.comp.SignatureHandler:";
+	public static final String	m_sSIGN_PROTOCOL_BASE_URL				= m_sWEBIDENTBASE + ".oxsit.comp.SignatureHandler:";
 	//object to sign for menu item
 	public static final String	m_sSIGN_DIALOG_PATH						= "SignDialog";
 	// specific object for extended toolbar
@@ -107,7 +107,7 @@ public class GlobConstant {
 	public static final String	m_sMAX_FILE_SIZE	 							= "MaxFileSize";// int
 
 	//// for singleton and XLogger
-	public static final String m_sSINGLETON_SERVICE = "it.plio.ext.oxsit.singleton.GlobalVariables";
+	public static final String m_sSINGLETON_SERVICE = m_sWEBIDENTBASE + ".oxsit.singleton.GlobalVariables";
 	public static final String m_sSINGLETON_SERVICE_INSTANCE = "/singletons/"+m_sSINGLETON_SERVICE;
 	
 	public static final int	m_nLOG_LEVEL_FINE									= 0;
