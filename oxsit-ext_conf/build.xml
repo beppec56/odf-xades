@@ -114,9 +114,9 @@ build-extension
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
 	<property name="sing_comp_jar" value="${project_friendly_name}_sing_var.uno.jar"/>
 
-	<property name="sig_comp" value="signature_component"/>
+	<property name="sig_comp" value="${project_friendly_name}-sig_uno"/>
 	<property name="sig_comp_dir" value="${sig_comp}/dist"/>
-	<property name="sig_comp_jar" value="${sig_comp}.uno.jar"/>
+	<property name="sig_comp_jar" value="${project_friendly_name}_sig.uno.jar"/>
 
 	<property name="job_comp" value="sync_job_comp"/>
 	<property name="job_comp_dir" value="${job_comp}/dist"/>

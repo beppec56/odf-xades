@@ -29,10 +29,11 @@ the default target must be removed
 <project name="oxsit-sing_var_uno" default="build-jar" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
 	<property name="project_name" value="${project_friendly_name}-sing_var_uno" />
+	<property name="extension_jar_file" value="${project_friendly_name}_sing_var.uno.jar" />
 	<description>
-        Build the jar file ${project_friendly_name}_sing_var.uno.jar.
+        Build the jar file ${extension_jar_file}.
     </description>
-	<echo>Build the jar file ${project_friendly_name}_sing_var.uno.jar.</echo>
+	<echo>Build the jar file ${extension_jar_file}.</echo>
 	<!-- set global properties for this build -->
 
 	<!--
@@ -46,7 +47,6 @@ the default target must be removed
 	<property name="build" location="build" />
 	<property name="build-eclipse" location="bin"/>
 	<property name="dist" location="dist" />
-	<property name="extension_jar_file" value="${project_friendly_name}-sing_var.uno.jar" />
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
