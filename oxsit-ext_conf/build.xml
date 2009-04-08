@@ -36,7 +36,7 @@ build-extension
 	<property name="project_name" value="ooo_xades_sign_it" />
 	<property name="project_friendly_name" value="oxsit" />
 	<property name="support_files" value="${project_friendly_name}-ext_conf" />
-	<property name="doc_dir" value="${basedir}/../doc" />
+	<property name="doc_dir" value="${basedir}/../oxsit-doc" />
 	<property name="src" location="src" />
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
@@ -118,9 +118,9 @@ build-extension
 	<property name="sig_comp_dir" value="${sig_comp}/dist"/>
 	<property name="sig_comp_jar" value="${project_friendly_name}_sig.uno.jar"/>
 
-	<property name="job_comp" value="sync_job_comp"/>
+	<property name="job_comp" value="${project_friendly_name}-sjob_uno"/>
 	<property name="job_comp_dir" value="${job_comp}/dist"/>
-	<property name="job_comp_jar" value="${job_comp}.uno.jar"/>	
+	<property name="job_comp_jar" value="${project_friendly_name}_sjob.uno.jar"/>	
 
 	<target name="build-jar" description="generate the subproject jar">
 		<echo>======== *** =========</echo>

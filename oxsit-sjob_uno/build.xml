@@ -26,12 +26,14 @@ ATTENTION:
 the default target must be removed
 
 -->
-<project name="sync_job_comp" default="build-jar" basedir=".">
-	<property name="project_name" value="sync_job_comp" />
+<project name="oxsit-sjob_uno" default="build-jar" basedir=".">
+	<property name="project_friendly_name" value="oxsit" />	
+	<property name="project_name" value="${project_friendly_name}-sjob_uno" />
+	<property name="extension_jar_file" value="${project_friendly_name}_sjob.uno.jar" />
 	<description>
-        Build the jar file ${project_name}.jar.
+        Build the jar file ${extension_jar_file}.
     </description>
-	<echo>Build the jar file ${project_name}.jar.</echo>
+	<echo>Build the jar file ${extension_jar_file}.</echo>
 	<!-- set global properties for this build -->
 
 	<!--
@@ -101,7 +103,7 @@ the default target must be removed
 	<property name="arch" location="${archr}/${project_name}-${version}" />
 
 	<dependset>
-		<srcfilelist dir="${xades_myclass_path}" files="signature_component.uno.jar" />
+		<srcfilelist dir="${xades_myclass_path}" files="${project_friendly_name}-sig.uno.jar" />
 		<targetfilelist dir="${dist}/lib" files="${extension_jar_file}" />
 	</dependset>
 
@@ -113,7 +115,7 @@ the default target must be removed
 	</target>
 
 	<target name="compile" depends="init" description="compile the source ">
-		<property name="my_ooo_classes_path3" value="${src}/../../singleton_var_comp/dist/lib" />
+		<property name="my_ooo_classes_path3" value="${src}/../../${project_friendly_name}-sing_var_uno/dist/lib" />
 		<available file="${my_ooo_classes_path3}" type="dir" property="my_ooo_classes_path3.available" value="false" />
 		<fail message="No signature_component classes available. Please edit the build file to correct it.(${my_ooo_classes_path3})">
 			<condition>
@@ -122,7 +124,7 @@ the default target must be removed
 				</not>
 			</condition>
 		</fail>
-		<property name="my_ooo_classes_path" value="${src}/../../signature_options_comp/dist/lib" />
+		<property name="my_ooo_classes_path" value="${src}/../../${project_friendly_name}-sig_opt_uno/dist/lib" />
 		<available file="${my_ooo_classes_path}" type="dir" property="my_ooo_classes_path.available" value="false" />
 		<fail message="No signature_options_comp classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
 			<condition>
@@ -131,7 +133,7 @@ the default target must be removed
 				</not>
 			</condition>
 		</fail>
-		<property name="my_ooo_classes_path2" value="${src}/../../signature_component/dist/lib" />
+		<property name="my_ooo_classes_path2" value="${src}/../../${project_friendly_name}-sig_uno/dist/lib" />
 		<available file="${my_ooo_classes_path2}" type="dir" property="my_ooo_classes_path2.available" value="false" />
 		<fail message="No signature_component classes available. Please edit the build file to correct it.(${my_ooo_classes_path2})">
 			<condition>
@@ -148,9 +150,9 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
-				<pathelement path="${my_ooo_classes_path3}/singleton_var_comp.uno.jar" />
-				<pathelement path="${my_ooo_classes_path2}/signature_component.uno.jar" />
-				<pathelement path="${my_ooo_classes_path}/signature_options_comp.uno.jar" />
+				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}_sig_opt.uno.jar" />
+				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}_sing_var.uno.jar" />
+				<pathelement path="${my_ooo_classes_path2}/${project_friendly_name}_sig.uno.jar" />
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -185,7 +187,7 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.xades.RegisterServices" />
-				<attribute name="Class-Path" value="signature_component.uno.jar signature_options_comp.uno.jar singleton_var_comp.uno.jar" />
+				<attribute name="Class-Path" value="${project_friendly_name}_sig_opt.uno.jar ${project_friendly_name}_sing_var.uno.jar ${project_friendly_name}_sig.uno.jar" />
 				<!--
 					the following is needed to start via java -jar namefile.jar
 					the main class load a loader to start the user class correctly in OOo
