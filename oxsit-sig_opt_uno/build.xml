@@ -155,7 +155,7 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.xades.RegisterServices" />
-				<attribute name="Class-Path" value="" />
+				<attribute name="Class-Path" value="" /> <!-- no need for class, this jar is the lowest one in use -->
 				<!--
 					the following is needed to start via java -jar namefile.jar
 					the main class load a loader to start the user class correctly in OOo

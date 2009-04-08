@@ -19,7 +19,7 @@
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
 <manifest:manifest>
- <manifest:file-entry manifest:full-path="oxsit_sign_opt.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
+ <manifest:file-entry manifest:full-path="oxsit_sig_opt.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="oxsit_sing_var.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="oxsit_sig.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="oxsit_sjob.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
