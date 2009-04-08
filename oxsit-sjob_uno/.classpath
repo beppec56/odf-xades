@@ -7,16 +7,8 @@
 	<classpathentry kind="var" path="OOO3_LIBS/jut.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/ridl.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/unoil.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/signature_options_comp">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="signature_options_comp/dist/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/signature_component">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="signature_component/dist/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/singleton_var_comp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_opt_uno"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_uno"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sing_var_uno"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
