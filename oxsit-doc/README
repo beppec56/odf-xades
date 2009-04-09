@@ -4,8 +4,8 @@ This is a proof of concept project for an extension performing custom digital si
 with OOo.
 This is only a portion of the UI side of the whole stuff.
 
-You need ant (http://ant.apache.org) installed and a Java compiler version 1.5 is suggested.
-I used only with Sun's JSE, I didn't check with gjc.
+You need ant (http://ant.apache.org) installed and a Java compiler version 1.6 is suggested.
+I used only with Sun's JVM, It wasn't checked with gjc.
 
 The Java compliance level is 1.6, change your Eclipse setting if necessary.
 
@@ -142,7 +142,7 @@ The build.xml properties are the following:
    								
 	oxsit-scratch				contains stuff used to carry on the developing job. 						   								
 
-5) To build from the operating sistem command line (if you checked out as explained in a
+5) To build from the operating system command line (if you checked out as explained in a
    unique workspace), go to project extension_conf_files, it contains the main ant
    build.xml file and issue the command:
 
@@ -232,11 +232,11 @@ Under Windows I only installed the extension: it worked.
 5) if something goes wrong with the extension (for example OOo enters in a crash/restart/crash... loop) you
    need to remove the extension issue the following in the command line:
 
-   ./unopkg remove it.plio.ext.xades_signature_extension
+   ./unopkg remove it.plio.oxsit
    
    that will remove the extension completely.
 
-6) When installed, the extension can be enebled / disabled from the Tools > Extension Manager... dialog.
+6) When installed, the extension can be enabled / disabled from the Tools > Extension Manager... dialog.
    IMPORTANT: before changing the state, be it Enable or Disable, ALL the document windows in OOo
    MUST be closed. Furthermore, OOo needs to be restarted after every state change. 
    If you fail to do so, the initialization is not carried out properly.
@@ -253,7 +253,7 @@ The parameter for Java 1.5 and up are:
 
 To change them, open the OOo options dialog and then the Java configuration item.
 Click on the Parameters button and add the parameter (a single one).
-If the need arise, you can use a different address for the trnsport, 8200 is the
+If the need arise, you can use a different address for the transport, 8200 is the
 one that best suits my needs (see below for address issues).
 
 In order to apply the parameter, you need to restart OOo (the quickstarter too).
@@ -298,7 +298,7 @@ run, the started JVM won't be stopped and the port will still be opened.
 
 The repository
 ==============
-The repository is devided into the following sections.
+The repository is divided into the following sections.
 
 trunk			the main code flow, this is when all the modifications
 				done by the developers merge.
@@ -321,7 +321,7 @@ tags                                                                            
                                                                                    |
 branches                                                    /-> prerelase---- OK! -/--- bug fixing---->
                                                             |
-           /->-- jum-doe-xx------>------>\                  |
+           /->-- jim-doe-xx------>------>\                  |
            |                             |               version
 workspaces /->- joe-doe-01 ----->\------>|>----/-------\   branched
            |                     |       |     ^       |   for shipping
@@ -331,4 +331,4 @@ trunk => > / --------->---->-----\--->---\-->--/-------\----/
 
 ========================= &&&&&&&&&&&& =========================
     Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
-    Copyright 2009 by Roberto Resoli
+    Copyright 2009 by Roberto Resoli resoli@osor.eu
