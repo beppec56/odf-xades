@@ -74,8 +74,6 @@ public class TreeNodeDescriptor implements XComponent  {
 		THUMBPRINT_SHA1,
 		THUMBPRINT_MD5,
 		EXTENSIONS_NON_CRITICAL,
-			X509V3_KEY_USAGE,
-		EXTENSIONS_CRITICAL,
 			QC_STATEMENTS,
 			AUTHORITY_INFORMATION_ACCESS,
 			X509V3_CERTIFICATE_POLICIES,
@@ -84,12 +82,24 @@ public class TreeNodeDescriptor implements XComponent  {
 			X509V3_AUTHORITY_KEY_IDENTIFIER,
 			X509V3_SUBJECT_KEY_IDENTIFIER,
 			X509V3_CRL_DISTRIBUTION_POINTS,
+		EXTENSIONS_CRITICAL,
+			X509V3_KEY_USAGE,
 		CERTIFICATION_PATH,
-		/*
-new suggestested structure:
-
-
-		 */
+	};
+	
+	/**
+	 * defines the state of the node, for display purposes
+	 * at every state is associated a graphic element for display
+	 * or none, if this is the case  
+	 * @author beppec56
+	 *
+	 */
+	public enum NodeState {
+		NODE_NONE, //no graphic indication needed
+		NODE_OK,
+		NODE_WARNING,
+		NODE_ERROR,
+		NODE_BROKEN
 	};
 
 	private SignatureStateInDocument m_aSignatureState = null;
@@ -107,7 +117,6 @@ new suggestested structure:
 		return m_nType;
 	}
 
-
 	public void addEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
 
@@ -117,7 +126,6 @@ new suggestested structure:
 		// TODO Auto-generated method stub
 		
 	}
-	
 
 	public void removeEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub

@@ -87,7 +87,7 @@ import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
 /**
  * specific for extended toolbar
  * 
- * register as lister for event at the document and at the frame
+ * register as listener for event at the document and at the frame
  * 
  * The document is needed to unregister from the frame data changes and remove the
  * 
@@ -145,8 +145,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_bHasLocation = false;
 		m_bSignatureIsEnabled = false;
 
-//FIXME DEBUG		m_logger.enableLogging();
-		m_logger.info("ctor (1)");
+//FIXME DEBUG m_logger.enableLogging();
+		m_logger.ctor("ctor (1)");
 
 		final String sSingletonService = GlobConstant.m_sSINGLETON_SERVICE_INSTANCE;
 		try {
@@ -394,32 +394,26 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		// the signature
 		// usually at the beginning
 //depends from the document type (writer, calc, draw, impress)		
-		String sAppName = "writer";
 		
 // FIXME detect the toolbar system size? auto?		
-//		String aSize = "_26.png"; //for large icons toolbar
-		String aSize = "_16.png"; //for small icons toolbar
+		String aSize = "_26.png"; //for large icons toolbar
+//		String aSize = "_16.png"; //for small icons toolbar
 		if(m_imagesUrl != null) {
 			switch (m_nState) {
 			case GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES:
-				return m_imagesUrl + "/"+sAppName+"-document"+aSize;// image with doc
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE+aSize;// image with certificate image
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK:
-				return m_imagesUrl + "/"+sAppName+"-signed"+aSize;// image with doc+seal
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize;// image with certificate image + green tick
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED:
-				return m_imagesUrl + "/"+sAppName+"-signed-warning"+aSize; // image with
-				// doc+seal+danger
-				// indication
-			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN:// image with broken
-				// seal
-				return m_imagesUrl + "/"+sAppName+"-signed-danger"+aSize;
-			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_INVALID:// image with
-				// doc+danger
-				// indication
-				return m_imagesUrl + "/"+sAppName+"-signed-danger"+aSize;
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; // image with certificate image + warning
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN:// image with broken + red cross
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize;
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_INVALID:// image with certificate image + danger
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize;
 			default:
-			case GlobConstant.m_nSIGNATURESTATE_UNKNOWN: // add an image with a
+			case GlobConstant.m_nSIGNATURESTATE_UNKNOWN: // add an image with a question mark
 				// question mark
-				return m_imagesUrl + "/"+sAppName+"-unknown"+aSize;
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_UNKNOWN+aSize;
 			}
 		}
 		return null;
@@ -506,6 +500,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		aArgs[0] = new com.sun.star.beans.NamedValue();
 		aArgs[0].Name = new String( "URL" );
 		aArgs[0].Value = _sImageURL;
+		
+		m_logger.log(_sImageURL);
 		
 //		println(_sImageURL);
 		

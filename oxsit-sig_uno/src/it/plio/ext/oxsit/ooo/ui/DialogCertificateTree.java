@@ -30,6 +30,8 @@ import it.plio.ext.oxsit.ooo.ui.BasicDialog;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
+import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
+import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentOK;
 
 import com.sun.star.awt.ActionEvent;
@@ -77,7 +79,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	private static final String sAdd = "addb";
 	private static final String sRemove = "remob";
 	private static final String sCountSig = "countsigb";
-	
+
 	//graphic indications
 	private String sSignatureOK = null; //signature ok
 	private String sSignatureNotValidated = null; //signature ok, but certificate not valid
@@ -88,6 +90,8 @@ public class DialogCertificateTree extends BasicDialog implements
 
 	private String sCertificateValid = null; //
 	private String sCertificateNotValidated = null; //
+	
+	private String	sCertificateElementWarning = null;
 
 	private XTreeControl m_xTreeControl = null;
 
@@ -132,23 +136,26 @@ public class DialogCertificateTree extends BasicDialog implements
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
 		// TODO Auto-generated constructor stub
+		m_logger.enableLogging();
+		m_logger.ctor();
 //fill string for graphics
 		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( context );
 		if(xPkgInfo != null) {
 			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
 			if(sLoc != null){
-//				String aSize = "_26.png"; //for large icons toolbar
-				String aSize = "_16.png"; //for small icons toolbar
+				String aSize = "_26.png"; //for large icons toolbar
+//				String aSize = "_16.png"; //for small icons toolbar
 				String m_imagesUrl = sLoc + "/images";
 //main, depends from application, for now. To be changed
 				//TODO change to a name not depending from the application
-				String sAppName = "writer";
-				sSignatureOK = m_imagesUrl + "/"+sAppName+"-signed"+aSize; //signature ok
-				sSignatureNotValidated = m_imagesUrl + "/"+sAppName+"-signed-warning"+aSize; //signature ok, but certificate not valid
-				sSignatureBroken = m_imagesUrl + "/"+sAppName+"-signed-danger"+aSize; //signature does not mach content: document changed after signature
-				sSignatureInvalid = m_imagesUrl + "/"+sAppName+"-signed-danger"+aSize; //signature does not mach content: document changed after signature
-				sCertificateValid = m_imagesUrl + "/certificate_26.png";
-				sCertificateNotValidated = m_imagesUrl + "/notcertificate_26.png";
+				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
+				sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
+				sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
+				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //signature does not mach content: document changed after signature
+				sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
+				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
+				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
+				m_logger.log(sSignatureOK);
 			}
 			else
 				printlnName("no package location !");
@@ -158,7 +165,7 @@ public class DialogCertificateTree extends BasicDialog implements
 		fillLocalizedString();
 		// the next value should be read from configuration
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
-		CertifTreeDlgDims.setDialogSize(310, 180, 0);
+		CertifTreeDlgDims.setDialogSize(300, 100, 0);
 	}
 
 	/**
@@ -432,12 +439,12 @@ public class DialogCertificateTree extends BasicDialog implements
 //contruct a certificate			
 			
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
-			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
-/*			aSignState = new SignatureStateInDocumentKODocument();			
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);
+			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");// add a warning on certification path
+			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
+			aSignState = new SignatureStateInDocumentKODocument();			
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken); // add an error on date
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature();			
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);*/
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken); 
 
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
@@ -559,6 +566,47 @@ public class DialogCertificateTree extends BasicDialog implements
 		return aretValue;
 	}
 
+	//FIXME: just to simulate the error, shoul be removed after the fact
+	private XMutableTreeNode addDummySignatureStateKOCertPath(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
+			SignatureStateInDocument aCert, String sGraphic) {
+		XMutableTreeNode aretValue = null;
+		try {
+			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
+			if(sGraphic != null)
+				xaCNode.setNodeGraphicURL(sGraphic);
+
+			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.SIGNATURE,aCert);
+			addLinesDisplayElement(aDesc);
+			xaCNode.setDataValue(aDesc);
+
+			aStartNode.appendChild(xaCNode);
+			aretValue = xaCNode;
+			if(sCertificateValid != null)
+				addDummyCertificateFields(xTreeDataModel, xaCNode, aCert,
+						(aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
+
+// add the certification path			
+			XMutableTreeNode xaDNode;
+			xaDNode = xTreeDataModel.createNode("Percorso di certificazione", true);
+			aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATION_PATH,aCert);
+// add the string displaying the graphic for warning signal			sCertificateElementWarning
+			if(sCertificateElementWarning != null)
+				xaDNode.setNodeGraphicURL(sCertificateElementWarning);
+
+			xaDNode.setDataValue(aDesc);			
+			xaCNode.appendChild(xaDNode);
+
+			//add fake certificate to the certification path
+			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
+
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return aretValue;
+	}
+	
 	public XMutableTreeNode addDummyPathCertificates(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
 				SignatureStateInDocument aCert ) {
 		XMutableTreeNode aretValue = null;
@@ -580,18 +628,27 @@ public class DialogCertificateTree extends BasicDialog implements
 		}
 		return aretValue;
 	}
-
+	/**
+	 * 
+	 * @param xTreeDataModel the node factory
+	 * @param aStartNode the parent done
+	 * @param aCert the certificate dato to add
+	 * @param sGraphic
+	 */
 	public void addDummyCertificateFields(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode, SignatureStateInDocument aCert, String sGraphic) {
-		try {
+		/*try {*/
 			XMutableTreeNode xaDNode;
 
-			xaDNode = xTreeDataModel.createNode("Dettagli del certificato", true);
-			if(sGraphic != null)
+			
+			xaDNode = aStartNode;//xTreeDataModel.createNode("Dettagli del certificato", true);
+/*			if(sGraphic != null)
 				xaDNode.setNodeGraphicURL(sGraphic);
+
 			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATE,aCert);
 			addLinesDisplayElement(aDesc);			
 			xaDNode.setDataValue(aDesc);
-			aStartNode.appendChild(xaDNode);
+
+			aStartNode.appendChild(xaDNode);*/
 /**
  * to get information from a certificate:
  * openssl x509 -inform DER -in CNIPA1.cer -noout -text
@@ -612,10 +669,10 @@ public class DialogCertificateTree extends BasicDialog implements
 			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
 //insert critical extension
 			appendMultilineNodeCriticalExtensions(xTreeDataModel, xaDNode, aCert);
-		} catch (IllegalArgumentException e) {
+/*		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	private void appendMultilineNodeDescription(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode, String sNodeTitle,
@@ -624,7 +681,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			// add version display field
 			XMutableTreeNode xaENode = xTreeDataModel.createNode(sNodeTitle, false);
 			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(treeNodeType,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);	
+			addMultiLineTextDisplayElement(aDesc);
 			xaENode.setDataValue(aDesc);			
 			xaDNode.appendChild(xaENode);
 		} catch (IllegalArgumentException e) {

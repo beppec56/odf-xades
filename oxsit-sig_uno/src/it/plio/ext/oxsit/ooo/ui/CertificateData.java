@@ -38,6 +38,21 @@ import com.sun.star.lang.XEventListener;
  *
  */
 public class CertificateData {
+	/**
+	 * defines the state of the node, for display purposes
+	 * at every state is associated a graphic element for display
+	 * or none, if this is the case  
+	 * @author beppec56
+	 *
+	 */
+	public enum ElementState {
+		ELEMENT_NONE, //no graphic indication needed
+		ELEMENT_OK,
+		ELEMENT_WARNING,
+		ELEMENT_ERROR,
+		ELEMENT_BROKEN
+	};
+
 
 	public static final int m_nTITLE			= 0;
 	public static final int m_nEMPTY_FIELD_01	= 1;

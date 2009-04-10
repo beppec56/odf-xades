@@ -25,9 +25,9 @@ package it.plio.ext.oxsit.ooo.ui;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
 
 public class CertifTreeDlgDims {
-	private static int m_nDsWidth = 350; //minimum value
+	private static int m_nDsWidth = 300; //minimum value
 	private static int m_nDsHeigh = 190; //minimum value
-	private static int m_nDsTreeWidth = 110; //minimum value
+	private static int m_nDsTreeWidth; //minimum value
 
 	public static final int TD_SP_INNERBORDER_LEFT = 3;
 	public static final int TD_SP_INNERBORDER_RIGHT = 3;
@@ -36,7 +36,6 @@ public class CertifTreeDlgDims {
 	public static final int SEP_FL_SPACE_Y = 6;
 
 	public static void setDialogSize(int nDs_Width, int nDs_Heigh, int nDs_TreeWidth) {
-		m_nDsHeigh = nDs_Heigh;
 //check for correct values
 		/*
 		 * 
@@ -46,15 +45,16 @@ public class CertifTreeDlgDims {
 		4*ControlDims.RSC_SP_CTRL_X+
 		5*dsBtnWidthCertTree();
 
-		if(minWith < nDs_Width)
+		if(nDs_Width > m_nDsWidth)
 			m_nDsWidth = nDs_Width;
-		else
-			m_nDsWidth = minWith;
-//height minimun is 200
+			
 		if(nDs_Heigh > m_nDsHeigh)
 			m_nDsHeigh = nDs_Heigh;
+
 		if(nDs_TreeWidth > m_nDsTreeWidth)
 			m_nDsTreeWidth = nDs_TreeWidth;
+		
+		System.out.println(m_nDsWidth + " " + m_nDsHeigh + " "+ m_nDsTreeWidth);
 	}
 	
 	public static int dsBtnWidthCertTree() {
@@ -80,6 +80,7 @@ public class CertifTreeDlgDims {
 //		return DS_WIDTH()*2/3;
 //		return DS_WIDTH()*610/967; // Fibonacci's sequence
 	}
+
 	public static int DS_ROW_0() {
 		return ControlDims.RSC_SP_DLG_INNERBORDER_TOP;
 	}
@@ -178,7 +179,7 @@ public class CertifTreeDlgDims {
 	}	
 
 	public static int dsTextFieldColumn() {
-		return (m_nDsWidth/3-
+		return (m_nDsWidth/2-
 				dsTextFieldSpacing());
 	}
 

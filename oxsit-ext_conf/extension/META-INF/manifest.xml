@@ -31,7 +31,11 @@
  <manifest:file-entry manifest:full-path="AddonMessages.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
  <manifest:file-entry manifest:full-path="ProtocolHandler.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
  <manifest:file-entry manifest:full-path="SynchronousJob.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
- <manifest:file-entry manifest:full-path="DisableCommands.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
+ <!-- disabled due to inconsistency in OOo interface, see: 
+	http://www.openoffice.org/issues/show_bug.cgi?id=96288
+	http://www.openoffice.org/issues/show_bug.cgi?id=96287
+ -->
+ <!-- manifest:file-entry manifest:full-path="DisableCommands.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/ -->
  <!-- files for options dialog pages -->
  <manifest:file-entry manifest:full-path="OptionsDialog.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
 <!--

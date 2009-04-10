@@ -92,7 +92,24 @@ public class GlobConstant {
 	 * status disappears.
 	 */
 	public static final int		m_nSIGNATURESTATE_SIGNATURES_INVALID		= 4;
+
+	//names of icons used to display state of certificate/certificate elements
+	public static final String	m_nCERTIFICATE = "certificato";
+	public static final String	m_nCERTIFICATE_CHECKED_OK = "certificato-ok";
+	public static final String	m_nCERTIFICATE_CHECKED_WARNING = "certificato-warning";
+	public static final String	m_nCERTIFICATE_CHECKED_INVALID = "certificato-err";
+//	public static final String	m_nCERTIFICATE_CHECKED_BROKEN = "certificato-rotto"; //TODO check alternative
+	public static final String	m_nCERTIFICATE_CHECKED_BROKEN = "certificato-rotto-2"; //TODO
+	public static final String	m_nCERTIFICATE_CHECKED_UNKNOWN = "certificato-interrogativo";
+	//state of single elements, when needed
+	public static final	String	m_nCERT_ELEM_OK = "check_ok";
+	public static final	String	m_nCERT_ELEM_WARNING = "warning";
+	public static final	String	m_nCERT_ELEM_INVALID = "errore";
+//	public static final	String	m_nCERT_ELEM_BROKEN = "rotto";
+	public static final	String	m_n_CERT_ELEM_BROKEN = "rotto-2";
 	
+
+
 	public static final String	m_sXADES_SIGNATURE_STREAM_NAME					= "xades-it-signature.xml";
 	
 	// Names used in configuration, the names are defined in file
