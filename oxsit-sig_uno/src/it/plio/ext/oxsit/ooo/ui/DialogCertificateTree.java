@@ -158,7 +158,6 @@ public class DialogCertificateTree extends BasicDialog implements
 				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
 				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
 				sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
-				m_logger.log(sSignatureOK);
 			}
 			else
 				printlnName("no package location !");

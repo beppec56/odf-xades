@@ -53,8 +53,6 @@ public class CertifTreeDlgDims {
 
 		if(nDs_TreeWidth > m_nDsTreeWidth)
 			m_nDsTreeWidth = nDs_TreeWidth;
-		
-		System.out.println(m_nDsWidth + " " + m_nDsHeigh + " "+ m_nDsTreeWidth);
 	}
 	
 	public static int dsBtnWidthCertTree() {

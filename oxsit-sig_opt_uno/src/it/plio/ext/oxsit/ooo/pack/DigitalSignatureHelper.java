@@ -105,7 +105,7 @@ public class DigitalSignatureHelper {
     	if(_xStorage == null ){
     		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
     		m_logger.info("createElemeList", "use the URL storage");
-    		Utilities.showInterfaces(this,xThePackage);
+//    		Utilities.showInterfaces(this,xThePackage);
     	}
     	else {
     		xThePackage = _xStorage;

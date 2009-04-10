@@ -109,7 +109,7 @@
 							<prop oor:name="Title" oor:type="xs:string"  oor:localized="true">
 								<value>Digital signatures XAdES (IT) mode...</value>
 								<value xml:lang="en">Digital signatures XAdES (IT) mode...</value>
-								<value xml:lang="it">Firme digitale modo XAdES (IT)...</value>
+								<value xml:lang="it">Firme digitali modo XAdES (IT)...</value>
 							</prop>
 							<prop oor:name="Target" oor:type="xs:string">
 								<value>_self</value>

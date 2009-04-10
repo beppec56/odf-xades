@@ -475,8 +475,8 @@ public class SingletonGlobalVariables extends WeakBase
 			m_log.addHandler(myHandl);
 			System.out.println("console logging enabled");
 		}
-		else
-			System.out.println("console logging NOT enabled");
+/*		else
+			System.out.println("console logging NOT enabled");*/
 
 		if(m_sEnableFileOutput) {
 			String sFileName = GlobConstant.m_sEXTENSION_IDENTIFIER+".log";
@@ -490,7 +490,7 @@ public class SingletonGlobalVariables extends WeakBase
 				myFileformatter = new LocalLogFormatter();
 				myFileHandl.setFormatter(myFileformatter);
 				m_log.addHandler(myFileHandl);
-				System.out.println("files logging enabled, path "+" "+sFileName+" size: "+m_sMaxFileSize+" count: "+m_sFileRotationCount);
+//FIXME DEBUG				System.out.println("files logging enabled, path "+" "+sFileName+" size: "+m_sMaxFileSize+" count: "+m_sFileRotationCount);
 			} catch (SecurityException e) {
 				//FIXME it seems the formatter does act accordingly
 /*				if(m_sEnableConsoleOutput)
@@ -507,8 +507,8 @@ public class SingletonGlobalVariables extends WeakBase
 				System.out.println("file logging NOT enabled ");
 			}
 		}
-		else
-			System.out.println("file logging NOT enabled ");
+/*		else
+			System.out.println("file logging NOT enabled ");*/
 			
 		if(!m_sEnableConsoleOutput && !m_sEnableFileOutput)
 			m_bEnableLogging = false;

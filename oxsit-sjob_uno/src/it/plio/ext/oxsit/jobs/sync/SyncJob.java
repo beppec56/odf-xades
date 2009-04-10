@@ -434,7 +434,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 						if(xStorage != null)
 							m_logger.info("execute"+" We have storage available!");
 						
-						Utilities.showInterfaces(xModel, xStorage);
+//						Utilities.showInterfaces(xModel, xStorage);
 							
 						/**
 						 * we can read the file and check if a CNIPA signature
