@@ -180,9 +180,16 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	    		//get the value of the text
 	    		String snTheText = 
 	    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
+	    		//check for limits
+	    		int nValue = Integer.valueOf(snTheText).intValue();
+	    		if( nValue < ArrayOfControls[i].m_nMinValue)
+	    			nValue = ArrayOfControls[i].m_nMinValue;
+	    		else if(nValue > ArrayOfControls[i].m_nMaxValue)
+	    			nValue = ArrayOfControls[i].m_nMaxValue;
 	    		//save it
-	    		m_xOptionsConfigAccess.setNumber(ArrayOfControls[i].m_sPropertyName,
-	    				Integer.valueOf(snTheText).intValue());
+	    		if(ArrayOfControls[i].m_bEnableSave)
+	    			m_xOptionsConfigAccess.setNumber(ArrayOfControls[i].m_sPropertyName,
+	    					nValue);
 	    		break;
 	    	case EDIT_TEXT:
 	    		//call the get method and assign the text to the control
@@ -191,14 +198,16 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	    		String sTheText = 
 	    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
 	    		//save it
-	    		m_xOptionsConfigAccess.setText(ArrayOfControls[i].m_sPropertyName,sTheText);
+	    		if(ArrayOfControls[i].m_bEnableSave)
+	    			m_xOptionsConfigAccess.setText(ArrayOfControls[i].m_sPropertyName,sTheText);
 	    		break;
 	    	case CHECK_BOX:
 	    		//in this case we need the boolean property of the control
 //	    		Utilities.showProperties(xProp);
 	    		short nState = AnyConverter.toShort(xProp.getPropertyValue( "State" ));
-				m_xOptionsConfigAccess.setBoolean(ArrayOfControls[i].m_sPropertyName,
-								(nState == 0) ? false : true);	    		
+	    		if(ArrayOfControls[i].m_bEnableSave)
+	    			m_xOptionsConfigAccess.setBoolean(ArrayOfControls[i].m_sPropertyName,
+	    					(nState == 0) ? false : true);	    		
 	    		break;
 	    	case RADIO_BUTTON:
 	    		//this is different, so...
@@ -206,7 +215,7 @@ public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase
 	    		//...we grab the value from the registry, an integer
 	    		//grab the status, when we find the selected one, set the vaue in the option.
 	    		short nRbState = AnyConverter.toShort(xProp.getPropertyValue( "State" ));
-	    		if( nRbState == 1 ) {// set the option
+	    		if( nRbState == 1 && ArrayOfControls[i].m_bEnableSave) {// set the option
 	    			m_xOptionsConfigAccess.setNumber(ArrayOfControls[i].m_sPropertyName, ArrayOfControls[i].m_nTheRadioButtonPosition);
 	    		}
 	      		break;

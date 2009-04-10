@@ -50,6 +50,13 @@ public class SingleControlDescription {
 	public int	m_nTheRadioButtonPosition; // the number corresponding to this radio button 
 
 	public String m_sPropertyName; //corresponding property in configuration structure
+	
+	public int	m_nMaxValue;
+
+	public int	m_nMinValue;
+	
+	public boolean	m_bEnableSave;
+	
 
 	/**
 	 * 
@@ -58,12 +65,19 @@ public class SingleControlDescription {
 	 * @param nRadioPos radio control button value, other elements get -1, it's the positional
 	 * code of the Radio button in the group of radio buttons (only if eType is ControlTypeCode.RADIO_BUTTON)
 	 * @param sProperty name of the property on configuration structure (AddonConfiguration.xcs.xml)
+	 * @param _nMax TODO
+	 * @param _nMin TODO
+	 * @param _bEnableSave TODO
 	 */
-	public SingleControlDescription(String sName, ControlTypeCode eType, int nRadioPos, String sProperty) {
+	public SingleControlDescription(String sName, ControlTypeCode eType, int nRadioPos, String sProperty, int _nMax, int _nMin, boolean _bEnableSave) {
 		m_sControlName = sName;
 		m_eTheCode = eType;
 		m_nTheRadioButtonPosition = nRadioPos; 
 		m_sPropertyName = sProperty;
 		m_xAnActionListener = null;
+		m_nMaxValue = _nMax;
+		m_nMinValue = _nMin;
+		m_bEnableSave = _bEnableSave;
+		
 	}	
 }

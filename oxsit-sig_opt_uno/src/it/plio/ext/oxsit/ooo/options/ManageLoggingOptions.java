@@ -78,40 +78,40 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		int iter = 0;
 		//checkbox
 		SingleControlDescription aControl = 
-			new SingleControlDescription("CheckInfo", ControlTypeCode.CHECK_BOX, -1, "EnableInfoLevel");
+			new SingleControlDescription("CheckInfo", ControlTypeCode.CHECK_BOX, -1, "EnableInfoLevel", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 //checkbox
 		aControl = 
-			new SingleControlDescription("CheckWarning", ControlTypeCode.CHECK_BOX, -1, "EnableWarningLevel");
+			new SingleControlDescription("CheckWarning", ControlTypeCode.CHECK_BOX, -1, "EnableWarningLevel", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-			new SingleControlDescription("CheckEnConsole", ControlTypeCode.CHECK_BOX, -1, "EnableConsoleOutput");
+			new SingleControlDescription("CheckEnConsole", ControlTypeCode.CHECK_BOX, -1, "EnableConsoleOutput", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-			new SingleControlDescription("CheckEnFile", ControlTypeCode.CHECK_BOX, -1, "EnableFileOutput");
+			new SingleControlDescription("CheckEnFile", ControlTypeCode.CHECK_BOX, -1, "EnableFileOutput", 0, 0, true);
 //add to control elements
 		aControl.m_xAnItemListener = this;
 		m_nEnableFileCtl = iter;
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-				new	SingleControlDescription("LogFilePath", ControlTypeCode.EDIT_TEXT, -1, "LogFilePath");
+				new	SingleControlDescription("LogFilePath", ControlTypeCode.EDIT_TEXT, -1, "LogFilePath", 0, 0, true);
 		m_nLogFilePathIdxTF = iter;
 		ArrayOfControls[iter++] = aControl;
 //the actionPerformed pushbutton		
 		aControl = 
-			new SingleControlDescription("BrowseSystemPath", ControlTypeCode.PUSH_BUTTON, -1, "");
+			new SingleControlDescription("BrowseSystemPath", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
 		m_nBrowseSystemPathPB = iter;
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
 //the file elements, counts and size
 		aControl = 
-			new	SingleControlDescription("LogFileSize", ControlTypeCode.EDIT_TEXT_INT, -1, "MaxFileSize");
+			new	SingleControlDescription("LogFileSize", ControlTypeCode.EDIT_TEXT_INT, -1, "MaxFileSize", 100000, 1000, true );
 //set the actionPerformed, for enable/disable
 		//....
 		m_nLogFileSizeTF = iter;
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-			new	SingleControlDescription("LogFileCount", ControlTypeCode.EDIT_TEXT_INT, -1, "FileRotationCount");
+			new	SingleControlDescription("LogFileCount", ControlTypeCode.EDIT_TEXT_INT, -1, "FileRotationCount",100 , 1, true);
 //set the actionPerformed, for enable/disable
 		m_nLogFileCountTF = iter;
 		ArrayOfControls[iter++] = aControl;
@@ -141,17 +141,15 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		super.loadData(aWindow);
 //when return from load, we should have the container initialized, so activate the right state
 		//for the subordinate controls
+		
 		if(m_xContainer != null) {
 			//retrieve the file control checkbox
 			XControl xControl = m_xContainer.getControl(ArrayOfControls[m_nEnableFileCtl].m_sControlName);
 	        XControlModel xControlModel = xControl.getModel();
 	        XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xControlModel);
 // check the state and set a boolean accordingly
-	        boolean bEnable = AnyConverter.toInt(xPSet.getPropertyValue("State")) == 1;			
-			enableOneFileControl(bEnable,m_nLogFilePathIdxTF);
-			enableOneFileControl(bEnable,m_nBrowseSystemPathPB);
-			enableOneFileControl(bEnable,m_nLogFileCountTF);
-			enableOneFileControl(bEnable,m_nLogFileSizeTF);
+	        boolean bEnable = AnyConverter.toInt(xPSet.getPropertyValue("State")) == 1;
+			enableTheFileControls(bEnable);
 		}
 		else
 			m_logger.severe("enableTheFileControls", "there is no window!");
@@ -238,6 +236,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 
 	protected void enableOneFileControl(boolean _bEnable, int _index) {
 		XControl xControl = m_xContainer.getControl(ArrayOfControls[_index].m_sControlName);
+		ArrayOfControls[_index].m_bEnableSave = _bEnable; // enable the saving
         XControlModel xControlModel = xControl.getModel();
         XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xControlModel);
         try {

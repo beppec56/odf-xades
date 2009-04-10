@@ -63,30 +63,30 @@ public class ManageGeneralOptions extends ManageOptions  {
 
 		int iter = 0;
 		SingleControlDescription aControl = 
-				new	SingleControlDescription("GeneralCNIPA_URL", ControlTypeCode.EDIT_TEXT, -1, "GeneralCNIPA_URL");
+				new	SingleControlDescription("GeneralCNIPA_URL", ControlTypeCode.EDIT_TEXT, -1, "GeneralCNIPA_URL", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 //checkbox
 		aControl = 
-			new SingleControlDescription("GeneralCheckBox1", ControlTypeCode.CHECK_BOX, -1, "TestBooleanValue");
+			new SingleControlDescription("GeneralCheckBox1", ControlTypeCode.CHECK_BOX, -1, "TestBooleanValue", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 //the three radio buttons
 		aControl = 
-			new SingleControlDescription("OptionButton0", ControlTypeCode.RADIO_BUTTON, 0, "TestNumericValue");
+			new SingleControlDescription("OptionButton0", ControlTypeCode.RADIO_BUTTON, 0, "TestNumericValue", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-			new SingleControlDescription("OptionButton1", ControlTypeCode.RADIO_BUTTON, 1, "TestNumericValue");
+			new SingleControlDescription("OptionButton1", ControlTypeCode.RADIO_BUTTON, 1, "TestNumericValue", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
-			new SingleControlDescription("OptionButton2", ControlTypeCode.RADIO_BUTTON, 2, "TestNumericValue");
+			new SingleControlDescription("OptionButton2", ControlTypeCode.RADIO_BUTTON, 2, "TestNumericValue", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;//the single About push button
 		aControl = 
-			new SingleControlDescription("AboutButton", ControlTypeCode.PUSH_BUTTON, -1, "");
+			new SingleControlDescription("AboutButton", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
 		m_nAboutButton = iter;
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
 
 		aControl = 
-			new SingleControlDescription("BrowseInternet", ControlTypeCode.PUSH_BUTTON, -1, "");
+			new SingleControlDescription("BrowseInternet", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
 		m_nBrowseInternetButton = iter; // set for further processing
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
