@@ -106,7 +106,7 @@ public class GlobConstant {
 	public static final	String	m_nCERT_ELEM_WARNING = "warning";
 	public static final	String	m_nCERT_ELEM_INVALID = "errore";
 //	public static final	String	m_nCERT_ELEM_BROKEN = "rotto";
-	public static final	String	m_n_CERT_ELEM_BROKEN = "rotto-2";
+	public static final	String	m_nCERT_ELEM_BROKEN = "rotto-2";
 	
 
 

@@ -113,6 +113,8 @@ public class DialogCertificateTree extends BasicDialog implements
 	private String 				m_sBtn_RemoveCertLabel;
 	private String				m_sBtn_AddCountCertLabel;
 
+	private String 				sCertificateElementError;
+
 	private static final String sEmptyText = "notextcontrol";		//the control without text
 	private static final String sEmptyTextLine = "notextcontrolL";		//the 1st line superimposed to the empty text contro
 //	public static final int	NUMBER_OF_DISPLAYED_TEST_LINES = 14;
@@ -155,6 +157,7 @@ public class DialogCertificateTree extends BasicDialog implements
 				sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
 				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
 				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
+				sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
 				m_logger.log(sSignatureOK);
 			}
 			else
@@ -437,14 +440,14 @@ public class DialogCertificateTree extends BasicDialog implements
 			// TEST:
 			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
 //contruct a certificate			
-			
+
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");// add a warning on certification path
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
 			aSignState = new SignatureStateInDocumentKODocument();			
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken); // add an error on date
+			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureBroken); // add an error on date
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature();			
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken); 
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
 
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
@@ -607,6 +610,44 @@ public class DialogCertificateTree extends BasicDialog implements
 		return aretValue;
 	}
 	
+	//FIXME: just to simulate the error, should be removed after the fact
+	private XMutableTreeNode addDummySignatureStateKOExtenCrit(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
+			SignatureStateInDocument aCert, String sGraphic) {
+		XMutableTreeNode aretValue = null;
+		try {
+			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
+			if(sGraphic != null)
+				xaCNode.setNodeGraphicURL(sGraphic);
+
+			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.SIGNATURE,aCert);
+			addLinesDisplayElement(aDesc);
+			xaCNode.setDataValue(aDesc);
+
+			aStartNode.appendChild(xaCNode);
+			aretValue = xaCNode;
+			if(sCertificateValid != null)
+				addDummyCertificateFieldsKOExtCrit(xTreeDataModel, xaCNode, aCert,
+						(aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
+
+// add the certification path			
+			XMutableTreeNode xaDNode;
+			xaDNode = xTreeDataModel.createNode("Percorso di certificazione", true);
+			aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATION_PATH,aCert);
+
+			xaDNode.setDataValue(aDesc);			
+			xaCNode.appendChild(xaDNode);
+
+			//add fake certificate to the certification path
+			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
+
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return aretValue;
+	}
+	
 	public XMutableTreeNode addDummyPathCertificates(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
 				SignatureStateInDocument aCert ) {
 		XMutableTreeNode aretValue = null;
@@ -628,6 +669,7 @@ public class DialogCertificateTree extends BasicDialog implements
 		}
 		return aretValue;
 	}
+
 	/**
 	 * 
 	 * @param xTreeDataModel the node factory
@@ -669,6 +711,53 @@ public class DialogCertificateTree extends BasicDialog implements
 			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
 //insert critical extension
 			appendMultilineNodeCriticalExtensions(xTreeDataModel, xaDNode, aCert);
+/*		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+
+	/**
+	 * 
+	 * @param xTreeDataModel the node factory
+	 * @param aStartNode the parent done
+	 * @param aCert the certificate dato to add
+	 * @param sGraphic
+	 */
+	public void addDummyCertificateFieldsKOExtCrit(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode, SignatureStateInDocument aCert, String sGraphic) {
+		/*try {*/
+			XMutableTreeNode xaDNode;
+
+			
+			xaDNode = aStartNode;//xTreeDataModel.createNode("Dettagli del certificato", true);
+/*			if(sGraphic != null)
+				xaDNode.setNodeGraphicURL(sGraphic);
+
+			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATE,aCert);
+			addLinesDisplayElement(aDesc);			
+			xaDNode.setDataValue(aDesc);
+
+			aStartNode.appendChild(xaDNode);*/
+/**
+ * to get information from a certificate:
+ * openssl x509 -inform DER -in CNIPA1.cer -noout -text
+ * 
+ */
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Versione", TreeNodeDescriptor.TreeNodeType.VERSION, aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Numero di serie", TreeNodeDescriptor.TreeNodeType.SERIAL_NUMBER,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Emittente", TreeNodeDescriptor.TreeNodeType.ISSUER,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido da", TreeNodeDescriptor.TreeNodeType.VALID_FROM,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido fino a", TreeNodeDescriptor.TreeNodeType.VALID_TO,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo del soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT_ALGORITHM,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Chiave pubblica", TreeNodeDescriptor.TreeNodeType.PUBLIC_KEY,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo di firma", TreeNodeDescriptor.TreeNodeType.SIGNATURE_ALGORITHM,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta SHA1", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_SHA1,aCert);
+			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta MD5", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_MD5,aCert);
+//insert non critical extensions
+			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
+//insert critical extension
+			appendMultilineNodeCriticalExtensionsKO(xTreeDataModel, xaDNode, aCert);
 /*		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -754,10 +843,40 @@ public class DialogCertificateTree extends BasicDialog implements
 			addMultiLineTextDisplayElement(aDesc);
 			xaENode.setDataValue(aDesc);			
 			xaDNode.appendChild(xaENode);
+
+			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode("X509v3 Key Usage", false);
+			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE,certxTreeDataModel);
+			addMultiLineTextDisplayElement(aDesc);		
+			xaENodeChild.setDataValue(aDesc);			
+			xaENode.appendChild(xaENodeChild);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	//fake function added to be able to write specifications...
+	//simulates error on certificate critical extensions
+	private void appendMultilineNodeCriticalExtensionsKO(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode, 
+			SignatureStateInDocument certxTreeDataModel) {
+		try {
+			// add version display field
+			XMutableTreeNode xaENode = xTreeDataModel.createNode("Estensioni critiche", false);
+			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeType.EXTENSIONS_CRITICAL,certxTreeDataModel);
+			addMultiLineTextDisplayElement(aDesc);
+			// add the string displaying the graphic for broken signal			sCertificateElementWarning
+			if(sCertificateElementError != null)
+				xaENode.setNodeGraphicURL(sCertificateElementError);
+			xaENode.setDataValue(aDesc);			
+			xaDNode.appendChild(xaENode);
 			
 			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode("X509v3 Key Usage", false);
 			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE,certxTreeDataModel);
 			addMultiLineTextDisplayElement(aDesc);
+			// add the string displaying the graphic for broken signal			sCertificateElementWarning
+			if(sCertificateElementError != null)
+				xaENodeChild.setNodeGraphicURL(sCertificateElementError);
+		
 			xaENodeChild.setDataValue(aDesc);			
 			xaENode.appendChild(xaENodeChild);
 			
