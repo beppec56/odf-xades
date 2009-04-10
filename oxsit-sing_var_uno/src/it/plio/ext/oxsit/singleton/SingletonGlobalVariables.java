@@ -463,6 +463,8 @@ public class SingletonGlobalVariables extends WeakBase
 		m_sEnableConsoleOutput = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_CONSOLE_OUTPUT);
 		m_sEnableFileOutput = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_FILE_OUTPUT);
 		m_sLogFilePath = m_LoggerConfigAccess.getText(GlobConstant.m_sLOG_FILE_PATH);
+//FIXME: the file path need to be converted according to the platform
+// e.g.: get the path separator, then scan the file path and change from whatever value to '/'
 		m_sFileRotationCount = m_LoggerConfigAccess.getNumber(GlobConstant.m_sFILE_ROTATION_COUNT);
 		m_sMaxFileSize = m_LoggerConfigAccess.getNumber(GlobConstant.m_sMAX_FILE_SIZE);
 	}
