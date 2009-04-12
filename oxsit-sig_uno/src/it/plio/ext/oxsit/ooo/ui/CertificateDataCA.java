@@ -34,7 +34,7 @@ public class CertificateDataCA extends SignatureStateInDocument {
 	 * @param user
 	 */
 	public CertificateDataCA() {
-		super("The Certification Authority");
+		super("ACME Ltd. Certification Authority");
 		String sUserN = "Giacomo";
 		String sUserC = "Verdi";
 		// TODO Auto-generated constructor stub

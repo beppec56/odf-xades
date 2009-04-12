@@ -117,6 +117,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	private String				m_sBtn_CreateReport;
 	
 	private String 				sCertificateElementError;
+	private String 				sCertificateElementBroken;
 
 	private String sSignatureInvalid2;
 
@@ -167,6 +168,7 @@ public class DialogCertificateTree extends BasicDialog implements
 				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
 				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
 				sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
+				sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
 			}
 			else
 				printlnName("no package location !");
@@ -727,10 +729,10 @@ public class DialogCertificateTree extends BasicDialog implements
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo di firma", TreeNodeDescriptor.TreeNodeType.SIGNATURE_ALGORITHM,aCert);
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta SHA1", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_SHA1,aCert);
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta MD5", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_MD5,aCert);
-//insert non critical extensions
-			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
 //insert critical extension
 			appendMultilineNodeCriticalExtensions(xTreeDataModel, xaDNode, aCert);
+			//insert non critical extensions
+			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
 /*		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -774,10 +776,10 @@ public class DialogCertificateTree extends BasicDialog implements
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo di firma", TreeNodeDescriptor.TreeNodeType.SIGNATURE_ALGORITHM,aCert);
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta SHA1", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_SHA1,aCert);
 			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta MD5", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_MD5,aCert);
-//insert non critical extensions
-			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
-//insert critical extension
+			//insert critical extension
 			appendMultilineNodeCriticalExtensionsKO(xTreeDataModel, xaDNode, aCert);
+			//insert non critical extensions
+			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
 /*		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -809,29 +811,30 @@ public class DialogCertificateTree extends BasicDialog implements
 			xaENode.setDataValue(aDesc);			
 			xaDNode.appendChild(xaENode);
 			
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, "qcStatements", TreeNodeType.QC_STATEMENTS , certxTreeDataModel);
-			
 //now create our child nodes			
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
-					"Authority Information Access", TreeNodeType.AUTHORITY_INFORMATION_ACCESS,
-						certxTreeDataModel);
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
 					"X509v3 Certificate Policies",TreeNodeType.X509V3_CERTIFICATE_POLICIES,
 						certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
-					"X509v3 Subject Directory Attributes", TreeNodeType.X509V3_SUBJECT_DIRECTORY_ATTRIBUTES,
-						certxTreeDataModel);
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 Issuer Alternative Name", TreeNodeType.X509V3_ISSUER_ALTERNATIVE_NAME ,
+					"X509v3 CRL Distribution Points", TreeNodeType.X509V3_CRL_DISTRIBUTION_POINTS ,
 					certxTreeDataModel);
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
 					"X509v3 Authority Key Identifier", TreeNodeType.X509V3_AUTHORITY_KEY_IDENTIFIER ,
 					certxTreeDataModel);
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 CRL Distribution Points", TreeNodeType.X509V3_CRL_DISTRIBUTION_POINTS ,
+					"X509v3 Subject Key Identifier", TreeNodeType.X509V3_SUBJECT_KEY_IDENTIFIER ,
 					certxTreeDataModel);
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 Subject Key Identifier", TreeNodeType.X509V3_SUBJECT_KEY_IDENTIFIER ,
+					"qcStatements", TreeNodeType.QC_STATEMENTS, 
+					certxTreeDataModel);
+			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
+					"X509v3 Subject Directory Attributes", TreeNodeType.X509V3_SUBJECT_DIRECTORY_ATTRIBUTES,
+						certxTreeDataModel);
+			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
+					"Authority Information Access", TreeNodeType.AUTHORITY_INFORMATION_ACCESS,
+						certxTreeDataModel);
+			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
+					"X509v3 Issuer Alternative Name", TreeNodeType.X509V3_ISSUER_ALTERNATIVE_NAME ,
 					certxTreeDataModel);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -885,8 +888,8 @@ public class DialogCertificateTree extends BasicDialog implements
 			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeType.EXTENSIONS_CRITICAL,certxTreeDataModel);
 			addMultiLineTextDisplayElement(aDesc);
 			// add the string displaying the graphic for broken signal			sCertificateElementWarning
-			if(sCertificateElementError != null)
-				xaENode.setNodeGraphicURL(sCertificateElementError);
+			if(sCertificateElementBroken != null)
+				xaENode.setNodeGraphicURL(sCertificateElementBroken);
 			xaENode.setDataValue(aDesc);			
 			xaDNode.appendChild(xaENode);
 			
@@ -894,8 +897,8 @@ public class DialogCertificateTree extends BasicDialog implements
 			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE,certxTreeDataModel);
 			addMultiLineTextDisplayElement(aDesc);
 			// add the string displaying the graphic for broken signal			sCertificateElementWarning
-			if(sCertificateElementError != null)
-				xaENodeChild.setNodeGraphicURL(sCertificateElementError);
+			if(sCertificateElementBroken != null)
+				xaENodeChild.setNodeGraphicURL(sCertificateElementBroken);
 		
 			xaENodeChild.setDataValue(aDesc);			
 			xaENode.appendChild(xaENodeChild);
