@@ -241,6 +241,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">Controfirma...</value>
 			</prop>
 		</node>
+		<node oor:name="id_pb_cert_report" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Report</value>
+				<value xml:lang="it">Rapporto</value>
+			</prop>
+		</node>
 		<node oor:name="id_title_cert_tree" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Qualified digital signatures (XadES IT)</value>

@@ -98,9 +98,11 @@ public class GlobConstant {
 	public static final String	m_nCERTIFICATE_CHECKED_OK = "certificato-ok";
 	public static final String	m_nCERTIFICATE_CHECKED_WARNING = "certificato-warning";
 	public static final String	m_nCERTIFICATE_CHECKED_INVALID = "certificato-err";
-//	public static final String	m_nCERTIFICATE_CHECKED_BROKEN = "certificato-rotto"; //TODO check alternative
-	public static final String	m_nCERTIFICATE_CHECKED_BROKEN = "certificato-rotto-2"; //TODO
+	public static final String	m_nCERTIFICATE_CHECKED_BROKEN = "certificato-rotto"; //TODO check alternative
+	public static final String	m_nCERTIFICATE_CHECKED_BROKEN2 = "certificato-rotto-2"; //TODO
 	public static final String	m_nCERTIFICATE_CHECKED_UNKNOWN = "certificato-interrogativo";
+	public static final String	m_nCERTIFICATE_REMOVING = "certificato-remove";
+	public static final String	m_nCERTIFICATE_ADDING = "certificato-add";
 	//state of single elements, when needed
 	public static final	String	m_nCERT_ELEM_OK = "check_ok";
 	public static final	String	m_nCERT_ELEM_WARNING = "warning";

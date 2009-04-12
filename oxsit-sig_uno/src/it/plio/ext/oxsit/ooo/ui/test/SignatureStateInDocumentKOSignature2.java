@@ -26,11 +26,11 @@ import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
-public class SignatureStateInDocumentKODocument extends SignatureStateInDocument {
+public class SignatureStateInDocumentKOSignature2 extends SignatureStateInDocument {
 
-	public SignatureStateInDocumentKODocument() {
-		super("Giacomo Piero Rossi");
-		String sUserN = "Giacomo Piero";
+	public SignatureStateInDocumentKOSignature2() {
+		super("Gianni Rossi");
+		String sUserN = "Gianni";
 		String sUserC = "Rossi";
 		// TODO Auto-generated constructor stub
 // now personalize the certificate: some of the field and set it OK
@@ -74,4 +74,5 @@ public class SignatureStateInDocumentKODocument extends SignatureStateInDocument
 	public boolean isCertificateValid() {
 		return true;
 	}
+
 }

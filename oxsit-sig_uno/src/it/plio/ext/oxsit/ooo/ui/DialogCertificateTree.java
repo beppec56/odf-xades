@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
+import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOSignature2;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentOK;
 
 import com.sun.star.awt.ActionEvent;
@@ -81,12 +82,13 @@ public class DialogCertificateTree extends BasicDialog implements
 	private static final String sCountSig = "countsigb";
 
 	//graphic indications
-	private String sSignatureOK = null; //signature ok
-	private String sSignatureNotValidated = null; //signature ok, but certificate not valid
-	@SuppressWarnings("unused")
-	private String sSignatureBroken = null; //signature does not mach content: document changed after signature
-	@SuppressWarnings("unused")
-	private String sSignatureInvalid = null; //signature cannot be validated
+	private String sSignatureOK; //signature ok
+	private String sSignatureNotValidated; //signature ok, but certificate not valid
+	private String sSignatureBroken; //signature does not mach content: document changed after signature
+	private String sSignatureInvalid; //signature cannot be validated
+	private String sSignatureAdding;
+	private String sSignatureRemoving;
+
 
 	private String sCertificateValid = null; //
 	private String sCertificateNotValidated = null; //
@@ -112,8 +114,11 @@ public class DialogCertificateTree extends BasicDialog implements
 	private String 				m_sFt_Hint_Doc;
 	private String 				m_sBtn_RemoveCertLabel;
 	private String				m_sBtn_AddCountCertLabel;
-
+	private String				m_sBtn_CreateReport;
+	
 	private String 				sCertificateElementError;
+
+	private String sSignatureInvalid2;
 
 	private static final String sEmptyText = "notextcontrol";		//the control without text
 	private static final String sEmptyTextLine = "notextcontrolL";		//the 1st line superimposed to the empty text contro
@@ -153,7 +158,11 @@ public class DialogCertificateTree extends BasicDialog implements
 				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
 				sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
 				sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
-				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //signature does not mach content: document changed after signature
+				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
+				sSignatureInvalid2 = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //
+				sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
+				sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
+
 				sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
 				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
 				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
@@ -186,6 +195,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			m_sBtn_AddCountCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_count_sign" );
 			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( "id_title_cert_tree" );
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_cert_treew" );
+			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( "id_pb_cert_report" );
 		} catch (com.sun.star.uno.Exception e) {
 			e.printStackTrace();
 		}
@@ -305,7 +315,7 @@ public class DialogCertificateTree extends BasicDialog implements
 //					CertifTreeDlgDims.DS_COL_8()-CertifTreeDlgDims.DS_COL_7(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					"sprint",
-					"Stampa",
+					m_sBtn_CreateReport,
 					(short) PushButtonType.STANDARD_value);
 	
 			insertHorizontalFixedLine(
@@ -438,15 +448,26 @@ public class DialogCertificateTree extends BasicDialog implements
 //insert dummy certificates
 			// TEST:
 			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
-//contruct a certificate			
-
+//contruct a certificate
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
+
 			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");// add a warning on certification path
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
-			aSignState = new SignatureStateInDocumentKODocument();			
-			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureBroken); // add an error on date
-			aSignState = new SignatureStateInDocumentKODocumentAndSignature();			
+
+			aSignState = new SignatureStateInDocumentKOSignature2();			
+			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
+
+			aSignState = new SignatureStateInDocumentOK("Lorenzo", "Verdi");
+			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
+
+			aSignState = new SignatureStateInDocumentKODocumentAndSignature();
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
+
+			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi");
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureAdding);
+
+			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi");
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
 
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );

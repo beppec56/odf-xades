@@ -56,7 +56,7 @@ public class SignatureStateInDocumentKOCertSignature extends SignatureStateInDoc
 
 			setCertString(TreeNodeType.SIGNATURE, asArray);
 		}
-		
+
 //create a fake certificate, with wrong data
 		m_aCert = new CertificateDataKONoCRL(sUserName,sUserSurname); 			
 	}

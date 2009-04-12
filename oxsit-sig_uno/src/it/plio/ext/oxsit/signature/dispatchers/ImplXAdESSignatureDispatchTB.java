@@ -407,7 +407,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED:
 				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; // image with certificate image + warning
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN:// image with broken + red cross
-				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize;
+				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize;
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_INVALID:// image with certificate image + danger
 				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize;
 			default:
