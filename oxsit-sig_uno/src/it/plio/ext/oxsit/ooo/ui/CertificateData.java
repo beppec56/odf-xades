@@ -207,6 +207,11 @@ public class CertificateData {
 			setCertString(TreeNodeType.X509V3_KEY_USAGE,saDummy);
 		}
 		{
+			String[] saDummy = {	"Non Repudiation [NR], Digital Signature [DS]",
+			};
+			setCertString(TreeNodeType.X509V3_KEY_USAGE_KO,saDummy);
+		}
+		{
 			String[] saDummy = {
 					"Certificato qualificato (O.I.D. 0.4.0.1862.1.1)\nPeriodo conservazione informazioni relative alla emissione del cerificato qualificato: 20 anni (O.I.D. 0.4.0.1862.1.3)\nDispositivo sicuro (O.I.D. 0.4.0.1862.1.4)"
 					};

@@ -84,6 +84,8 @@ public class TreeNodeDescriptor implements XComponent  {
 			X509V3_CRL_DISTRIBUTION_POINTS,
 		EXTENSIONS_CRITICAL,
 			X509V3_KEY_USAGE,
+//FIXME remove this !
+			X509V3_KEY_USAGE_KO, //added only for test/spec writing
 		CERTIFICATION_PATH,
 	};
 	
@@ -241,6 +243,7 @@ public class TreeNodeDescriptor implements XComponent  {
 			case SUBJECT_ALGORITHM:
 			case SIGNATURE_ALGORITHM:
 			case X509V3_KEY_USAGE:
+			case X509V3_KEY_USAGE_KO:
 			case QC_STATEMENTS:
 			case AUTHORITY_INFORMATION_ACCESS:
 			case X509V3_CERTIFICATE_POLICIES:

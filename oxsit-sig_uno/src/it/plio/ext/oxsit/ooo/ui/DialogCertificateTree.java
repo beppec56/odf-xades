@@ -894,7 +894,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			xaDNode.appendChild(xaENode);
 			
 			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode("X509v3 Key Usage", false);
-			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE,certxTreeDataModel);
+			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE_KO,certxTreeDataModel);
 			addMultiLineTextDisplayElement(aDesc);
 			// add the string displaying the graphic for broken signal			sCertificateElementWarning
 			if(sCertificateElementBroken != null)
