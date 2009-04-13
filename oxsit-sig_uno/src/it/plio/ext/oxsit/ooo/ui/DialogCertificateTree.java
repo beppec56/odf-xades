@@ -157,7 +157,9 @@ public class DialogCertificateTree extends BasicDialog implements
 				String m_imagesUrl = sLoc + "/images";
 //main, depends from application, for now. To be changed
 				//TODO change to a name not depending from the application
-				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
+				
+				sSignatureOK = m_imagesUrl + "/"+"signature"+aSize; //signature ok
+//				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
 				sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
 				sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
 				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //

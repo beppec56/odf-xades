@@ -397,13 +397,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		
 // FIXME detect the toolbar system size? auto?		
 		String aSize = "_26.png"; //for large icons toolbar
-//		String aSize = "_16.png"; //for small icons toolbar
+//		aSize = "_16.png"; //for small icons toolbar
 		if(m_imagesUrl != null) {
 			switch (m_nState) {
 			case GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES:
 				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE+aSize;// image with certificate image
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK:
-				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize;// image with certificate image + green tick
+				return m_imagesUrl + "/"+"signature"+aSize;// image with certificate image + green tick
+//				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize;// image with certificate image + green tick
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED:
 				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; // image with certificate image + warning
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN:// image with broken + red cross
