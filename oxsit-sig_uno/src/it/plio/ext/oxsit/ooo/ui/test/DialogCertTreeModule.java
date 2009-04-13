@@ -20,16 +20,19 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui.test;
 
 import java.util.LinkedList;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
+import it.plio.ext.oxsit.ooo.ui.CertifTreeDlgDims;
+import it.plio.ext.oxsit.ooo.ui.CertificateDataCA;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
+import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
+import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
-import it.plio.ext.oxsit.ooo.ui.test.DialogCertTreeModule;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
@@ -71,14 +74,14 @@ import com.sun.star.view.XSelectionChangeListener;
  * @author beppe
  *
  */
-public class DialogCertificateTree extends BasicDialog implements
+public class DialogCertTreeModule extends BasicDialog implements
 		XActionListener, XMouseListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
 
 	private static final String DLG_CERT_TREE = "DialogCertTreeModule";
 
-	private static final String sTree = "certtree";
-	private static final String sVerify = "verifyb";
-	private static final String sAdd = "addb";
+	private static final String sTree = "certmodtree";
+	private static final String sSelect = "selectb";
+	private static final String sAdd = "addcertb";
 	private static final String sRemove = "remob";
 	private static final String sCountSig = "countsigb";
 
@@ -109,7 +112,7 @@ public class DialogCertificateTree extends BasicDialog implements
 
 	private String				m_sBtnOKLabel;
 	private String				m_sBtn_CancelLabel;
-	private String 				m_sBtn_Verify;
+	private String 				m_sBtn_SelDevice;
 	private String 				m_sBtn_AddCertLabel;
 	private String 				m_sDlgListCertTitle;	
 	private String 				m_sFt_Hint_Doc;
@@ -130,7 +133,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	 * Note on the display:
 	 * two ways on right pane:
 	 * - a six line text on a white background for generals
-	 * - a multiline text for internal elements.	 * 
+	 * - a multiline text for internal elements.
 	 * 
 	 * tree structure:
 	 *  tree ()
@@ -141,7 +144,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	 * @param context
 	 * @param _xmcf
 	 */
-	public DialogCertificateTree(XFrame frame, XComponentContext context,
+	public DialogCertTreeModule(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
 		// TODO Auto-generated constructor stub
@@ -192,11 +195,11 @@ public class DialogCertificateTree extends BasicDialog implements
 		try {
 			m_sBtnOKLabel = m_aRegAcc.getStringFromRegistry( "id_ok" );			
 			m_sBtn_CancelLabel = m_aRegAcc.getStringFromRegistry( "id_cancel" );
-			m_sBtn_Verify = m_aRegAcc.getStringFromRegistry( "id_pb_verif_sign" );
+			m_sBtn_SelDevice = m_aRegAcc.getStringFromRegistry( "id_pb_sel_device" );
 			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_add_cert" );
-			m_sBtn_RemoveCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_rem_cert" );
-			m_sBtn_AddCountCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_count_sign" );
-			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( "id_title_cert_tree" );
+//			m_sBtn_RemoveCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_rem_cert" );
+//			m_sBtn_AddCountCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_count_sign" );
+			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_tree" );
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_cert_treew" );
 			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( "id_pb_cert_report" );
 		} catch (com.sun.star.uno.Exception e) {
@@ -280,29 +283,29 @@ public class DialogCertificateTree extends BasicDialog implements
 					XTextComponent.class, xTFControl);
 	
 			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB2(),
+					CertifTreeDlgDims.DS_COL_PB3(),
 //					CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					sVerify,
-					m_sBtn_Verify,
-					(short) PushButtonType.STANDARD_value);
-	
-			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB3(),
-					CertifTreeDlgDims.DS_ROW_4(),
-					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					sAdd,
-					m_sBtn_AddCertLabel,
+					sSelect,
+					m_sBtn_SelDevice,
 					(short) PushButtonType.STANDARD_value);
 	
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
+					sAdd,
+					m_sBtn_AddCertLabel,
+					(short) PushButtonType.STANDARD_value);
+	
+/*			insertButton(this,
+					CertifTreeDlgDims.DS_COL_PB4(),
+					CertifTreeDlgDims.DS_ROW_4(),
+					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					sRemove,
 					m_sBtn_RemoveCertLabel,
-					(short) PushButtonType.STANDARD_value);
+					(short) PushButtonType.STANDARD_value);*/
 			
 /*			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
@@ -345,7 +348,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	
 			xDialog = (XDialog) UnoRuntime.queryInterface(XDialog.class, super.m_xDialogControl);		
 			createWindowPeer();
-		center();
+//		center();
 		} catch (UnknownPropertyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -389,26 +392,12 @@ public class DialogCertificateTree extends BasicDialog implements
 			// we make sure we refer to the right one
 			System.out.println("action: "+sName);
 			if (sName.equals(sAdd)) {
-					DialogCertTreeModule aDialog1 = new DialogCertTreeModule( m_xParentFrame, m_xContext, m_xMCF );
-					try {
-						int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
-						int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*5;//to see the underlying certificates already in the document
-						aDialog1.initialize( BiasX, BiasY);
-						aDialog1.executeDialog();
-					} catch (BasicErrorException e) {
-						m_logger.severe("actionPerformed", "", e);
-					}
-					try {
-						aDialog1.executeDialog();
-						return;
-					} catch (BasicErrorException e) {
-						// TODO Auto-generated catch block
-						m_logger.severe("actionPerformed", "", e);
-						return;
-					}
-				// Helper.setUnoPropertyValue(m_xMSFDialogModel, "Step", new
-				// Integer(1));
-			} else {
+				m_logger.info("Aggiunto certificato");
+			} else if (sName.equals(sSelect)) {
+					// close dialog and will exit				
+				m_logger.info("Seleziona dispositivo");
+			}
+			else {
 				System.out.println("Activated: " + sName);
 			}
 		} catch (com.sun.star.uno.Exception ex) {
@@ -470,23 +459,8 @@ public class DialogCertificateTree extends BasicDialog implements
 //contruct a certificate
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 
-			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");// add a warning on certification path
-			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
-
-			aSignState = new SignatureStateInDocumentKOSignature2();			
-			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
-
-			aSignState = new SignatureStateInDocumentOK("Lorenzo", "Verdi");
+			aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
-
-			aSignState = new SignatureStateInDocumentKODocumentAndSignature();
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
-
-			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi");
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureAdding);
-
-			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi");
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
 
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
@@ -977,8 +951,7 @@ public class DialogCertificateTree extends BasicDialog implements
 				if(aCurrentNode.getType() == TreeNodeType.SIGNATURE) {
 					bEnableButton = true;
 				}
-				enableSingleButton(sVerify,bEnableButton);
-				enableSingleButton(sRemove,bEnableButton);				
+				enableSingleButton(sAdd,bEnableButton);
 				aCurrentNode.EnableDisplay(true);
 			}
 		}		

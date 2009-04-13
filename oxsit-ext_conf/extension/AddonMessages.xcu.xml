@@ -259,6 +259,24 @@ Roberto Resoli, developer
 				<value xml:lang="it">Il documento è stato firmato da:</value>
 			</prop>
 		</node>
+		<node oor:name="id_help" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Help</value>
+				<value xml:lang="it">?</value>
+			</prop>
+		</node>
+		<node oor:name="id_title_mod_cert_tree" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Available certificates</value>
+				<value xml:lang="it">Certificati disponibili</value>
+			</prop>
+		</node>
+		<node oor:name="id_pb_sel_device" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Select...</value>
+				<value xml:lang="it">Seleziona...</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->
