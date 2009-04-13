@@ -392,7 +392,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					DialogCertTreeModule aDialog1 = new DialogCertTreeModule( m_xParentFrame, m_xContext, m_xMCF );
 					try {
 						int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
-						int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*5;//to see the underlying certificates already in the document
+						int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*4;//to see the underlying certificates already in the document
 						aDialog1.initialize( BiasX, BiasY);
 						aDialog1.executeDialog();
 					} catch (BasicErrorException e) {

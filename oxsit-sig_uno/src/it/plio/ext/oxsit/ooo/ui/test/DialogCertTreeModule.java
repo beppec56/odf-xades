@@ -455,11 +455,11 @@ public class DialogCertTreeModule extends BasicDialog implements
 
 //insert dummy certificates
 			// TEST:
-			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
-//contruct a certificate
+			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso");
+//construct a certificate
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 
-			aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
+			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso");
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
 //now create the TreeControlModel and add it to the dialog
