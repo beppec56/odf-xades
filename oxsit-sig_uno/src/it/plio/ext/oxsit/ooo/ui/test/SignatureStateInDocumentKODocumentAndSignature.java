@@ -22,6 +22,11 @@
 
 package it.plio.ext.oxsit.ooo.ui.test;
 
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.Exception;
+import com.sun.star.uno.XComponentContext;
+
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
@@ -35,32 +40,34 @@ public class SignatureStateInDocumentKODocumentAndSignature extends SignatureSta
 	/**
 	 * @param user
 	 */
-	public SignatureStateInDocumentKODocumentAndSignature() {
-		super("Dave Rossini");
+	public SignatureStateInDocumentKODocumentAndSignature(XComponentContext _Context, XMultiComponentFactory _xMCF) {
+		super("Dave Rossini", _Context, _xMCF);
 		String sUserN = "Dave";
 		String sUserC = "Rossini";
 		// TODO Auto-generated constructor stub
 // now personalize the certificate: some of the field and set it OK
 // set the right certificate state string
 		{
-			String[] asArray = new String[m_nMAXIMUM_FIELDS];
+			String[] asArray = getCertStrings(TreeNodeType.SIGNATURE);		
 
-			int i = 0;			
-			asArray[i++] = new String("bLa firma NON È VALIDA, firmato da:");
-			asArray[i++] = new String("r"+sUserN+" "+sUserC);
-			asArray[i++] = new String("bL'identità del firmatario NON È VALIDA.");
-			asArray[i++] = new String("bNON È POSSIBILE VALIDARE IL CERTIFICATO!");
-			asArray[i++] = new String("bFirma qualificata NON VALIDA");
-			asArray[i++] = new String("");
-			asArray[i++] = new String("bIL DOCUMENTO È STATO MODIFICATO");
-			asArray[i++] = new String("bDOPO LA FIRMA.");
-			asArray[i++] = new String("bIL DOCUMENTO NON È AFFIDABILE!");
-			asArray[i++] = new String("bData e ora della firma:");
-			asArray[i++] = new String("r2008.11.02 10:03:34 Z");
-			asArray[i++] = new String("");
-			asArray[i++] = new String("bL'ora è stata acquisita da un server di");
-			asArray[i++] = new String("bmarca temporale il 2008.11.02 10:03:34 Z");
-//remove olfd data
+			MessageConfigurationAccess m_aRegAcc = new MessageConfigurationAccess(_Context, _xMCF);
+
+			try {
+				asArray[m_nSIGNATURE_STATE] = m_aRegAcc.getStringFromRegistry( "err_txt_sig_ko" );
+				asArray[m_nDOCUMENT_STATE] = m_aRegAcc.getStringFromRegistry( "err_txt_docu_ok" );
+				asArray[m_nSUBJECT] = new String("r"+sUserN+ ""+sUserC);
+				asArray[m_nTEXT_FIELD_04] = m_aRegAcc.getStringFromRegistry( "err_txt_cert_noconf" );
+				asArray[m_nTEXT_FIELD_05] = m_aRegAcc.getStringFromRegistry( "err_txt_crl_cannot" );
+				asArray[m_nISSUER] = new String("rACME & C Authority Ltd");
+				asArray[m_nTEXT_FIELD_08] = m_aRegAcc.getStringFromRegistry( "err_txt_ca_exp" );
+				asArray[m_nTEXT_FIELD_10] = new String("r2009.01.02 10:23:34 Z");
+				asArray[m_nTEXT_FIELD_11] = m_aRegAcc.getStringFromRegistry( "txt_times_serv1" );
+				asArray[m_nTEXT_FIELD_12] = m_aRegAcc.getStringFromRegistry( "txt_times_serv2" ) + "2009.01.02 10:23:34 Z"; 
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			m_aRegAcc.dispose();
 			removeCertString(TreeNodeType.SIGNATURE);
 			setCertString(TreeNodeType.SIGNATURE, asArray);
 		}

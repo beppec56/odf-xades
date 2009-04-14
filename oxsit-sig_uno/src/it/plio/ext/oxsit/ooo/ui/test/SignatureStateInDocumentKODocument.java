@@ -22,14 +22,17 @@
 
 package it.plio.ext.oxsit.ooo.ui.test;
 
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.XComponentContext;
+
 import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
 public class SignatureStateInDocumentKODocument extends SignatureStateInDocument {
 
-	public SignatureStateInDocumentKODocument() {
-		super("Giacomo Piero Rossi");
+	public SignatureStateInDocumentKODocument( XComponentContext _Context, XMultiComponentFactory _xMCF) {
+		super("Giacomo Piero Rossi", _Context, _xMCF);
 		String sUserN = "Giacomo Piero";
 		String sUserC = "Rossi";
 		// TODO Auto-generated constructor stub

@@ -22,6 +22,9 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.XComponentContext;
+
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
 /**
@@ -31,10 +34,12 @@ import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 public class CertificateDataCA extends SignatureStateInDocument {
 
 	/**
+	 * @param _Ctx TODO
+	 * @param _MFC TODO
 	 * @param user
 	 */
-	public CertificateDataCA() {
-		super("ACME Ltd. Certification Authority");
+	public CertificateDataCA(XComponentContext _Ctx, XMultiComponentFactory _MFC) {
+		super("ACME Ltd. Certification Authority", _Ctx, _MFC);
 		String sUserN = "Giacomo";
 		String sUserC = "Verdi";
 		// TODO Auto-generated constructor stub

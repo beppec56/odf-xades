@@ -468,26 +468,26 @@ public class DialogCertificateTree extends BasicDialog implements
 
 //insert dummy certificates
 			// TEST:
-			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi");
+			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi", m_xContext, m_xMCF);
 //contruct a certificate
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 
-			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe");// add a warning on certification path
+			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe", m_xContext, m_xMCF);// add a warning on certification path
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
 
-			aSignState = new SignatureStateInDocumentKOSignature2();			
+			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
 
-			aSignState = new SignatureStateInDocumentOK("Lorenzo", "Verdi");
+			aSignState = new SignatureStateInDocumentOK("Lorenzo", "Verdi", m_xContext, m_xMCF);
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
-			aSignState = new SignatureStateInDocumentKODocumentAndSignature();
+			aSignState = new SignatureStateInDocumentKODocumentAndSignature( m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
 
-			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi");
+			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi", m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureAdding);
 
-			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi");
+			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi", m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
 
 //now create the TreeControlModel and add it to the dialog
@@ -600,7 +600,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {
@@ -641,7 +641,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {
@@ -679,7 +679,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {

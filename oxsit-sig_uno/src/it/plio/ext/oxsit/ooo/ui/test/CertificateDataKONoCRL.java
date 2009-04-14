@@ -35,7 +35,7 @@ public class CertificateDataKONoCRL extends CertificateData {
 			String[] saDummy = getCertStrings(TreeNodeType.CERTIFICATE);			
 			removeCertString(TreeNodeType.CERTIFICATE);
 
-			saDummy[m_nEMPTY_FIELD_01] = "";
+			saDummy[m_nTEXT_FIELD_01] = "";
 			saDummy[m_nINFO_LINE1] = "rIl certificato è adatto per la firma digitale.";
 			saDummy[m_nINFO_LINE2] = "r(non ripudio attivato)";
 			saDummy[m_nTITLE_SCOPE] = "bIl certificato è stato rilasciato per i seguenti scopi:";

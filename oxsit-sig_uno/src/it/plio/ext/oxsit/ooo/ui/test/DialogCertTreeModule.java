@@ -455,11 +455,11 @@ public class DialogCertTreeModule extends BasicDialog implements
 
 //insert dummy certificates
 			// TEST:
-			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso");
+			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
 //construct a certificate
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 
-			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso");
+			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
 //now create the TreeControlModel and add it to the dialog
@@ -572,7 +572,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {
@@ -613,7 +613,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {
@@ -651,7 +651,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 			xaCNode.appendChild(xaDNode);
 
 			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA();
+			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
 			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
 
 		} catch (IllegalArgumentException e) {

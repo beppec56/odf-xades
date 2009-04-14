@@ -278,6 +278,197 @@ Roberto Resoli, developer
 			</prop>
 		</node>
 		<!--
+		    start from here, state of the signature on doc. Descriptive string
+		-->
+		<node oor:name="err_txt_sig_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rFirma valida</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_sig_ko" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bFirma NON valida</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_sig_to_ver" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bFirma da verificare (usate 'Verifica)</value>
+			</prop>
+		</node>
+		<!--
+		    Certificate state descriptive strings
+		-->
+		<node oor:name="err_txt_cert_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rCertificato valido</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_exp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCertificato scaduto</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_rev" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCertificato revocato</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_noact" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCertificato non attivo</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_noconf" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCertificato non conforme (vedere 'Rapporto')</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_nover" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCertificato non verificabile</value>
+			</prop>
+		</node>
+		<!--
+		    document state
+		-->
+		<node oor:name="err_txt_docu_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rIl documento non è modificato </value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docu_mod" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bIl documento è modificato (vedere 'Rapporto')</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docu_nover" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bDocumento non controllato (opzioni, usate 'Verifica')</value>
+			</prop>
+		</node>
+		<!--
+		    CRL control state
+		-->
+		<node oor:name="err_txt_crl_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rControllo con CRL abilitato</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_crl_dis" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bControllo con CRL non abilitato (opzioni)</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_crl_cannot" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCRL non accessibile</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_crl_noroot" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bPercorso di certificazione: manca root</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_crl_noint" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bPercorso di certificazione: manca intermedio</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_crl_noclo" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bPercorso di certificazione: non chiuso</value>
+			</prop>
+		</node>
+		<!--
+		    The intermediate titles
+		-->
+		<node oor:name="err_txt_title1" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">iRilasciato da:</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_title2" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">iData e ora della firma:</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_title0" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">iFirmato da:</value>
+			</prop>
+		</node>
+		<!--
+		    Time stamping types
+		-->
+		<node oor:name="txt_times_serv1" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rL'ora è stata acquisita da un server di</value>
+			</prop>
+		</node>
+		<node oor:name="txt_times_serv2" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rmarca temporale il </value>
+			</prop>
+		</node>
+		<node oor:name="txt_time_pc1" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rData e ora della firma dal PC</value>
+			</prop>
+		</node>
+		<node oor:name="txt_time_pc2" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rdel firmatario.</value>
+			</prop>
+		</node>
+		<!--
+		    CA control state
+		-->
+		<node oor:name="err_txt_ca_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rCA accreditata</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_noctrl" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bControllo certificato CNIPA non eseguito</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_ko" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCA non accreditata</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_stale" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bDB CA non aggiornato</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_nover" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bImpronta DB CA non verificata</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_noact" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bAggiornamento DB CA non attivo (opzioni)</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_noroot" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bManca certificato root CNIPA</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_exp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCA accreditata, certificato CA scaduto</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_ko_exp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">bCA non accreditata, certificato CA scaduto</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">

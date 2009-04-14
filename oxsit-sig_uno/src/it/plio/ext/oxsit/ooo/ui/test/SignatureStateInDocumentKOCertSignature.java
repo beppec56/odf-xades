@@ -22,6 +22,11 @@
 
 package it.plio.ext.oxsit.ooo.ui.test;
 
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.Exception;
+import com.sun.star.uno.XComponentContext;
+
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
@@ -37,23 +42,29 @@ public class SignatureStateInDocumentKOCertSignature extends SignatureStateInDoc
 	 * @param sUserSurname TODO
 	 * @param user
 	 */
-	public SignatureStateInDocumentKOCertSignature(String sUserName, String sUserSurname) {
-		super(sUserName+" "+sUserSurname);
+	public SignatureStateInDocumentKOCertSignature(String sUserName, String sUserSurname, XComponentContext _Context, XMultiComponentFactory _xMCF) {
+		super(sUserName+" "+sUserSurname, _Context, _xMCF);
 // now personalize the certificate: some of the field and set it OK
 // set the right certificate state string
 		{
+			MessageConfigurationAccess m_aRegAcc = new MessageConfigurationAccess(_Context, _xMCF);
 			String[] asArray = getCertStrings(TreeNodeType.SIGNATURE);		
 			//remove olfd data
 			removeCertString(TreeNodeType.SIGNATURE);
-
-			asArray[m_nSIGNATURE_VALIDITY] = new String( m_sSignatureValidity[m_nSIGNATURE_VALIDITY_NOT_VALID]);
-			asArray[m_nSIGNEE_NAME] = new String("r"+sUserName+" "+sUserSurname);
-			asArray[m_nSIGNEE_VALIDATION] = new String(m_sSigneeValidity[m_nSIGNEE_VALIDATION_NOT_VALID]);
-			asArray[m_nCERT_VALIDITY_STATE1] = new String("bNON È POSSIBILE VALIDARE IL CERTIFICATO!");
-			asArray[m_nCERT_VALIDITY_STATE2] = new String("bvedere nei dettagli certificato");
-			asArray[m_nSIGNATURE_DATE] = new String("r2008.11.02 10:33:34 Z");
-			asArray[m_nSIGNATURE_DATE_METHOD_DATE] = new String("bmarca temporale il 2008.11.02 10:33:34 Z");
-
+			try {
+				asArray[m_nSIGNATURE_STATE] = m_aRegAcc.getStringFromRegistry( "err_txt_sig_ko" );
+				asArray[m_nDOCUMENT_STATE] = m_aRegAcc.getStringFromRegistry( "err_txt_docu_mod" );
+				asArray[m_nSUBJECT] = new String("r"+sUserName+" "+sUserSurname);
+				asArray[m_nTEXT_FIELD_04] = m_aRegAcc.getStringFromRegistry( "err_txt_cert_ok" );
+				asArray[m_nTEXT_FIELD_05] = m_aRegAcc.getStringFromRegistry( "err_txt_crl_dis" );
+				asArray[m_nTEXT_FIELD_08] = m_aRegAcc.getStringFromRegistry( "err_txt_ca_ko" );
+				asArray[m_nTEXT_FIELD_10] = new String("r2008.10.02 10:23:34 Z");
+				asArray[m_nTEXT_FIELD_12] = m_aRegAcc.getStringFromRegistry( "txt_times_serv2" ) + "2008.10.02 10:23:34 Z"; 
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			m_aRegAcc.dispose();
 			setCertString(TreeNodeType.SIGNATURE, asArray);
 		}
 

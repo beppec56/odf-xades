@@ -54,8 +54,8 @@ public class CertificateData {
 	};
 
 
-	public static final int m_nTITLE			= 0;
-	public static final int m_nEMPTY_FIELD_01	= 1;
+	public static final int m_nTEXT_FIELD_00			= 0;
+	public static final int m_nTEXT_FIELD_01	= 1;
 	public static final int m_nINFO_LINE1	= 2;
 	public static final int m_nINFO_LINE2	= 3;
 	public static final int m_nTITLE_SCOPE		= 4;
@@ -121,10 +121,12 @@ public class CertificateData {
 		// S    the string will striken out bold
 		//	
 		{
-			String[] saDummy = new String[m_nMAXIMUM_FIELDS];			
+			String[] saDummy = new String[m_nMAXIMUM_FIELDS];
+//instantiate getter for strings
 
-			saDummy[m_nTITLE] = "bInformazioni sul certificato";
-			saDummy[m_nEMPTY_FIELD_01] = "";
+
+			saDummy[m_nTEXT_FIELD_00] = "bInformazioni sul certificato";
+			saDummy[m_nTEXT_FIELD_01] = "";
 			saDummy[m_nINFO_LINE1] = "rIl certificato è adatto per la firma digitale.";
 			saDummy[m_nINFO_LINE2] = "r(non ripudio attivato)";
 			saDummy[m_nTITLE_SCOPE] = "bIl certificato è stato rilasciato per i seguenti scopi:";
