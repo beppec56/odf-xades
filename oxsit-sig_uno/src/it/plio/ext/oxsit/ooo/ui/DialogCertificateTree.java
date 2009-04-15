@@ -159,8 +159,8 @@ public class DialogCertificateTree extends BasicDialog implements
 //main, depends from application, for now. To be changed
 				//TODO change to a name not depending from the application
 				
-				sSignatureOK = m_imagesUrl + "/"+"signature"+aSize; //signature ok
-//				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
+//				sSignatureOK = m_imagesUrl + "/"+"signature"+aSize; //signature ok
+				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
 				sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
 				sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
 				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
@@ -484,12 +484,13 @@ public class DialogCertificateTree extends BasicDialog implements
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature( m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
 
-			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi", m_xContext, m_xMCF);
+			//next two elements simulate the setting of 2 cert ready to be used to sign the docu
+/*			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi", m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureAdding);
 
 			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi", m_xContext, m_xMCF);
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
-
+*/
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(oTreeModel == null) {

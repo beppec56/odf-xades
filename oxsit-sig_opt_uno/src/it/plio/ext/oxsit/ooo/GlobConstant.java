@@ -109,10 +109,8 @@ public class GlobConstant {
 	public static final	String	m_nCERT_ELEM_INVALID = "errore";
 	public static final	String	m_nCERT_ELEM_BROKEN = "rotto";
 	public static final	String	m_nCERT_ELEM_BROKEN2 = "rotto-2";
-	
 
-
-	public static final String	m_sXADES_SIGNATURE_STREAM_NAME					= "xades-it-signature.xml";
+	public static final String	m_sXADES_SIGNATURE_STREAM_NAME					= "xadessignatures.xml";
 	
 	// Names used in configuration, the names are defined in file
 	// extension_conf_files/extension/AddonConfiguration.xcs.xml
