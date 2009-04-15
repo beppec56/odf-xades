@@ -51,7 +51,11 @@ import com.sun.star.uno.UnoRuntime;
 
 /**
  * contains the data description of the tree node, for example
- * parts of the certificate to display, along with status and similia
+ * parts of the certificate to display, along with status et similia
+ * 
+ * in the proj, need to redesign the class:
+ * base class with disply, and subclasses: one for every kind of node, so
+ * we can have a different instance, with different data.
  * 
  * @author beppe
  *
@@ -188,7 +192,7 @@ public class TreeNodeDescriptor implements XComponent  {
 									XPropertySet xTFModelPSet = (XPropertySet) UnoRuntime.queryInterface(
 											XPropertySet.class, xTFControl.getModel());
 // DEBUG: print properties:
-									Utilities.showProperties(this, xTFModelPSet);
+/*									Utilities.showProperties(this, xTFModelPSet);*/
 									//detect the first char
 									String sFirst = aStrings[StringIndex].substring(0,1);
 									// set the width accordingly 
