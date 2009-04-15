@@ -34,6 +34,7 @@ import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOSignature2;
+import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOSignature3;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentOK;
 
 import com.sun.star.awt.ActionEvent;
@@ -477,7 +478,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
 
-			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
+			aSignState = new SignatureStateInDocumentKOSignature3(m_xContext, m_xMCF);
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature( m_xContext, m_xMCF);
