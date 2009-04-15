@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.sun.star.awt.FontDescriptor;
 import com.sun.star.awt.FontFamily;
 import com.sun.star.awt.FontPitch;
 import com.sun.star.awt.FontSlant;
@@ -187,15 +188,38 @@ public class TreeNodeDescriptor implements XComponent  {
 									XPropertySet xTFModelPSet = (XPropertySet) UnoRuntime.queryInterface(
 											XPropertySet.class, xTFControl.getModel());
 // DEBUG: print properties:
-	/*								Utilities.showProperties(this, xTFModelPSet);*/
+									Utilities.showProperties(this, xTFModelPSet);
 									//detect the first char
 									String sFirst = aStrings[StringIndex].substring(0,1);
 									// set the width accordingly 
 									try {
-										if(sFirst.equalsIgnoreCase("b"))
-											xTFModelPSet.setPropertyValue("FontWeight", new Float(FontWeight.BOLD));
-										else
-											xTFModelPSet.setPropertyValue("FontWeight", new Float(FontWeight.NORMAL));
+										// back is the back color of the control, not the font
+										int nBackCol =  ControlDims.DLG_CERT_TREE_BACKG_COLOR;
+										// get the font descriptor props
+										FontDescriptor xf = (FontDescriptor)xTFModelPSet.getPropertyValue("FontDescriptor");
+										xf.Slant  = com.sun.star.awt.FontSlant.NONE;
+										xf.Underline = com.sun.star.awt.FontUnderline.NONE;
+										xf.Weight = FontWeight.NORMAL;
+										if(sFirst.equalsIgnoreCase("b")) {
+											xf.Weight = FontWeight.BOLD;
+										}
+										else if(sFirst.equalsIgnoreCase("w")) {
+											xf.Weight = FontWeight.BOLD;
+											//set backgound color for 'e' errors, bold+
+											nBackCol = ControlDims.DLG_CERT_TREE_STATE_WARNING_COLOR;
+										}
+										else if(sFirst.equalsIgnoreCase("e")) {
+											xf.Weight = FontWeight.BOLD;
+											//set backgound color for 'e' errors, bold+
+											nBackCol = ControlDims.DLG_CERT_TREE_STATE_ERROR_COLOR;
+										}
+										else if(sFirst.equalsIgnoreCase("i")) {
+											// italic, undeline single
+											xf.Slant  = com.sun.star.awt.FontSlant.ITALIC;
+											xf.Underline = com.sun.star.awt.FontUnderline.SINGLE;
+										}
+										xTFModelPSet.setPropertyValue("BackgroundColor", new Integer( nBackCol ));
+										xTFModelPSet.setPropertyValue("FontDescriptor", xf);
 									} catch (UnknownPropertyException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();

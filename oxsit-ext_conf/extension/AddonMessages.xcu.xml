@@ -282,12 +282,14 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="err_txt_sig_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">rValid signature</value>
 				<value xml:lang="it">rFirma valida</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_sig_ko" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bFirma NON valida</value>
+				<value xml:lang="en">eSignature not valid</value>
+				<value xml:lang="it">eFirma NON valida</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_sig_to_ver" oor:op="replace">
@@ -300,32 +302,35 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="err_txt_cert_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">rCertificate valid</value>
 				<value xml:lang="it">rCertificato valido</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_exp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCertificato scaduto</value>
+				<value xml:lang="en">eCertificate expired</value>
+				<value xml:lang="it">eCertificato scaduto</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_rev" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCertificato revocato</value>
+				<value xml:lang="en">eCertificate revoked</value>
+				<value xml:lang="it">eCertificato revocato</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_noact" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCertificato non attivo</value>
+				<value xml:lang="it">eCertificato non attivo</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_noconf" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCertificato non conforme (vedere 'Rapporto')</value>
+				<value xml:lang="it">eCertificato non conforme (vedere 'Rapporto')</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_nover" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCertificato non verificabile</value>
+				<value xml:lang="it">eCertificato non verificabile</value>
 			</prop>
 		</node>
 		<!--
@@ -338,12 +343,12 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="err_txt_docu_mod" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bIl documento è modificato (vedere 'Rapporto')</value>
+				<value xml:lang="it">eIl documento è modificato (vedere 'Rapporto')</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_docu_nover" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bDocumento non controllato (opzioni, usate 'Verifica')</value>
+				<value xml:lang="it">wDocumento non controllato (opzioni, usate 'Verifica')</value>
 			</prop>
 		</node>
 		<!--
@@ -356,27 +361,27 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="err_txt_crl_dis" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bControllo con CRL non abilitato (opzioni)</value>
+				<value xml:lang="it">wControllo con CRL non abilitato (opzioni)</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_cannot" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCRL non accessibile</value>
+				<value xml:lang="it">eCRL non accessibile</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_noroot" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bPercorso di certificazione: manca root</value>
+				<value xml:lang="it">ePercorso di certificazione: manca root</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_noint" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bPercorso di certificazione: manca intermedio</value>
+				<value xml:lang="it">ePercorso di certificazione: manca intermedio</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_noclo" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bPercorso di certificazione: non chiuso</value>
+				<value xml:lang="it">ePercorso di certificazione: non chiuso</value>
 			</prop>
 		</node>
 		<!--
@@ -430,42 +435,42 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="err_txt_ca_noctrl" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bControllo certificato CNIPA non eseguito</value>
+				<value xml:lang="it">wControllo certificato CNIPA non eseguito</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_ko" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCA non accreditata</value>
+				<value xml:lang="it">eCA non accreditata</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_stale" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bDB CA non aggiornato</value>
+				<value xml:lang="it">wDB CA non aggiornato</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_nover" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bImpronta DB CA non verificata</value>
+				<value xml:lang="it">wImpronta DB CA non verificata</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_noact" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bAggiornamento DB CA non attivo (opzioni)</value>
+				<value xml:lang="it">wAggiornamento DB CA non attivo (opzioni)</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_noroot" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bManca certificato root CNIPA</value>
+				<value xml:lang="it">eManca certificato root CNIPA</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_exp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCA accreditata, certificato CA scaduto</value>
+				<value xml:lang="it">eCA accreditata, certificato CA scaduto</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_ca_ko_exp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">bCA non accreditata, certificato CA scaduto</value>
+				<value xml:lang="it">eCA non accreditata, certificato CA scaduto</value>
 			</prop>
 		</node>
 		<!--

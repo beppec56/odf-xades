@@ -469,8 +469,7 @@ public class DialogCertificateTree extends BasicDialog implements
 //insert dummy certificates
 			// TEST:
 			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi", m_xContext, m_xMCF);
-//contruct a certificate
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
+			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);//contruct a certificate
 
 			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe", m_xContext, m_xMCF);// add a warning on certification path
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
@@ -478,7 +477,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
 			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
 
-			aSignState = new SignatureStateInDocumentOK("Lorenzo", "Verdi", m_xContext, m_xMCF);
+			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
 			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature( m_xContext, m_xMCF);
