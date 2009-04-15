@@ -431,11 +431,10 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 									(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xModel );
 
 						xStorage = xDocStorage.getDocumentStorage();
-						if(xStorage != null)
+						if(xStorage != null) {
 							m_logger.info("execute"+" We have storage available!");
-						
-//						Utilities.showInterfaces(xModel, xStorage);
-							
+							Utilities.showInterfaces(xModel, xStorage);
+						}
 						/**
 						 * we can read the file and check if a CNIPA signature
 						 * TODO start a thread to do the job? may be creating a
@@ -693,9 +692,9 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 //					try {
 					m_logger.info( "simulating signature check..." );
 //						Thread.sleep( 20 ); //simulates the time needed to check signatures
-						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xContext);
+						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xServiceManager, m_xContext);
 //						aCls.examinePackageODT(aURL, m_xServiceManager, m_xComponentContext);
-						aCls.verifyDocumentSignature(_xStorage, aURL, m_xServiceManager, m_xContext);
+						aCls.verifyDocumentSignature(_xStorage, aURL);
 /*					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

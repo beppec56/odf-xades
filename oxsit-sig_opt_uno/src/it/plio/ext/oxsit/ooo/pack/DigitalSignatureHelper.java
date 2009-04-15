@@ -30,11 +30,14 @@ import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
 import com.sun.star.embed.XStorage;
 import com.sun.star.io.IOException;
+import com.sun.star.io.XInputStream;
+import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.lang.*;
+import com.sun.star.packages.WrongPasswordException;
 import com.sun.star.uno.XComponentContext;
 
 import it.plio.ext.oxsit.Utilities;
@@ -51,10 +54,12 @@ public class DigitalSignatureHelper {
 //    public OOoServerInfo SvrInfo = new OOoServerInfo();
 
 	private XDynamicLogger m_logger;
-	
+	protected XComponentContext m_xCtx;
+	protected XMultiComponentFactory m_xMFC;
     /** Creates a new instance of __NAME__ */
-    public DigitalSignatureHelper(XComponentContext _context) {
-    	
+    public DigitalSignatureHelper(XMultiComponentFactory _xMFC, XComponentContext _context) {
+    	m_xCtx = _context;
+    	m_xMFC = _xMFC;
     	m_logger = new XDynamicLogger(this, _context);
     	m_logger.enableLogging();
     	m_logger.info("ctor","");
@@ -68,6 +73,27 @@ public class DigitalSignatureHelper {
 				try {
 					if( xThePackage.isStreamElement(aElements[i]) ) {
 						_List.add(_rootElement+aElements[i]);
+// try to open the element, read a few bytes, close it
+						try {
+							Object oObjXStreamSto = xThePackage.cloneStreamElement(aElements[i]);
+//							Object oObjXStreamSto = xThePackage.openStreamElement(aElements[i], ElementModes.READ);
+							
+							
+//							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XStreamStorage.class, oObjXStreamSto);
+//							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
+							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
+							XInputStream xI = xSt.getInputStream();
+
+							m_logger.info(aElements[i]+" "+xI.available()+ " bytes");
+							
+							xI.closeInput();
+/*							Utilities.showInterfaces(this, oObjXStreamSto);
+							Utilities.showProperties(oObjXStreamSto, xPset);*/
+							
+						} catch (WrongPasswordException e) {
+							// TODO Auto-generated catch block
+							m_logger.warning("fillElementList", aElements[i]+" wrong password", e);
+						}
 					}
 					else if(_bRecurse && xThePackage.isStorageElement(aElements[i])) {
 						XStorage xSubStore = xThePackage.openStorageElement(aElements[i], ElementModes.READ);
@@ -91,7 +117,8 @@ public class DigitalSignatureHelper {
     }
 
     /**
-     * closly resembles the function  DocumentSignatureHelper::CreateElementList 
+     * closly resembles the function  DocumentSignatureHelper::CreateElementList
+     * FIXME but need to be redesigned, because of concurrent access to streams/elements 
      * @param _thePackage
      * @return
      */
@@ -104,12 +131,12 @@ public class DigitalSignatureHelper {
     	XStorage xThePackage;
     	if(_xStorage == null ){
     		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
-    		m_logger.info("createElemeList", "use the URL storage");
+    		m_logger.info("makeTheElementList", "use the URL storage");
 //    		Utilities.showInterfaces(this,xThePackage);
     	}
     	else {
     		xThePackage = _xStorage;
-    		m_logger.info("createElemeList", "use the document storage");
+    		m_logger.info("makeTheElementList", "use the document storage");
     	}
  
     	XPropertySet xPropset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, _othePackage);
@@ -118,10 +145,10 @@ public class DigitalSignatureHelper {
 			try {
 				sVersion = (String)xPropset.getPropertyValue("Version");
 			} catch (UnknownPropertyException e) {
-				m_logger.warning("createElemeList", "Version missing", e);
+				m_logger.warning("makeTheElementList", "Version missing", e);
 				//no problem if not existent
 			} catch (WrappedTargetException e) {
-				m_logger.warning("createElemeList", "Version missing", e);
+				m_logger.warning("makeTheElementList", "Version missing", e);
 			}
 			if(sVersion.length() != 0)
 				m_logger.log("Version is: "+sVersion); // this should be 1.2 or more
@@ -142,15 +169,15 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
+			m_logger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
+			m_logger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "\"Pictures\" substorage missing", e);
+			m_logger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		}
 
     	//OLE
@@ -165,15 +192,15 @@ public class DigitalSignatureHelper {
 			}
 			catch (IOException e) {
 				//no problem if not existent
-				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+				m_logger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			} catch (StorageWrappedTargetException e) {
 				// TODO Auto-generated catch block
 				//no problem if not existent
-				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+				m_logger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				//no problem if not existent
-				m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+				m_logger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			}
 			
 			//Object folders
@@ -182,27 +209,47 @@ public class DigitalSignatureHelper {
 			for(int i = 0; i < aObjName.length; i++) {
 				sElementName = aObjName[i];
 				if((aObjName[i].indexOf(aObjectName) != -1) && xThePackage.isStorageElement(aObjName[i]))  {
-					XStorage xAnotherSubStore = xThePackage.openStorageElement(aObjName[i], ElementModes.READ);
-					fillElementList(xAnotherSubStore, aElements,aObjName[i]+"/", true);
-					xAnotherSubStore.dispose();					
+					XStorage xAnotherSubStore;
+					try
+					{
+					   xAnotherSubStore = xThePackage.openStorageElement(aObjName[i], ElementModes.READ);
+						fillElementList(xAnotherSubStore, aElements,aObjName[i]+"/", true);
+						xAnotherSubStore.dispose();					
+					}
+					catch (IOException e)
+					{
+						m_logger.info("makeTheElementList", "the substorage "+aObjName[i]+" might be locked, get the last committed version of it");
+					   try {
+						   Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
+						   XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
+						   Object oMyStorage =xStorageFactory.createInstance();
+						   xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
+						   xThePackage.copyStorageElementLastCommitTo( aObjName[i], xAnotherSubStore );
+						   fillElementList(xAnotherSubStore, aElements,aObjName[i]+"/", true);
+						   xAnotherSubStore.dispose();						   
+					   } catch (Exception e1) {
+						// TODO Auto-generated catch block
+							m_logger.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e1);
+					   } // should create an empty temporary storage
+					} 					
 				}
 			}			
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_logger.severe("createElemeList", "\""+sElementName+"\""+" missing", e);
+			m_logger.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "\""+sElementName+" missing", e);
+			m_logger.warning("makeTheElementList", "\""+sElementName+" missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "\""+sElementName+"\""+" missing", e);
+			m_logger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 		} catch (NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_logger.warning("createElemeList", "", e);
+			m_logger.warning("makeTheElementList", "", e);
 		}
     	return aElements;
     }
@@ -214,10 +261,10 @@ public class DigitalSignatureHelper {
      * @param _xMCF
      * @param _xCompCtx
      */
-    public void verifyDocumentSignature(XStorage _xStorage, String aTheDocURL, XMultiComponentFactory _xMCF, XComponentContext _xCompCtx) {
+    public void verifyDocumentSignature(XStorage _xStorage, String aTheDocURL) {
     	try {
     		// try from url
-			Object oObj = _xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", _xCompCtx);
+			Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
 			if(oObj != null) {
 				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)
 							UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
@@ -226,8 +273,8 @@ public class DigitalSignatureHelper {
 	            args[1] = ElementModes.READ;
 	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);
 
-	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
-//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
+	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
 	            	m_logger.log(aElements.get(i));	            	
