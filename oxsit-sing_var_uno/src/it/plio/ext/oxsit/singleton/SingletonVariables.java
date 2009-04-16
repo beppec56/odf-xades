@@ -74,7 +74,7 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppe
  *
  */
-public class SingletonGlobalVariables extends WeakBase 
+public class SingletonVariables extends WeakBase 
 			implements XServiceInfo, 
 			XComponent,
 			XInterface,
@@ -86,7 +86,7 @@ public class SingletonGlobalVariables extends WeakBase
 			XLogger {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= SingletonGlobalVariables.class.getName();
+	public static final String			m_sImplementationName	= SingletonVariables.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_SERVICE };
@@ -135,7 +135,7 @@ public class SingletonGlobalVariables extends WeakBase
 	 * 
 	 * @param _ctx
 	 */
-	public SingletonGlobalVariables(XComponentContext _ctx) {
+	public SingletonVariables(XComponentContext _ctx) {
 		
 ///rigamarole for logging....
 //read the logger configuration locally

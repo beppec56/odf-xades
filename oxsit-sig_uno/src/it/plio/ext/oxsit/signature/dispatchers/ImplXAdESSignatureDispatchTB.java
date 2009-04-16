@@ -80,7 +80,7 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
 import it.plio.ext.oxsit.signature.dispatchers.DocumentURLStatusHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
+import it.plio.ext.oxsit.singleton.SingletonVariables;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
 
@@ -200,7 +200,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			}
 			else
 				m_logger.info("no interface!");*/
-/*			SingletonGlobalVariables xS = (SingletonGlobalVariables)UnoRuntime.queryInterface(SingletonGlobalVariables.class,oObj);
+/*			SingletonVariables xS = (SingletonVariables)UnoRuntime.queryInterface(SingletonVariables.class,oObj);
 			if (xS != null) {
 				xS.indentify();
 			}

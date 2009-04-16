@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit;
 
-import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
+import it.plio.ext.oxsit.singleton.SingletonVariables;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
@@ -44,10 +44,10 @@ public class RegisterServices {
 		XSingleComponentFactory xFactory = null;
 	
 //		System.out.println("__getComponentFactory: "+ManageOptions.m_sImplementationName);
-		if ( sImplementationName.equals( SingletonGlobalVariables.m_sImplementationName ) )
+		if ( sImplementationName.equals( SingletonVariables.m_sImplementationName ) )
 			xFactory = Factory.createComponentFactory( 
-						SingletonGlobalVariables.class,
-						SingletonGlobalVariables.m_sServiceNames );
+						SingletonVariables.class,
+						SingletonVariables.m_sServiceNames );
 		return xFactory;
 	}
 	/** Writes the service information into the given registry key.
@@ -67,16 +67,16 @@ public class RegisterServices {
 		//prepare thew key path
 		try {
 			XRegistryKey newKey = xRegistryKey.createKey(
-					SingletonGlobalVariables.m_sImplementationName+ // the class implementing
+					SingletonVariables.m_sImplementationName+ // the class implementing
 					"/UNO/SINGLETONS/"+	//fixed key reference
-					SingletonGlobalVariables.m_sServiceNames[0]); //
+					SingletonVariables.m_sServiceNames[0]); //
 
-			newKey.setStringValue(SingletonGlobalVariables.m_sServiceNames[0]);
+			newKey.setStringValue(SingletonVariables.m_sServiceNames[0]);
 		} catch (InvalidRegistryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return Factory.writeRegistryServiceInfo( SingletonGlobalVariables.m_sImplementationName, SingletonGlobalVariables.m_sServiceNames, xRegistryKey );
+		return Factory.writeRegistryServiceInfo( SingletonVariables.m_sImplementationName, SingletonVariables.m_sServiceNames, xRegistryKey );
 	}
 }

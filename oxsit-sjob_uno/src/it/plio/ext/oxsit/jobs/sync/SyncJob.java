@@ -31,7 +31,7 @@ import it.plio.ext.oxsit.ooo.GlobalVariables;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.oxsit.singleton.SingletonGlobalVariables;
+import it.plio.ext.oxsit.singleton.SingletonVariables;
 
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.WindowAttribute;
@@ -122,7 +122,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
 	private final String sSingletonService = "/singletons/it.plio.ext.oxsit.singleton.GlobalVariables";
-	private SingletonGlobalVariables globalSign_data = null;
+	private SingletonVariables globalSign_data = null;
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;
 	
