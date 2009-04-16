@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit;
 
+import it.plio.ext.oxsit.ooo.cert.ImplDocumentSignatures;
 import it.plio.ext.oxsit.ooo.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.ooo.options.ManageLoggingOptions;
 
@@ -47,9 +48,14 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( ManageGeneralOptions.class, ManageGeneralOptions.m_sServiceNames );
 //DEBUG			System.out.println("__getComponentFactory: "+ManageGeneralOptions.m_sImplementationName);
 		}
-		if ( sImplementationName.equals( ManageLoggingOptions.m_sImplementationName ) ) {
+		else if ( sImplementationName.equals( ManageLoggingOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageLoggingOptions.class, ManageLoggingOptions.m_sServiceNames );
 //DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( ImplDocumentSignatures.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( ImplDocumentSignatures.class, ImplDocumentSignatures.m_sServiceNames );
+//DEBUG			
+			System.out.println("__getComponentFactory: "+ImplDocumentSignatures.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -69,13 +75,19 @@ public class RegisterServices {
 		boolean retLogging = 
 			Factory.writeRegistryServiceInfo( ManageLoggingOptions.m_sImplementationName, ManageLoggingOptions.m_sServiceNames, xRegistryKey );
 
+		boolean retDigitalSignatures = 
+			Factory.writeRegistryServiceInfo( ImplDocumentSignatures.m_sImplementationName, ImplDocumentSignatures.m_sServiceNames, xRegistryKey );
+
 		if (!retGeneral)
 			System.out.println("__writeRegistryServiceInfo: "+ManageGeneralOptions.m_sImplementationName + "failed");		
 
 		if (!retLogging)
 			System.out.println("__writeRegistryServiceInfo: "+ManageLoggingOptions.m_sImplementationName + "failed");		
 		
-		if(retGeneral && retLogging)
+		if (!retDigitalSignatures)
+			System.out.println("__writeRegistryServiceInfo: "+ImplDocumentSignatures.m_sImplementationName + "failed");		
+
+		if(retGeneral && retLogging && retDigitalSignatures)
 			return true;
 		
 		return false;
