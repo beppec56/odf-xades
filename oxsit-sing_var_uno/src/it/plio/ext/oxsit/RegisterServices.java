@@ -64,7 +64,7 @@ public class RegisterServices {
 	public synchronized static boolean __writeRegistryServiceInfo( XRegistryKey xRegistryKey ) {
 //		System.out.println("__writeRegistryServiceInfo: "+ManageOptions.m_sImplementationName+" "+ManageOptions.m_sServiceNames[0] );
 		
-		//prepare thew key path
+		//prepare the new key path
 		try {
 			XRegistryKey newKey = xRegistryKey.createKey(
 					SingletonVariables.m_sImplementationName+ // the class implementing
