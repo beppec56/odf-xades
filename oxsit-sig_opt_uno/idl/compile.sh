@@ -15,8 +15,8 @@ rm ../rdb/oxsit_types.rdb
 regmerge -v ../rdb/oxsit_types.rdb /UCR OXDocumentSignatures.urd
 
 #prepare the java classes
-javamaker -BUCR -Tit.plio.ext.oxsit.ooo.cert.OXDocumentSignatures -nD $OO_SDK_URE_HOME/share/misc/types.rdb ../rdb/oxsit_types.rdb
+javamaker -BUCR -O../class-lib -Tit.plio.ext.oxsit.ooo.cert.OXDocumentSignatures -nD $OO_SDK_URE_HOME/share/misc/types.rdb ../rdb/oxsit_types.rdb
 
 #prepare the java classes
-cppumaker -BUCR -Tit.plio.ext.oxsit.ooo.cert.OXDocumentSignatures $OO_SDK_URE_HOME/share/misc/types.rdb ../rdb/oxsit_types.rdb
+#cppumaker -BUCR -Tit.plio.ext.oxsit.ooo.cert.OXDocumentSignatures $OO_SDK_URE_HOME/share/misc/types.rdb ../rdb/oxsit_types.rdb
  

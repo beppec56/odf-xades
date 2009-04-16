@@ -7,5 +7,6 @@
 	<classpathentry kind="var" path="OOO3_LIBS/jut.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/ridl.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/unoil.jar"/>
+	<classpathentry kind="lib" path="class-lib"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

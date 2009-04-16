@@ -8,8 +8,8 @@
  
   interface OXDocumentSignatures : com::sun::star::uno::XInterface 
   {
-      [attribute] string SourceDirectory;
-      [attribute] string DestinationDirectory;
+      [attribute] string DocumentURL;
+//      [attribute] string DestinationDirectory;
 //      [attribute] com::sun::star::awt::Size Dimension;
   };
  
