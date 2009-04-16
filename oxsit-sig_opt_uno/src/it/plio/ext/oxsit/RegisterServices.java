@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit;
 
-import it.plio.ext.oxsit.ooo.cert.ImplDocumentSignatures;
+import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
 import it.plio.ext.oxsit.ooo.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.ooo.options.ManageLoggingOptions;
 
@@ -52,10 +52,10 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( ManageLoggingOptions.class, ManageLoggingOptions.m_sServiceNames );
 //DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
 		}
-		else if ( sImplementationName.equals( ImplDocumentSignatures.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( ImplDocumentSignatures.class, ImplDocumentSignatures.m_sServiceNames );
+		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
 //DEBUG			
-			System.out.println("__getComponentFactory: "+ImplDocumentSignatures.m_sImplementationName);
+			System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -76,7 +76,7 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( ManageLoggingOptions.m_sImplementationName, ManageLoggingOptions.m_sServiceNames, xRegistryKey );
 
 		boolean retDigitalSignatures = 
-			Factory.writeRegistryServiceInfo( ImplDocumentSignatures.m_sImplementationName, ImplDocumentSignatures.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
 
 		if (!retGeneral)
 			System.out.println("__writeRegistryServiceInfo: "+ManageGeneralOptions.m_sImplementationName + "failed");		
@@ -85,7 +85,7 @@ public class RegisterServices {
 			System.out.println("__writeRegistryServiceInfo: "+ManageLoggingOptions.m_sImplementationName + "failed");		
 		
 		if (!retDigitalSignatures)
-			System.out.println("__writeRegistryServiceInfo: "+ImplDocumentSignatures.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
 		if(retGeneral && retLogging && retDigitalSignatures)
 			return true;

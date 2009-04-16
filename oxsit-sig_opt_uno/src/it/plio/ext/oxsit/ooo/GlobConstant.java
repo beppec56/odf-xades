@@ -133,7 +133,7 @@ public class GlobConstant {
 	
 	//service for document signatures, this service implements specific interfaces, not available in
 	// standard OOo, with functionality similar to some stock OOo interfaces declared unpublished
-	public static final String m_sDOCUMENT_SIGNATURES_SERVICE = m_sWEBIDENTBASE + ".oxsit.DocumentSignatures";
+	public static final String m_sDOCUMENT_SIGNATURES_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.cert.DocumentSignatures";
 
 	public static final int	m_nLOG_LEVEL_FINE									= 0;
 	public static final int	m_nLOG_LEVEL_INFO									= 1;

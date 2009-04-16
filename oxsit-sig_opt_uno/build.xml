@@ -121,6 +121,7 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
+				<!-- pathelement path="class-lib" /-->
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -133,7 +134,17 @@ the default target must be removed
 			<fileset dir="${ooosdk}/classes">
 				<include name="**/*" />
 			</fileset>
-		</copy>
+		</copy>	
+		<!-- end of copy helper classes from OOo SDK -->
+
+		<!--
+			copy interface classes
+		-->
+		<!-- copy todir="${build}" failonerror="false">
+			<fileset dir="${basedir}/class-lib">
+				<include name="**/*" />
+			</fileset>
+		</copy -->
 		<!-- end of copy helper classes from OOo SDK -->
 
 	</target>

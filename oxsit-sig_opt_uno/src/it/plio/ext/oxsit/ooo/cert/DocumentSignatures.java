@@ -45,9 +45,12 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.WeakBase;
+import com.sun.star.security.XCertificate;
+import com.sun.star.security.XCertificateExtension;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
+import com.sun.star.util.DateTime;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
@@ -61,7 +64,7 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppe
  *
  */
-public class ImplDocumentSignatures extends WeakBase 
+public class DocumentSignatures extends WeakBase 
 			implements XServiceInfo, 
 			XComponent,
 			XInterface,
@@ -70,10 +73,11 @@ public class ImplDocumentSignatures extends WeakBase
 			XPropertySetInfo,
 			XChangesNotifier,
 			XNameContainer,
-			OXDocumentSignatures {
+			XCertificate,
+			XOXDocumentSignatures {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= ImplDocumentSignatures.class.getName();
+	public static final String			m_sImplementationName	= DocumentSignatures.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE };
@@ -99,7 +103,7 @@ public class ImplDocumentSignatures extends WeakBase
 	 * 
 	 * @param _ctx
 	 */
-	public ImplDocumentSignatures(XComponentContext _ctx) {
+	public DocumentSignatures(XComponentContext _ctx) {
 		m_logger = new XDynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();
@@ -397,7 +401,7 @@ public class ImplDocumentSignatures extends WeakBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.OXDocumentSignatures#getDocumentURL()
+	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#getDocumentURL()
 	 */
 	@Override
 	public String getDocumentURL() {
@@ -407,11 +411,164 @@ public class ImplDocumentSignatures extends WeakBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.OXDocumentSignatures#setDocumentURL(java.lang.String)
+	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#setDocumentURL(java.lang.String)
 	 */
 	@Override
 	public void setDocumentURL(String arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("setDocumentURL");		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#findCertificateExtension(byte[])
+	 */
+	@Override
+	public XCertificateExtension findCertificateExtension(byte[] arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getCertificateUsage()
+	 */
+	@Override
+	public int getCertificateUsage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getEncoded()
+	 */
+	@Override
+	public byte[] getEncoded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getExtensions()
+	 */
+	@Override
+	public XCertificateExtension[] getExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getIssuerName()
+	 */
+	@Override
+	public String getIssuerName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getIssuerUniqueID()
+	 */
+	@Override
+	public byte[] getIssuerUniqueID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getMD5Thumbprint()
+	 */
+	@Override
+	public byte[] getMD5Thumbprint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getNotValidAfter()
+	 */
+	@Override
+	public DateTime getNotValidAfter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getNotValidBefore()
+	 */
+	@Override
+	public DateTime getNotValidBefore() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSHA1Thumbprint()
+	 */
+	@Override
+	public byte[] getSHA1Thumbprint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSerialNumber()
+	 */
+	@Override
+	public byte[] getSerialNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSignatureAlgorithm()
+	 */
+	@Override
+	public String getSignatureAlgorithm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSubjectName()
+	 */
+	@Override
+	public String getSubjectName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSubjectPublicKeyAlgorithm()
+	 */
+	@Override
+	public String getSubjectPublicKeyAlgorithm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSubjectPublicKeyValue()
+	 */
+	@Override
+	public byte[] getSubjectPublicKeyValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getSubjectUniqueID()
+	 */
+	@Override
+	public byte[] getSubjectUniqueID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.security.XCertificate#getVersion()
+	 */
+	@Override
+	public short getVersion() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
