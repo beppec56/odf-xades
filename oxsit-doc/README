@@ -98,7 +98,7 @@ The build.xml properties are the following:
 
 	The Eclipse projects are:
 
-	extension_conf_files, signature_options_comp, singleton_var_comp, signature_component, sync_job_comp,
+	oxsit-ext_conf, oxsit-sig_opt_uno, oxsit-sing_var_uno, oxsit-sig_uno, oxsit-sjob_uno,
 	
 	After that, if all is ok and 'Build Automatically' is checked, Eclipse will compile the Java projects
 	as soon as they are checked-out.
