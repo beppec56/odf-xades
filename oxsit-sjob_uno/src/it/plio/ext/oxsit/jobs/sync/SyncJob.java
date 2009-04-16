@@ -111,8 +111,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	private XFrame						m_xFrame;												// use
 	// when frame is needed as reference
 
-	private XComponentContext			m_xContext;
-	private XComponentContext			m_xComponentContext		= null;
+	private XComponentContext			m_xComponentContext;
 
 	@SuppressWarnings("unused")
 	// may be we will need it afterward...
@@ -121,7 +120,8 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	// protected XMultiComponentFactory m_xRemoteServiceManager = null;
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
-	private final String sSingletonService = "/singletons/it.plio.ext.oxsit.singleton.GlobalVariables";
+	private final String sSingletonService = GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE;
+	private final String sDocumentSignaturesService = GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE;
 	private SingletonVariables globalSign_data = null;
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;
@@ -152,19 +152,19 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		m_logger.enableLogging(); // comment this if no logging needed
 
 		m_logger.ctor();
-		m_xContext = context;
+		m_xComponentContext = context;
 
 		/*
-		 * if(m_xContext != null) System.out.println(" got a context!");
+		 * if(m_xComponentContext != null) System.out.println(" got a context!");
 		 */
 		try {
 			// get the service manager from the component context
-			m_xServiceManager = m_xContext.getServiceManager();
+			m_xServiceManager = m_xComponentContext.getServiceManager();
 		} catch (java.lang.Exception ex) {
 			ex.printStackTrace();
 		}
 
-		m_xFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, m_xContext);
+		m_xFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, m_xComponentContext);
 	}
 
 	/*
@@ -252,7 +252,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		com.sun.star.beans.NamedValue[] lDynamicData = null;
 
 		try {
-			Object oObj = m_xContext.getValueByName(sSingletonService);
+			Object oObj = m_xComponentContext.getValueByName(sSingletonService);
 			if(oObj != null)
 				m_logger.info("execute"," singleton data "+String.format( "%8H", oObj.hashCode() ));
 			else
@@ -261,6 +261,28 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		catch (ClassCastException e) {
 			e.printStackTrace();
 		}
+		try {
+			///////// try to get a Document Signatures object
+			Object oObj = null; 
+			oObj = m_xServiceManager.createInstanceWithContext(sDocumentSignaturesService, m_xComponentContext); 
+//				m_xComponentContext.getValueByName(sDocumentSignaturesService);
+			
+			if(oObj != null) {
+				m_logger.info("execute"," document signatures service"+String.format( "%8H", oObj.hashCode() )+ " XNameContainer present" );
+				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
+				if(xName != null)
+					xName.hasElements();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );					
+			}
+			else
+				m_logger.info("execute","No document signatures service (UNO)");
+		}
+		catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+		
+		
 		int c = lArgs.length;
 		for (int i = 0; i < c; ++i) {
 			// System.out.println("Argument: "+lArgs[i].Name);
@@ -352,7 +374,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 					globalSign_data.indentify();
 				else
 					m_logger.info("execute", "No singleton data (Java)");
-
+				
 				// if (sEventName.equalsIgnoreCase( "onFirstVisibleTask" )) {
 				if (sEventName.equalsIgnoreCase( "OnStartApp" )
 						/*|| sEventName.equalsIgnoreCase( "OnCloseApp" )*/) {
@@ -415,6 +437,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 					 * though I'm not sure
 					 * 
 					 */
+
 					if (xFrame != null) {
 						m_xFrame = xFrame;
 						m_logger.info("execute", "document loaded URL: " + xModel.getURL() );
@@ -692,7 +715,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 //					try {
 					m_logger.info( "simulating signature check..." );
 //						Thread.sleep( 20 ); //simulates the time needed to check signatures
-						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xServiceManager, m_xContext);
+						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xServiceManager, m_xComponentContext);
 //						aCls.examinePackageODT(aURL, m_xServiceManager, m_xComponentContext);
 						aCls.verifyDocumentSignature(_xStorage, aURL);
 /*					} catch (InterruptedException e) {
@@ -746,7 +769,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		try {
 			aConfProvider = (XMultiServiceFactory) UnoRuntime.queryInterface(
 					XMultiServiceFactory.class, m_xServiceManager
-							.createInstanceWithContext( sProviderService, m_xContext ) );
+							.createInstanceWithContext( sProviderService, m_xComponentContext ) );
 		} catch (Exception e) {
 			e.printStackTrace();
 			m_logger.info( "error !" );
