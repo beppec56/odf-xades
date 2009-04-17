@@ -73,7 +73,6 @@ public class DocumentSignatures extends WeakBase
 			XPropertySetInfo,
 			XChangesNotifier,
 			XNameContainer,
-			XCertificate,
 			XOXDocumentSignatures {
 
 	// the name of the class implementing this object
@@ -406,7 +405,6 @@ public class DocumentSignatures extends WeakBase
 	@Override
 	public String getDocumentURL() {
 		// TODO Auto-generated method stub
-		m_logger.entering("getDocumentURL");		
 		return null;
 	}
 
@@ -416,159 +414,7 @@ public class DocumentSignatures extends WeakBase
 	@Override
 	public void setDocumentURL(String arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("setDocumentURL");		
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#findCertificateExtension(byte[])
-	 */
-	@Override
-	public XCertificateExtension findCertificateExtension(byte[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getCertificateUsage()
-	 */
-	@Override
-	public int getCertificateUsage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getEncoded()
-	 */
-	@Override
-	public byte[] getEncoded() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getExtensions()
-	 */
-	@Override
-	public XCertificateExtension[] getExtensions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getIssuerName()
-	 */
-	@Override
-	public String getIssuerName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getIssuerUniqueID()
-	 */
-	@Override
-	public byte[] getIssuerUniqueID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getMD5Thumbprint()
-	 */
-	@Override
-	public byte[] getMD5Thumbprint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getNotValidAfter()
-	 */
-	@Override
-	public DateTime getNotValidAfter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getNotValidBefore()
-	 */
-	@Override
-	public DateTime getNotValidBefore() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSHA1Thumbprint()
-	 */
-	@Override
-	public byte[] getSHA1Thumbprint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSerialNumber()
-	 */
-	@Override
-	public byte[] getSerialNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSignatureAlgorithm()
-	 */
-	@Override
-	public String getSignatureAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSubjectName()
-	 */
-	@Override
-	public String getSubjectName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSubjectPublicKeyAlgorithm()
-	 */
-	@Override
-	public String getSubjectPublicKeyAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSubjectPublicKeyValue()
-	 */
-	@Override
-	public byte[] getSubjectPublicKeyValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getSubjectUniqueID()
-	 */
-	@Override
-	public byte[] getSubjectUniqueID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.security.XCertificate#getVersion()
-	 */
-	@Override
-	public short getVersion() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

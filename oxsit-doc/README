@@ -241,6 +241,35 @@ Under Windows I only installed the extension: it worked.
    MUST be closed. Furthermore, OOo needs to be restarted after every state change. 
    If you fail to do so, the initialization is not carried out properly.
 
+Compiling the idl file of specialized interfaces
+================================================
+These note explain how to compile the idl file given in.....
+to obtain the class file and prepare the rdb file for component
+registration when the extension is installed.
+Note taken under OOo 3.0 SDK
+
+The interface are written in Java, where needed.
+
+1) install the OOo SDK, 
+2) initialize it, accept default, not the autodeploy (e.g. = NO)
+3) now go to the default directory (sould be $HOME/openoffice.org_sdk under Linux)
+   cd  dsklnx
+   . ./setsdkenv_unix.sh
+   
+Now you are ready to compile the idl and prepare the file rdb for inclusion
+   
+
+
+Registered component
+====================
+
+To list registered component under UNO packages use:
+./regview <ooo dir>/share/uno_packages/cache/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend/common_.rdb /
+ 
+The following console command shows the SINGLETONS:
+./regview <ooo dir>/share/uno_packages/cache/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend/common_.rdb / | grep -A5 -B7 SINGLETONS
+
+
 Debugging Java extensions with Eclipse
 ======================================
 

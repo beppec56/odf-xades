@@ -28,6 +28,8 @@ import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
+import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
+import it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
@@ -76,6 +78,7 @@ import com.sun.star.logging.XLogger;
 import com.sun.star.reflection.InvocationTargetException;
 import com.sun.star.registry.XRegistryKey;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.security.XCertificate;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
 import com.sun.star.text.XTextDocument;
@@ -121,7 +124,6 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
 	private final String sSingletonService = GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE;
-	private final String sDocumentSignaturesService = GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE;
 	private SingletonVariables globalSign_data = null;
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;
@@ -264,16 +266,30 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		try {
 			///////// try to get a Document Signatures object
 			Object oObj = null; 
-			oObj = m_xServiceManager.createInstanceWithContext(sDocumentSignaturesService, m_xComponentContext); 
+			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext); 
 //				m_xComponentContext.getValueByName(sDocumentSignaturesService);
-			
+
 			if(oObj != null) {
-				m_logger.info("execute"," document signatures service"+String.format( "%8H", oObj.hashCode() )+ " XNameContainer present" );
+				m_logger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
 				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
+
+				Utilities.showInterfaces(oObj, oObj);
 				if(xName != null)
 					xName.hasElements();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );					
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
+				
+				XOXDocumentSignatures oxDocSig = (XOXDocumentSignatures)UnoRuntime.queryInterface(XOXDocumentSignatures.class, oObj);
+				if(oxDocSig != null)
+					oxDocSig.getDocumentURL();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
+				
+				XCertificate oxcert = (XCertificate)UnoRuntime.queryInterface(XCertificate.class, oObj);
+				if(oxcert != null)
+					oxcert.getCertificateUsage();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XCertificate" );				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
@@ -281,8 +297,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		catch (ClassCastException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		int c = lArgs.length;
 		for (int i = 0; i < c; ++i) {
 			// System.out.println("Argument: "+lArgs[i].Name);

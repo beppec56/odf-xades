@@ -19,6 +19,7 @@
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
 <manifest:manifest>
+ <!-- manifest:file-entry manifest:full-path="oxsit_types.uno.rdb" manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"/ -->
  <manifest:file-entry manifest:full-path="oxsit_sig_opt.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="oxsit_sing_var.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <manifest:file-entry manifest:full-path="oxsit_sig.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
@@ -50,5 +51,5 @@
  <manifest:file-entry manifest:full-path="Office/UI/WriterWindowState.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
 <!--
  <manifest:file-entry manifest:full-path="Office/UI/MathWindowState.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/> -->
- 
+ <manifest:file-entry manifest:full-path="oxsit_types.uno.rdb" manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"/> 
 </manifest:manifest>

@@ -153,6 +153,8 @@ the default target must be removed
 				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}_sig_opt.uno.jar" />
 				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}_sing_var.uno.jar" />
 				<pathelement path="${my_ooo_classes_path2}/${project_friendly_name}_sig.uno.jar" />
+				<pathelement path="${src}/../../${project_friendly_name}-sig_opt_uno/class-lib" />
+
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>

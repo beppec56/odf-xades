@@ -1,0 +1,4 @@
+To list type in OOo:
+
+./regview /home/beppe/ooo-b/ooo3.0.1-pristine-bin/openoffice.org/ure/share/misc/types.rdb / |less
+./regview <ooo installation dir>/openoffice.org/ure/share/misc/types.rdb / |less

@@ -23,16 +23,12 @@
 #ifndef __it_plio_ext_oxsit_ooo_cert_XOXDocumentSignatures_idl__
 #define __it_plio_ext_oxsit_ooo_cert_XOXDocumentSignatures_idl__
 
-// #include <com/sun/star/uno/XInterface.idl>
-
-// #include <com/sun/star/awt/Size.idl>
- 
   module it { module plio { module ext { module oxsit { module ooo { module cert {
 
 	/** test interface
 	 *
 	 */
-  published interface XOXDocumentSignatures 
+  interface XOXDocumentSignatures 
   {
       string getDocumentURL();
       void setDocumentURL( [in] string s1 );
@@ -41,4 +37,3 @@
   }; }; }; }; };  };
  
 #endif
-

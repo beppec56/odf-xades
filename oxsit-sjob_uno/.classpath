@@ -10,5 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_opt_uno"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sig_uno"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/oxsit-sing_var_uno"/>
+	<classpathentry kind="lib" path="/oxsit-sig_opt_uno/class-lib"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
