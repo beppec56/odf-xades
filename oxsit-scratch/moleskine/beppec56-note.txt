@@ -1,4 +1,27 @@
+My local blog for code dev, notes, nonsense and the likes...
+Date can be estracted from svn commits :-).
+Beware, function names are written by heart, so they may be plain wrong ;-).
+
+beppec56
+============
+
+
+
+=========
+The idea of preparing a new interface in OOo proved to be unfruitful
+so, last commit with the work carried out so far, then back to a more std implementation
+using std OOo interface types
+
+idl compiled ok, regmerge didn't complain, XTypeProvider on DocumentSignatures service obj showed
+the interface but UnoRuntime.queryinterface didn't return it.
+Making the whole idea not useful.
+
+====
 To list type in OOo:
 
 ./regview /home/beppe/ooo-b/ooo3.0.1-pristine-bin/openoffice.org/ure/share/misc/types.rdb / |less
 ./regview <ooo installation dir>/openoffice.org/ure/share/misc/types.rdb / |less
+
+
+======================================================
+Moleskine is a registered trademark of Moleskine Srl, detils on: http://www.moleskine.com

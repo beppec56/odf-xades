@@ -265,8 +265,21 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		}
 		try {
 			///////// try to get a Document Signatures object
-			Object oObj = null; 
-			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext); 
+			Object oObj = null;
+			String[] alist = m_xServiceManager.getAvailableServiceNames();
+			for(int i=0; i < alist.length; i++)
+				m_logger.info(i+": "+alist[i]);
+			
+//			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext);
+//			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext);
+			
+            Object args[]=new Object[2];
+            args[0] = "arg1";
+            args[1] = "arg2";
+
+			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, args, m_xComponentContext);
+			
+			
 //				m_xComponentContext.getValueByName(sDocumentSignaturesService);
 
 			if(oObj != null) {
@@ -285,11 +298,11 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
 				
-				XCertificate oxcert = (XCertificate)UnoRuntime.queryInterface(XCertificate.class, oObj);
+/*				XoxCertificate oxcert = (XoxCertificate)UnoRuntime.queryInterface(XoxCertificate.class, oObj);
 				if(oxcert != null)
 					oxcert.getCertificateUsage();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XCertificate" );				
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XoxCertificate" );*/				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");

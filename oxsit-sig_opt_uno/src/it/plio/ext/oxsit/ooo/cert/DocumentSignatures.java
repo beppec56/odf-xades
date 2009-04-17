@@ -43,14 +43,13 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
+import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.security.XCertificate;
-import com.sun.star.security.XCertificateExtension;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
-import com.sun.star.util.DateTime;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
@@ -72,8 +71,10 @@ public class DocumentSignatures extends WeakBase
 			XPropertyAccess,
 			XPropertySetInfo,
 			XChangesNotifier,
+			XInitialization,
 			XNameContainer,
-			XOXDocumentSignatures {
+			XOXDocumentSignatures
+			 {
 
 	// the name of the class implementing this object
 	public static final String			m_sImplementationName	= DocumentSignatures.class.getName();
@@ -129,6 +130,7 @@ public class DocumentSignatures extends WeakBase
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
+		m_logger.info("supportsService",_sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -417,4 +419,12 @@ public class DocumentSignatures extends WeakBase
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	 */
+	@Override
+	public void initialize(Object[] arg0) throws Exception {
+		// TODO Auto-generated method stub
+		m_logger.entering("initialize");		
+	}
 }
