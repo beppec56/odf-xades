@@ -109,7 +109,6 @@ build-extension
 	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>
 	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
 	<property name="sig_options_comp_jar" value="${project_friendly_name}_sig_opt.uno.jar"/>
-	<property name="sig_options_comp_types" value="${sig_options_comp}/rdb/${project_friendly_name}_types.uno.rdb"/>
 
 	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
@@ -168,7 +167,6 @@ build-extension
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${job_comp_dir}/lib/${job_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sing_comp_dir}/lib/${sing_comp_jar}" todir="${extension_dest_dir}" />
-		<copy file="${basedir}/../${sig_options_comp_types}" todir="${extension_dest_dir}" />
 		<copy todir="${extension_dest_dir}${ico}">
 			<!-- the icons files -->
 			<fileset dir="${extension_dir}${ico}">

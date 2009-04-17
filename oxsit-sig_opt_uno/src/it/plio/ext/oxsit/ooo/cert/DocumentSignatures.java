@@ -72,8 +72,7 @@ public class DocumentSignatures extends WeakBase
 			XPropertySetInfo,
 			XChangesNotifier,
 			XInitialization,
-			XNameContainer,
-			XOXDocumentSignatures
+			XNameContainer
 			 {
 
 	// the name of the class implementing this object
@@ -399,24 +398,6 @@ public class DocumentSignatures extends WeakBase
 		m_logger.entering("hasElements");
 		return false;
 		//////////////// last of XNameContainer
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#getDocumentURL()
-	 */
-	@Override
-	public String getDocumentURL() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#setDocumentURL(java.lang.String)
-	 */
-	@Override
-	public void setDocumentURL(String arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)

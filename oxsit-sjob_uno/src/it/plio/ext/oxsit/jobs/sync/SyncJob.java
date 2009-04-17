@@ -29,7 +29,6 @@ import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
 import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
-import it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
@@ -265,44 +264,23 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 		}
 		try {
 			///////// try to get a Document Signatures object
-			Object oObj = null;
-			String[] alist = m_xServiceManager.getAvailableServiceNames();
-			for(int i=0; i < alist.length; i++)
-				m_logger.info(i+": "+alist[i]);
-			
-//			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext);
-//			oObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xComponentContext);
+			Object oObj = null;			
 			
             Object args[]=new Object[2];
-            args[0] = "arg1";
-            args[1] = "arg2";
+            args[0] = "arg1"; //here the first arg the URl, may be)
+            args[1] = "arg2"; // the second one, top XStorage?, need to test it
 
 			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, args, m_xComponentContext);
-			
-			
-//				m_xComponentContext.getValueByName(sDocumentSignaturesService);
 
 			if(oObj != null) {
 				m_logger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
 				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
 
-				Utilities.showInterfaces(oObj, oObj);
 				if(xName != null)
 					xName.hasElements();
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
 				
-				XOXDocumentSignatures oxDocSig = (XOXDocumentSignatures)UnoRuntime.queryInterface(XOXDocumentSignatures.class, oObj);
-				if(oxDocSig != null)
-					oxDocSig.getDocumentURL();
-				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
-				
-/*				XoxCertificate oxcert = (XoxCertificate)UnoRuntime.queryInterface(XoxCertificate.class, oObj);
-				if(oxcert != null)
-					oxcert.getCertificateUsage();
-				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XoxCertificate" );*/				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
