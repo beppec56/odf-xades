@@ -29,7 +29,7 @@ the default target must be removed
 <project name="oxsit-sing_var_uno" default="build-jar" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
 	<property name="project_name" value="${project_friendly_name}-sing_var_uno" />
-	<property name="extension_jar_file" value="${project_friendly_name}_sing_var.uno.jar" />
+	<property name="extension_jar_file" value="${project_name}.uno.jar" />
 	<description>
         Build the jar file ${extension_jar_file}.
     </description>
@@ -116,7 +116,7 @@ the default target must be removed
 		<!-- Compile the java code from ${src} into ${build} -->
 		<property name="my_ooo_classes_path" value="${src}/../../${project_friendly_name}-sig_opt_uno/dist/lib" />
 		<available file="${my_ooo_classes_path}" type="dir" property="my_ooo_classes_path.available" value="false" />
-		<fail message="No signature_option_comp classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
+		<fail message="No ${project_friendly_name}-sig_opt_uno classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
 			<condition>
 				<not>
 					<isset property="my_ooo_classes_path.available" />
@@ -130,7 +130,7 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
-				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}_sig_opt.uno.jar" />
+				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}-sig_opt_uno.uno.jar" />
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -165,7 +165,7 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
-				<attribute name="Class-Path" value="${project_friendly_name}_sig_opt.uno.jar" />
+				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar" />
 				<!--
 					the following is needed to start via java -jar namefile.jar
 					the main class load a loader to start the user class correctly in OOo

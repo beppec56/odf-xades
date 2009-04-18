@@ -29,7 +29,7 @@ the default target must be removed
 <project name="oxsit-sig_uno" default="build-jar" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
 	<property name="project_name" value="${project_friendly_name}-sig_uno" />
-	<property name="extension_jar_file" value="${project_friendly_name}_sig.uno.jar" />
+	<property name="extension_jar_file" value="${project_name}.uno.jar" />
 	<description>
         Build the jar file ${extension_jar_file}.
     </description>
@@ -129,6 +129,16 @@ the default target must be removed
 				</not>
 			</condition>
 		</fail>
+		<!-- new uno types -->
+		<property name="my_uno_types_path" value="${src}/../../${project_friendly_name}-uno_types/dist/lib" />
+		<available file="${my_uno_types_path}" type="dir" property="my_uno_types_path.available" value="false" />
+		<fail message="No new uno types classes available. Please edit the build file to correct it.(${my_uno_types_path})">
+			<condition>
+				<not>
+					<isset property="my_uno_types_path.available" />
+				</not>
+			</condition>
+		</fail>		
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
 			<classpath>
@@ -137,8 +147,9 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
-				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}_sig_opt.uno.jar" />
-				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}_sing_var.uno.jar" />
+				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}-sig_opt_uno.uno.jar" />
+				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}-sing_var_uno.uno.jar" />
+				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />				
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>

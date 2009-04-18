@@ -28,8 +28,8 @@ the default target must be removed
 -->
 <project name="oxsit-sig_opt_uno" default="build-jar" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
-	<property name="extension_jar_file" value="${project_friendly_name}_sig_opt.uno.jar" />
 	<property name="project_name" value="${project_friendly_name}-sig_opt_uno" />
+	<property name="extension_jar_file" value="${project_name}.uno.jar" />
 	<description>
         Build the jar file ${extension_jar_file}.
     </description>
@@ -114,6 +114,17 @@ the default target must be removed
 
 	<target name="compile" depends="init" description="compile the source ">
 		<!-- Compile the java code from ${src} into ${build} -->
+		
+		<!-- new UNO Java type classes -->
+		<property name="my_uno_types_path" value="${src}/../../${project_friendly_name}-uno_types/dist/lib" />
+		<available file="${my_uno_types_path}" type="dir" property="my_uno_types_path.available" value="false" />
+		<fail message="No new uno types classes available. Please edit the build file to correct it.(${my_uno_types_path})">
+			<condition>
+				<not>
+					<isset property="my_uno_types_path.available" />
+				</not>
+			</condition>
+		</fail>
 		<javac  debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
 			<classpath>
 				<pathelement path="${ooo_ure_classes_path}/juh.jar" />
@@ -121,7 +132,7 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
-				<pathelement path="class-lib" />
+				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -130,23 +141,22 @@ the default target must be removed
 			copy helper classes from OOo SDK
 			Disable the whole section if the stand alone capability is not needed
 		-->
-		<copy todir="${build}" failonerror="false">
+		<!-- copy todir="${build}" failonerror="false">
 			<fileset dir="${ooosdk}/classes">
 				<include name="**/*" />
 			</fileset>
-		</copy>	
+		</copy -->	
 		<!-- end of copy helper classes from OOo SDK -->
 
 		<!--
 			copy interface classes
 		-->
-		<copy todir="${build}" failonerror="true">
+		<!-- copy todir="${build}" failonerror="true">
 			<fileset dir="${basedir}/class-lib">
 				<include name="**/*" />
 			</fileset>
-		</copy>
+		</copy -->
 		<!-- end of copy idlc generated classes -->
-
 	</target>
 
 	<target name="build-jar" depends="compile" description="generate the distribution">
@@ -166,23 +176,7 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
-				<attribute name="Class-Path" value="" /> <!-- no need for class, this jar is the lowest one in use -->
-				<!--
-					the following is needed to start via java -jar namefile.jar
-					the main class load a loader to start the user class correctly in OOo
-					environment.
-					See
-					Documentation/DevGuide/ProUNO/Java/Transparent_Use_of_Office_UNO_Components
-					on OOo wiki for details
-
-					Disable the whole section if the stand alone capability is not needed
-				-->
-				<attribute name="Main-Class" value="com.sun.star.lib.loader.Loader" />
-				<section name="com/sun/star/lib/loader/Loader.class">
-					<!-- this attribute is the real user start class -->
-					<attribute name="Application-Class" value="it.plio.ext.oxsit.MainStandAloneDebug" />
-				</section>
-				<!-- end of section to start via java -jar namefile.jar -->
+				<attribute name="Class-Path" value=""/> <!-- no need for class, this jar is the lowest one in use -->
 			</manifest>
 		</jar>
 	</target>

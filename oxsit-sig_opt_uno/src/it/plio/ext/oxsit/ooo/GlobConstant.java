@@ -124,7 +124,7 @@ public class GlobConstant {
 	public static final String	m_sMAX_FILE_SIZE	 							= "MaxFileSize";// int
 
 	//// for singleton and XLogger
-	public static final String m_sSINGLETON_SERVICE = m_sWEBIDENTBASE + ".oxsit.singleton.GlobalVariables";
+	public static final String m_sSINGLETON_SERVICE = m_sWEBIDENTBASE + ".oxsit.singleton.SingleGlobalVariables";
 	public static final String m_sSINGLETON_SERVICE_INSTANCE = "/singletons/"+m_sSINGLETON_SERVICE;
 	
 	//// for XLogger (still to be implemented

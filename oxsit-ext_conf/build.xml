@@ -106,24 +106,36 @@ build-extension
 	<property name="license_dir" value="${doc_dir}/licenses"/>
 	<property name="third_party_license" value="${license_dir}/third_parties"/>
 
+	<property name="uno_types" value="${project_friendly_name}-uno_types"/>
+	<property name="uno_types_dir" value="${uno_types}/dist"/>
+	<property name="uno_types_jar" value="${uno_types}.uno.jar"/>
+	<property name="uno_types_rdb_dir" value="${uno_types}/rdb"/>
+	<property name="uno_types_rdb" value="${uno_types}.uno.rdb"/>
+
 	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>
 	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
-	<property name="sig_options_comp_jar" value="${project_friendly_name}_sig_opt.uno.jar"/>
-	<property name="sig_options_comp_types" value="${sig_options_comp}/rdb/${project_friendly_name}_types.uno.rdb"/>
+	<property name="sig_options_comp_jar" value="${sig_options_comp}.uno.jar"/>
 
 	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
-	<property name="sing_comp_jar" value="${project_friendly_name}_sing_var.uno.jar"/>
+	<property name="sing_comp_jar" value="${sing_comp}.uno.jar"/>
 
 	<property name="sig_comp" value="${project_friendly_name}-sig_uno"/>
 	<property name="sig_comp_dir" value="${sig_comp}/dist"/>
-	<property name="sig_comp_jar" value="${project_friendly_name}_sig.uno.jar"/>
+	<property name="sig_comp_jar" value="${sig_comp}.uno.jar"/>
 
 	<property name="job_comp" value="${project_friendly_name}-sjob_uno"/>
 	<property name="job_comp_dir" value="${job_comp}/dist"/>
-	<property name="job_comp_jar" value="${project_friendly_name}_sjob.uno.jar"/>	
+	<property name="job_comp_jar" value="${job_comp}.uno.jar"/>	
 
 	<target name="build-jar" description="generate the subproject jar">
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${uno_types}/build.xml" />
+			</filelist>
+		</subant>
+
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
 			<filelist dir="${basedir}/../">
@@ -164,11 +176,12 @@ build-extension
 		<echo>Now prepare extension stuff</echo>
 		
 		<mkdir dir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${uno_types_dir}/lib/${uno_types_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${uno_types_rdb_dir}/${uno_types_rdb}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${job_comp_dir}/lib/${job_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sing_comp_dir}/lib/${sing_comp_jar}" todir="${extension_dest_dir}" />
-		<copy file="${basedir}/../${sig_options_comp_types}" todir="${extension_dest_dir}" />
 		<copy todir="${extension_dest_dir}${ico}">
 			<!-- the icons files -->
 			<fileset dir="${extension_dir}${ico}">

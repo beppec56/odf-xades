@@ -20,10 +20,12 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.singleton;
+package it.plio.ext.oxsit.singleton.comp;
 
 import it.plio.ext.oxsit.logging.LocalLogFormatter;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
+import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -74,7 +76,7 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppe
  *
  */
-public class SingletonVariables extends WeakBase 
+public class SingletonGlobalVariables extends WeakBase 
 			implements XServiceInfo, 
 			XComponent,
 			XInterface,
@@ -86,7 +88,7 @@ public class SingletonVariables extends WeakBase
 			XLogger {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= SingletonVariables.class.getName();
+	public static final String			m_sImplementationName	= SingletonGlobalVariables.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_SERVICE };
@@ -135,7 +137,7 @@ public class SingletonVariables extends WeakBase
 	 * 
 	 * @param _ctx
 	 */
-	public SingletonVariables(XComponentContext _ctx) {
+	public SingletonGlobalVariables(XComponentContext _ctx) {
 		
 ///rigamarole for logging....
 //read the logger configuration locally

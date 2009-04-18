@@ -19,10 +19,10 @@
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
 <manifest:manifest>
- <manifest:file-entry manifest:full-path="oxsit_sig_opt.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
- <manifest:file-entry manifest:full-path="oxsit_sing_var.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
- <manifest:file-entry manifest:full-path="oxsit_sig.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
- <manifest:file-entry manifest:full-path="oxsit_sjob.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
+ <manifest:file-entry manifest:full-path="oxsit-sig_opt_uno.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
+ <manifest:file-entry manifest:full-path="oxsit-sing_var_uno.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
+ <manifest:file-entry manifest:full-path="oxsit-sig_uno.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
+ <manifest:file-entry manifest:full-path="oxsit-sjob_uno.uno.jar" manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/>
  <!-- next element it's deprecated in 3.1, to be removed... -->
  <manifest:file-entry manifest:full-path="pkg-desc/pkg-description-it.txt" manifest:media-type="application/vnd.sun.star.package-bundle-description"/>
  <manifest:file-entry manifest:full-path="Addons.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
@@ -50,5 +50,6 @@
  <manifest:file-entry manifest:full-path="Office/UI/WriterWindowState.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/>
 <!--
  <manifest:file-entry manifest:full-path="Office/UI/MathWindowState.xcu" manifest:media-type="application/vnd.sun.star.configuration-data"/> -->
- <manifest:file-entry manifest:full-path="oxsit_types.uno.rdb" manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"/>
+ <manifest:file-entry manifest:full-path="oxsit-uno_types.uno.rdb" manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"/>
+ <manifest:file-entry manifest:full-path="oxsit-uno_types.uno.jar" manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=Java"/>
 </manifest:manifest>

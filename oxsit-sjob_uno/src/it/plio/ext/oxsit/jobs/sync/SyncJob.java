@@ -32,7 +32,7 @@ import it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.oxsit.singleton.SingletonVariables;
+import it.plio.ext.oxsit.singleton.comp.SingletonGlobalVariables;
 
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.WindowAttribute;
@@ -84,6 +84,7 @@ import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
+import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;
@@ -123,7 +124,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
 	private final String sSingletonService = GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE;
-	private SingletonVariables globalSign_data = null;
+	private SingletonGlobalVariables globalSign_data = null;
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;
 	
@@ -287,6 +288,14 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 					xoxD.getDocumentURL();
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
+				
+				{
+//					Type tp = new Type(XOXDocumentSignatures.class);
+					Type tp = new Type(XNameContainer.class);
+					m_logger.info("execute", "type is "+tp.getTypeClass().getValue());
+					tp = new Type(XOXDocumentSignatures.class);
+					m_logger.info("execute", "type is "+tp.getTypeClass().getValue());
+				}
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
