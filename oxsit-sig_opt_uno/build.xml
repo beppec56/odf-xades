@@ -140,12 +140,12 @@ the default target must be removed
 		<!--
 			copy interface classes
 		-->
-		<copy todir="${build}" failonerror="false">
+		<copy todir="${build}" failonerror="true">
 			<fileset dir="${basedir}/class-lib">
 				<include name="**/*" />
 			</fileset>
 		</copy>
-		<!-- end of copy helper classes from OOo SDK -->
+		<!-- end of copy idlc generated classes -->
 
 	</target>
 

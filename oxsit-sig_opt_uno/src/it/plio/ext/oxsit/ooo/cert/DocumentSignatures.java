@@ -27,7 +27,10 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
@@ -45,26 +48,38 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lang.XTypeProvider;
+import com.sun.star.lib.uno.helper.WeakAdapter;
 import com.sun.star.lib.uno.helper.WeakBase;
+import com.sun.star.uno.Any;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
+import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
+import com.sun.star.uno.XWeak;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
+ * THis is a specification, it may change!
  * This service implements the DocumentSignatures service.
- * Export the interfaces need to check a document signatures, retrieve the
- * X509(std CNIPA!) certificates embedded in the document, and other iassorted interfaces.
+ * receives the doc information from the task  
  *  
- * This objects has properties, they are set by the callings UNO objects.
+ * This objects has properties, they are set by the calling UNO objects.
  * 
- * @author beppe
+ * The service is initialized with URL and XStorage of the document under test
+ * Information about the certificates, number of certificates, status of every signature
+ * ca be retrieved through properties 
+ * 
+ * @author beppec56
  *
  */
-public class DocumentSignatures extends WeakBase 
-			implements XServiceInfo, 
+public class DocumentSignatures //extends WeakBase //help class, implements XTypeProvider, XInterface, XWeak
+			implements 
+			XWeak,
+			XTypeProvider,
+			XServiceInfo,
 			XComponent,
 			XInterface,
 			XProperty,
@@ -72,7 +87,8 @@ public class DocumentSignatures extends WeakBase
 			XPropertySetInfo,
 			XChangesNotifier,
 			XInitialization,
-			XNameContainer
+			XNameContainer,
+			XOXDocumentSignatures
 			 {
 
 	// the name of the class implementing this object
@@ -82,7 +98,14 @@ public class DocumentSignatures extends WeakBase
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE };
 
 	protected XDynamicLogger m_logger;
+
+	//for XWeak
+    private WeakAdapter m_adapter;
 	
+	//used for methods ox XTypeProvider
+	protected static Map<Class, byte[]> _mapImplementationIds= new Hashtable<Class, byte[]>();
+	protected static Map<Class, Type[]> _mapTypes= new Hashtable<Class, Type[]>();
+
 	public static	String m_sProperties[] = {"SelfObject","DataInstance"}; 
 	private class DocumentDescriptor {
 		public String	sURLHash; // the hash computed from the URL name class
@@ -114,6 +137,79 @@ public class DocumentSignatures extends WeakBase
 		return m_sImplementationName;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see com.sun.star.uno.XWeak#queryAdapter()
+	 */
+	@Override
+	public XAdapter queryAdapter() {		
+		if (m_adapter == null)
+			m_adapter= new WeakAdapter(this);
+		return m_adapter;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XTypeProvider#getImplementationId()
+	 */
+	@Override
+	public byte[] getImplementationId() {
+		// TODO Auto-generated method stub
+        byte[] id= null;
+        synchronized (_mapImplementationIds) {
+        	id= _mapImplementationIds.get(getClass());
+        	if (id == null) {
+        		int hash = hashCode();
+        		String sName= getClass().getName();
+        		byte[] arName= sName.getBytes();
+        		int nNameLength= arName.length;
+
+        		id= new byte[ 4 + nNameLength];
+        		id[0]= (byte)(hash & 0xff);
+        		id[1]= (byte)((hash >>> 8) & 0xff);
+        		id[2]= (byte)((hash >>> 16) & 0xff);
+        		id[3]= (byte)((hash >>>24) & 0xff);
+        		for (int i= 0; i < nNameLength; i++) {
+        			id[4 + i]= arName[i];
+        		}
+        		_mapImplementationIds.put(getClass(), id);
+        	}
+        }
+        return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XTypeProvider#getTypes()
+	 */
+	@Override
+	public Type[] getTypes() {
+		m_logger.info("getTypes");
+		Type[] arTypes= _mapTypes.get( getClass());
+		if (arTypes == null) {
+			Vector<Type> vec= new Vector<Type>();
+			Class<?> currentClass= getClass();
+			do {
+				Class<?> interfaces[]= currentClass.getInterfaces();
+				for(int i = 0; i < interfaces.length; ++ i) {
+					// Test if it is a UNO interface (check if is a subinterface of XInterface)
+					if (com.sun.star.uno.XInterface.class.isAssignableFrom((interfaces[i])))
+						vec.add(new Type(interfaces[i]));
+					else {
+						m_logger.info("getTypes", interfaces[i]+" doesn't exist in UNO");
+					}
+				}
+				// get the superclass the currentClass inherits from
+				currentClass= currentClass.getSuperclass();
+			} while (currentClass != null);
+
+			Type types[]= new Type[vec.size()];
+			for( int i= 0; i < types.length; i++)
+				types[i]= vec.elementAt(i);
+			_mapTypes.put(getClass(), types);
+			arTypes= types;
+		}
+		return arTypes;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
@@ -143,6 +239,7 @@ public class DocumentSignatures extends WeakBase
 		// TODO Auto-generated method stub
 		m_logger.info("addEventListener");
 	}
+
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XComponent#dispose()
 	 */
@@ -163,7 +260,6 @@ public class DocumentSignatures extends WeakBase
 		m_logger.exiting("dispose","");
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
 	 */
@@ -402,10 +498,32 @@ public class DocumentSignatures extends WeakBase
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	 * when instantiated, 
+	 * 	_oObj[0] first argument document URL
+	 *  _oObj[1] corresponding XStorage object
 	 */
 	@Override
-	public void initialize(Object[] arg0) throws Exception {
+	public void initialize(Object[] _oObj) throws Exception {
 		// TODO Auto-generated method stub
 		m_logger.entering("initialize");		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#getDocumentURL()
+	 */
+	@Override
+	public String getDocumentURL() {
+		// TODO Auto-generated method stub
+		m_logger.info("getDocumentURL");
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#setDocumentURL(java.lang.String)
+	 */
+	@Override
+	public void setDocumentURL(String s1) {
+		// TODO Auto-generated method stub
+		
 	}
 }
