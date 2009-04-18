@@ -184,7 +184,7 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
-				<attribute name="Class-Path" value="${project_friendly_name}_sig_opt.uno.jar ${project_friendly_name}_sing_var.uno.jar" />
+				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${project_friendly_name}-sing_var_uno.uno.jar" />
 				<!--
 					the following is needed to start via java -jar namefile.jar
 					the main class load a loader to start the user class correctly in OOo

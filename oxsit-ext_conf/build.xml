@@ -109,7 +109,7 @@ build-extension
 	<property name="uno_types" value="${project_friendly_name}-uno_types"/>
 	<property name="uno_types_dir" value="${uno_types}/dist"/>
 	<property name="uno_types_jar" value="${uno_types}.uno.jar"/>
-	<property name="uno_types_rdb_dir" value="${uno_types}/rdb"/>
+	<property name="uno_types_rdb_dir" value="${uno_types}/pre-built-type-classes/rdb"/>
 	<property name="uno_types_rdb" value="${uno_types}.uno.rdb"/>
 
 	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>
@@ -459,6 +459,12 @@ build-extension
 		<subant target="clean">
 			<filelist dir="${basedir}/../">
 				<file name="${sing_comp}/build.xml" />
+			</filelist>
+		</subant>
+
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${uno_types}/build.xml" />
 			</filelist>
 		</subant>
 
