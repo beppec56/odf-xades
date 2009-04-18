@@ -52,6 +52,7 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.logging.XLogHandler;
 import com.sun.star.logging.XLogger;
@@ -76,10 +77,8 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppe
  *
  */
-public class SingletonGlobalVariables extends WeakBase 
+public class SingletonGlobalVariables extends ComponentBase 
 			implements XServiceInfo, 
-			XComponent,
-			XInterface,
 			XProperty,
 			XPropertyAccess,
 			XPropertySetInfo,
@@ -182,45 +181,6 @@ public class SingletonGlobalVariables extends WeakBase
 				return true;
 		}
 		return false;
-	}
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
-	 */
-	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		if(m_nCanLogMyself)
-			m_log.info("addEventListener");
-	}
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#dispose()
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
-		//clean all the element created and exit
-		Collection<DocumentDescriptor> cDocuDescriptors = theDocumentList.values();
-		
-		if(!cDocuDescriptors.isEmpty()) {
-			Iterator<DocumentDescriptor> aIter = cDocuDescriptors.iterator();
-			while (aIter.hasNext()) {
-				DocumentDescriptor aDocDesc = aIter.next();
-				aDocDesc.listeners.clear();
-			}			
-		}
-		theDocumentList.clear();	
-
-		if(m_nCanLogMyself)
-			m_log.info("");
-		myFileHandl.close();
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
-	 */
-	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		if(m_nCanLogMyself)
-			m_log.info("removeEventListener");				
 	}
 
 	public void indentify() {

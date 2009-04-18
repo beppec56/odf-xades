@@ -49,6 +49,7 @@ import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XTypeProvider;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.lib.uno.helper.WeakAdapter;
 import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.uno.Any;
@@ -75,13 +76,9 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppec56
  *
  */
-public class DocumentSignatures //extends WeakBase //help class, implements XTypeProvider, XInterface, XWeak
+public class DocumentSignatures extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
-			XWeak,
-			XTypeProvider,
 			XServiceInfo,
-			XComponent,
-			XInterface,
 			XProperty,
 			XPropertyAccess,
 			XPropertySetInfo,
@@ -136,79 +133,6 @@ public class DocumentSignatures //extends WeakBase //help class, implements XTyp
 		m_logger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
-
-	
-	/* (non-Javadoc)
-	 * @see com.sun.star.uno.XWeak#queryAdapter()
-	 */
-	@Override
-	public XAdapter queryAdapter() {		
-		if (m_adapter == null)
-			m_adapter= new WeakAdapter(this);
-		return m_adapter;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XTypeProvider#getImplementationId()
-	 */
-	@Override
-	public byte[] getImplementationId() {
-		// TODO Auto-generated method stub
-        byte[] id= null;
-        synchronized (_mapImplementationIds) {
-        	id= _mapImplementationIds.get(getClass());
-        	if (id == null) {
-        		int hash = hashCode();
-        		String sName= getClass().getName();
-        		byte[] arName= sName.getBytes();
-        		int nNameLength= arName.length;
-
-        		id= new byte[ 4 + nNameLength];
-        		id[0]= (byte)(hash & 0xff);
-        		id[1]= (byte)((hash >>> 8) & 0xff);
-        		id[2]= (byte)((hash >>> 16) & 0xff);
-        		id[3]= (byte)((hash >>>24) & 0xff);
-        		for (int i= 0; i < nNameLength; i++) {
-        			id[4 + i]= arName[i];
-        		}
-        		_mapImplementationIds.put(getClass(), id);
-        	}
-        }
-        return id;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XTypeProvider#getTypes()
-	 */
-	@Override
-	public Type[] getTypes() {
-		m_logger.info("getTypes");
-		Type[] arTypes= _mapTypes.get( getClass());
-		if (arTypes == null) {
-			Vector<Type> vec= new Vector<Type>();
-			Class<?> currentClass= getClass();
-			do {
-				Class<?> interfaces[]= currentClass.getInterfaces();
-				for(int i = 0; i < interfaces.length; ++ i) {
-					// Test if it is a UNO interface (check if is a subinterface of XInterface)
-					if (com.sun.star.uno.XInterface.class.isAssignableFrom((interfaces[i])))
-						vec.add(new Type(interfaces[i]));
-					else {
-						m_logger.info("getTypes", interfaces[i]+" doesn't exist in UNO");
-					}
-				}
-				// get the superclass the currentClass inherits from
-				currentClass= currentClass.getSuperclass();
-			} while (currentClass != null);
-
-			Type types[]= new Type[vec.size()];
-			for( int i= 0; i < types.length; i++)
-				types[i]= vec.elementAt(i);
-			_mapTypes.put(getClass(), types);
-			arTypes= types;
-		}
-		return arTypes;
-	}
 	
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
@@ -231,41 +155,6 @@ public class DocumentSignatures //extends WeakBase //help class, implements XTyp
 				return true;
 		}
 		return false;
-	}
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
-	 */
-	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_logger.info("addEventListener");
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#dispose()
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
-		//clean all the element created and exit
-		Collection<DocumentDescriptor> cDocuDescriptors = theDocumentList.values();
-		
-		if(!cDocuDescriptors.isEmpty()) {
-			Iterator<DocumentDescriptor> aIter = cDocuDescriptors.iterator();
-			while (aIter.hasNext()) {
-				DocumentDescriptor aDocDesc = aIter.next();
-				aDocDesc.listeners.clear();
-			}			
-		}
-		theDocumentList.clear();	
-
-		m_logger.exiting("dispose","");
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
-	 */
-	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_logger.info("removeEventListener");				
 	}
 
 	public void indentify() {
@@ -393,6 +282,18 @@ public class DocumentSignatures //extends WeakBase //help class, implements XTyp
 		// last of XChangesNotifier
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	 * when instantiated, 
+	 * 	_oObj[0] first argument document URL
+	 *  _oObj[1] corresponding XStorage object
+	 */
+	@Override
+	public void initialize(Object[] _oObj) throws Exception {
+		// TODO Auto-generated method stub
+		m_logger.entering("initialize");		
+	}
+	
 	/////////////////// XNameContainer
 
 	/* (non-Javadoc)
@@ -494,18 +395,6 @@ public class DocumentSignatures //extends WeakBase //help class, implements XTyp
 		m_logger.entering("hasElements");
 		return false;
 		//////////////// last of XNameContainer
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * when instantiated, 
-	 * 	_oObj[0] first argument document URL
-	 *  _oObj[1] corresponding XStorage object
-	 */
-	@Override
-	public void initialize(Object[] _oObj) throws Exception {
-		// TODO Auto-generated method stub
-		m_logger.entering("initialize");		
 	}
 
 	/* (non-Javadoc)

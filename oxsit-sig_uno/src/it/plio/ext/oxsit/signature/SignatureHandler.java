@@ -54,6 +54,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -68,7 +69,7 @@ import com.sun.star.util.XCloseable;
  * @author beppe
  * 
  */
-public class SignatureHandler extends com.sun.star.lib.uno.helper.WeakBase
+public class SignatureHandler extends ComponentBase
 			implements XServiceInfo, // general
 						XInitialization, // to implement the ProtocolHandler service
 						XDispatchProvider, // to implement the ProtocolHandler service

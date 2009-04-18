@@ -22,10 +22,8 @@
 
 package it.plio.ext.oxsit.ooo.options;
 
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 
-import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XButton;
 import com.sun.star.awt.XCheckBox;
@@ -39,6 +37,7 @@ import com.sun.star.lang.EventObject;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -49,7 +48,7 @@ import com.sun.star.uno.XComponentContext;
  * @author beppe
  *
  */
-public abstract class ManageOptions extends com.sun.star.lib.uno.helper.WeakBase  implements
+public abstract class ManageOptions extends ComponentBase  implements
 			XServiceInfo,
 			XContainerWindowEventHandler,
 			XActionListener {

@@ -22,8 +22,6 @@
 
 package it.plio.ext.oxsit.jobs.sync;
 
-import java.util.Date;
-
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -34,13 +32,6 @@ import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
 import it.plio.ext.oxsit.singleton.comp.SingletonGlobalVariables;
 
-import com.sun.star.awt.Rectangle;
-import com.sun.star.awt.WindowAttribute;
-import com.sun.star.awt.WindowClass;
-import com.sun.star.awt.WindowDescriptor;
-import com.sun.star.awt.XMessageBox;
-import com.sun.star.awt.XToolkit;
-import com.sun.star.awt.XWindowPeer;
 import com.sun.star.beans.NamedValue;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
@@ -50,51 +41,29 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNameContainer;
-import com.sun.star.document.EventObject;
-import com.sun.star.document.XEventListener;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XController;
-import com.sun.star.frame.XDesktop;
-import com.sun.star.frame.XDispatch;
-import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XFrame;
-import com.sun.star.frame.XModel;
-import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
-import com.sun.star.lang.XSingleComponentFactory;
-import com.sun.star.lang.XSingleServiceFactory;
-import com.sun.star.lib.uno.helper.Factory;
-import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.logging.XLogger;
-import com.sun.star.reflection.InvocationTargetException;
-import com.sun.star.registry.XRegistryKey;
-import com.sun.star.script.BasicErrorException;
-import com.sun.star.security.XCertificate;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;
-import com.sun.star.util.URL;
 import com.sun.star.util.XChangesBatch;
-import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XChangesNotifier;
 import com.sun.star.util.XCloseListener;
 import com.sun.star.util.XCloseable;
-import com.sun.star.util.XURLTransformer;
 
 /**
  * this class is the class to be registered when installing the extension
@@ -102,7 +71,7 @@ import com.sun.star.util.XURLTransformer;
  * @author beppe
  * 
  */
-public class SyncJob extends WeakBase implements XServiceInfo, // general
+public class SyncJob extends ComponentBase implements XServiceInfo, // general
 		XJob, // synchronous Job interface (activates a Java thread for
 		// the XDispatcherInterceptor operations)
 		XCloseable {
@@ -274,7 +243,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, args, m_xComponentContext);
 
 			if(oObj != null) {
-				Utilities.showInterfaces(oObj, oObj);
+//				Utilities.showInterfaces(oObj, oObj);
 				m_logger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
 				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
 
@@ -287,15 +256,7 @@ public class SyncJob extends WeakBase implements XServiceInfo, // general
 				if(xoxD != null)
 					xoxD.getDocumentURL();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
-				
-				{
-//					Type tp = new Type(XOXDocumentSignatures.class);
-					Type tp = new Type(XNameContainer.class);
-					m_logger.info("execute", "type is "+tp.getTypeClass().getValue());
-					tp = new Type(XOXDocumentSignatures.class);
-					m_logger.info("execute", "type is "+tp.getTypeClass().getValue());
-				}
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
