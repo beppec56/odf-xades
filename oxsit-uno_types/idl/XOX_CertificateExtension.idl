@@ -20,20 +20,37 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateExtension_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_CertificateExtension_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-	/** this interface represents the main interface to describe
-	 * document signature states.
-	 * That is, the state of all the signatures in a document.
-	 */
-  interface XOX_DocumentSignatures
-  {
-      string getDocumentURL();
-      void setDocumentURL( [in] string s1 );
-  };
+/**
+ * Extension of a X509 certificate
+ *
+ */
+	interface XOX_CertificateExtension
+	{
+		/** State of the critical flag for this certificate extension.
+		 *
+		 *  @return true if this is an extension marked critical  
+		 */
+		boolean isCritical() ;
+
+		/** This extension OID.
+		 */
+		[attribute, readonly] sequence< byte > ExtensionId ;
+
+		/** The extension value, DER encoded octects
+		 *
+		 */
+		[attribute, readonly] sequence< byte > ExtensionValue ;
+
+		/**
+		 * The extension value, String representation
+		 */
+		[attribute, readonly] string ExtensionStringValue ;
+	}; 
  
   }; }; }; }; };  };
  

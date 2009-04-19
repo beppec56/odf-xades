@@ -20,20 +20,36 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_CertificateState_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificateState_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-	/** this interface represents the main interface to describe
-	 * document signature states.
-	 * That is, the state of all the signatures in a document.
-	 */
-  interface XOX_DocumentSignatures
-  {
-      string getDocumentURL();
-      void setDocumentURL( [in] string s1 );
-  };
+/** State of a Certificate
+ */
+	enum CertificateState
+	{
+		/** the certificate was verified, it's ok.
+		 */
+		OK, 
+		/** the certificate has expired.
+		 */
+		EXPIRED, 
+		/** the certificate was revoked.
+		 */
+		REVOKED, 
+		/** the certificate is not yet active.
+		 */
+		NOT_ACTIVE, 
+		/** the certificate is not consistent with the Italian standard.
+		 */
+		NOT_CONSISTENT, 
+ 
+		/** the certificate cannot be verified.
+		 */
+		NOT_VERIFIABLE 
+ 
+	}; 
  
   }; }; }; }; };  };
  

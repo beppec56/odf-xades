@@ -114,7 +114,7 @@ the default target must be removed
 
 	<target name="compile-idl" description="compile idl, rdb and class for a single UNO type">
 		<!-- compile idl, Linux version, see compile-idl.sh for details -->
-		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary form urd" os="Linux-i386">
+		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary" os="Linux-i386">
 			<arg value="${oo_sdk_init_script}"/>
 			<arg value="${parm1}"/>
 			<arg value="${uno_idl}"/>
@@ -140,29 +140,49 @@ the default target must be removed
 				<include name="**/*.rdb" />
 			</fileset>
 		</delete>
-		
+
 		<delete>
 			<fileset dir="${uno_class}" >
 				<include name="**/*.class" />
 			</fileset>
 		</delete>
-		
+
 		<!-- delete the build directory, after this target, target build-jar needs to be rebuilt -->
 		<delete dir="${build-eclipse}" />
 		<delete dir="${build}" />
 
 		<antcall target="compile-idl">
+			<param name="parm1" value="CertificateState"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
+		</antcall>
+		<antcall target="compile-idl">
+			<param name="parm1" value="CertificateAuthorityState"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
+		</antcall>
+		<antcall target="compile-idl">
 			<!--interface name -->
 			<param name="parm1" value="XOX_DocumentSignatures"/>
-			<!--interface path -->			
+			<!--interface path -->
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 
 		<antcall target="compile-idl">
 			<param name="parm1" value="XOX_CertificateExtension"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
+		<antcall target="compile-idl">
+			<param name="parm1" value="XOX_QualifiedCertificate"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
+		</antcall>
+		
+		<!-- last thing, build documentation files, only locally, not in svn for copyright reason -->
+		<exec dir="${uno_idl}" executable="${basedir}/generate-idl-doc.sh" description="generate idl documentation" os="Linux-i386">
+			<arg value="${oo_sdk_init_script}"/>
+			<arg value="${uno_idl}"/>
+			<arg value="${basedir}/html-no-svn"/>
+		</exec>
 	</target>
-	
+
 	<target name="compile" depends="init" description="assemble the created class file into a Java archive (jar)">		
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">

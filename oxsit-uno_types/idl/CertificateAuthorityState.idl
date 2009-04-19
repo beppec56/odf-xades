@@ -20,20 +20,48 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_CertificateAuthorityState_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificateAuthorityState_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-	/** this interface represents the main interface to describe
-	 * document signature states.
-	 * That is, the state of all the signatures in a document.
-	 */
-  interface XOX_DocumentSignatures
-  {
-      string getDocumentURL();
-      void setDocumentURL( [in] string s1 );
-  };
+/** State of a Certificate
+ */
+	enum CertificateAuthorityState
+	{
+		/** the Certificate Authority was verified, it's reliable (accredited).
+		 */
+		RELIABLE,
+		/** the root cnipa certificate not checked.
+		 */
+		NO_CNIPA_ROOT,
+		/** the Certificate Authority it's nonreliable (not accredited).
+		 */
+		UNRELIABLE ,
+		/** the CA DB was not updated.
+		 */
+		CA_LIST_DB_NOT_UPDATED,
+		/** The CA DB thumbprint was not checked.
+		 */
+		CA_LIST_DB_THUMBP_NOT_CHECKED, 
+ 
+		/** 
+		 */
+		CA_LIST_DB_UPDATE_DISABLED,
+ 
+		/** The CNIPA root certificate is missing
+		 */
+		MISSING_ROOT_CA,
+ 
+		/** The CA is reliable, but the CA certificate is expired
+		 */
+		RELIABLE_EXPIRED,
+
+		/** The CA is not reliable, and the CA certificate is expired
+		 */
+		UNRELIABLE_EXPIRED
+
+	}; 
  
   }; }; }; }; };  };
  

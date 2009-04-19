@@ -13,8 +13,6 @@
 # $5 is the full path to class destination
 # $6 is the full module path of the class
 
-echo $1 $2 $3 $4
-
 # change working dir to the $3 directory
 cd "$3"
 
@@ -40,7 +38,7 @@ if [ $? -ne 0 ] ;
 fi
 
 echo "prepare the java classes"
-javamaker -BUCR -O$5 -T"$6."$2 -nD $OO_SDK_URE_HOME/share/misc/types.rdb "$4"/oxsit-uno_types.uno.rdb
+javamaker -BUCR -O$5 -T"$6."$2 -nD $OO_SDK_URE_HOME/share/misc/types.rdb $OO_SDK_URE_HOME/../basis3.0/program/offapi.rdb "$4"/oxsit-uno_types.uno.rdb
 
 if [ $? -ne 0 ] ;
 	then

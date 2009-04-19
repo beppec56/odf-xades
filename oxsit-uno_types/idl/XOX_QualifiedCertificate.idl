@@ -1,0 +1,144 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_QualifiedCertificate_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_QualifiedCertificate_idl__
+
+#include <com/sun/star/util/DateTime.idl>
+#include "XOX_CertificateExtension.idl"
+#include "CertificateState.idl"
+#include "CertificateAuthorityState.idl"
+
+  module it { module plio { module ext { module oxsit { module security { module cert {
+
+/**
+ * Interface of a Qualified X509 Certificate
+ *
+ */
+	interface XOX_QualifiedCertificate 
+	{
+		/**
+	 	* the state of the certificate.
+	 	*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState ;
+
+		/**
+	 	* the state of the CA (certificate Authority) control.
+	 	*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificateAuthorityState;
+
+		/**
+	 	* the version number attribute of the certificate.
+	 	*/
+		[attribute, readonly] short Version ;
+
+		/**
+		 * the serial number attribute of the certificate.
+		 */
+		[attribute, readonly] sequence< byte > SerialNumber ;
+
+		/**
+		 * the issuer name attribute of the certificate.
+		 */
+		[attribute, readonly] string IssuerName ;
+
+		/**
+	 	* the subject name attribute of the certificate.
+		*/
+		[attribute, readonly] string SubjectName ;
+
+		/**
+		 * the validity NotBefore date attribute of the certificate.
+		 */
+		[attribute, readonly] com::sun::star::util::DateTime NotValidBefore ;
+
+		/**
+		 * the validity NotAfter date attribute of the certificate.
+		 */
+		[attribute, readonly] com::sun::star::util::DateTime NotValidAfter ;
+
+		/**
+		 * the issuer unique ID attribute of the certificate.
+		 */
+		[attribute, readonly] sequence< byte > IssuerUniqueID ;
+
+		/**
+		 * the subject unique ID attribute of the certificate.
+		 */
+		[attribute, readonly] sequence< byte > SubjectUniqueID ;
+
+		/**
+		 * all extensions of a certificate.
+		 */
+		[attribute, readonly] sequence< XOX_CertificateExtension > Extensions ;
+
+		/**
+		 * the DER encoded form of the certificate
+		 */
+		[attribute, readonly] sequence< byte > Encoded ;
+
+		/**
+		 * the algorithm of the subject public key
+		 */
+		[attribute, readonly] string SubjectPublicKeyAlgorithm;
+
+		/**
+		 * the value of the subject public key
+		 */
+		[attribute, readonly] sequence< byte > SubjectPublicKeyValue;
+
+		/**
+		 * the signature algorithm
+		 */
+		[attribute, readonly] string SignatureAlgorithm;
+
+		/**
+			 * the SHA1 thumbprint
+		*/
+		[attribute, readonly] sequence< byte > SHA1Thumbprint;
+
+		/**
+		* the MD5 thumbprint
+		*/
+		[attribute, readonly] sequence< byte > MD5Thumbprint;
+
+		/**
+		* Find a extension with a OID.
+		*/
+		XOX_CertificateExtension findCertificateExtension( [in]sequence< byte > oid ) ;
+
+		/** verify the Certificate Revocation List state of this 
+		* certificate
+		*
+		*/
+		boolean verifyCRLForCertificate( );
+
+		/** verify the Certificate Authority of this certificate
+		  *
+		  */
+		boolean verifyCAForCertificate( );
+	
+	} ;
+
+  }; }; }; }; };  };
+ 
+#endif
