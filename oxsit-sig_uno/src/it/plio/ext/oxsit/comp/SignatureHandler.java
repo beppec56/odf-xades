@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.signature;
+package it.plio.ext.oxsit.comp;
 
 import java.util.Date;
 

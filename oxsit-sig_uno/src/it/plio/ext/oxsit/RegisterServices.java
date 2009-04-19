@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit;
 
-import it.plio.ext.oxsit.signature.SignatureHandler;
+import it.plio.ext.oxsit.comp.SignatureHandler;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
