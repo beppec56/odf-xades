@@ -22,9 +22,9 @@
 
 package it.plio.ext.oxsit;
 
+import it.plio.ext.oxsit.comp.options.ManageGeneralOptions;
+import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
 import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
-import it.plio.ext.oxsit.ooo.options.ManageGeneralOptions;
-import it.plio.ext.oxsit.ooo.options.ManageLoggingOptions;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;

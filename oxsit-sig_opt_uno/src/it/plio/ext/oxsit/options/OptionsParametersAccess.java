@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.options;
+package it.plio.ext.oxsit.options;
 
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.ConfigurationAccess;

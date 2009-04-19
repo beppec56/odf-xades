@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.options;
+package it.plio.ext.oxsit.options;
 
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XItemListener;

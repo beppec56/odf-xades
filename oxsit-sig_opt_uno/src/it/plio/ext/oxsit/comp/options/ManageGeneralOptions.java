@@ -20,10 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.options;
+package it.plio.ext.oxsit.comp.options;
 
-import it.plio.ext.oxsit.ooo.options.SingleControlDescription.ControlTypeCode;
 import it.plio.ext.oxsit.ooo.ui.DialogAbout;
+import it.plio.ext.oxsit.options.SingleControlDescription;
+import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.XControl;

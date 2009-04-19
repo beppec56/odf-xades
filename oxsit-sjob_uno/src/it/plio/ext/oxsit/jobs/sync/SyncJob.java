@@ -57,7 +57,6 @@ import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;

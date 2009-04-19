@@ -20,9 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.options;
+package it.plio.ext.oxsit.comp.options;
 
 import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.options.OptionsParametersAccess;
+import it.plio.ext.oxsit.options.SingleControlDescription;
 
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XButton;
