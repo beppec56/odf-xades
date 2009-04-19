@@ -26,7 +26,7 @@ ATTENTION:
 the default target must be removed
 
 -->
-<project name="oxsit-uno_types" default="build-jar" basedir=".">
+<project name="oxsit-uno_types" default="" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
 	<property name="project_name" value="${project_friendly_name}-uno_types" />
 	<property name="extension_jar_file" value="${project_name}.uno.jar" />
@@ -34,7 +34,7 @@ the default target must be removed
 	<description>
         Build the jar file ${extension_jar_file} + ${extension_rdb_file}.
     </description>
-	<echo>Build the jar file ${extension_jar_file}.</echo>
+	<echo>Build the jar file ${extension_jar_file} (on top).</echo>
 	<!-- set global properties for this build -->
 
 	<!--
@@ -42,13 +42,16 @@ the default target must be removed
 	platform file are:
 	Linux: build.Linux-i386.properties
 	-->
-	<echo message="${project_name}: platform specific file is: build.${os.name}-${os.arch}.properties."/>
-	<available file="build.${os.name}-${os.arch}.properties" type="file" property="properties_file.available" value="false" />
-	<property file="build.${os.name}-${os.arch}.properties" />
+	<echo message="${project_name}: platform specific file is: build.${os.name}-${os.arch}.properties.xml."/>
+	<available file="build.${os.name}-${os.arch}.properties.xml" type="file" property="properties_file.available" value="false" />
+	<property file="build.${os.name}-${os.arch}.properties.xml" />
 	<property name="src" location="src" />
 	<property name="build" location="build" />
 	<property name="build-eclipse" location="bin"/>
 	<property name="dist" location="dist" />
+	<property name="uno_class" location="pre-built-type-classes" />
+	<property name="uno_rdb" location="pre-built-type-rdb" />
+	<property name="uno_idl" location="idl" />
 
 	<!--
 		the OOo SDK root path, used for the custom loader
@@ -114,7 +117,45 @@ the default target must be removed
 		<mkdir dir="${build}" />
 	</target>
 
-	<target name="compile" depends="init" description="compile the source ">
+	<target name="compile-idl" description="compile idl, rdb and class for a single UNO type">
+		<!-- compile idl -->		
+		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary form urd" os="Linux-i386">
+			<arg value="${oo_sdk_init_script}"/>
+			<arg value="${parm1}"/>
+			<arg value="${uno_idl}"/>
+			<arg value="${uno_rdb}"/>
+			<arg value="${uno_class}"/>
+			<arg value="${parm2}"/>
+		</exec>		
+	</target>
+	<!--
+	The following target builds the new UNO interface class files out of the UNO definition.
+	For this you'll need a working OpenOffice.org SDK for your platform.
+	Change into the file platform specific file is: build.${os.name}-${os.arch}.properties the 
+	properties value to suit your needs,	properties needed are commented in the supplied files.	
+	-->
+	<target name="prebuild"  description="uses OOo SDK to build clss file from the UNO IDL definition file, read the build.xml comments!">
+		<echo>${oo_sdk_installed}</echo>
+		<!-- remove previous directory structure -->
+		<delete dir="${uno_rdb}" />
+		<delete dir="${uno_class}" />
+		<!-- prepare the new empty directory -->
+		<mkdir dir="${uno_rdb}" />
+		<mkdir dir="${uno_class}" />
+
+		<antcall target="compile-idl">
+			<!--interface name -->
+			<param name="parm1" value="XOXDocumentSignatures"/>
+			<!--interface path -->			
+			<param name="parm2" value="it.plio.ext.oxsit.ooo.cert"/>
+		</antcall>
+		
+		<antcall target="compile-idl">
+			<param name="parm1" value="XOX_CertificateExtension"/>
+		</antcall>
+	</target>
+	
+	<target name="compile" depends="init" description="assemble the created class file into a Java archive (jar)">
 		
 		<!--
 		the other libray are not used, this lib is build by the OOO sdk library
@@ -214,6 +255,7 @@ the default target must be removed
 
 	<target name="clean" description="clean up the project">
 		<!-- Delete the ${build} and ${dist} directory trees -->
+		<echo>Executing clean</echo>
 		<delete dir="${archr}" />
 		<delete dir="${build-eclipse}" />
 		<delete dir="${build}" />

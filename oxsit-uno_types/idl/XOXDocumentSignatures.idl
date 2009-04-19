@@ -20,15 +20,15 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_ooo_cert_XOXDocumentSignatures_idl__
-#define __it_plio_ext_oxsit_ooo_cert_XOXDocumentSignatures_idl__
+#ifndef __it_plio_ext_oxsit_ooo_cert_XOX_DocumentSignatures_idl__
+#define __it_plio_ext_oxsit_ooo_cert_XOX_DocumentSignatures_idl__
 
-  module it { module plio { module ext { module oxsit { module ooo { module cert {
+  module it { module plio { module ext { module oxsit { module security { module cert {
 
 	/** test interface
 	 *
 	 */
-  interface XOXDocumentSignatures
+  interface XOX_DocumentSignatures
   {
       string getDocumentURL();
       void setDocumentURL( [in] string s1 );

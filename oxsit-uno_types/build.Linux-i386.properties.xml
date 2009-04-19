@@ -18,6 +18,20 @@
     program.  If not, see:
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
+<!-- the installed OpenOffice.org SDK java classs location -->
 ooosdk=/opt/openoffice.org3/basis-link/sdk
+<!--
+this is where the sdk environment is installed for you
+the value is the default in Linux after standard installation
+this is needed because
+-->
+oo_sdk_installed=${user.home}/openoffice.org_sdk
+<!-- standard init script for OOo SDK, what should be launched for a correct init of the environment -->
+oo_sdk_init_script=${oo_sdk_installed}/dsklnx/setsdkenv_unix.sh
+<!-- command to build idl to urd -->
+oo_sdk_idl_compile=compile-idl.sh
+
+<!-- the installed OpenOffice.org URE Java classes location -->
 ooo_ure_classes_path=/opt/openoffice.org3/basis-link/ure-link/share/java
+<!-- the installed OpenOffice.org Java classes location -->
 ooo_classes_path=/opt/openoffice.org3/basis-link/program/classes

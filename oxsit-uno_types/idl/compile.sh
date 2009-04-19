@@ -6,23 +6,23 @@
 #
 HOME_OO_SDK="/home/beppe/openoffice.org_sdk"
 SOURCE_SHELL=$HOME_OO_SDK/dsklnx
+RDB_DEST=../pre-built-type-rdb
+CLASS_DEST=../pre-built-type-classes
 
-#HOME_OO_SDK="/home/beppe/openoffice.org2.2_sdk"
-#SOURCE_SHELL=$HOME_OO_SDK/
-
-CLASS_FILE=XOXDocumentSignatures
+#CLASS_FILE=XOXDocumentSignatures
 
 echo "source env for OOo SDK"
 . $SOURCE_SHELL/setsdkenv_unix.sh
 
 echo "compile idl file"
-idlc -I $OO_SDK_HOME/idl $CLASS_FILE".idl"
+#idlc -I $OO_SDK_HOME/idl $CLASS_FILE".idl"
+idlc -I $OO_SDK_HOME/idl "*.idl"
 
 echo "remove old registry file"
-rm ../pre-built-type-classes/rdb/oxsit-uno_types.uno.rdb
+rm $RDB_DEST/oxsit-uno_types.uno.rdb
 
 echo "merge the registry file"
-regmerge -v ../pre-built-type-classes/rdb/oxsit-uno_types.uno.rdb /UCR $CLASS_FILE".urd"
+regmerge -v $RDB_DEST/oxsit-uno_types.uno.rdb /UCR "*.urd"
 
 echo "prepare the java classes"
-javamaker -BUCR -O../pre-built-type-classes -T"it.plio.ext.oxsit.ooo.cert."$CLASS_FILE -nD $OO_SDK_URE_HOME/share/misc/types.rdb ../pre-built-type-classes/rdb/oxsit-uno_types.uno.rdb
+javamaker -BUCR -O$CLASS_DEST -T"it.plio.ext.oxsit.ooo.cert."$CLASS_FILE -nD $OO_SDK_URE_HOME/share/misc/types.rdb ../pre-built-type-classes/rdb/oxsit-uno_types.uno.rdb
