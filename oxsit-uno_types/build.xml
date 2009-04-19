@@ -105,11 +105,6 @@ the default target must be removed
 	<property name="archr" location="to-be-zipped" />
 	<property name="arch" location="${archr}/${project_name}-${version}" />
 
-	<dependset>
-		<srcfilelist dir="${xades_myclass_path}" files="${project_friendly_name}-sig.uno.jar" />
-		<targetfilelist dir="${dist}/lib" files="${extension_jar_file}" />
-	</dependset>
-
 	<target name="init">
 		<!-- Create the time stamp -->
 		<tstamp />
@@ -118,7 +113,7 @@ the default target must be removed
 	</target>
 
 	<target name="compile-idl" description="compile idl, rdb and class for a single UNO type">
-		<!-- compile idl -->		
+		<!-- compile idl, Linux version, see compile-idl.sh for details -->
 		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary form urd" os="Linux-i386">
 			<arg value="${oo_sdk_init_script}"/>
 			<arg value="${parm1}"/>
@@ -136,60 +131,39 @@ the default target must be removed
 	-->
 	<target name="prebuild"  description="uses OOo SDK to build clss file from the UNO IDL definition file, read the build.xml comments!">
 		<echo>${oo_sdk_installed}</echo>
-		<!-- remove previous directory structure -->
-		<delete dir="${uno_rdb}" />
-		<delete dir="${uno_class}" />
 		<!-- prepare the new empty directory -->
 		<mkdir dir="${uno_rdb}" />
 		<mkdir dir="${uno_class}" />
+		<!-- remove previous directory structure -->
+		<delete >
+			<fileset dir="${uno_rdb}" >
+				<include name="**/*.rdb" />
+			</fileset>
+		</delete>
+		
+		<delete>
+			<fileset dir="${uno_class}" >
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+		
+		<!-- delete the build directory, after this target, target build-jar needs to be rebuilt -->
+		<delete dir="${build-eclipse}" />
+		<delete dir="${build}" />
 
 		<antcall target="compile-idl">
 			<!--interface name -->
-			<param name="parm1" value="XOXDocumentSignatures"/>
+			<param name="parm1" value="XOX_DocumentSignatures"/>
 			<!--interface path -->			
-			<param name="parm2" value="it.plio.ext.oxsit.ooo.cert"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
-		
+
 		<antcall target="compile-idl">
 			<param name="parm1" value="XOX_CertificateExtension"/>
 		</antcall>
 	</target>
 	
-	<target name="compile" depends="init" description="assemble the created class file into a Java archive (jar)">
-		
-		<!--
-		the other libray are not used, this lib is build by the OOO sdk library
-		
-		<property name="my_ooo_classes_path3" value="${src}/../../${project_friendly_name}-sing_var_uno/dist/lib" />
-		<available file="${my_ooo_classes_path3}" type="dir" property="my_ooo_classes_path3.available" value="false" />
-		<fail message="No signature_component classes available. Please edit the build file to correct it.(${my_ooo_classes_path3})">
-			<condition>
-				<not>
-					<isset property="my_ooo_classes_path3.available" />
-				</not>
-			</condition>
-		</fail>
-		<property name="my_ooo_classes_path" value="${src}/../../${project_friendly_name}-sig_opt_uno/dist/lib" />
-		<available file="${my_ooo_classes_path}" type="dir" property="my_ooo_classes_path.available" value="false" />
-		<fail message="No signature_options_comp classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
-			<condition>
-				<not>
-					<isset property="my_ooo_classes_path.available" />
-				</not>
-			</condition>
-		</fail>
-		<property name="my_ooo_classes_path2" value="${src}/../../${project_friendly_name}-sig_uno/dist/lib" />
-		<available file="${my_ooo_classes_path2}" type="dir" property="my_ooo_classes_path2.available" value="false" />
-		<fail message="No signature_component classes available. Please edit the build file to correct it.(${my_ooo_classes_path2})">
-			<condition>
-				<not>
-					<isset property="my_ooo_classes_path2.available" />
-				</not>
-			</condition>
-		</fail>
-		
-		-->
-		
+	<target name="compile" depends="init" description="assemble the created class file into a Java archive (jar)">		
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
 			<classpath>
