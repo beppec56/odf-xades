@@ -20,12 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.singleton.comp;
+package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.logging.LocalLogFormatter;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
-import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -326,13 +325,13 @@ public class SingletonGlobalVariables extends ComponentBase
 			//we recevive a series of propertyvalues
 			PropertyValue[] aValues = (PropertyValue[])aVal.Value;
 			for(int i= 0; i< aValues.length; i++)
-				if(aValues[i].Name.compareTo(SigletonGlobalVarConstants.m_sURL_VALUE) == 0) {
+				if(aValues[i].Name.compareTo(SingletonGlobalVarConstants.m_sURL_VALUE) == 0) {
 					docuDescrip.sURL = (String)aValues[i].Value;
 					break;
 				}
 		
 			for(int i= 0; i< aValues.length; i++) {
-				if(aValues[i].Name.compareTo(SigletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE) == 0) {
+				if(aValues[i].Name.compareTo(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE) == 0) {
 					docuDescrip.nXAdESSignatureState = ((Integer)aValues[i].Value).intValue();
 					break;
 				}

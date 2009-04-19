@@ -23,14 +23,14 @@
 package it.plio.ext.oxsit.jobs.sync;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
+import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
 import it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
-import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.oxsit.singleton.comp.SingletonGlobalVariables;
 
 import com.sun.star.beans.NamedValue;
 import com.sun.star.beans.PropertyValue;
@@ -656,15 +656,15 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 				PropertyValue[] aValues = new PropertyValue[3];
 				
 				aValues[0] = new PropertyValue();
-				aValues[0].Name = new String(SigletonGlobalVarConstants.m_sPROPERTY_OPERATION);
-				aValues[0].Value = new Integer(SigletonGlobalVarConstants.m_nADD_PROPERTY);
+				aValues[0].Name = new String(SingletonGlobalVarConstants.m_sPROPERTY_OPERATION);
+				aValues[0].Value = new Integer(SingletonGlobalVarConstants.m_nADD_PROPERTY);
 					
 				aValues[1] = new PropertyValue();
-				aValues[1].Name = new String(SigletonGlobalVarConstants.m_sURL_VALUE);
+				aValues[1].Name = new String(SingletonGlobalVarConstants.m_sURL_VALUE);
 				aValues[1].Value = new String(aURL);
 
 				aValues[2] = new PropertyValue();
-				aValues[2].Name = new String(SigletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
+				aValues[2].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
 				aValues[2].Value = new Integer(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 				PropertyValue aParVal = new PropertyValue();
 				aParVal.Name = new String(aURLHash);
@@ -713,10 +713,10 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 				try {
 					PropertyValue[] aValues = new PropertyValue[2];
 					aValues[0] = new PropertyValue();
-					aValues[0].Name = new String(SigletonGlobalVarConstants.m_sPROPERTY_OPERATION);
-					aValues[0].Value = new Integer(SigletonGlobalVarConstants.m_nSET_PROPERTY);
+					aValues[0].Name = new String(SingletonGlobalVarConstants.m_sPROPERTY_OPERATION);
+					aValues[0].Value = new Integer(SingletonGlobalVarConstants.m_nSET_PROPERTY);
 					aValues[1] = new PropertyValue();
-					aValues[1].Name = new String(SigletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
+					aValues[1].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
 					aValues[1].Value = new Integer(_nSignState);
 
 					PropertyValue[] aParVal = new PropertyValue[1];

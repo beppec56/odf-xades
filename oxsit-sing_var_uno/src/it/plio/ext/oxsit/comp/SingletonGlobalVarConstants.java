@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.singleton;
+package it.plio.ext.oxsit.comp;
 
 /**
  * this class contains the global variables needed by the singleton implementation
@@ -28,7 +28,7 @@ package it.plio.ext.oxsit.singleton;
  * @author beppe
  * 
  */
-public class SigletonGlobalVarConstants {
+public class SingletonGlobalVarConstants {
 	
 	// the property name operation to carry out
 	public static final String m_sPROPERTY_OPERATION = "Operation";

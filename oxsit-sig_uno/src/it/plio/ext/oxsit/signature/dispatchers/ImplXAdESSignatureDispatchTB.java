@@ -71,6 +71,8 @@ import com.sun.star.util.XModifiable;
 import com.sun.star.bridge.XInstanceProvider;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
+import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
@@ -79,8 +81,6 @@ import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
 import it.plio.ext.oxsit.signature.dispatchers.DocumentURLStatusHelper;
-import it.plio.ext.oxsit.singleton.SigletonGlobalVarConstants;
-import it.plio.ext.oxsit.singleton.comp.SingletonGlobalVariables;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
 
@@ -170,7 +170,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			
 			pValues[0] = new PropertyValue();
 			
-			pValues[0].Name = new String(SigletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
+			pValues[0].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
 			pValues[0].Value = new Integer(23);
 
 			try {
