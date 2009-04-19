@@ -135,6 +135,13 @@ The build.xml properties are the following:
    								only once per every OpenOffice.org session.
    								Contains global variables and the global Logger for the extension.
 
+	oxsit-uno_types				Contains the new UNO types (interfaces, declared services) needed in the
+								extension.
+								Most of the new interfaces deal with qualified X509 certificates.
+								This project is partially prebuild, due to the necessity of having a
+								full installed OOo SDK installed and configured in order to be built
+								from scratch. 
+
 	oxsit-web					Contains the web pages for the project at forge.osor.eu
 
 	oxsit-l10n					contains the localization source data, used to generate the correct

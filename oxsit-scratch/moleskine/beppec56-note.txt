@@ -1,11 +1,31 @@
 My local blog for code dev, notes, nonsense and the likes...
-Date can be estracted from svn commits :-).
+Date can be extracted from svn commits :-).
 Beware, function names are written by heart, so they may be plain wrong ;-).
 
 beppec56
 ============
 
 
+============
+
+I finally succeeded in adding a new interface in UNO.
+I needed a dedicated Java jar library containing the new .class file generated through the
+OOo SDK procedure to generate new types in Java:
+
+1) descrive the new element using UNO IDL language
+2) compile the new definition with idlc from ooo_sdk
+3) prepare the .rdb file containing the UNO registration information
+4) use javamaker to generated the new class declaring the interface
+5) build a jar Java archive containing the .class file so generated
+6) when installing the extension install both file, the .rdb AND the .jar.
+
+Now I need to clean up the part I touched to implement this...
+
+When I had time, I'll change the way the procedure described above is done,
+currently carried out through console and in Linux only.
+Possibly using ant as a make command for the whole process.
+
+The Windows environment needs to be checked as well.
 
 =========
 The idea of preparing a new interface in OOo proved to be unfruitful
