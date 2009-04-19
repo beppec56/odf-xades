@@ -22,9 +22,9 @@
 
 package it.plio.ext.oxsit.ooo.interceptor;
 
+import it.plio.ext.oxsit.comp.GlobConstantJobs;
 import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveAsDispatch;
 import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveDispatch;
-import it.plio.ext.oxsit.jobs.sync.GlobConstantJobs;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;

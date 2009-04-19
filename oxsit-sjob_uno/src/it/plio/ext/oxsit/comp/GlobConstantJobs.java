@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.jobs.sync;
+package it.plio.ext.oxsit.comp;
 
 /** this class contains the global variables needed by all this implemenatation
  * 

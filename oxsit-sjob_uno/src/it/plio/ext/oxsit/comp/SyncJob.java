@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.jobs.sync;
+package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
