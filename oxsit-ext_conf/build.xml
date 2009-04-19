@@ -109,7 +109,7 @@ build-extension
 	<property name="uno_types" value="${project_friendly_name}-uno_types"/>
 	<property name="uno_types_dir" value="${uno_types}/dist"/>
 	<property name="uno_types_jar" value="${uno_types}.uno.jar"/>
-	<property name="uno_types_rdb_dir" value="${uno_types}/pre-built-type-classes/rdb"/>
+	<property name="uno_types_rdb_dir" value="${uno_types}/pre-built-type-rdb"/>
 	<property name="uno_types_rdb" value="${uno_types}.uno.rdb"/>
 
 	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>

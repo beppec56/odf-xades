@@ -320,16 +320,19 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="err_txt_cert_noact" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate not yet active</value>
 				<value xml:lang="it">eCertificato non attivo</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_noconf" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate non consistent (see 'Report')</value>
 				<value xml:lang="it">eCertificato non conforme (vedere 'Rapporto')</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_cert_nover" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate not verifiable</value>
 				<value xml:lang="it">eCertificato non verificabile</value>
 			</prop>
 		</node>

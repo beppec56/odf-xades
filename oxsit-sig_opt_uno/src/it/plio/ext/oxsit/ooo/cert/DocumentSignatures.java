@@ -24,6 +24,11 @@ package it.plio.ext.oxsit.ooo.cert;
 
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,6 +64,7 @@ import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
 import com.sun.star.uno.XWeak;
+import com.sun.star.util.DateTime;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
@@ -85,7 +91,9 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			XChangesNotifier,
 			XInitialization,
 			XNameContainer,
-			XOXDocumentSignatures
+			XOX_DocumentSignatures,
+			XOX_CertificateExtension,
+			XOX_QualifiedCertificate
 			 {
 
 	// the name of the class implementing this object
@@ -414,5 +422,224 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public void setDocumentURL(String s1) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
+	 */
+	@Override
+	public byte[] getExtensionId() {
+		// TODO Auto-generated method stub
+		m_logger.info("getExtensionId");
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
+	 */
+	@Override
+	public String getExtensionStringValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionValue()
+	 */
+	@Override
+	public byte[] getExtensionValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
+	 */
+	@Override
+	public boolean isCritical() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getVersion()
+	 */
+	@Override
+	public short getVersion() {
+		// TODO Auto-generated method stub
+		m_logger.info("getVersion");
+		return 3;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#findCertificateExtension(byte[])
+	 */
+	@Override
+	public XOX_CertificateExtension findCertificateExtension(byte[] arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getEncoded()
+	 */
+	@Override
+	public byte[] getEncoded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerName()
+	 */
+	@Override
+	public String getIssuerName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerUniqueID()
+	 */
+	@Override
+	public byte[] getIssuerUniqueID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getMD5Thumbprint()
+	 */
+	@Override
+	public byte[] getMD5Thumbprint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidAfter()
+	 */
+	@Override
+	public DateTime getNotValidAfter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidBefore()
+	 */
+	@Override
+	public DateTime getNotValidBefore() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSHA1Thumbprint()
+	 */
+	@Override
+	public byte[] getSHA1Thumbprint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSerialNumber()
+	 */
+	@Override
+	public byte[] getSerialNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSignatureAlgorithm()
+	 */
+	@Override
+	public String getSignatureAlgorithm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectName()
+	 */
+	@Override
+	public String getSubjectName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectPublicKeyAlgorithm()
+	 */
+	@Override
+	public String getSubjectPublicKeyAlgorithm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectPublicKeyValue()
+	 */
+	@Override
+	public byte[] getSubjectPublicKeyValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectUniqueID()
+	 */
+	@Override
+	public byte[] getSubjectUniqueID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCAForCertificate()
+	 */
+	@Override
+	public boolean verifyCAForCertificate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCRLForCertificate()
+	 */
+	@Override
+	public boolean verifyCRLForCertificate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateAuthorityState()
+	 */
+	@Override
+	public CertificateAuthorityState getCertificateAuthorityState() {
+		// TODO Auto-generated method stub
+		return CertificateAuthorityState.CA_LIST_DB_NOT_UPDATED;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateState()
+	 */
+	@Override
+	public CertificateState getCertificateState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

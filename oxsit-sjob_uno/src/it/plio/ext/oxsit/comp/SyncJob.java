@@ -28,7 +28,9 @@ import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
-import it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 
@@ -259,11 +261,25 @@ public class SyncJob extends ComponentBase
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
 				
-				XOXDocumentSignatures xoxD = (XOXDocumentSignatures)UnoRuntime.queryInterface(XOXDocumentSignatures.class, oObj);
+				XOX_DocumentSignatures xoxD = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, oObj);
 				if(xoxD != null)
 					xoxD.getDocumentURL();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );				
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
+
+				XOX_CertificateExtension xoxCE = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, oObj);
+				if(xoxCE != null)
+					xoxCE.getExtensionId();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_CertificateExtension" );
+				
+				XOX_QualifiedCertificate xoxQC = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oObj);
+				if(xoxQC != null)
+					xoxQC.getVersion();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );
+				
+				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
