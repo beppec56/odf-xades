@@ -20,33 +20,22 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateExtension_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificateExtension_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_QualifiedCertificate_idl__
+#define __it_plio_ext_oxsit_security_cert_QualifiedCertificate_idl__
+
+#include "XOX_QualifiedCertificate.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** Extension of a X509 certificate
-  */
-	interface XOX_CertificateExtension
+/** This service can be used to rappresent a Qualified X509 Certificate
+ */
+	service QualifiedCertificate 
 	{
-		/** State of the critical flag for this certificate extension.
-		   @return true if this is an extension marked critical  
-		 */
-		boolean isCritical() ;
-
-		/** This extension OID.
-		 */
-		[attribute, readonly] sequence< byte > ExtensionId ;
-
-		/** The extension value, DER encoded octects
-		 */
-		[attribute, readonly] sequence< byte > ExtensionValue ;
-
-		/** The extension value, String representation
+		/** This interface gives access to the X509 qualified certificate
 		*/
-		[attribute, readonly] string ExtensionStringValue ;
-	}; 
- 
+		interface it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate;
+	} ;
+
   }; }; }; }; };  };
  
 #endif

@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.logging.XDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -403,6 +404,15 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentCertificates()
+	 */
+	@Override
+	public XOX_QualifiedCertificate[] getDocumentCertificates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
 	 */
 	@Override
@@ -438,5 +448,4 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

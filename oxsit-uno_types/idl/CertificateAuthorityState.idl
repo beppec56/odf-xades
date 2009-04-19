@@ -25,7 +25,7 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** State of a Certificate
+/** State of a Certificate Authority (after control)
  */
 	enum CertificateAuthorityState
 	{

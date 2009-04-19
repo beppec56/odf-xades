@@ -30,113 +30,71 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/**
- * Interface of a Qualified X509 Certificate
- *
+/** Interface of a Qualified X509 Certificate
  */
 	interface XOX_QualifiedCertificate 
 	{
-		/**
-	 	* the state of the certificate.
+		/** the state of the certificate.
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState ;
-
-		/**
-	 	* the state of the CA (certificate Authority) control.
+		/** the state of the CA (certificate Authority) control.
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificateAuthorityState;
-
-		/**
-	 	* the version number attribute of the certificate.
+		/** the version number attribute of the certificate.
 	 	*/
 		[attribute, readonly] short Version ;
-
-		/**
-		 * the serial number attribute of the certificate.
+		/** the serial number attribute of the certificate.
 		 */
 		[attribute, readonly] sequence< byte > SerialNumber ;
-
-		/**
-		 * the issuer name attribute of the certificate.
+		/** the issuer name attribute of the certificate.
 		 */
 		[attribute, readonly] string IssuerName ;
-
-		/**
-	 	* the subject name attribute of the certificate.
+		/** the subject name attribute of the certificate.
 		*/
 		[attribute, readonly] string SubjectName ;
-
-		/**
-		 * the validity NotBefore date attribute of the certificate.
+		/** the validity NotBefore date attribute of the certificate.
 		 */
 		[attribute, readonly] com::sun::star::util::DateTime NotValidBefore ;
-
-		/**
-		 * the validity NotAfter date attribute of the certificate.
+		/** the validity NotAfter date attribute of the certificate.
 		 */
 		[attribute, readonly] com::sun::star::util::DateTime NotValidAfter ;
-
-		/**
-		 * the issuer unique ID attribute of the certificate.
+		/** the issuer unique ID attribute of the certificate.
 		 */
 		[attribute, readonly] sequence< byte > IssuerUniqueID ;
-
-		/**
-		 * the subject unique ID attribute of the certificate.
+		/** the subject unique ID attribute of the certificate.
 		 */
 		[attribute, readonly] sequence< byte > SubjectUniqueID ;
-
-		/**
-		 * all extensions of a certificate.
+		/** all extensions of a certificate.
 		 */
 		[attribute, readonly] sequence< XOX_CertificateExtension > Extensions ;
-
-		/**
-		 * the DER encoded form of the certificate
+		/** the DER encoded form of the certificate
 		 */
 		[attribute, readonly] sequence< byte > Encoded ;
-
-		/**
-		 * the algorithm of the subject public key
+		/** the algorithm of the subject public key
 		 */
 		[attribute, readonly] string SubjectPublicKeyAlgorithm;
-
-		/**
-		 * the value of the subject public key
+		/** the value of the subject public key
 		 */
 		[attribute, readonly] sequence< byte > SubjectPublicKeyValue;
-
-		/**
-		 * the signature algorithm
+		/** the signature algorithm
 		 */
 		[attribute, readonly] string SignatureAlgorithm;
-
-		/**
-			 * the SHA1 thumbprint
+		/** the SHA1 thumbprint
 		*/
 		[attribute, readonly] sequence< byte > SHA1Thumbprint;
-
-		/**
-		* the MD5 thumbprint
+		/** the MD5 thumbprint
 		*/
 		[attribute, readonly] sequence< byte > MD5Thumbprint;
-
-		/**
-		* Find a extension with a OID.
+		/** Find a extension with a OID.
 		*/
 		XOX_CertificateExtension findCertificateExtension( [in]sequence< byte > oid ) ;
-
 		/** verify the Certificate Revocation List state of this 
-		* certificate
-		*
+		 certificate
 		*/
 		boolean verifyCRLForCertificate( );
-
 		/** verify the Certificate Authority of this certificate
-		  *
 		  */
 		boolean verifyCAForCertificate( );
-	
 	} ;
 
   }; }; }; }; };  };

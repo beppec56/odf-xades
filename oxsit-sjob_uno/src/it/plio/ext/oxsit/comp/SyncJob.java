@@ -267,7 +267,7 @@ public class SyncJob extends ComponentBase
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
 
-				XOX_CertificateExtension xoxCE = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, oObj);
+				XOX_CertificateExtension xoxCE = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, xoxD);
 				if(xoxCE != null)
 					xoxCE.getExtensionId();
 				else
