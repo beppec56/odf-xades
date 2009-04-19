@@ -27,7 +27,6 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -38,7 +37,6 @@ import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.logging.XLogHandler;
 import com.sun.star.logging.XLogger;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.util.XChangesListener;
 
 /**
  * This class is a singleton UNO object.
@@ -56,7 +54,7 @@ import com.sun.star.util.XChangesListener;
  *
  */
 public class GlobalLogger extends ComponentBase 
-			implements XServiceInfo, 
+			implements XServiceInfo,
 			XLogger	{
 
 	// the name of the class implementing this object

@@ -41,9 +41,14 @@ import com.sun.star.uno.XComponentContext;
  * @author beppe
  *
  */
-public class LoggerParametersAccess extends LoggerConfigurationAccess  implements XComponent {
+public class LoggerParametersAccess extends LoggerConfigurationAccess 
+	implements XComponent
+	// XComponent implemented for convenience, using
+	// method dispose to dispose of configuration
+	//access used
+	{
 	private Object	m_oOptionsParametersRegKey	= null;
-// this class is instantiated by the logger upon starting, so no log is really possible	
+	// this class is instantiated by the logger upon starting, so no log is really possible	
 
 	/**
 	 * @param _Context
@@ -53,7 +58,6 @@ public class LoggerParametersAccess extends LoggerConfigurationAccess  implement
 		try {
 			m_oOptionsParametersRegKey = createConfigurationReadWriteView( GlobConstant.m_sEXTENSION_CONF_OPTIONS );
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 		}
@@ -76,7 +80,6 @@ public class LoggerParametersAccess extends LoggerConfigurationAccess  implement
 			} catch (UnknownPropertyException e) {
 				e.printStackTrace();
 			} catch (WrappedTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -136,7 +139,6 @@ public class LoggerParametersAccess extends LoggerConfigurationAccess  implement
 
 	public void addEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
