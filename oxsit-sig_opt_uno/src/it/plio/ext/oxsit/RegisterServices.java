@@ -54,8 +54,7 @@ public class RegisterServices {
 		}
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
-//DEBUG			
-			System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -89,8 +88,6 @@ public class RegisterServices {
 
 		if(retGeneral && retLogging && retDigitalSignatures)
 			return true;
-		
 		return false;
-		
 	}
 }

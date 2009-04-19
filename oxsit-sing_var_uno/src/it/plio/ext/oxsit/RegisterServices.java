@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit;
 
+import it.plio.ext.oxsit.comp.GlobalLogger;
 import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -48,6 +49,14 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( 
 						SingletonGlobalVariables.class,
 						SingletonGlobalVariables.m_sServiceNames );
+		else if ( sImplementationName.equals( GlobalLogger.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( 
+					GlobalLogger.class,
+					GlobalLogger.m_sServiceNames );
+//DEBUG			
+			System.out.println("__getComponentFactory: "+GlobalLogger.m_sImplementationName);
+		}
+
 		return xFactory;
 	}
 	/** Writes the service information into the given registry key.
@@ -63,7 +72,7 @@ public class RegisterServices {
 	 */
 	public synchronized static boolean __writeRegistryServiceInfo( XRegistryKey xRegistryKey ) {
 //		System.out.println("__writeRegistryServiceInfo: "+ManageOptions.m_sImplementationName+" "+ManageOptions.m_sServiceNames[0] );
-		
+		boolean retSingvar = false; 
 		//prepare the new key path
 		try {
 			XRegistryKey newKey = xRegistryKey.createKey(
@@ -72,11 +81,30 @@ public class RegisterServices {
 					SingletonGlobalVariables.m_sServiceNames[0]); //
 
 			newKey.setStringValue(SingletonGlobalVariables.m_sServiceNames[0]);
+			retSingvar = Factory.writeRegistryServiceInfo( SingletonGlobalVariables.m_sImplementationName, 
+					SingletonGlobalVariables.m_sServiceNames, xRegistryKey );
 		} catch (InvalidRegistryException e) {
 			// TODO Auto-generated catch block
+			System.out.println("__writeRegistryServiceInfo: "+SingletonGlobalVariables.m_sImplementationName + "failed");		
 			e.printStackTrace();
 		}
 
-		return Factory.writeRegistryServiceInfo( SingletonGlobalVariables.m_sImplementationName, SingletonGlobalVariables.m_sServiceNames, xRegistryKey );
+		boolean retGLogg = false; 
+		//prepare the new key path
+		try {
+			XRegistryKey newKey = xRegistryKey.createKey(
+					GlobalLogger.m_sImplementationName+ // the class implementing
+					"/UNO/SINGLETONS/"+	//fixed key reference
+					GlobalLogger.m_sServiceNames[0]); //
+
+			newKey.setStringValue(GlobalLogger.m_sServiceNames[0]);
+			retGLogg = Factory.writeRegistryServiceInfo( GlobalLogger.m_sImplementationName, 
+					GlobalLogger.m_sServiceNames, xRegistryKey );
+		} catch (InvalidRegistryException e) {
+			// TODO Auto-generated catch block
+			System.out.println("__writeRegistryServiceInfo: "+GlobalLogger.m_sImplementationName + "failed");		
+			e.printStackTrace();
+		}
+		return (retSingvar && retGLogg);
 	}
 }

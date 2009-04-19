@@ -25,7 +25,7 @@
 		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<node oor:name="HandlerSet">
 		<!-- name of the Java class implementing the handler -->
-		<node oor:name="it.plio.ext.oxsit.signature.SignatureHandler" oor:op="replace">
+		<node oor:name="it.plio.ext.oxsit.comp.SignatureHandler" oor:op="replace">
 			<!--
 			    protocol name can be anything, it MUST be in the class defined as HandlerSet name.
 			    In this case it is defined in static field:

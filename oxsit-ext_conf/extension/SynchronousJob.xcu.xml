@@ -26,7 +26,7 @@
 	<node oor:name="Jobs">
 		<node oor:name="SyncSignatureHandlerJob" oor:op="replace">
 			<prop oor:name="Service">
-				<value>it.plio.ext.oxsit.jobs.sync.SyncJob</value>
+				<value>it.plio.ext.oxsit.comp.SyncJob</value>
 				<!--  value>it.plio.ext.xades.SignatureHandler</value -->
 			</prop>
 			<node oor:name="Arguments">

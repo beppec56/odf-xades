@@ -62,7 +62,9 @@ public class XDynamicLogger {
 		//compute the parent class ID hex hash
 		
 		m_xLogger = (XLogger)UnoRuntime.queryInterface(XLogger.class, 
-				_ctx.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE));
+				_ctx.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
+		if(m_xLogger == null)
+			System.out.println("no main logger!");
 		m_sOwnerClassHashHex = String.format( "%8H", _theOwner );
 		m_sOwnerClass =  _theOwner.getClass().getName();		
 	}

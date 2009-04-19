@@ -70,7 +70,8 @@ import com.sun.star.util.XCloseable;
  * @author beppe
  * 
  */
-public class SyncJob extends ComponentBase implements XServiceInfo, // general
+public class SyncJob extends ComponentBase
+	implements XServiceInfo, // general
 		XJob, // synchronous Job interface (activates a Java thread for
 		// the XDispatcherInterceptor operations)
 		XCloseable {
@@ -98,6 +99,8 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 	
 	private	XDynamicLogger							m_logger;
 
+	private Object m_oSingleLogObj;	
+	
 	/**
 	 * The toolkit, that we can create UNO dialogs.
 	 */
@@ -115,6 +118,11 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 	 *            the XComponentContext
 	 */
 	public SyncJob(XComponentContext context) {
+
+		m_oSingleLogObj = context.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE);
+		if(m_oSingleLogObj == null)
+			System.out.println("cannot build first singleton logger!");
+			
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_aSingletonGlobVarProps = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_oSingleVarObj);
@@ -131,7 +139,7 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 			// get the service manager from the component context
 			m_xServiceManager = m_xComponentContext.getServiceManager();
 		} catch (java.lang.Exception ex) {
-			ex.printStackTrace();
+			m_logger.severe("ctor", "No service manager!", ex);
 		}
 
 		m_xFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, m_xComponentContext);
@@ -351,9 +359,7 @@ public class SyncJob extends ComponentBase implements XServiceInfo, // general
 				GlobalVariables test = GlobalVariables.getInstance();
 				test.logSomething(this.toString()+ " "+sEventName);
 				
-				if(globalSign_data != null)
-					globalSign_data.indentify();
-				else
+				if(globalSign_data == null)
 					m_logger.info("execute", "No singleton data (Java)");
 				
 				// if (sEventName.equalsIgnoreCase( "onFirstVisibleTask" )) {
