@@ -130,13 +130,17 @@ public class GlobConstant {
 	//// for XLogger (still to be implemented
 	public static final String m_sSINGLETON_LOGGER_SERVICE = m_sWEBIDENTBASE + ".oxsit.singleton.GlobalLogger";
 	public static final String m_sSINGLETON_LOGGER_SERVICE_INSTANCE = "/singletons/"+m_sSINGLETON_LOGGER_SERVICE;
+		
+	public static final int	m_nLOG_LEVEL_FINE									= 0;
+	public static final int	m_nLOG_LEVEL_INFO									= 1;
+	public static final int	m_nLOG_LEVEL_WARNING								= 2;
+	public static final int	m_nLOG_LEVEL_SEVERE									= 3;
 	
 	//service for document signatures, this service implements specific interfaces, not available in
 	// standard OOo, with functionality similar to some stock OOo interfaces declared unpublished
 	public static final String m_sDOCUMENT_SIGNATURES_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.cert.DocumentSignatures";
 
-	public static final int	m_nLOG_LEVEL_FINE									= 0;
-	public static final int	m_nLOG_LEVEL_INFO									= 1;
-	public static final int	m_nLOG_LEVEL_WARNING								= 2;
-	public static final int	m_nLOG_LEVEL_SEVERE									= 3;	
+	//service to hold a single certificate
+	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.QualifiedCertificate";
+	
 }

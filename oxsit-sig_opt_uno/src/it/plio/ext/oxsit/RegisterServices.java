@@ -24,6 +24,7 @@ package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.comp.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
+import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
 import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -54,7 +55,11 @@ public class RegisterServices {
 		}
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( QualifiedCertificate.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( QualifiedCertificate.class, QualifiedCertificate.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -77,6 +82,9 @@ public class RegisterServices {
 		boolean retDigitalSignatures = 
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
 
+		boolean retQualCertif = 
+			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
+
 		if (!retGeneral)
 			System.out.println("__writeRegistryServiceInfo: "+ManageGeneralOptions.m_sImplementationName + "failed");		
 
@@ -86,8 +94,9 @@ public class RegisterServices {
 		if (!retDigitalSignatures)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
-		if(retGeneral && retLogging && retDigitalSignatures)
-			return true;
-		return false;
+		if (!retQualCertif)
+			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
+
+		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif);
 	}
 }

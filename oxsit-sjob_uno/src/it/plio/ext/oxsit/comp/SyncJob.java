@@ -279,10 +279,25 @@ public class SyncJob extends ComponentBase
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );
 				
-				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
+			
+			//create a Qualified certificate Object, test only
+            args[0] = "arg1"; //here the first arg the URl, may be)
+            args[1] = "arg2"; // the second one, top XStorage?, need to test it
+							
+			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE, args, m_xComponentContext);
+			if(oObj != null) {
+				XOX_QualifiedCertificate xoxQC = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oObj);
+				if(xoxQC != null)
+					xoxQC.getVersion();
+				else
+					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );				
+			}
+			else
+				m_logger.info("execute","No qualified certificate service (UNO)");				
+			
 		}
 		catch (ClassCastException e) {
 			e.printStackTrace();
