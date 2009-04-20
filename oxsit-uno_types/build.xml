@@ -54,24 +54,6 @@ the default target must be removed
 	<property name="uno_idl" location="idl" />
 
 	<!--
-		the OOo SDK root path, used for the custom loader
-		edit to suit your installation
-
-	 The variable ooosdk should be set in the Eclipse IDE, Ant variables, or in a
-	 build.${os.name}-${os.arch}.properties file.
-	 See README file in doc project.
-	-->
-	<property name="ooosdk" value="$ooosdk" />	
-	<available file="${ooosdk}" type="dir" property="ooosdk.available" value="false" />
-	<fail message="No OOo sdk available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
-		<condition>
-			<not>
-				<isset property="ooosdk.available" />
-			</not>
-		</condition>
-	</fail>
-
-	<!--
 	 The variable ooo_ure_classes_path should be set in the Eclipse IDE, Ant variables, or in a
 	 build.${os.name}-${os.arch}.properties file.
 	 See README file in doc project.
@@ -130,7 +112,22 @@ the default target must be removed
 	properties value to suit your needs,	properties needed are commented in the supplied files.	
 	-->
 	<target name="prebuild"  description="uses OOo SDK to build clss file from the UNO IDL definition file, read the build.xml comments!">
-		<echo>${oo_sdk_installed}</echo>
+		<!-- check the OOo SDK presence 
+
+		 The variable ooosdk should be set in the Eclipse IDE, Ant variables, or in a
+		 build.${os.name}-${os.arch}.properties file.
+		 See README file in doc project.
+		-->
+		<property name="ooosdk" value="$ooosdk" />	
+		<available file="${ooosdk}" type="dir" property="ooosdk.available" value="false" />
+		<fail message="No OOo sdk available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
+			<condition>
+				<not>
+					<isset property="ooosdk.available" />
+				</not>
+			</condition>
+		</fail>
+
 		<!-- prepare the new empty directory -->
 		<mkdir dir="${uno_rdb}" />
 		<mkdir dir="${uno_class}" />

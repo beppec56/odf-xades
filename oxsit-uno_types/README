@@ -1,0 +1,71 @@
+README of oxsit-uno_types subproject
+====================================
+
+oxsit-uno_types subproject is the only one that needs the OpenOffice.org
+SDK in order to be built from scratch.
+
+Since the OOo SDK dependent part changes slowly, this subproject has
+a prebuild for the objects needed in the main build.
+
+The structure is as follows.
+
+src			the Java source directory, empty
+
+idl			contains the UNOIDL (idl type file) descriptions of the new interfaces
+			and related stuff (services, constants, enums...) declared for subsequent
+			UNO packaging.
+
+pre-built-type-classes
+			contains the *.class files generated through the OOo SDK procedure
+
+pre-built-type-rdb
+			contains the type library to be used with the Java classes in
+			pre-built-type-classes
+
+The build process is divided into two parts:
+
+1) the OOo SDK part, where OOo SDK is needed;
+
+2) the standard part, where the jar library needed for the other subproject is built.
+In order for the part 1) to succeeded you need an OOo SDK installed and configured.
+Then you need to change the platform specific file (e.g. build.Linux-i386.properties.xml
+in GNU/Linux platform) to suit your installation.
+The file has comments that should enable you to understand the process.
+
+The steps needed to add a new interface or a new UNO component are the followings:
+
+1) describe the new element using UNO IDL language
+
+2) compile the new definition with idlc from ooo_sdk
+
+3) prepare the .rdb file containing the UNO registration information
+
+4) use javamaker to generated the new class declaring the interface
+
+5) using autodoc, generate the new UNO component html documentation
+
+6) build a jar Java archive containing the .class file so generated
+   this jar file is to be used as a referenced library in the subprojects
+   that will use the new UNO interfaces.
+   
+7) when installing the extension install both file, the .rdb AND the .jar.
+
+Step 1) is developer responsibility, using a text editor or Eclipse.
+
+Steps 2) 3) and 4) 5) are carried out by the ant target 'prebuild', it generates
+the documentation as well, using autodoc (as is done in the OOo main build process),
+and putting the documentation in the directory 'html-no-svn'.
+The documentation is not (yet) under svn cause of the automatic copyright note that
+autodoc adds at the end of every file.
+
+Steps 6) and 7) are carried out by the main extension build.
+
+A good help in writing UNOIDL specification file could be the IDL editor embedded in
+the Eclipse plug-in, see:
+
+http://wiki.services.openoffice.org/wiki/JavaEclipseTuto
+
+for details.
+
+Please refer to the OOo SDK installation instruction for details on how to install it.
+======================================================================================

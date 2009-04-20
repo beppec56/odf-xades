@@ -140,7 +140,7 @@ The build.xml properties are the following:
 								Most of the new interfaces deal with qualified X509 certificates.
 								This project is partially prebuild, due to the necessity of having a
 								full installed OOo SDK installed and configured in order to be built
-								from scratch. 
+								from scratch. See the README file in the subproject for further details.
 
 	oxsit-web					Contains the web pages for the project at forge.osor.eu
 
