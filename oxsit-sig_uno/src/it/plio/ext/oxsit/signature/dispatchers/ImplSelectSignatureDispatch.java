@@ -25,7 +25,7 @@ package it.plio.ext.oxsit.signature.dispatchers;
 import it.plio.ext.oxsit.comp.SignatureHandler;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchSynch;
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes;
 import it.plio.ext.oxsit.ooo.ui.DialogInformation;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;

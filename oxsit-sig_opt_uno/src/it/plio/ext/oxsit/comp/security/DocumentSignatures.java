@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
@@ -87,7 +87,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE };
 
-	protected XDynamicLogger m_logger;
+	protected DynamicLogger m_logger;
 
 	public static	String m_sProperties[] = {"SelfObject","DataInstance"}; 
 	private class DocumentDescriptor {
@@ -109,7 +109,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * @param _ctx
 	 */
 	public DocumentSignatures(XComponentContext _ctx) {
-		m_logger = new XDynamicLogger(this, _ctx);
+		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();
     	

@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.ooo.registry;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.ConfigurationAccess;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 
@@ -41,14 +41,14 @@ import com.sun.star.util.XChangesBatch;
 public class ToolbarButtonTitleRegistryAccess extends ConfigurationAccess {
 
 	private Object	m_oToolbarTitleRegKey	= null;
-	private XDynamicLogger			m_logger;	
+	private DynamicLogger			m_logger;	
 
 	public ToolbarButtonTitleRegistryAccess(XComponentContext _xContext,
 			XMultiComponentFactory _xMCF, String _sButtonName) {
 		// printlnName("ctor");
 
 		super( _xContext );
-		m_logger = new XDynamicLogger(this,_xContext);
+		m_logger = new DynamicLogger(this,_xContext);
 		
 		try {
 			m_oToolbarTitleRegKey = createConfigurationReadWriteView( GlobConstant.m_sEXTENSION_TOOLBAR_CONF_BASE_KEY

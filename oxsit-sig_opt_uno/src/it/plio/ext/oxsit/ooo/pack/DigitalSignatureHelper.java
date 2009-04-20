@@ -41,7 +41,7 @@ import com.sun.star.packages.WrongPasswordException;
 import com.sun.star.uno.XComponentContext;
 
 import it.plio.ext.oxsit.Utilities;
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 
 import java.util.Vector;
 
@@ -53,14 +53,14 @@ public class DigitalSignatureHelper {
     
 //    public OOoServerInfo SvrInfo = new OOoServerInfo();
 
-	private XDynamicLogger m_logger;
+	private DynamicLogger m_logger;
 	protected XComponentContext m_xCtx;
 	protected XMultiComponentFactory m_xMFC;
     /** Creates a new instance of __NAME__ */
     public DigitalSignatureHelper(XMultiComponentFactory _xMFC, XComponentContext _context) {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
-    	m_logger = new XDynamicLogger(this, _context);
+    	m_logger = new DynamicLogger(this, _context);
 //    	m_logger.enableLogging();
     	m_logger.info("ctor","");
     }

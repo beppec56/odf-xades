@@ -75,7 +75,7 @@ import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
 import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
@@ -266,7 +266,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
 			if(sLoc != null) 
 				m_imagesUrl = sLoc + "/images";
-			else
+			else //FIXME, TODO devise a better method, if the call fails
 				m_logger.info("ctor: no package location !");
 		}
 		else

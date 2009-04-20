@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.ooo;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 
 import java.util.Collection;
 import java.util.Date;

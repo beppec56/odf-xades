@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security.cert;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -95,7 +95,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
 
-	protected XDynamicLogger m_logger;
+	protected DynamicLogger m_logger;
 	
 	protected CertificateAuthorityState m_CAState;
 	protected CertificateState			m_CState;
@@ -105,7 +105,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @param _ctx
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
-		m_logger = new XDynamicLogger(this, _ctx);
+		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;

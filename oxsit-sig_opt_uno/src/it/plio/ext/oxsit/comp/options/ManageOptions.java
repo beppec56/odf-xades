@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.comp.options;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 
@@ -60,7 +60,7 @@ public abstract class ManageOptions extends ComponentBase  implements
     protected XMultiComponentFactory m_xMultiComponentFactory;
 
 	protected OptionsParametersAccess m_xOptionsConfigAccess;
-	protected XDynamicLogger			m_logger;
+	protected DynamicLogger			m_logger;
 
     protected	SingleControlDescription[] ArrayOfControls = null;
     protected int m_nNumberOfControls = 0;
@@ -78,7 +78,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		m_xMultiComponentFactory = m_xComponentContext.getServiceManager();                
 		m_nNumberOfControls = _nNumberOfControls;
 	    m_sOptionPagename = _sPageName;
-		m_logger = new XDynamicLogger(this,m_xComponentContext);// must be enabled by the subclass (derived class)
+		m_logger = new DynamicLogger(this,m_xComponentContext);// must be enabled by the subclass (derived class)
 		//prepare the list of controls on the single page
 		// the key is the control name, there is a list every page,
 		// when multiple pages, then a page hasjhmap of list of controls will be used

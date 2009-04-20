@@ -24,7 +24,6 @@ package it.plio.ext.oxsit.logging;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
 
-import com.sun.star.logging.XLogger;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -40,10 +39,10 @@ import com.sun.star.uno.XComponentContext;
  * @author beppe
  *
  */
-public class XDynamicLogger {
+public class DynamicLogger {
 	protected String m_sOwnerClass;
 	protected String m_sOwnerClassHashHex;
-	protected XLogger m_xLogger;
+	protected XOX_Logger m_xLogger;
 	protected boolean	m_bLogEnabled = false;
 	protected boolean 	m_bInfoEnabled = true;
 	protected boolean 	m_bWarningEnabled = true;
@@ -58,10 +57,10 @@ public class XDynamicLogger {
 	 * @param _theOwner parent object
 	 * @param _ctx the UNO context
 	 */
-	public XDynamicLogger(Object _theOwner, XComponentContext _ctx) {
+	public DynamicLogger(Object _theOwner, XComponentContext _ctx) {
 		//compute the parent class ID hex hash
 		
-		m_xLogger = (XLogger)UnoRuntime.queryInterface(XLogger.class, 
+		m_xLogger = (XOX_Logger)UnoRuntime.queryInterface(XOX_Logger.class, 
 				_ctx.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
 		if(m_xLogger == null)
 			System.out.println("no main logger!");

@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.ooo;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -36,13 +36,13 @@ public class ConfigurationAccess {
 	protected XComponentContext			m_xContext;	 
 	protected XMultiServiceFactory	m_ConfProvider = null;
 	private XMultiComponentFactory	m_xServiceManager = null;
-	protected XDynamicLogger			m_logger;
+	protected DynamicLogger			m_logger;
 
 	public ConfigurationAccess(XComponentContext _xContext) {
 		m_xContext = _xContext;
 		m_xServiceManager = m_xContext.getServiceManager(); 
 		getProvider();
-		m_logger = new XDynamicLogger(this, _xContext); // should be enabled by subclass
+		m_logger = new DynamicLogger(this, _xContext); // should be enabled by subclass
 	}
 
 	/**

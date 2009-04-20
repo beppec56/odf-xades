@@ -123,6 +123,17 @@ the default target must be removed
 				</not>
 			</condition>
 		</fail>
+		<!-- new UNO Java type classes -->
+		<property name="my_uno_types_path" value="${src}/../../${project_friendly_name}-uno_types/dist/lib" />
+		<available file="${my_uno_types_path}" type="dir" property="my_uno_types_path.available" value="false" />
+		<fail message="No new uno types classes available. Please edit the build file to correct it.(${my_uno_types_path})">
+			<condition>
+				<not>
+					<isset property="my_uno_types_path.available" />
+				</not>
+			</condition>
+		</fail>
+		
 		<javac  debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
 			<classpath>
 				<pathelement path="${ooo_ure_classes_path}/juh.jar" />
@@ -130,6 +141,7 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
+				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />
 				<pathelement path="${my_ooo_classes_path}/${project_friendly_name}-sig_opt_uno.uno.jar" />
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
@@ -155,8 +167,8 @@ the default target must be removed
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
 			<!-- build the manifest file on-line -->
 			<manifest>
-				<attribute name="Built-By" value="http://www.acca-esse.it" />
-				<attribute name="Specification-Title" value="Firma digitale CNIPA" />
+				<attribute name="Built-By" value="https://forge.osor.eu/projects/ooo-xadessig-it" />
+				<attribute name="Specification-Title" value="Firma digitale XAdES" />
 				<attribute name="Specification-Version" value="${spec_version}" />
 				<attribute name="Specification-Vendor" value="http://www.plio.it" />
 				<attribute name="Implementation-Title" value="${project_name}" />

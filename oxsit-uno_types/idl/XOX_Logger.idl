@@ -1,0 +1,75 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_logging_XOX_Logger_idl__
+#define __it_plio_ext_oxsit_logging_XOX_Logger_idl__
+
+  module it { module plio { module ext { module oxsit { module logging {
+
+	interface XOX_Logger 
+	{
+    	/** denotes the name of the logger.
+    	*/
+    	[attribute, readonly]		string  Name;
+
+    	[attribute]		long	Level;
+
+		[attribute]		boolean	EnableLogging;
+
+		[attribute]		boolean	EnableInfoLevel;
+
+		[attribute]		boolean	EnableWarningLevel;
+
+		[attribute]		boolean	EnableConsoleOutput;
+
+		[attribute]		boolean	EnableFileOutput;
+
+		/** configuration changed in Tools > Options...
+		*/
+		void	optionsConfigurationChanged();
+
+		/** configuraion changed programmatically
+		*/
+		void	localConfigurationChanged();
+
+    	/** logs a given message, detailing the source class and method at which the logged
+        event occured.
+
+        @param Level
+            the log level of this message. If this level is smaller than the logger's <member>Level</member>
+            attribute, then the call will be ignored.
+
+        @param SourceClass
+            the source class at which the logged event occured.
+
+        @param SourceMethod
+            the source class at which the logged event occured.
+
+        @param Message
+            the message to log
+    	*/
+	    void    logp( [in] long Level, [in] string SourceClassName, [in] string SourceMethodName, [in] string Message );
+	};
+
+  }; }; }; }; };
+ 
+#endif

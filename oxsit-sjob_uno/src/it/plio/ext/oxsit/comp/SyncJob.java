@@ -25,7 +25,7 @@ package it.plio.ext.oxsit.comp;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
 import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.GlobalVariables;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
@@ -99,7 +99,7 @@ public class SyncJob extends ComponentBase
 	private Object m_oSingleVarObj;	
 	private XPropertyAccess m_aSingletonGlobVarProps;
 	
-	private	XDynamicLogger							m_logger;
+	private	DynamicLogger							m_logger;
 
 	private Object m_oSingleLogObj;	
 	
@@ -128,7 +128,7 @@ public class SyncJob extends ComponentBase
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_aSingletonGlobVarProps = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_oSingleVarObj);
-		m_logger = new XDynamicLogger(this,context);
+		m_logger = new DynamicLogger(this,context);
 		m_logger.enableLogging(); // comment this if no logging needed
 
 		m_logger.ctor();

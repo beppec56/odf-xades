@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.options;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.ConfigurationAccess;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 

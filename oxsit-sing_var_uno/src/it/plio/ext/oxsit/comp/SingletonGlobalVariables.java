@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import java.util.HashMap;
@@ -53,7 +53,7 @@ import com.sun.star.util.XChangesNotifier;
  * 
  * This class implements the global logger for the extension, since it needs to
  * be a singleton object.
- * NOTE: it can't use the XDynamicLogger, but instead will use the 'real' Java logger.
+ * NOTE: it can't use the DynamicLogger, but instead will use the 'real' Java logger.
  * 
  * This objects has properties, they are set by the callings UNO objects.
  * 
@@ -75,7 +75,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_SERVICE };
 	
-	protected XDynamicLogger			m_logger;
+	protected DynamicLogger			m_logger;
 
 	public static	String m_sProperties[] = {"SelfObject","DataInstance"}; 
 	private class DocumentDescriptor {
@@ -97,9 +97,9 @@ public class SingletonGlobalVariables extends ComponentBase
 	 * @param _ctx
 	 */
 	public SingletonGlobalVariables(XComponentContext _ctx) {		
-		m_logger = new XDynamicLogger(this,_ctx);
+		m_logger = new DynamicLogger(this,_ctx);
 		if(m_logger == null)
-			System.out.println("no XDynamicLogger !");
+			System.out.println("no DynamicLogger !");
 
 		m_logger.enableLogging();
 		m_logger.ctor();

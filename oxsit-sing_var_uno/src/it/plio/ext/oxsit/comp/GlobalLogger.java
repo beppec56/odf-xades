@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.logging.LocalLogFormatter;
+import it.plio.ext.oxsit.logging.XOX_Logger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
 
@@ -45,7 +46,7 @@ import com.sun.star.uno.XComponentContext;
  * 
  * This class implements the global logger for the extension, since it needs to
  * be a singleton object.
- * NOTE: it can't use the XDynamicLogger, but instead will use the 'real' Java logger.
+ * NOTE: it can't use the DynamicLogger, but instead will use the 'real' Java logger.
  * 
  * This objects has properties, they are set by the callings UNO objects.
  * 
@@ -55,7 +56,7 @@ import com.sun.star.uno.XComponentContext;
  */
 public class GlobalLogger extends ComponentBase 
 			implements XServiceInfo,
-			XLogger	{
+			XOX_Logger {
 
 	// the name of the class implementing this object
 	public static final String			m_sImplementationName	= GlobalLogger.class.getName();
@@ -70,6 +71,9 @@ public class GlobalLogger extends ComponentBase
 	protected static LocalLogFormatter 	myFileformatter;
 
 	//logger configuration
+	protected int m_nLogLevel; // not yet used... TODO
+
+	protected static String		m_sName;
 	protected static boolean	m_sEnableInfoLevel = true;
 	protected static boolean	m_sEnableWarningLevel = true;
 	protected static boolean	m_sEnableConsoleOutput = false;
@@ -79,13 +83,13 @@ public class GlobalLogger extends ComponentBase
 	protected static int		m_sMaxFileSize = 200000;
 	protected	boolean			m_nCanLogMyself;
 
-//only used as a synchronising object
+//only used as a synchronizing object
 	private static Boolean 				m_bLogConfigChanged = new Boolean(false);
 
 // the 'real' global logger
 	private static	Logger				m_log;
 	private static	boolean				m_bEnableLogging = true;
-	
+
     private LoggerParametersAccess m_LoggerConfigAccess;
 
 	/**
@@ -94,15 +98,12 @@ public class GlobalLogger extends ComponentBase
 	 * @param _ctx
 	 */
 	public GlobalLogger(XComponentContext _ctx) {
-		
-///rigamarole for logging....
-//read the logger configuration locally
-//contained in the <extension installation path>/logger subdirectory
+		//read the logger configuration locally
 		//get configuration access, using standard registry functions
-
 		m_LoggerConfigAccess = new LoggerParametersAccess(_ctx);
-		
-		m_log = Logger.getLogger("it.plio.ext.oxsit");		
+
+		m_sName = GlobConstant.m_sEXTENSION_IDENTIFIER;
+		m_log = Logger.getLogger(m_sName);
 		m_log.setUseParentHandlers(false);//disables the console output of the root logger
 
 		getLoggingConfiguration();
@@ -123,8 +124,8 @@ public class GlobalLogger extends ComponentBase
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
+	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
 		if(m_nCanLogMyself)
 			m_log.info("getSupportedServiceNames");
 		return m_sServiceNames;
@@ -133,6 +134,7 @@ public class GlobalLogger extends ComponentBase
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
 	 */
+	@Override
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
@@ -159,7 +161,7 @@ public class GlobalLogger extends ComponentBase
 		m_sFileRotationCount = m_LoggerConfigAccess.getNumber(GlobConstant.m_sFILE_ROTATION_COUNT);
 		m_sMaxFileSize = m_LoggerConfigAccess.getNumber(GlobConstant.m_sMAX_FILE_SIZE);
 	}
-	
+
 	protected void configureLogger() {
 		if(m_sEnableConsoleOutput) {
 			myHandl = new ConsoleHandler();
@@ -197,10 +199,10 @@ public class GlobalLogger extends ComponentBase
 					m_log.log(Level.SEVERE, "exception: ", e);
 				else*/
 					e.printStackTrace();
-				System.out.println("file logging NOT enabled ");
+				System.out.println("file logging NOT enabled: problem with formatter or file access ");
 			}
 		}
-/*		else
+/*FIXME DEBUG		else
 			System.out.println("file logging NOT enabled ");*/
 			
 		if(!m_sEnableConsoleOutput && !m_sEnableFileOutput)
@@ -208,44 +210,27 @@ public class GlobalLogger extends ComponentBase
 
 		m_nCanLogMyself =  m_bEnableLogging && m_sEnableInfoLevel;
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#addLogHandler(com.sun.star.logging.XLogHandler)
-	 */
-	public void addLogHandler(XLogHandler arg0) {		
-	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#getLevel()
+	 * @see com.sun.star.logging.XOX_Logger#getLevel()
 	 */
+	@Override
 	public int getLevel() {
-		return 0;
+		return m_nLogLevel;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#getName()
+	 * @see com.sun.star.logging.XOX_Logger#getName()
 	 */
+	@Override
 	public String getName() {
-		return null;
+		return m_sName;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#isLoggable(int)
+	 * @see com.sun.star.logging.XOX_Logger#logp(int, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public boolean isLoggable(int arg0) {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#log(int, java.lang.String)
-	 */
-	public void log(int arg0, String arg1) {
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#logp(int, java.lang.String, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void logp(int _nLevel, String arg1, String arg2, String arg3) {
 		if(m_bEnableLogging)		
 			synchronized (m_bLogConfigChanged) {			
@@ -268,38 +253,127 @@ public class GlobalLogger extends ComponentBase
 			}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#removeLogHandler(com.sun.star.logging.XLogHandler)
+	/* 
+	 *   
+	 * (non-Javadoc)
+	 * @see com.sun.star.logging.XOX_Logger#setLevel(int)
 	 */
-	public void removeLogHandler(XLogHandler arg0) {
+	@Override
+	public void setLevel(int _nNewVal) {
+		m_nLogLevel = _nNewVal;
 	}
 
-	/* 
-	 * this method works a little differently then what intended
-	 * on the original OOo API specification.
-	 * It's called from configuration when the logging
-	 * leveles in the configuration change: the new level
-	 * will be taken into account immediately.
-	 * as well as the file name:
-	 * close the current handler,
-	 * 
-	 *  TODO
-	 *  May be we can use a changelistener object on the
-	 *  configuration parameters.
-	 *  
-	 *  The event is fired when the parameters change.
-	 *  
-	 * (non-Javadoc)
-	 * @see com.sun.star.logging.XLogger#setLevel(int)
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableConsoleOutput()
 	 */
-	public void setLevel(int arg0) {
+	@Override
+	public boolean getEnableConsoleOutput() {
+		return m_sEnableConsoleOutput;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableFileOutput()
+	 */
+	@Override
+	public boolean getEnableFileOutput() {
+		return m_sEnableFileOutput;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableInfoLevel()
+	 */
+	@Override
+	public boolean getEnableInfoLevel() {
+		return m_sEnableInfoLevel;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableLogging()
+	 */
+	@Override
+	public boolean getEnableLogging() {
+		return m_bEnableLogging;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableWarningLevel()
+	 */
+	@Override
+	public boolean getEnableWarningLevel() {
+		return m_sEnableWarningLevel;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#localConfigurationChanged()
+	 */
+	@Override
+	public void localConfigurationChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#optionsConfigurationChanged()
+	 */
+	@Override
+	public void optionsConfigurationChanged() {
+		// TODO Auto-generated method stub
 		synchronized (m_bLogConfigChanged) {
 			m_log.info("setLevel (change config) called");
 			// protected area to change base elements of configuration			
 			getLoggingConfiguration();
 // restart logger, what is possible to restart, that is...		
 //			configureLogger();
-		}	
-////// last of com.sun.star.logging.XLogger
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableConsoleOutput(boolean)
+	 */
+	@Override
+	public void setEnableConsoleOutput(boolean _bNewVal) {
+		m_sEnableConsoleOutput = _bNewVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableFileOutput(boolean)
+	 */
+	@Override
+	public void setEnableFileOutput(boolean _bNewVal) {
+		m_sEnableFileOutput = _bNewVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableInfoLevel(boolean)
+	 */
+	@Override
+	public void setEnableInfoLevel(boolean _bNewVal) {
+		m_sEnableInfoLevel = _bNewVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableLogging(boolean)
+	 */
+	@Override
+	public void setEnableLogging(boolean _bNewVal) {
+		m_bEnableLogging = _bNewVal;
+	}
+
+	/* (non-Javadoc)
+	 * It's called from configuration when the logging
+	 * levels in the configuration change: the new level
+	 * will be taken into account immediately.
+	 * as well as the file name:
+	 * close the current handler,
+	 *  TODO
+	 *  May be we can use a changelistener object on the
+	 *  configuration parameters.
+	 *  
+	 *  The event is fired when the parameters change.
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableWarningLevel(boolean)
+	 */
+	@Override
+	public void setEnableWarningLevel(boolean _bNewVal) {
+		m_sEnableWarningLevel = _bNewVal;
 	}
 }

@@ -56,7 +56,7 @@ import com.sun.star.util.XModifiable;
 import com.sun.star.util.XURLTransformer;
 
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
 import it.plio.ext.oxsit.signature.dispatchers.DocumentURLStatusHelper;

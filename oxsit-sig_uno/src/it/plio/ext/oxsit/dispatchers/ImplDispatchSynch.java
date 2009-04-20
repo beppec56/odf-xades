@@ -23,7 +23,7 @@
 package it.plio.ext.oxsit.dispatchers;
 
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;
@@ -47,7 +47,7 @@ public class ImplDispatchSynch implements XDispatch {
 /*	protected String today;*/
 	protected XDispatch m_aUnoSlaveDispatch = null;
 	
-	protected XDynamicLogger		m_logger;
+	protected DynamicLogger		m_logger;
 
 	public ImplDispatchSynch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -56,7 +56,7 @@ public class ImplDispatchSynch implements XDispatch {
 		m_axMCF = xMCF;
 		m_xCC = xContext;
 		m_aUnoSlaveDispatch = unoSaveSlaveDispatch;
-		m_logger = new XDynamicLogger(this,xContext);
+		m_logger = new DynamicLogger(this,xContext);
 
 /*		DateFormat timeFormatter =
 			DateFormat.getTimeInstance(DateFormat.DEFAULT, new Locale("it"));

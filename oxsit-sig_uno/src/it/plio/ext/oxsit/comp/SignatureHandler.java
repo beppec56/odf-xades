@@ -24,7 +24,7 @@ package it.plio.ext.oxsit.comp;
 
 import java.util.Date;
 
-import it.plio.ext.oxsit.logging.XDynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes;
 import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
@@ -108,7 +108,7 @@ public class SignatureHandler extends ComponentBase
 	private XDispatch					m_aImplXAdESSignatureDispatchTB	= null;
 	private XDispatch					m_aImplOnHelpDispatch			= null;
 	private XDispatch					m_aImplXAdESSignatureDispatch	= null;
-	private XDynamicLogger				m_logger;
+	private DynamicLogger				m_logger;
 
 	/**
 	 * Constructs a new instance
@@ -117,7 +117,7 @@ public class SignatureHandler extends ComponentBase
 	 *            the XComponentContext
 	 */
 	public SignatureHandler(XComponentContext context) {
-		m_logger = new XDynamicLogger(this,context);
+		m_logger = new DynamicLogger(this,context);
 //FIXME DEBUG		m_logger.enableLogging();
 		m_logger.ctor();
 		m_xComponentContext = context;
