@@ -24,8 +24,8 @@ package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.comp.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
+import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
-import it.plio.ext.oxsit.ooo.cert.DocumentSignatures;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;

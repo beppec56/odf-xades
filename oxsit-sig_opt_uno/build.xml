@@ -166,8 +166,8 @@ the default target must be removed
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
 			<!-- build the manifest file on-line -->
 			<manifest>
-				<attribute name="Built-By" value="http://www.acca-esse.it" />
-				<attribute name="Specification-Title" value="Firma digitale CNIPA" />
+				<attribute name="Built-By" value="https://forge.osor.eu/projects/ooo-xadessig-it" />
+				<attribute name="Specification-Title" value="Firma digitale XAdES" />
 				<attribute name="Specification-Version" value="${spec_version}" />
 				<attribute name="Specification-Vendor" value="http://www.plio.it" />
 				<attribute name="Implementation-Title" value="${project_name}" />
