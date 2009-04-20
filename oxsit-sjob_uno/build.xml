@@ -57,7 +57,7 @@ the default target must be removed
 	 build.${os.name}-${os.arch}.properties file.
 	 See README file in doc project.
 	-->
-	<property name="ooosdk" value="$ooosdk" />	
+	<!-- property name="ooosdk" value="$ooosdk" />	
 	<available file="${ooosdk}" type="dir" property="ooosdk.available" value="false" />
 	<fail message="No OOo sdk available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
 		<condition>
@@ -65,7 +65,7 @@ the default target must be removed
 				<isset property="ooosdk.available" />
 			</not>
 		</condition>
-	</fail>
+	</fail -->
 
 	<!--
 	 The variable ooo_ure_classes_path should be set in the Eclipse IDE, Ant variables, or in a
@@ -171,11 +171,11 @@ the default target must be removed
 			copy helper classes from OOo SDK
 			Disable the whole section if the stand alone capability is not needed
 		-->
-		<copy todir="${build}" failonerror="false">
+		<!-- copy todir="${build}" failonerror="false">
 			<fileset dir="${ooosdk}/classes">
 				<include name="**/*" />
 			</fileset>
-		</copy>
+		</copy -->
 		<!-- end of copy helper classes from OOo SDK -->
 
 	</target>

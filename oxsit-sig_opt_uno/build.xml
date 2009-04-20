@@ -56,7 +56,8 @@ the default target must be removed
 	 See README file in doc project.
 	-->
 	
-	<property name="ooosdk" value="$ooosdk" />	
+	<!-- temporarily disabled, no need it seems..
+	 property name="ooosdk" value="$ooosdk" />	
 	<available file="${ooosdk}" type="dir" property="ooosdk.available" value="false" />
 	<fail message="No OOo sdk available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
 		<condition>
@@ -64,7 +65,7 @@ the default target must be removed
 				<isset property="ooosdk.available" />
 			</not>
 		</condition>
-	</fail>
+	</fail -->
 		
 	<!--
 	 The variable ooo_ure_classes_path should be set in the Eclipse IDE, Ant variables, or in a
