@@ -51,10 +51,6 @@ import com.sun.star.util.XChangesNotifier;
  * It contains the global volatile variables of the applications
  * The permanent variables are stored in the registry.
  * 
- * This class implements the global logger for the extension, since it needs to
- * be a singleton object.
- * NOTE: it can't use the DynamicLogger, but instead will use the 'real' Java logger.
- * 
  * This objects has properties, they are set by the callings UNO objects.
  * 
  * 

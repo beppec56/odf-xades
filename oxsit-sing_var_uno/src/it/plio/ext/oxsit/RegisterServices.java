@@ -44,7 +44,6 @@ public class RegisterServices {
 	public synchronized static XSingleComponentFactory __getComponentFactory( String sImplementationName ) {
 		XSingleComponentFactory xFactory = null;
 	
-//		System.out.println("__getComponentFactory: "+ManageOptions.m_sImplementationName);
 		if ( sImplementationName.equals( SingletonGlobalVariables.m_sImplementationName ) )
 			xFactory = Factory.createComponentFactory( 
 						SingletonGlobalVariables.class,
@@ -53,8 +52,7 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( 
 					GlobalLogger.class,
 					GlobalLogger.m_sServiceNames );
-//DEBUG			
-			System.out.println("__getComponentFactory: "+GlobalLogger.m_sImplementationName);
+//DEBUG	System.out.println("__getComponentFactory: "+GlobalLogger.m_sImplementationName);
 		}
 
 		return xFactory;
@@ -71,7 +69,6 @@ public class RegisterServices {
 ./regview /opt/openoffice.org3/share/uno_packages/cache/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend/common_.rdb / | grep -A5 -B7 SINGLETONS
 	 */
 	public synchronized static boolean __writeRegistryServiceInfo( XRegistryKey xRegistryKey ) {
-//		System.out.println("__writeRegistryServiceInfo: "+ManageOptions.m_sImplementationName+" "+ManageOptions.m_sServiceNames[0] );
 		boolean retSingvar = false; 
 		//prepare the new key path
 		try {
@@ -84,7 +81,6 @@ public class RegisterServices {
 			retSingvar = Factory.writeRegistryServiceInfo( SingletonGlobalVariables.m_sImplementationName, 
 					SingletonGlobalVariables.m_sServiceNames, xRegistryKey );
 		} catch (InvalidRegistryException e) {
-			// TODO Auto-generated catch block
 			System.out.println("__writeRegistryServiceInfo: "+SingletonGlobalVariables.m_sImplementationName + "failed");		
 			e.printStackTrace();
 		}
@@ -101,7 +97,6 @@ public class RegisterServices {
 			retGLogg = Factory.writeRegistryServiceInfo( GlobalLogger.m_sImplementationName, 
 					GlobalLogger.m_sServiceNames, xRegistryKey );
 		} catch (InvalidRegistryException e) {
-			// TODO Auto-generated catch block
 			System.out.println("__writeRegistryServiceInfo: "+GlobalLogger.m_sImplementationName + "failed");		
 			e.printStackTrace();
 		}
