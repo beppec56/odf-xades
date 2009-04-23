@@ -27,7 +27,8 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** This service can be used to rappresent a Qualified X509 Certificate
+/** QualifiedCertificate service can be used to access a Qualified X509 Certificate.
+	<p>Besides the interfaces documented here, it exports the interfaces needed to interact with OpenOffice.org API, they are not shown here.</p>
  */
 	service QualifiedCertificate 
 	{

@@ -443,6 +443,23 @@ public class Utilities {
 		}
 	}
 
+	/** Return the hex hash code.
+	 * 
+	 * @param _oObj the object to be examined
+	 * @return the returned hash code, in hex
+	 */
+	public static String getHashHex(Object _oObj) {
+		String ret;
+		try {
+//grab from the Object the has code and returns it
+			ret = Integer.toHexString( _oObj.hashCode() );
+		} catch (java.lang.Exception e) {
+			e.printStackTrace(System.out);
+			ret = "caught exception!";
+		}
+		return ret;
+	}
+
 	public static String ArraytoString(String[] LocArray) {
 		String ResultString = "";
 		int iLen = LocArray.length;

@@ -180,6 +180,12 @@ the default target must be removed
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 
+		<antcall target="compile-idl">
+			<!--interface name -->
+			<param name="parm1" value="XOX_SingletonDataAccess"/>
+			<!--interface path -->
+			<param name="parm2" value="it.plio.ext.oxsit"/>
+		</antcall>
 
 		<!-- last thing, build documentation files, only locally, not in svn for copyright reason -->
 		<exec dir="${uno_idl}" executable="${basedir}/generate-idl-doc.sh" description="generate idl documentation" os="Linux-i386">

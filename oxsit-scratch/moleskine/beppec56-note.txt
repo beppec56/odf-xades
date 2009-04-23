@@ -5,6 +5,13 @@ Beware, function names are written by heart, so they may be plain wrong ;-).
 beppec56
 ============
 
+============
+Started work on the new stuff needed to describes the XAdES signature state in the
+document.
+
+Big work. New UNO interfaces needed, other major work to do.
+
+Obviously the new stuff is in a state of great fluctuation...
 
 ============
 

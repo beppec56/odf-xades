@@ -71,6 +71,7 @@ import com.sun.star.util.XModifiable;
 import com.sun.star.bridge.XInstanceProvider;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
 import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
@@ -80,6 +81,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.signature.dispatchers.DocumentURLStatusHelper;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
@@ -128,6 +130,10 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	private Object												m_aFrameConfMutex			= new Object();
 	DocumentURLStatusHelper										m_aDocumentConf				= null;
 	
+	protected Object											m_SingletonDataObject;
+	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
+	protected XOX_DocumentSignatures							m_xDocumentSignatures;
+	
 	private XComponentContext									m_aComponentContext;
 	private XMultiComponentFactory								m_aMultiComponentFctry;
 
@@ -145,16 +151,21 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_bHasLocation = false;
 		m_bSignatureIsEnabled = false;
 
-//FIXME DEBUG m_logger.enableLogging();
-		m_logger.ctor("ctor (1)");
+//FIXME DEBUG 
+		m_logger.enableLogging();
+		m_logger.ctor(" frame hash: "+Utilities.getHashHex(m_xFrame));
 
 		final String sSingletonService = GlobConstant.m_sSINGLETON_SERVICE_INSTANCE;
 		try {
-			Object oObj = xContext.getValueByName(sSingletonService);
-			if(oObj != null)
-				m_logger.info(" singleton data "+String.format( "%8H", oObj.hashCode() ));
+			m_SingletonDataObject = xContext.getValueByName(sSingletonService);
+			if(m_SingletonDataObject != null) {
+				m_logger.info(" singleton service data "+String.format( "%8H", m_SingletonDataObject.hashCode() ));
+				m_xSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_SingletonDataObject);
+				if(m_xSingletonDataAccess == null)
+					m_logger.ctor("XOX_SingletonDataAccess missing!");
+			}
 			else
-				m_logger.info("No singleton data");
+				m_logger.info("No singleton service data");
 			
 //			Utilities.showInterfaces(this, oObj);
 // obtain the property service
@@ -164,7 +175,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			aPathArgument.Name = "signatureXAdESState";
 			aPathArgument.Value = new Integer(5252);
 			
-			XPropertyAccess xPropAccess = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, oObj);
+			XPropertyAccess xPropAccess = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_SingletonDataObject);
 
 			PropertyValue[] pValues = new PropertyValue[1];
 			
@@ -211,12 +222,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			e.printStackTrace();
 		}
 
-		m_logger.info("ctor (2)");
-
 		grabModel();
 		// Utilities.showInterfaces( m_xModel );
 		if (m_xModel != null) {
 			// init the status structure from the configuration
+			if(m_xSingletonDataAccess != null) {
+				//add this to the document-signatures list
+				m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), this);							
+			}
 			m_aDocumentConf = new DocumentURLStatusHelper( xContext, m_aDocumentURL );
 			if (m_aDocumentConf != null) {
 				// we are listening on changes to the Frames/ structure, e.g all
@@ -281,15 +294,17 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				if (xCont != null) {
 					m_xModel = xCont.getModel();
 					if (m_xModel != null) {
+
+						m_logger.log("model hash: "+Utilities.getHashHex(m_xModel));
+
 						m_aDocumentURL = m_xModel.getURL();
-						// we decide with kind of document this is.
+						// we decide whath kind of document this is.
 						XStorable xStore = (XStorable) UnoRuntime.queryInterface(
 								XStorable.class, m_xModel );
 						// decide if new or already saved
 						if (xStore != null)
 							m_bHasLocation = xStore.hasLocation();
 						if (m_bHasLocation) {
-//							println( "URL: " + m_aDocumentURL );
 							if (m_aDocumentConf != null)
 								m_aDocumentConf.setFrameURL( m_aDocumentURL );
 						}
@@ -502,9 +517,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		aArgs[0].Name = new String( "URL" );
 		aArgs[0].Value = _sImageURL;
 		
-		m_logger.log(_sImageURL);
-		
-//		println(_sImageURL);
+//		m_logger.log(_sImageURL);
 		
 		ControlCommand aCommand = new ControlCommand();
 		aCommand.Command = "SetImage";

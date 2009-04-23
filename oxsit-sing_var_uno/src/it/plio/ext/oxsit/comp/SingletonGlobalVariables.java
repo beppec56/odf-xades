@@ -22,8 +22,10 @@
 
 package it.plio.ext.oxsit.comp;
 
+import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;
 
@@ -63,7 +65,8 @@ public class SingletonGlobalVariables extends ComponentBase
 			XPropertyAccess,
 			XPropertySetInfo,
 			XChangesNotifier,
-			XNameContainer {
+			XNameContainer,
+			XOX_SingletonDataAccess {
 
 	// the name of the class implementing this object
 	public static final String			m_sImplementationName	= SingletonGlobalVariables.class.getName();
@@ -353,6 +356,38 @@ public class SingletonGlobalVariables extends ComponentBase
 		return false;
 		
 		//////////////// last of XNameContainer
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
+	 */
+	@Override
+	public XOX_DocumentSignatures getDocumentSignatures(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
+	 */
+	@Override
+	public XOX_DocumentSignatures initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
+		// TODO Auto-generated method stub
+		
+		m_logger.info("initDocumentAndListener","doc id: "+_aDocumentId);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeDocumentSignatures(java.lang.String)
+	 */
+	@Override
+	public void removeDocumentSignatures(String _aDocumentId) {
+		// TODO Auto-generated method stub
+		//remove the DocumentSignatures element whose id is the one on parameter
+		m_logger.info("removeDocumentSignatures","doc id: "+_aDocumentId);		
+		
+		
 	}
 
 }

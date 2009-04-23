@@ -124,7 +124,7 @@ public class SyncJob extends ComponentBase
 		m_oSingleLogObj = context.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE);
 		if(m_oSingleLogObj == null)
 			System.out.println("cannot build first singleton logger!");
-			
+
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_aSingletonGlobVarProps = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_oSingleVarObj);
@@ -133,6 +133,12 @@ public class SyncJob extends ComponentBase
 
 		m_logger.ctor();
 		m_xComponentContext = context;
+
+		if(m_oSingleVarObj != null)
+			m_logger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
+		else
+			m_logger.info("No singleton service data");
+
 
 		/*
 		 * if(m_xComponentContext != null) System.out.println(" got a context!");
@@ -449,7 +455,7 @@ public class SyncJob extends ComponentBase
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnLoad" )) {
 					/**
-					 * this event is fired when the document loading is finished
+					 * this event is fired up when the document loading is finished
 					 * 
 					 * seems in sfx2/source/doc/objstor.cxx#577 (dev300-m10)
 					 * though I'm not sure
@@ -472,10 +478,10 @@ public class SyncJob extends ComponentBase
 									(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xModel );
 
 						xStorage = xDocStorage.getDocumentStorage();
-						if(xStorage != null) {
+/*						if(xStorage != null) {
 							m_logger.info("execute"+" We have storage available!");
 							Utilities.showInterfaces(xModel, xStorage);
-						}
+						}*/
 						/**
 						 * we can read the file and check if a CNIPA signature
 						 * TODO start a thread to do the job? may be creating a
@@ -492,7 +498,9 @@ public class SyncJob extends ComponentBase
 						// then the data will be cleared at the next app start
 //						initThisFrameData( xModel.getURL(), true );
 						
-//new methos						
+						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+						
+//new methods						
 						initThisDocumentURLData(xStorage, xModel.getURL(), true, xFrame);
 					}
 				}/* else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
@@ -508,6 +516,7 @@ public class SyncJob extends ComponentBase
 					// only clear the status of the corresponding frame
 					if (xFrame != null) {
 						m_xFrame = xFrame;
+						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
 							clearStatusOfThisFrame( aUrl );
@@ -523,6 +532,7 @@ public class SyncJob extends ComponentBase
 							//new methos
 							// FIXME may be we need to swap the old URL to the new one, besides
 							// resetting the signature status to 'non available'
+							m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 							initThisDocumentURLData(null, xModel.getURL(), false, xFrame);
 						}
 					}

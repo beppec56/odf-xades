@@ -1,0 +1,64 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_SingletonDataAccess_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_SingletonDataAccess_idl__
+
+#include <com/sun/star/util/XChangesListener.idl>
+#include "XOX_DocumentSignatures.idl"
+
+  module it { module plio { module ext { module oxsit {
+
+/** Interface to access the data global volatile extension data
+
+  */
+	interface XOX_SingletonDataAccess
+	{
+		/** To add a new structure describing the XAdES document signatues of the document
+			@see  it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures for a description of the related interface
+			
+			if the document signature structure of the document in DocumentId, already exists, the interface does nothing and returns the
+			document signatures structures
+
+	@param DocumentId the unique id for this document
+
+	@param DocumentSignaturesChangesListener the listener that will be added to the newly created document signature structure
+	
+	@return the new added structure (in form of the main structure interface)
+		*/
+		it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures initDocumentAndListener( [in] string DocumentId, [in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
+
+		/** return the XOX_DocumentSignatures interface of the document
+			@see  XOX_DocumentSignatures
+			@param DocumentId the document id
+		*/
+		it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures getDocumentSignatures([in] string DocumentId);
+
+		/**
+			the document signatures structure is removed 
+		*/
+		void removeDocumentSignatures( [in]  string DocumentId);
+	}; 
+ 
+  }; }; }; };
+ 
+#endif

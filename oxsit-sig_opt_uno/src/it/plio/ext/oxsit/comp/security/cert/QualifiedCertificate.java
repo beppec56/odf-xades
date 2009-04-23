@@ -69,8 +69,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
- * THis is a specification, it may change!
- * This service implements the QualifiedCertificate service.
+ *  This service implements the QualifiedCertificate service.
  * receives the doc information from the task  
  *  
  * This objects has properties, they are set by the calling UNO objects.

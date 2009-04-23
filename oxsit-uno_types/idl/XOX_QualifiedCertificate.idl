@@ -85,7 +85,7 @@
 		/** the MD5 thumbprint
 		*/
 		[attribute, readonly] sequence< byte > MD5Thumbprint;
-		/** Find a extension with a OID.
+		/** Find an extension with a OID.
 		*/
 		XOX_CertificateExtension findCertificateExtension( [in]sequence< byte > oid ) ;
 		/** verify the Certificate Revocation List state of this 
