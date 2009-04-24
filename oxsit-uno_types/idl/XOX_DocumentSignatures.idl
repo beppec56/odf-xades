@@ -23,6 +23,7 @@
 #ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
 #define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
 
+#include <com/sun/star/embed/XStorage.idl>
 #include "XOX_QualifiedCertificate.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
@@ -33,12 +34,17 @@
 	 */
   interface XOX_DocumentSignatures
   {
+		/** This document storage
+		*/
+		[attribute] com::sun::star::embed::XStorage DocumentStorage;
+
+		/** this document signature state
+		*/
+		[attribute] long DocumentSignatureState;
+
 		/** The certificates contained in the document.
 		*/
 		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;
-
-      	string getDocumentURL();
-      	void setDocumentURL( [in] string s1 );
   };
  
   }; }; }; }; };  };

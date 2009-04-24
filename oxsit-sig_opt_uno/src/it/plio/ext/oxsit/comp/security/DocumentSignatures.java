@@ -24,13 +24,10 @@ package it.plio.ext.oxsit.comp.security;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
@@ -42,12 +39,12 @@ import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.ElementExistException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameContainer;
+import com.sun.star.embed.XStorage;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.lib.uno.helper.WeakAdapter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.XComponentContext;
@@ -77,8 +74,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			XChangesNotifier,
 			XInitialization,
 			XNameContainer,
-			XOX_DocumentSignatures,
-			XOX_CertificateExtension
+			XOX_DocumentSignatures
 			 {
 
 	// the name of the class implementing this object
@@ -88,33 +84,25 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE };
 
 	protected DynamicLogger m_logger;
-
-	public static	String m_sProperties[] = {"SelfObject","DataInstance"}; 
-	private class DocumentDescriptor {
-		public String	sURLHash; // the hash computed from the URL name class
-		public String	sURL;   //the corresponding URL
-		public int		nXAdESSignatureState; // state of the signature(s) in this frame
-		// these are the lister on changes on this element only
-		// called only if the signature changes state.
-		public HashMap<XChangesListener,XChangesListener> listeners;
-	};
-
-	private HashMap<String, DocumentDescriptor>	theDocumentList = new HashMap<String, DocumentDescriptor>(10);
-	// these are the lister on changes of all the variables
+	// these are the listeners on this document signatures changes
 	public HashMap<XChangesListener,XChangesListener> listeners;
+
+	protected XStorage		m_xDocumentStorage;
+	// this document signature state
+	protected int			m_nDocumentSignatureState;
 
 	/**
 	 * 
 	 * 
-	 * @param _ctx
+	 * @param _ctx the UNO context
 	 */
 	public DocumentSignatures(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();
-    	
 	}
 
+	@Override
 	public String getImplementationName() {
 		// TODO Auto-generated method stub
 		m_logger.entering("getImplementationName");
@@ -124,6 +112,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
+	@Override
 	public String[] getSupportedServiceNames() {
 		// TODO Auto-generated method stub
 		m_logger.info("getSupportedServiceNames");
@@ -133,6 +122,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
 	 */
+	@Override
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
@@ -144,14 +134,10 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		return false;
 	}
 
-	public void indentify() {
-//		logger.info(getHashHex());
-		m_logger.info("indentify");
-	}
-
 	/* (non-Javadoc)
 	 * @see com.sun.star.beans.XProperty#getAsProperty()
 	 */
+	@Override
 	public Property getAsProperty() {
 		// TODO Auto-generated method stub
 		return null;
@@ -160,6 +146,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.beans.XPropertyAccess#getPropertyValues()
 	 */
+	@Override
 	public PropertyValue[] getPropertyValues() {
 		// TODO Auto-generated method stub
 		return null;
@@ -190,6 +177,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * (non-Javadoc)
 	 *  @see com.sun.star.beans.XPropertyAccess#setPropertyValues(com.sun.star.beans.PropertyValue[])
 	 */
+	@Override
 	public void setPropertyValues(PropertyValue[] aPropertyValue)
 			throws UnknownPropertyException, PropertyVetoException,
 			IllegalArgumentException, WrappedTargetException {
@@ -204,6 +192,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * 
 	 * @see com.sun.star.beans.XPropertySetInfo#getProperties()
 	 */
+	@Override
 	public Property[] getProperties() {
 		// TODO Auto-generated method stub
 		return null;
@@ -237,6 +226,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * 
 	 * @see com.sun.star.beans.XPropertySetInfo#getPropertyByName(java.lang.String)
 	 */
+	@Override
 	public Property getPropertyByName(String arg0)
 			throws UnknownPropertyException {
 		// TODO Auto-generated method stub
@@ -246,6 +236,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.beans.XPropertySetInfo#hasPropertyByName(java.lang.String)
 	 */
+	@Override
 	public boolean hasPropertyByName(String arg0) {
 		// TODO Auto-generated method stub
 		return false;
@@ -255,6 +246,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.util.XChangesNotifier#addChangesListener(com.sun.star.util.XChangesListener)
 	 */
+	@Override
 	public void addChangesListener(XChangesListener _ChangesListener) {
 		// TODO Auto-generated method stub
 		
@@ -263,6 +255,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.util.XChangesNotifier#removeChangesListener(com.sun.star.util.XChangesListener)
 	 */
+	@Override
 	public void removeChangesListener(XChangesListener _ChangesListener) {
 		// TODO Auto-generated method stub
 
@@ -286,6 +279,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameContainer#insertByName(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void insertByName(String _aURLHash, Object _oObj)
 			throws IllegalArgumentException, ElementExistException,
 			WrappedTargetException {
@@ -319,21 +313,23 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameContainer#removeByName(java.lang.String)
 	 */
+	@Override
 	public void removeByName(String _aURLHash) throws NoSuchElementException,
 			WrappedTargetException {
 		// TODO Auto-generated method stub
 //		m_logger.info("removeByName");
-		if(theDocumentList.containsKey(_aURLHash)) {
+/*		if(theDocumentList.containsKey(_aURLHash)) {
 			DocumentDescriptor docuDescrip = theDocumentList.remove(_aURLHash);
 			docuDescrip.listeners.clear();
 		}
 		else
-			throw new NoSuchElementException();
+			throw new NoSuchElementException();*/
 	}
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameReplace#replaceByName(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void replaceByName(String arg0, Object arg1)
 			throws IllegalArgumentException, NoSuchElementException,
 			WrappedTargetException {
@@ -343,6 +339,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameAccess#getByName(java.lang.String)
 	 */
+	@Override
 	public Object getByName(String arg0) throws NoSuchElementException,
 			WrappedTargetException {
 		// TODO Auto-generated method stub
@@ -352,6 +349,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameAccess#getElementNames()
 	 */
+	@Override
 	public String[] getElementNames() {
 		// TODO Auto-generated method stub
 		return null;
@@ -360,14 +358,17 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XNameAccess#hasByName(java.lang.String)
 	 */
+	@Override
 	public boolean hasByName(String _sElementName) { // this is the name of the frame
 												// is the key inside the full hash list
-		return theDocumentList.containsKey(_sElementName);
+//		return theDocumentList.containsKey(_sElementName);
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XElementAccess#getElementType()
 	 */
+	@Override
 	public Type getElementType() {
 		// TODO Auto-generated method stub
 		return null;
@@ -376,31 +377,13 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	/* (non-Javadoc)
 	 * @see com.sun.star.container.XElementAccess#hasElements()
 	 */
+	@Override
 	public boolean hasElements() {
 		// TODO Auto-generated method stub
 // check if we have some elements onlist, returns
 		m_logger.entering("hasElements");
 		return false;
 		//////////////// last of XNameContainer
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#getDocumentURL()
-	 */
-	@Override
-	public String getDocumentURL() {
-		// TODO Auto-generated method stub
-		m_logger.info("getDocumentURL");
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.cert.XOXDocumentSignatures#setDocumentURL(java.lang.String)
-	 */
-	@Override
-	public void setDocumentURL(String s1) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -413,39 +396,47 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentStorage()
+	 * 
+	 * IMPORTANT the manipulation of storage variable is Sync Job only responsability!
 	 */
 	@Override
-	public byte[] getExtensionId() {
+	public XStorage getDocumentStorage() {
 		// TODO Auto-generated method stub
-		m_logger.info("getExtensionId");
-		return null;
+		return m_xDocumentStorage;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentStorage(com.sun.star.embed.XStorage)
+	 * IMPORTANT the manipulation of storage variable is Sync Job only responsability!
 	 */
 	@Override
-	public String getExtensionStringValue() {
+	public void setDocumentStorage(XStorage _xStore) {
 		// TODO Auto-generated method stub
-		return null;
+		m_xDocumentStorage = _xStore;		
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionValue()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentSignatureState()
 	 */
 	@Override
-	public byte[] getExtensionValue() {
+	public int getDocumentSignatureState() {
 		// TODO Auto-generated method stub
-		return null;
+		synchronized (this) {
+			return m_nDocumentSignatureState;			
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentSignatureState(int)
+	 * when this method is called, the signature state is notified to all the listeners
+	 * 
 	 */
 	@Override
-	public boolean isCritical() {
+	public void setDocumentSignatureState(int arg0) {
 		// TODO Auto-generated method stub
-		return false;
+		synchronized (this) {
+			m_nDocumentSignatureState = arg0;
+		}
 	}
 }

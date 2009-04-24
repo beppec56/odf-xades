@@ -37,13 +37,14 @@
 			@see  it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures for a description of the related interface
 			
 			if the document signature structure of the document in DocumentId, already exists, the interface does nothing and returns the
-			document signatures structures
+			existent document signatures structures.
+			The function is multithread safe, that is on every call only a single instance can run.
 
-	@param DocumentId the unique id for this document
+			@param DocumentId the unique id for this document
 
-	@param DocumentSignaturesChangesListener the listener that will be added to the newly created document signature structure
+			@param DocumentSignaturesChangesListener the listener that will be added to the newly created document signature structure
 	
-	@return the new added structure (in form of the main structure interface)
+			@return the new added structure (in form of the main structure interface)
 		*/
 		it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures initDocumentAndListener( [in] string DocumentId, [in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
 

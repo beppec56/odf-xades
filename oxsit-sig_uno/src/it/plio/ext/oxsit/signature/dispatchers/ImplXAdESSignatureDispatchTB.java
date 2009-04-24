@@ -165,58 +165,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					m_logger.ctor("XOX_SingletonDataAccess missing!");
 			}
 			else
-				m_logger.info("No singleton service data");
-			
-//			Utilities.showInterfaces(this, oObj);
-// obtain the property service
-
-// set an integer property, just to check
-			com.sun.star.beans.PropertyValue aPathArgument = new com.sun.star.beans.PropertyValue();
-			aPathArgument.Name = "signatureXAdESState";
-			aPathArgument.Value = new Integer(5252);
-			
-			XPropertyAccess xPropAccess = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_SingletonDataObject);
-
-			PropertyValue[] pValues = new PropertyValue[1];
-			
-			pValues[0] = new PropertyValue();
-			
-			pValues[0].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
-			pValues[0].Value = new Integer(23);
-
-			try {
-				xPropAccess.setPropertyValues(pValues);
-			} catch (UnknownPropertyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (PropertyVetoException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (WrappedTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-
-// send the property to the Singleton service			
-
-			
-/*			XServiceInfo xS = (XServiceInfo)UnoRuntime.queryInterface(XServiceInfo.class,oObj);
-			if (xS != null) {
-				String aS[] = xS.getSupportedServiceNames();
-				m_logger.info(aS[0]);
-			}
-			else
-				m_logger.info("no interface!");*/
-/*			SingletonGlobalVariables xS = (SingletonGlobalVariables)UnoRuntime.queryInterface(SingletonGlobalVariables.class,oObj);
-			if (xS != null) {
-				xS.indentify();
-			}
-			else
-				m_logger.info("no interface!");*/
+				m_logger.info("No singleton service data");			
 		}
 		catch (ClassCastException e) {
 			e.printStackTrace();

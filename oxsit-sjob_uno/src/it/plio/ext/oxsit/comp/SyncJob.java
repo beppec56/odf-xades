@@ -23,26 +23,18 @@
 package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.Utilities;
-import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
-import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
+import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.GlobalVariables;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
-import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import com.sun.star.beans.NamedValue;
-import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XPropertyAccess;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
-import com.sun.star.container.XNameContainer;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.embed.XStorage;
@@ -84,24 +76,18 @@ public class SyncJob extends ComponentBase
 
 	private XFrame						m_xFrame;												// use
 	// when frame is needed as reference
-
 	private XComponentContext			m_xComponentContext;
-
-	@SuppressWarnings("unused")
 	// may be we will need it afterward...
 	private XMultiServiceFactory		m_xFactory				= null;
 
 	// protected XMultiComponentFactory m_xRemoteServiceManager = null;
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
-	private final String sSingletonService = GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE;
-	private SingletonGlobalVariables globalSign_data = null;
-	private Object m_oSingleVarObj;	
-	private XPropertyAccess m_aSingletonGlobVarProps;
+	private Object m_oSingleVarObj;
+	private XOX_SingletonDataAccess	m_xoxSingletonDataAccess;
 	
-	private	DynamicLogger							m_logger;
-
 	private Object m_oSingleLogObj;	
+	private	DynamicLogger							m_logger;
 	
 	/**
 	 * The toolkit, that we can create UNO dialogs.
@@ -127,18 +113,21 @@ public class SyncJob extends ComponentBase
 
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
-		m_aSingletonGlobVarProps = (XPropertyAccess)UnoRuntime.queryInterface(XPropertyAccess.class, m_oSingleVarObj);
 		m_logger = new DynamicLogger(this,context);
 		m_logger.enableLogging(); // comment this if no logging needed
 
 		m_logger.ctor();
 		m_xComponentContext = context;
 
-		if(m_oSingleVarObj != null)
+		if(m_oSingleVarObj != null) {
 			m_logger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
+			m_xoxSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_oSingleVarObj);
+			if(m_xoxSingletonDataAccess == null)
+				m_logger.severe("ctor:","No XOX_SingletonDataAccess interface!");
+				
+		}
 		else
-			m_logger.info("No singleton service data");
-
+			m_logger.severe("ctor:","No singleton service data");
 
 		/*
 		 * if(m_xComponentContext != null) System.out.println(" got a context!");
@@ -228,6 +217,8 @@ public class SyncJob extends ComponentBase
 	 * initialize the stuff (change the elements)
 	 */
 	public Object execute(NamedValue[] lArgs) throws IllegalArgumentException, Exception {
+		XOX_DocumentSignatures aDocSign = null;
+
 		// TODO Auto-generated method stub
 //		println( "execute() called !" );
 		m_logger.info("execute", "");
@@ -237,17 +228,7 @@ public class SyncJob extends ComponentBase
 		com.sun.star.beans.NamedValue[] lEnvironment = null;
 		com.sun.star.beans.NamedValue[] lDynamicData = null;
 
-		try {
-			Object oObj = m_xComponentContext.getValueByName(sSingletonService);
-			if(oObj != null)
-				m_logger.info("execute"," singleton data "+String.format( "%8H", oObj.hashCode() ));
-			else
-				m_logger.info("execute","No singleton data (UNO)");
-		}
-		catch (ClassCastException e) {
-			e.printStackTrace();
-		}
-		try {
+/*		try {
 			///////// try to get a Document Signatures object
 			Object oObj = null;			
 			
@@ -273,18 +254,6 @@ public class SyncJob extends ComponentBase
 				else
 					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
 
-				XOX_CertificateExtension xoxCE = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, xoxD);
-				if(xoxCE != null)
-					xoxCE.getExtensionId();
-				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_CertificateExtension" );
-				
-				XOX_QualifiedCertificate xoxQC = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oObj);
-				if(xoxQC != null)
-					xoxQC.getVersion();
-				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );
-				
 			}
 			else
 				m_logger.info("execute","No document signatures service (UNO)");
@@ -308,29 +277,24 @@ public class SyncJob extends ComponentBase
 		catch (ClassCastException e) {
 			e.printStackTrace();
 		}
-
+*/
 		int c = lArgs.length;
 		for (int i = 0; i < c; ++i) {
-			// System.out.println("Argument: "+lArgs[i].Name);
 			if (lArgs[i].Name.equals( "Config" )) {
 				lGenericConfig = (com.sun.star.beans.NamedValue[]) com.sun.star.uno.AnyConverter
 						.toArray( lArgs[i].Value );
-//				println("Config");
 			}
 			else if (lArgs[i].Name.equals( "JobConfig" )) {
 				lJobConfig = (com.sun.star.beans.NamedValue[]) com.sun.star.uno.AnyConverter
 						.toArray( lArgs[i].Value );
-//				println("JobConfig");
 			}
 			else if (lArgs[i].Name.equals( "Environment" )) {
 				lEnvironment = (com.sun.star.beans.NamedValue[]) com.sun.star.uno.AnyConverter
 						.toArray( lArgs[i].Value );
-//				println("Environment");
 			}
 			else if (lArgs[i].Name.equals( "DynamicData" )) {
 				lDynamicData = (com.sun.star.beans.NamedValue[]) com.sun.star.uno.AnyConverter
 						.toArray( lArgs[i].Value );
-//				println("DynamicData");
 			}
 		}
 
@@ -393,22 +357,17 @@ public class SyncJob extends ComponentBase
 			if (sEventName != null) {
 				m_logger.info("execute", "event received: " + sEventName );
 
-				GlobalVariables test = GlobalVariables.getInstance();
+/*				GlobalVariables test = GlobalVariables.getInstance();
 				test.logSomething(this.toString()+ " "+sEventName);
 				
 				if(globalSign_data == null)
 					m_logger.info("execute", "No singleton data (Java)");
-				
+*/				
 				// if (sEventName.equalsIgnoreCase( "onFirstVisibleTask" )) {
 				if (sEventName.equalsIgnoreCase( "OnStartApp" )
 						/*|| sEventName.equalsIgnoreCase( "OnCloseApp" )*/) {
+//well need to initialize the security stuff, done once on init.					
 
-					GlobalVariables test2 = GlobalVariables.getInstance();
-					test2.logSomething(this.toString()+ " "+sEventName);
-					
-//					UniqueGlobalData aData;
-
-//					cleanupAllFrameData();
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
 ///////////////////// OnViewCreated //////////////////////////7
 					/**
@@ -496,44 +455,66 @@ public class SyncJob extends ComponentBase
 						// toolbar dispatcher.
 						// if the dispatcher is dead, then no longer needs them,
 						// then the data will be cleared at the next app start
-//						initThisFrameData( xModel.getURL(), true );
-						
-						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
-						
-//new methods						
-						initThisDocumentURLData(xStorage, xModel.getURL(), true, xFrame);
-					}
-				}/* else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
-					// delete the single frame data
-					if (xFrame != null) {
-						m_xFrame = xFrame;
-						String aUrl = xModel.getURL();
-						if (aUrl.length() > 0) {
-							removeThisFrameData( aUrl );
+						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));						
+						if(m_xoxSingletonDataAccess != null) {
+							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+							aDocSign.setDocumentStorage(xStorage);
+							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
 						}
+						else
+							m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+//						initThisDocumentURLData(xStorage, xModel.getURL(), true, xFrame);
 					}
-				}*/ else if (sEventName.equalsIgnoreCase( "OnSaveDone" )) {
+				} else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
+					// delete the single frame data
+					if (xModel != null) {
+						if(m_xoxSingletonDataAccess != null)
+							m_xoxSingletonDataAccess.removeDocumentSignatures(Utilities.getHashHex(xModel));
+						else
+							m_logger.log("OnUnload: m_xoxSingletonDataAccess is null");
+					}
+					else
+						m_logger.log("OnUnload: xModel is null");
+				} else if (sEventName.equalsIgnoreCase( "OnSaveDone" )) {
 					// only clear the status of the corresponding frame
+					//save done, update status of the model
 					if (xFrame != null) {
 						m_xFrame = xFrame;
 						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							clearStatusOfThisFrame( aUrl );
+							m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+							if(m_xoxSingletonDataAccess != null) {
+								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+								if(aDocSign != null) {
+									//determine the storage, it may be different, set it to the document
+									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+								}
+								else
+									m_logger.severe("execute","Missing XOX_DocumentSignatures interface");						
+							}
+							else
+								m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
 						}
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnSaveAsDone" )) {
+					//a new document, see if already there, init signature states if necessary
 					if (xFrame != null) {
 						m_xFrame = xFrame;
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							// no signature check
-//							initThisFrameData( xModel.getURL(), false );
-							//new methos
-							// FIXME may be we need to swap the old URL to the new one, besides
-							// resetting the signature status to 'non available'
 							m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
-							initThisDocumentURLData(null, xModel.getURL(), false, xFrame);
+							if(m_xoxSingletonDataAccess != null) {
+								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+								if(aDocSign != null) {
+									//determine the storage, it may be different, set it to the document
+									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+								}
+								else
+									m_logger.severe("execute","Missing XOX_DocumentSignatures interface");						
+							}
+							else
+								m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
 						}
 					}
 				}
@@ -564,229 +545,6 @@ public class SyncJob extends ComponentBase
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private void clearStatusOfThisFrame(String aURL) {
-		// get provider, open view, grab the url
-		String aURLHash = Utilities.getFrameHash( aURL );
-
-		// create a default frame structure, if existent do nothing
-		// get provider
-		XMultiServiceFactory aConfProvider = getConfigurationProvider();
-
-		// create a read/write view at the root frame configuration level
-//		println( "2" );
-		// Object xViewRoot = getReadWriteView( aConfProvider,
-		// it.plio.ext.cnipa.signature.GlobConstant.m_sExtensionConfFrameKey+
-		// aURLHash);
-		Object xViewRoot = getReadWriteView( aConfProvider,
-				GlobConstant.m_sEXTENSION_CONF_FRAME_KEY );
-//		println( "3" );
-		if (xViewRoot != null) {
-			// try to see if the frame is already available, it should be...
-			// grab note container
-			XNameAccess xNAccess = (XNameAccess) UnoRuntime.queryInterface(
-					XNameAccess.class, xViewRoot );
-
-			Object oObj = null;
-			try {
-				oObj = xNAccess.getByName( aURLHash );
-			} catch (NoSuchElementException e1) {
-				// TODO Auto-generated catch block
-				m_logger.severe("execute", "No element", e1);
-				e1.printStackTrace();
-			} catch (WrappedTargetException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			m_logger.info( "oObj "+ oObj );
-
-			// XPropertySet xPS = (XPropertySet) UnoRuntime.queryInterface(
-			// XPropertySet.class, xViewRoot );
-			XPropertySet xPS = (XPropertySet) UnoRuntime.queryInterface(
-					XPropertySet.class, oObj );
-//			passert( "xPS", xPS );
-			// Utilities.showProperties( xPS );
-			// set the SignatureStatus property (defined in
-			// AddConfiguration.xcs.xml)
-			// to the parameter value get the value
-//			println( "4" );
-			if (xPS != null) {
-				try {
-					// xPS.setPropertyValue( "SignatureStatus", new Integer(
-					// it.plio.ext.cnipa.signature.GlobConstant.SIGNATURESTATE_NOSIGNATURES)
-					// );
-					xPS
-							.setPropertyValue(
-									"SignatureStatus",
-									new Integer(
-											GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES ) );
-					m_logger.info( "status set to 0" );
-				} catch (UnknownPropertyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (PropertyVetoException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (WrappedTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else
-				m_logger.info( "no property" );
-			m_logger.info( "5" );
-			commitChanges( xViewRoot );
-			// close the view
-			( (XComponent) UnoRuntime.queryInterface( XComponent.class, xViewRoot ) )
-					.dispose();
-		} else
-			m_logger.info( "no view: reinstall the extension " );
-	}
-
-	private void removeThisFrameData(String aURL) {
-		String aURLHash = Utilities.getFrameHash( aURL );
-
-		if (m_oSingleVarObj != null) {
-			XNameContainer xNCont = (XNameContainer) UnoRuntime.queryInterface(
-					XNameContainer.class, m_oSingleVarObj );
-
-			// if exists, remove the aURL object
-			if (xNCont.hasByName( aURLHash )) {
-				try {
-					// remove the node
-					xNCont.removeByName( aURLHash );
-					m_logger.info( "removed: " + aURLHash);
-				} catch (NoSuchElementException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (WrappedTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	/**
-	 * this method initialize the document data in the registry. if this is the
-	 * first time the signature is checked
-	 * @param _xStorage TODO
-	 * @param aURL
-	 * @param frame the frame this document belongs to, or null if not frame
-	 */
-	private void initThisDocumentURLData(XStorage _xStorage, String aURL, boolean _bCheckSignature, XFrame frame) {
-		String aURLHash = Utilities.getFrameHash( aURL );
-
-		// first remove this frame data, just to be sure, the document is
-		// loaded only once, other windows won't trigger another OnLoad event on
-		// the same document
-		// removeThisFrameData( aURL );
-
-		// create a read/write view at the root frame configuration level
-		if (m_oSingleVarObj != null) {
-			// search the hash
-			XNameContainer xNCont = (XNameContainer) UnoRuntime.queryInterface(
-					XNameContainer.class, m_oSingleVarObj );
-			// if exist, set value to zero, else create it at default value
-			if (!xNCont.hasByName( aURLHash )) {
-				m_logger.info( "adding name: " + aURLHash );
-				// frame doesn't exist, first create it
-				// doesn't exist, so add it to the current view, provide default
-				// value for status and exits
-				// need to add a named container to hold the frame name
-				
-				// so create and empty record, as expected by the object
-				
-				PropertyValue[] aValues = new PropertyValue[3];
-				
-				aValues[0] = new PropertyValue();
-				aValues[0].Name = new String(SingletonGlobalVarConstants.m_sPROPERTY_OPERATION);
-				aValues[0].Value = new Integer(SingletonGlobalVarConstants.m_nADD_PROPERTY);
-					
-				aValues[1] = new PropertyValue();
-				aValues[1].Name = new String(SingletonGlobalVarConstants.m_sURL_VALUE);
-				aValues[1].Value = new String(aURL);
-
-				aValues[2] = new PropertyValue();
-				aValues[2].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
-				aValues[2].Value = new Integer(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-				PropertyValue aParVal = new PropertyValue();
-				aParVal.Name = new String(aURLHash);
-				aParVal.Value = aValues;
-
-				// insert it - this also names the element
-				try {
-					xNCont.insertByName( aURLHash, aParVal );
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			// read again to see if now it exists
-			if (xNCont.hasByName( aURLHash )) {
-				// now update the status of the property
-				m_logger.info( "frame data root added successfully " );
-
-				int _nSignState = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-
-				if (_bCheckSignature) {
-					// ///////////////////////////////////////////////
-					// FIXME (01) we need to add here the signature check!
-					// ////////////////////////////////////////////////
-					/*
-					 * arrive here with:
-					 */
-//					try {
-					m_logger.info( "simulating signature check..." );
-//						Thread.sleep( 20 ); //simulates the time needed to check signatures
-						DigitalSignatureHelper aCls = new DigitalSignatureHelper(m_xServiceManager, m_xComponentContext);
-//						aCls.examinePackageODT(aURL, m_xServiceManager, m_xComponentContext);
-						aCls.verifyDocumentSignature(_xStorage, aURL);
-/*					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}*/
-
-					// FIXME (02) this statement needs to be changed into the right one according to signature check result!!
-//					_nSignState = it.plio.ext.cnipa.signature.GlobConstant.SIGNATURESTATE_NOSIGNATURES;
-//					_nSignState = it.plio.ext.cnipa.signature.GlobConstant.SIGNATURESTATE_SIGNATURES_NOTVALIDATED;
-				}
-
-// simply udate the signature state of our element
-				try {
-					PropertyValue[] aValues = new PropertyValue[2];
-					aValues[0] = new PropertyValue();
-					aValues[0].Name = new String(SingletonGlobalVarConstants.m_sPROPERTY_OPERATION);
-					aValues[0].Value = new Integer(SingletonGlobalVarConstants.m_nSET_PROPERTY);
-					aValues[1] = new PropertyValue();
-					aValues[1].Name = new String(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE);
-					aValues[1].Value = new Integer(_nSignState);
-
-					PropertyValue[] aParVal = new PropertyValue[1];
-					aParVal[0].Name = new String(aURLHash);
-					aParVal[0].Value = aValues;
-					m_aSingletonGlobVarProps.setPropertyValues(aParVal);
-				} catch (UnknownPropertyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (PropertyVetoException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (WrappedTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else
-				m_logger.info( "problems creating new frame data on Singleton var" );
-		} else
-			m_logger.info( "the main Singleton Var object is missing!" );	
 	}
 
 	private XMultiServiceFactory getConfigurationProvider() {
@@ -841,47 +599,6 @@ public class SyncJob extends ComponentBase
 		return xViewRoot;
 	}
 
-	// remove the frame data structure from our private configuration
-	private void cleanupAllFrameData() {
-		// get provider
-		XMultiServiceFactory aConfProvider = getConfigurationProvider();
-		// create a read/write view
-		// remove all the frame data
-		Object xViewRoot = getReadWriteView( aConfProvider,
-				GlobConstant.m_sEXTENSION_CONF_FRAME_KEY );
-		if (xViewRoot != null) {
-			XNameContainer xNCont = (XNameContainer) UnoRuntime.queryInterface(
-					XNameContainer.class, xViewRoot );
-			String[] elementsToRemove = xNCont.getElementNames();
-			if (elementsToRemove.length > 0) {
-				for (int i = 0; i < elementsToRemove.length; i++) {
-					m_logger.info( "removing: " + elementsToRemove[i] + ", " );
-
-					try {
-						xNCont.removeByName( elementsToRemove[i] );
-					} catch (NoSuchElementException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (WrappedTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				m_logger.info( "" );
-			}
-			commitChanges( xViewRoot );
-			// close the view
-			( (XComponent) UnoRuntime.queryInterface( XComponent.class, xViewRoot ) )
-					.dispose();
-		}
-	}
-
-	// remove the frame data structure from our private configuration
-	private void cleanupAllDocumentURLData() {
-		GlobalVariables globalVar = GlobalVariables.getInstance();
-		globalVar.removeAllDocumentURL();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -911,5 +628,4 @@ public class SyncJob extends ComponentBase
 		// TODO Auto-generated method stub
 		m_logger.info( "removeCloseListener called" );
 	}
-
 }

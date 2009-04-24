@@ -41,9 +41,12 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameContainer;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
@@ -61,11 +64,6 @@ import com.sun.star.util.XChangesNotifier;
  */
 public class SingletonGlobalVariables extends ComponentBase 
 			implements XServiceInfo, 
-			XProperty,
-			XPropertyAccess,
-			XPropertySetInfo,
-			XChangesNotifier,
-			XNameContainer,
 			XOX_SingletonDataAccess {
 
 	// the name of the class implementing this object
@@ -75,20 +73,20 @@ public class SingletonGlobalVariables extends ComponentBase
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_SERVICE };
 	
 	protected DynamicLogger			m_logger;
+	
+	protected	XComponentContext		m_xCtx;
+	protected	XMultiComponentFactory	m_MFC;
 
-	public static	String m_sProperties[] = {"SelfObject","DataInstance"}; 
 	private class DocumentDescriptor {
-		public String	sURLHash; // the hash computed from the URL name class
-		public String	sURL;   //the corresponding URL
-		public int		nXAdESSignatureState; // state of the signature(s) in this frame
-		// these are the lister on changes on this element only
-		// called only if the signature changes state.
-		public HashMap<XChangesListener,XChangesListener> listeners;
+		public	String	DocumentId;
+		public	XOX_DocumentSignatures DocumentState;
 	};
 
 	private HashMap<String, DocumentDescriptor>	theDocumentList = new HashMap<String, DocumentDescriptor>(10);
-	// these are the lister on changes of all the variables
-	public HashMap<XChangesListener,XChangesListener> listeners;
+	
+/*	public String	m_sDocumentId;   //the Id of this document
+	// these are the listener on changes of all the signatures related variables
+	public HashMap<XChangesListener,XChangesListener> listeners = new HashMap<XChangesListener, XChangesListener>(10);*/
 
 	/**
 	 * 
@@ -102,6 +100,9 @@ public class SingletonGlobalVariables extends ComponentBase
 
 		m_logger.enableLogging();
 		m_logger.ctor();
+		
+		m_xCtx = _ctx;
+		m_MFC = m_xCtx.getServiceManager();
 	}
 
 	@Override
@@ -135,230 +136,6 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.beans.XProperty#getAsProperty()
-	 */
-	public Property getAsProperty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.beans.XPropertyAccess#getPropertyValues()
-	 */
-	public PropertyValue[] getPropertyValues() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* 
-	 * every time a property is set,  all the registered listeners are notified.
-	 * Note that if a pproperty does not exists, it is added 
-	 * Example:
-	 * 
-	 *  property.Name = String("Fuhc8222a626")
-	 *  property.Value = array[] of properties [].Name "Operation"       the operation to carry out
-	 *  										.Value int = 1           remove it from list
-	 *                                                       2           add if not present
-	 *                                                       3			 set value, if not present throws
-	 *                                                       4			 set a ChangeListener
-	 *                                                       5			 remove a change listener
-	 *  										.Name "URL"
-	 *  										.Value 'the full URL'
-	 *  										.Name "XAdESSignatureState"
-	 *  										.Value int, the signature status
-	 *  										.Name "ChangesListener"
-	 *  										.Value Obj should ne an object of the kind change listener, e.g.
-	 *  													should have a XChangesLister interface implemented
-	 *  													
-	 *  
-	 * 
-	 * (non-Javadoc)
-	 *  @see com.sun.star.beans.XPropertyAccess#setPropertyValues(com.sun.star.beans.PropertyValue[])
-	 */
-	public void setPropertyValues(PropertyValue[] aPropertyValue)
-			throws UnknownPropertyException, PropertyVetoException,
-			IllegalArgumentException, WrappedTargetException {
-		// TODO Auto-generated method stub
-		
-//		if(m_bEnableLogging)
-//			m_log.info("setPropertyValues: "+aPropertyValue[0].Name);
-	}
-
-	/* returns all the properties, in this case all the registered
-	 * (non-Javadoc)
-	 * 
-	 * @see com.sun.star.beans.XPropertySetInfo#getProperties()
-	 */
-	public Property[] getProperties() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * return a single property or throws
-	 * 
-	 * in case of a Document add-on data (e.g. the signature status)
-	 * the property is the document URL hash computed as a key. E.g. the URL
-	 * becomes someting as: Fuhc8222a626
-	 * This is the name name of the frame
-	 * the value is a sequence of property containing the corresponding data to be
-	 * set.
-	 * Example:
-	 * 
-	 *  property.Name = String("Fuhc8222a626")
-	 *  property.Value = array[] of properties [].Name "Operation"            the operation to carry out
-	 *  										.Value int = 1           retrieve the value
-	 *                                                       2
-	 *                                                       3
-	 *                                                       4
-	 *  										.Name "URL"
-	 *  										.Value 'the full URL'
-	 *  										.Name "XAdESSignatureState"
-	 *  										.Value int, the signature status
-	 *  
-	 *  
-	 *  The properties in the sequence can be in any order.
-	 * 
-	 * 
-	 * @see com.sun.star.beans.XPropertySetInfo#getPropertyByName(java.lang.String)
-	 */
-	public Property getPropertyByName(String arg0)
-			throws UnknownPropertyException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.beans.XPropertySetInfo#hasPropertyByName(java.lang.String)
-	 */
-	public boolean hasPropertyByName(String arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	// XChangesNotifier
-	/* (non-Javadoc)
-	 * @see com.sun.star.util.XChangesNotifier#addChangesListener(com.sun.star.util.XChangesListener)
-	 */
-	public void addChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.util.XChangesNotifier#removeChangesListener(com.sun.star.util.XChangesListener)
-	 */
-	public void removeChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
-
-		// last of XChangesNotifier
-	}
-
-	/////////////////// XNameContainer
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameContainer#insertByName(java.lang.String, java.lang.Object)
-	 */
-	public void insertByName(String _aURLHash, Object _oObj)
-			throws IllegalArgumentException, ElementExistException,
-			WrappedTargetException {
-		// TODO Auto-generated method stub
-		if(!theDocumentList.containsKey(_aURLHash)) {
-			DocumentDescriptor docuDescrip = new DocumentDescriptor();
-			docuDescrip.sURLHash = _aURLHash;
-
-			PropertyValue aVal = (PropertyValue)_oObj;
-			//we recevive a series of propertyvalues
-			PropertyValue[] aValues = (PropertyValue[])aVal.Value;
-			for(int i= 0; i< aValues.length; i++)
-				if(aValues[i].Name.compareTo(SingletonGlobalVarConstants.m_sURL_VALUE) == 0) {
-					docuDescrip.sURL = (String)aValues[i].Value;
-					break;
-				}
-		
-			for(int i= 0; i< aValues.length; i++) {
-				if(aValues[i].Name.compareTo(SingletonGlobalVarConstants.m_sXADES_SIGNATURE_STATE) == 0) {
-					docuDescrip.nXAdESSignatureState = ((Integer)aValues[i].Value).intValue();
-					break;
-				}
-			}
-			docuDescrip.listeners = new HashMap<XChangesListener, XChangesListener>(10);
-			theDocumentList.put(docuDescrip.sURLHash, docuDescrip);
-		}
-		else
-			throw new ElementExistException();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameContainer#removeByName(java.lang.String)
-	 */
-	public void removeByName(String _aURLHash) throws NoSuchElementException,
-			WrappedTargetException {
-		// TODO Auto-generated method stub
-			m_logger.info("removeByName");
-		if(theDocumentList.containsKey(_aURLHash)) {
-			DocumentDescriptor docuDescrip = theDocumentList.remove(_aURLHash);
-			docuDescrip.listeners.clear();
-		}
-		else
-			throw new NoSuchElementException();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameReplace#replaceByName(java.lang.String, java.lang.Object)
-	 */
-	public void replaceByName(String arg0, Object arg1)
-			throws IllegalArgumentException, NoSuchElementException,
-			WrappedTargetException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameAccess#getByName(java.lang.String)
-	 */
-	public Object getByName(String arg0) throws NoSuchElementException,
-			WrappedTargetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameAccess#getElementNames()
-	 */
-	public String[] getElementNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XNameAccess#hasByName(java.lang.String)
-	 */
-	public boolean hasByName(String _sElementName) { // this is the name of the frame
-												// is the key inside the full hash list
-		return theDocumentList.containsKey(_sElementName);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XElementAccess#getElementType()
-	 */
-	public Type getElementType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.container.XElementAccess#hasElements()
-	 */
-	public boolean hasElements() {
-		// TODO Auto-generated method stub
-// check if we have some elements onlist, returns		
-		return false;
-		
-		//////////////// last of XNameContainer
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
@@ -369,13 +146,42 @@ public class SingletonGlobalVariables extends ComponentBase
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
+	 * 
+	 * FIXME set exception
 	 */
 	@Override
 	public XOX_DocumentSignatures initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
 		// TODO Auto-generated method stub
-		
-		m_logger.info("initDocumentAndListener","doc id: "+_aDocumentId);
-		return null;
+		synchronized (theDocumentList) {				
+			//see if the document already exists
+			if(!theDocumentList.containsKey(_aDocumentId)) {
+				DocumentDescriptor docuDescrip = new DocumentDescriptor();
+				docuDescrip.DocumentId = _aDocumentId;			
+				Object aObj;
+				try {
+					//doesn't exists: instantiate a DocumentSignatures service and
+					//add it the list of available documents.
+					aObj = m_MFC.createInstanceWithContext("", m_xCtx);
+					XOX_DocumentSignatures aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					docuDescrip.DocumentState = aDoc;
+					theDocumentList.put(docuDescrip.DocumentId, docuDescrip);
+					m_logger.log("initDocumentAndListener","added doc id: "+_aDocumentId);
+//need to add the listenener to the doc, if needed
+					
+					return aDoc;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					m_logger.severe("initDocumentAndListener", "error instantionting a new DocumentSignatures service", e);
+					return null;
+				}
+			}
+			else {
+				//if exists, returns the document signatures element
+				m_logger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
+				return theDocumentList.get(_aDocumentId).DocumentState;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -385,9 +191,12 @@ public class SingletonGlobalVariables extends ComponentBase
 	public void removeDocumentSignatures(String _aDocumentId) {
 		// TODO Auto-generated method stub
 		//remove the DocumentSignatures element whose id is the one on parameter
-		m_logger.info("removeDocumentSignatures","doc id: "+_aDocumentId);		
-		
-		
+		synchronized (theDocumentList) {
+			m_logger.log("removeDocumentSignatures","doc id: "+_aDocumentId);		
+			if(theDocumentList.containsKey(_aDocumentId)) {
+				XOX_DocumentSignatures aDocu = theDocumentList.get(_aDocumentId).DocumentState;
+				DocumentDescriptor docuDescrip = theDocumentList.remove(_aDocumentId);
+			}		
+		}
 	}
-
 }
