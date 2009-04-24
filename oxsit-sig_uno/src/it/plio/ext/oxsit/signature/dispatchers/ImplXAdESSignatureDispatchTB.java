@@ -261,6 +261,9 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * returned value: 1 2 0 = Cancel
 				 */
 				short ret = signatureDialog();
+				/** the next lines of code are not needed in the end.
+				 * These are here only to test extension behavior.
+				 */
 				XModel xModel = m_xFrame.getController().getModel();
 				m_logger.info("impl_dispatch: \tthe url of the document under signature is: "
 						+ xModel.getURL() );

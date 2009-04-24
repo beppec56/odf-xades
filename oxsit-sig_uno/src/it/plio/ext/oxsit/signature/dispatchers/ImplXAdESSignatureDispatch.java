@@ -66,7 +66,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	private XModel m_xModel = null;
 
 	private boolean	m_bIsModified = false;
-//	DocumentURLStatusHelper								m_aFrameConf	= null;
 	
 	protected Object											m_SingletonDataObject;
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
@@ -269,6 +268,9 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener,
 	 *      com.sun.star.util.URL)
+	 * this method is called by the framework to asses the status
+	 * of the  menu enabled/disabled. We'll set it
+	 * according to the rest of the document state (save/non saved/changed, etc...)
 	 */
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
 		m_logger.entering("addStatusListener");
@@ -277,20 +279,15 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 				LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
 						m_aDocumentURL );
 				Listeners.put( aListener, MyListener );
-//				println("+ listener: "+ new String(String.format("%8H",aListener.hashCode() ) ) + " URL: "+aURL.Complete);
-//grab the document status
-
-				// prepare the new image for the toolbar and send it
-
 				aListener.statusChanged( prepareFeatureState() );
-			}	
-
+			}
 		} catch (com.sun.star.uno.RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void impl_addStatusListener(XStatusListener aListener, URL aURL) {
+	private void impl_addStatusListener(XStatusListener aListener, URL aURL) {
+		m_logger.entering("impl_addStatusListener");
 		try {
 			if(aListener != null ) {
 				LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
@@ -382,40 +379,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		 */
 		public void statusChanged(FeatureStateEvent aEvent) {
 			if (m_aMaster != null) {
-
-				// // mix the two signature status
-				// m_nOOoSignatureStatus = ( (Integer) aEvent.State
-				// ).intValue();
-				// aEvent.State = new Integer( m_nOOoSignatureStatus
-				// | m_nCNIPASignatureStatus );
-				// // print the status here
-				/*
-				 * printlnName("\n\t\tsignature status changed for document URL:
-				 * "+m_aDocumentURL); println("StatusChanged called feature:
-				 * '"+aEvent.FeatureDescriptor+"' URL:
-				 * '"+aEvent.FeatureURL.Complete+ "' IsEnabled:
-				 * "+aEvent.IsEnabled+" Requery "+ aEvent.Requery);
-				 * println("path "+aEvent.FeatureURL.Path+" proto
-				 * "+aEvent.FeatureURL.Protocol); if(aEvent.Source != null) {
-				 * println(" Source is a:"+aEvent.Source.getClass().getName()); //
-				 * Utilities.showInterfaces((XInterface) aEvent.Source); }
-				 * if(aEvent.State != null) { println(" State is
-				 * a:"+aEvent.State.getClass().getName()+" value:
-				 * "+aEvent.State); }
-				 * 
-				 * if(m_signStatus != 0) { printlnName("é"); aEvent.State = new
-				 * Integer(m_signStatus); }
-				 */
-				// aEvent.State = new Integer(0);// means no signatures present
-				// on document
-				// aEvent.State = new Integer(1);// means signatures present on
-				// document and ALL validated
-				// aEvent.State = new Integer(2);// means signatures present but
-				// document can't be validated (hence certificates not checked)
-				// aEvent.State = new Integer(3);// no effect
-				// aEvent.State = new Integer(4);// signature valid wrt the
-				// document, but certificates can't be validated
-				//
 				// forward 'upstair' the status changed event
 				m_aMaster.statusChanged( aEvent );
 			}

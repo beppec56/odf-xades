@@ -44,7 +44,6 @@ public class ImplDispatchSynch implements XDispatch {
 	protected XFrame m_xFrame;
 	protected XMultiComponentFactory m_axMCF;
 	protected XComponentContext m_xCC;
-/*	protected String today;*/
 	protected XDispatch m_aUnoSlaveDispatch = null;
 	
 	protected DynamicLogger		m_logger;
@@ -73,7 +72,6 @@ public class ImplDispatchSynch implements XDispatch {
 			m_aUnoSlaveDispatch.addStatusListener(aListener, aURL);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see com.sun.star.frame.XDispatch#dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
 	 * 
@@ -94,6 +92,5 @@ public class ImplDispatchSynch implements XDispatch {
 		m_logger.log("removeStatusListener "+String.format("%8H",hashCode())+" "+aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener(aListener, aURL);
-	}
-	
+	}	
 }
