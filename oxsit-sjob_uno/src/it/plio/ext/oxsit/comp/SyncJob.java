@@ -459,10 +459,13 @@ public class SyncJob extends ComponentBase
 							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
 							aDocSign.setDocumentStorage(xStorage);
 							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+//verify signatures, if the case							
+
+							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+							
 						}
 						else
 							m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
-//						initThisDocumentURLData(xStorage, xModel.getURL(), true, xFrame);
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
 					// delete the single frame data

@@ -298,7 +298,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * 
 				 */
 			} catch (RuntimeException e) {
-				e.printStackTrace();
+				m_logger.severe("impl_dispatch", "", e);
 			}
 		}
 	}
@@ -485,9 +485,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					LinkingStatusListeners MyListener = new LinkingStatusListeners(
 							aListener, aURL, m_aDocumentURL );
 					Listeners.put( aListener, MyListener );
-//					 println( "+ listener: "
-//					 + new String( String.format( "%8H", aListener.hashCode() ) )
-//					 + " URL: " + aURL.Complete );
 					// grab the document status
 					grabModel();//update model
 					aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
@@ -514,8 +511,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
 		try {
 			Listeners.remove( aListener );
-			// println( "- m_aListeners: " + Listeners.size() + " URL: " +
-			// aURL.Complete );
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -601,20 +596,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			else
 				m_logger.severe("disposing (docu)", "XChangesNotifier missing");
 
-//			m_xDocumentSignatures.getDocumentStorage();
-			
-/*			DocumentURLStatusHelper								aFrameConf;			
-			synchronized(m_aFrameConfMutex) {
-				aFrameConf = m_aDocumentConf;
-				m_aDocumentConf = null;
-			}*/
-/*			if (aFrameConf != null) {
-				m_logger.info("disposing: config changes listener" );
-				aFrameConf.removeAllFrameChangesListener( this );
-//remove this frame from the data store
-				aFrameConf.removeFrameData();
-//					aFrameConf.dispose();
-			}*/
 			return;
 		}
 
@@ -646,18 +627,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			else
 				m_logger.severe("disposing (frame)", "XChangesNotifier missing");
 
-/*			DocumentURLStatusHelper								aFrameConf = null;			
-			synchronized(m_aFrameConfMutex) {
-				aFrameConf = m_aDocumentConf;
-				m_aDocumentConf = null;
-			}
-			if (aFrameConf != null) {
-				m_logger.info("disposing: config changes listener" );
-				aFrameConf.removeAllFrameChangesListener( this );
-//remove this frame from the data store
-				aFrameConf = null;
-			}*/
-
 			if (m_bIsFrameActionRegistered) {
 				m_xFrame.removeFrameActionListener( this );
 				m_bIsFrameActionRegistered = false;
@@ -665,20 +634,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			}
 		}
 	}
-
-/*	private void shutDown() {
-		synchronized(this) {
-			if(m_bDead)
-				return;
-
-			if (m_bIsFrameActionRegistered) {
-				m_xFrame.removeFrameActionListener( this );
-				m_bIsFrameActionRegistered = false;
-				println( "unregister from frame" );
-			}
-			m_bDead = true;
-		}
-	}*/
 
 	/*
 	 * (non-Javadoc)
@@ -704,38 +659,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			grabModel();
 			
 			synchronized(m_aFrameConfMutex) {
-
 				changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
-
-/*				if(m_aDocumentConf == null)
-					return;
-
-				if (m_aDocumentConf.isFrameExistent()) {
-					// verify if the new URL is different than the one originally
-					// recorded
-					//may be the SaveAs function was used...
-					if (m_aDocumentConf.isFrameChanged( m_aDocumentURL )) {
-						m_logger.info(" changing frame view\n" );
-						
-						m_aDocumentConf.changeDocumentURL(m_aDocumentURL);
-						// set the current frame view to the new frame
-						m_aDocumentConf.setFrameURL( m_aDocumentURL );
-						// check the status updates only if necessary
-						changeSignatureStatus( m_aDocumentConf.getSignatureStatus() );
-					} else { // frame was already in place, simply update the status
-						m_logger.info(" refreshing the signature status\n" );
-						changeSignatureStatus( m_aDocumentConf.getSignatureStatus() );
-					}
-				} else { // a frame was not there, so add it
-					m_logger.info(" adding frame view\n" );
-					m_aDocumentConf.setFrameURL( m_aDocumentURL );
-					// reopen a view and add ourselves as m_aListeners
-//					m_aDocumentConf.activateSigleFrameView();
-//					m_aDocumentConf.addSingleFrameChangesListener( this );
-					// check the status updates only if necessary
-					changeSignatureStatus( m_aDocumentConf.getSignatureStatus() );
-				}*/
-
 			}
 		// grab the new status, updates ours
 			m_logger.info(" state: " + m_nState );
@@ -755,31 +679,31 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 /*		printHash("frameAction");
 		switch (aEvent.Action.getValue()) {
 		case com.sun.star.frame.FrameAction.COMPONENT_DETACHING_value:
-			print( "COMPONENT_DETACHING_value" );
+			m_logger.log( "COMPONENT_DETACHING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_ATTACHED_value:
-			print( "COMPONENT_ATTACHED_value" );
+			m_logger.log( "COMPONENT_ATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_REATTACHED_value:
-			print( "COMPONENT_REATTACHED_value" );
+			m_logger.log( "COMPONENT_REATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_ACTIVATED_value:
-			print( "FRAME_ACTIVATED_value" );
+			m_logger.log( "FRAME_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
-			print( "FRAME_DEACTIVATING_value" );
+			m_logger.log( "FRAME_DEACTIVATING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.CONTEXT_CHANGED_value:
-			print( "CONTEXT_CHANGED_value" );
+			m_logger.log( "CONTEXT_CHANGED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_ACTIVATED_value:
-			print( "FRAME_UI_ACTIVATED_value" );
+			m_logger.log( "FRAME_UI_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_DEACTIVATING_value:
-			print( "FRAME_UI_DEACTIVATING_value" );
+			m_logger.log( "FRAME_UI_DEACTIVATING_value" );
 			break;
 		default:
-			print( "frameAction other value" );
+			m_logger.log( "frameAction other value" );
 		}
 		print("\n");*/
 	}
