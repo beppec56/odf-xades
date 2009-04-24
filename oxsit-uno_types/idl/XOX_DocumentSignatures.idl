@@ -42,6 +42,10 @@
 		*/
 		[attribute] long DocumentSignatureState;
 
+		/** this document id
+		*/
+		[attribute] string DocumentId;
+
 		/** The certificates contained in the document.
 		*/
 		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;

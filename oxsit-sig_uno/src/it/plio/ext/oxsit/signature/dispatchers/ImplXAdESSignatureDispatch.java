@@ -192,7 +192,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 			// init the status structure from the configuration
 			m_aFrameConf = new DocumentURLStatusHelper( m_xCC, m_aDocumentURL );
 
-//			register ourself at the document as listeners
+//			register ourself at the document as m_aListeners
 //			we register the modified status (when modified signature becomes broken)
 //			the end of save status (model can change, then the rest)
 
@@ -326,7 +326,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	public void removeStatusListener(XStatusListener aListener, URL aURL) {
 		try {
 			Listeners.remove( aListener );
-//			println("- listeners: "+Listeners.size()+ " URL: "+aURL.Complete);
+//			println("- m_aListeners: "+Listeners.size()+ " URL: "+aURL.Complete);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -341,7 +341,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	 * 2.3
 	 */
 	private void changeSignatureStatus() {
-		// get the COllection of listeners
+		// get the COllection of m_aListeners
 		Collection<LinkingStatusListeners> cListenters = Listeners.values();
 		// printlnName("changeSignatureStatus "+cListenters.size());
 		if (!cListenters.isEmpty()) {

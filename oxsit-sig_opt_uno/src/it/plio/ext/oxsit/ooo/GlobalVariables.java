@@ -181,7 +181,7 @@ public class GlobalVariables {
 			theDocu.aTheURL = aURL;
 			theDocu.signatureXAdESState = signatureState;
 			theDocumentList.put(theDocu.documentURLHash, theDocu);
-//notify all the changes listeners in the list
+//notify all the changes m_aListeners in the list
 			notifyListeners(theDocu);
 		}		
 	}
@@ -199,7 +199,7 @@ public class GlobalVariables {
 			theDocu.aTheURL = aURL;
 			theDocu.signatureXAdESState = signatureState;
 			theDocumentList.put(theDocu.documentURLHash, theDocu);
-//notify all the change listeners in the list
+//notify all the change m_aListeners in the list
 			notifyListeners(theDocu);
 		}		
 		return true;

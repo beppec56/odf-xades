@@ -301,7 +301,7 @@ public class ImplIntSignatureDispatch extends WeakBase implements XDispatch,
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
 		// printName("addStatusListener
 		// "+String.format("%8s",Integer.toHexString(aListener.hashCode()))+"
-		// "+aURL.Complete+" listeners: "+Listeners.size());
+		// "+aURL.Complete+" m_aListeners: "+Listeners.size());
 		LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
 				m_aDocumentURL );
 		Listeners.put( aListener, MyListener );
@@ -333,7 +333,7 @@ public class ImplIntSignatureDispatch extends WeakBase implements XDispatch,
 		if (m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener( MyListener, aURL );
 		Listeners.remove( aListener );
-		// println(" listeners: "+Listeners.size());
+		// println(" m_aListeners: "+Listeners.size());
 	}
 
 	/*

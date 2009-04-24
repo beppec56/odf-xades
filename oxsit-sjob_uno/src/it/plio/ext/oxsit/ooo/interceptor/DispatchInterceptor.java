@@ -82,7 +82,7 @@ public class DispatchInterceptor extends WeakBase implements
 	private boolean									m_bIsInterceptorRegistered;				// we
 	// are registered as dispatch interceptors
 	private boolean									m_bIsFrameActionRegistered;				// we
-	// are registered as frame action listeners
+	// are registered as frame action m_aListeners
 
 	private static final String[]					m_InterceptedURLs			= {
 			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstantJobs.m_sUnoSaveURLComplete,
@@ -380,7 +380,7 @@ public class DispatchInterceptor extends WeakBase implements
 			case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
 				println( "frameAction FRAME_DEACTIVATING_value" );
 				// ///////////// not good...
-				// //check if we are frame action listeners, if yes unregister,
+				// //check if we are frame action m_aListeners, if yes unregister,
 				// surround with mutex
 				// synchronized (aMutex) {
 				// if( m_bIsFrameActionRegistered ) {

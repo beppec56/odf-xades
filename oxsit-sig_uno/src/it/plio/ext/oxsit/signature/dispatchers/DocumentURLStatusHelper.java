@@ -206,13 +206,13 @@ public class DocumentURLStatusHelper /*extends ConfigurationAccess implements
 				println("the frame record does not exist!");
 		}
 		else
-			println("close the view first (release the listeners if any))!");
+			println("close the view first (release the m_aListeners if any))!");
 	}*/
 
 	/**
 	 * opposite of the above
 	 * IMPORTANT: the caller shall call the respective
-	 * function to remove listeners before changing the view
+	 * function to remove m_aListeners before changing the view
 	 */
 /*	public void disposeSingleFrameView() {
 		if(m_oOneFrameConfView != null) {

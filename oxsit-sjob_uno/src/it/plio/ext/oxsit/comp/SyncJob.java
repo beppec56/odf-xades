@@ -123,8 +123,7 @@ public class SyncJob extends ComponentBase
 			m_logger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
 			m_xoxSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_oSingleVarObj);
 			if(m_xoxSingletonDataAccess == null)
-				m_logger.severe("ctor:","No XOX_SingletonDataAccess interface!");
-				
+				m_logger.severe("ctor:","No XOX_SingletonDataAccess interface!");			
 		}
 		else
 			m_logger.severe("ctor:","No singleton service data");
@@ -511,10 +510,10 @@ public class SyncJob extends ComponentBase
 									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 								}
 								else
-									m_logger.severe("execute","Missing XOX_DocumentSignatures interface");						
+									m_logger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
 							}
 							else
-								m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+								m_logger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 
 						}
 					}
 				}

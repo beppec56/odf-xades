@@ -29,23 +29,10 @@ import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;
 
-import com.sun.star.beans.Property;
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XProperty;
-import com.sun.star.beans.XPropertyAccess;
-import com.sun.star.beans.XPropertySetInfo;
-import com.sun.star.container.ElementExistException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameContainer;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
@@ -79,14 +66,14 @@ public class SingletonGlobalVariables extends ComponentBase
 
 	private class DocumentDescriptor {
 		public	String	DocumentId;
-		public	XOX_DocumentSignatures DocumentState;
+		public	Object m_aDocumentSignaturesService;
 	};
 
 	private HashMap<String, DocumentDescriptor>	theDocumentList = new HashMap<String, DocumentDescriptor>(10);
 	
 /*	public String	m_sDocumentId;   //the Id of this document
 	// these are the listener on changes of all the signatures related variables
-	public HashMap<XChangesListener,XChangesListener> listeners = new HashMap<XChangesListener, XChangesListener>(10);*/
+	public HashMap<XChangesListener,XChangesListener> m_aListeners = new HashMap<XChangesListener, XChangesListener>(10);*/
 
 	/**
 	 * 
@@ -161,13 +148,22 @@ public class SingletonGlobalVariables extends ComponentBase
 				try {
 					//doesn't exists: instantiate a DocumentSignatures service and
 					//add it the list of available documents.
-					aObj = m_MFC.createInstanceWithContext("", m_xCtx);
-					XOX_DocumentSignatures aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
-					docuDescrip.DocumentState = aDoc;
+					aObj = m_MFC.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xCtx);
+					docuDescrip.m_aDocumentSignaturesService = aObj;
 					theDocumentList.put(docuDescrip.DocumentId, docuDescrip);
-					m_logger.log("initDocumentAndListener","added doc id: "+_aDocumentId);
-//need to add the listenener to the doc, if needed
-					
+//need to add the listener to the doc, if needed
+					XChangesNotifier aNotif = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, aObj);
+					if(aNotif != null)
+						aNotif.addChangesListener(_aListener);
+					else
+						m_logger.severe("initDocumentAndListener", "XChangesNotifier missing.");
+						
+					XOX_DocumentSignatures aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					if(aDoc == null) 
+						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures missing.");
+					else
+						aDoc.setDocumentId(_aDocumentId);
+					m_logger.exiting("initDocumentAndListener", "");
 					return aDoc;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -179,7 +175,23 @@ public class SingletonGlobalVariables extends ComponentBase
 			else {
 				//if exists, returns the document signatures element
 				m_logger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
-				return theDocumentList.get(_aDocumentId).DocumentState;
+				XOX_DocumentSignatures aDoc = null;
+				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
+				if(aObj != null) {
+					//need to add the listener to the doc, if needed
+					XChangesNotifier aNotif = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, aObj);
+					if(aNotif != null)
+						aNotif.addChangesListener(_aListener);
+					else
+						m_logger.severe("initDocumentAndListener", "XChangesNotifier missing.");
+					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					if(aDoc == null) 
+						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");
+					
+				}
+				else
+					m_logger.severe("initDocumentAndListener", "aObj is null");					
+				return aDoc;
 			}
 		}
 	}
@@ -194,7 +206,7 @@ public class SingletonGlobalVariables extends ComponentBase
 		synchronized (theDocumentList) {
 			m_logger.log("removeDocumentSignatures","doc id: "+_aDocumentId);		
 			if(theDocumentList.containsKey(_aDocumentId)) {
-				XOX_DocumentSignatures aDocu = theDocumentList.get(_aDocumentId).DocumentState;
+				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
 				DocumentDescriptor docuDescrip = theDocumentList.remove(_aDocumentId);
 			}		
 		}

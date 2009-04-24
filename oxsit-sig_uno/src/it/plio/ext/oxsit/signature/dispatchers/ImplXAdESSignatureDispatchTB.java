@@ -22,67 +22,48 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.logging.Logger;
-
-import com.sun.star.beans.NamedValue;
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XProperty;
-import com.sun.star.beans.XPropertyAccess;
-import com.sun.star.deployment.PackageInformationProvider;
-import com.sun.star.deployment.XPackageInformationProvider;
-import com.sun.star.document.XEventBroadcaster; // import
-// com.sun.star.document.XEventListener;
-import com.sun.star.frame.ControlCommand;
-import com.sun.star.frame.ControlEvent;
-import com.sun.star.frame.FeatureStateEvent;
-import com.sun.star.frame.FrameActionEvent;
-import com.sun.star.frame.XControlNotificationListener;
-import com.sun.star.frame.XController;
-import com.sun.star.frame.XDispatch; // import
-import com.sun.star.frame.XFrameActionListener; // com.sun.star.frame.XDispatchResultListener;
-import com.sun.star.frame.XFrame;
-import com.sun.star.frame.XModel; // import
-// com.sun.star.frame.XNotifyingDispatch;
-import com.sun.star.frame.XStatusListener;
-import com.sun.star.frame.XStorable;
-import com.sun.star.lang.EventObject;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XEventListener;
-import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.lang.XMultiServiceFactory;
-import com.sun.star.lang.XServiceInfo;
-import com.sun.star.script.BasicErrorException;
-import com.sun.star.uno.Exception;
-import com.sun.star.uno.RuntimeException;
-import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
-import com.sun.star.util.ChangesEvent;
-import com.sun.star.util.URL;
-import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XModifiable;
-import com.sun.star.bridge.XInstanceProvider;
-
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.comp.SingletonGlobalVarConstants;
-import it.plio.ext.oxsit.comp.SingletonGlobalVariables;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
-import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
-import it.plio.ext.oxsit.signature.dispatchers.DocumentURLStatusHelper;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import com.sun.star.beans.NamedValue;
+import com.sun.star.beans.PropertyValue;
+import com.sun.star.deployment.PackageInformationProvider;
+import com.sun.star.deployment.XPackageInformationProvider;
+import com.sun.star.document.XEventBroadcaster;
+import com.sun.star.frame.ControlCommand;
+import com.sun.star.frame.FeatureStateEvent;
+import com.sun.star.frame.FrameActionEvent;
+import com.sun.star.frame.XController;
+import com.sun.star.frame.XDispatch;
+import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XFrameActionListener;
+import com.sun.star.frame.XModel;
+import com.sun.star.frame.XStatusListener;
+import com.sun.star.frame.XStorable;
+import com.sun.star.lang.EventObject;
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.script.BasicErrorException;
+import com.sun.star.uno.Exception;
+import com.sun.star.uno.RuntimeException;
+import com.sun.star.uno.UnoRuntime;
+import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.URL;
+import com.sun.star.util.XChangesListener;
+import com.sun.star.util.XChangesNotifier;
+import com.sun.star.util.XModifiable;
 
 // import it.plio.ext.cnipa.utilities.Utilities;
 
@@ -128,7 +109,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	private String												m_imagesUrl					= null;
 	
 	private Object												m_aFrameConfMutex			= new Object();
-	DocumentURLStatusHelper										m_aDocumentConf				= null;
+//	DocumentURLStatusHelper										m_aDocumentConf				= null;
 	
 	protected Object											m_SingletonDataObject;
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
@@ -155,9 +136,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_logger.enableLogging();
 		m_logger.ctor(" frame hash: "+Utilities.getHashHex(m_xFrame));
 
-		final String sSingletonService = GlobConstant.m_sSINGLETON_SERVICE_INSTANCE;
 		try {
-			m_SingletonDataObject = xContext.getValueByName(sSingletonService);
+			m_SingletonDataObject = xContext.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 			if(m_SingletonDataObject != null) {
 				m_logger.info(" singleton service data "+String.format( "%8H", m_SingletonDataObject.hashCode() ));
 				m_xSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_SingletonDataObject);
@@ -165,7 +145,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					m_logger.ctor("XOX_SingletonDataAccess missing!");
 			}
 			else
-				m_logger.info("No singleton service data");			
+				m_logger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!");
 		}
 		catch (ClassCastException e) {
 			e.printStackTrace();
@@ -177,24 +157,19 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			// init the status structure from the configuration
 			if(m_xSingletonDataAccess != null) {
 				//add this to the document-signatures list
-				m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), this);							
+				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), this);
+				 if(m_xDocumentSignatures != null )
+					 changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
 			}
-			m_aDocumentConf = new DocumentURLStatusHelper( xContext, m_aDocumentURL );
-			if (m_aDocumentConf != null) {
-				// we are listening on changes to the Frames/ structure, e.g all
-				// the frames involved
-				m_aDocumentConf.addDocumentChangesListener( this );
-				// now check if we already have a status ready
-			}
-
-			// register ourself at the document as listeners
+			else
+				m_logger.severe("ctor","XOX_SingletonDataAccess missing!");
+			// register ourself at the document as m_aListeners
 			// we register the modified status (when modified signature becomes
 			// broken)
 			// the end of save (hence location given) the status of the button
 			// changes and
 			// we unregister from document broadcast
-			m_DocBroad = (XEventBroadcaster) UnoRuntime.queryInterface(
-					XEventBroadcaster.class, m_xModel );
+			m_DocBroad = (XEventBroadcaster) UnoRuntime.queryInterface( XEventBroadcaster.class, m_xModel );
 			if (m_DocBroad != null) {
 					m_DocBroad.addEventListener( this );
 					m_bIsDocEventRegistered = true;
@@ -244,8 +219,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					m_xModel = xCont.getModel();
 					if (m_xModel != null) {
 
-						m_logger.log("model hash: "+Utilities.getHashHex(m_xModel));
-
 						m_aDocumentURL = m_xModel.getURL();
 						// we decide whath kind of document this is.
 						XStorable xStore = (XStorable) UnoRuntime.queryInterface(
@@ -253,10 +226,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 						// decide if new or already saved
 						if (xStore != null)
 							m_bHasLocation = xStore.hasLocation();
-						if (m_bHasLocation) {
-							if (m_aDocumentConf != null)
-								m_aDocumentConf.setFrameURL( m_aDocumentURL );
-						}
 						// check to see if modified or not
 						XModifiable xMod = (XModifiable) UnoRuntime.queryInterface(
 								XModifiable.class, m_xModel );
@@ -295,19 +264,19 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				XModel xModel = m_xFrame.getController().getModel();
 				m_logger.info("impl_dispatch: \tthe url of the document under signature is: "
 						+ xModel.getURL() );
-				
+
 				TestWriteDigitalSignature aCls = new TestWriteDigitalSignature();				
 				aCls.testWriteSignatureStream(xModel.getURL(),m_aMultiComponentFctry,m_aComponentContext);
 
 				int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
 				if (ret != 0) {
-					localstate = m_aDocumentConf.getSignatureStatus();
+					localstate = m_xDocumentSignatures.getDocumentSignatureState();
 					localstate = localstate + 1;
 					localstate = ( localstate > 4 ) ? 0 : localstate;
 				}
 
 				// now change the frame location
-				m_aDocumentConf.setSignatureStatus( localstate );
+				m_xDocumentSignatures.setDocumentSignatureState( localstate );
 				// println( "m_nState is: " + ImplCNIPASignatureDispatch.m_nState );
 				/**
 				 * while returning we will do as follow Ok was hit: grab the added
@@ -414,7 +383,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 2.3
 	 */
 	private void changeSignatureStatus() {
-		// get the collection of listeners
+		// get the collection of m_aListeners
 		Collection<LinkingStatusListeners> cListenters = Listeners.values();
 		// printlnName( "changeSignatureStatus " + cListenters.size() );
 		if (!cListenters.isEmpty()) {
@@ -545,7 +514,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
 		try {
 			Listeners.remove( aListener );
-			// println( "- listeners: " + Listeners.size() + " URL: " +
+			// println( "- m_aListeners: " + Listeners.size() + " URL: " +
 			// aURL.Complete );
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -606,7 +575,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	public void disposing(com.sun.star.lang.EventObject aEvent) {
 		m_logger.info(" disposing (lang)" );
-//		println( "disposing (lang)" );
 
 		com.sun.star.document.XEventBroadcaster xBroad = 
 			(XEventBroadcaster) UnoRuntime.queryInterface(com.sun.star.document.XEventBroadcaster.class, aEvent.Source);
@@ -619,23 +587,34 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			synchronized (m_bIsDocEventRegisteredMutex) {
 				bIsDocEventRegistered = m_bIsDocEventRegistered;
 				m_bIsDocEventRegistered = false;
-			}				
+			}
 			if (bIsDocEventRegistered == true) {
 				m_logger.info( "disposing: doc listening" );
 				m_DocBroad.removeEventListener( this );
 			}
-			DocumentURLStatusHelper								aFrameConf;			
+			
+//remove from the documentSignatures as well
+			XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
+			if(aNotifier != null) {
+				aNotifier.removeChangesListener(this);
+			}
+			else
+				m_logger.severe("disposing (docu)", "XChangesNotifier missing");
+
+//			m_xDocumentSignatures.getDocumentStorage();
+			
+/*			DocumentURLStatusHelper								aFrameConf;			
 			synchronized(m_aFrameConfMutex) {
 				aFrameConf = m_aDocumentConf;
 				m_aDocumentConf = null;
-			}
-			if (aFrameConf != null) {
+			}*/
+/*			if (aFrameConf != null) {
 				m_logger.info("disposing: config changes listener" );
 				aFrameConf.removeAllFrameChangesListener( this );
 //remove this frame from the data store
 				aFrameConf.removeFrameData();
 //					aFrameConf.dispose();
-			}
+			}*/
 			return;
 		}
 
@@ -646,7 +625,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			
 		if(xFrame != null) {
 			// it's the frame, unregister from the frame
-			// and from the frame data changes (not needed anuymore because this object
+			// and from the frame data changes (not needed anymore because this object
 			// it's gonna disposed of
 			m_logger.info("disposing: got a frame");
 			boolean bIsDocEventRegistered;
@@ -656,11 +635,18 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			}
 
 			if (bIsDocEventRegistered == true) {
-				m_logger.info("disposing: doc listening" );
+				m_logger.info("disposing: frame listening (1)" );
 				m_DocBroad.removeEventListener( this );
 			}
-				
-			DocumentURLStatusHelper								aFrameConf;			
+			//remove from the documentSignatures as well
+			XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
+			if(aNotifier != null) {
+				aNotifier.removeChangesListener(this);
+			}
+			else
+				m_logger.severe("disposing (frame)", "XChangesNotifier missing");
+
+/*			DocumentURLStatusHelper								aFrameConf = null;			
 			synchronized(m_aFrameConfMutex) {
 				aFrameConf = m_aDocumentConf;
 				m_aDocumentConf = null;
@@ -670,12 +656,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				aFrameConf.removeAllFrameChangesListener( this );
 //remove this frame from the data store
 				aFrameConf = null;
-			}
+			}*/
 
 			if (m_bIsFrameActionRegistered) {
 				m_xFrame.removeFrameActionListener( this );
 				m_bIsFrameActionRegistered = false;
-				m_logger.info("disposing: frame listening" );
+				m_logger.info("disposing: frame listening (2)" );
 			}
 		}
 	}
@@ -719,7 +705,9 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			
 			synchronized(m_aFrameConfMutex) {
 
-				if(m_aDocumentConf == null)
+				changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
+
+/*				if(m_aDocumentConf == null)
 					return;
 
 				if (m_aDocumentConf.isFrameExistent()) {
@@ -741,12 +729,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				} else { // a frame was not there, so add it
 					m_logger.info(" adding frame view\n" );
 					m_aDocumentConf.setFrameURL( m_aDocumentURL );
-					// reopen a view and add ourselves as listeners
+					// reopen a view and add ourselves as m_aListeners
 //					m_aDocumentConf.activateSigleFrameView();
 //					m_aDocumentConf.addSingleFrameChangesListener( this );
 					// check the status updates only if necessary
 					changeSignatureStatus( m_aDocumentConf.getSignatureStatus() );
-				}
+				}*/
 
 			}
 		// grab the new status, updates ours
