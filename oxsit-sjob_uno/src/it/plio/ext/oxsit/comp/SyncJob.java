@@ -402,7 +402,6 @@ public class SyncJob extends ComponentBase
 							DispatchInterceptor aInterceptor = new DispatchInterceptor(
 									xFrame, m_xComponentContext, m_xServiceManager );
 							aInterceptor.startListening();
-							m_logger.info("execute", "DispatchInterceptor started");
 						}
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnLoad" )) {

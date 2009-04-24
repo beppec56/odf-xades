@@ -23,8 +23,9 @@
 package it.plio.ext.oxsit.ooo.interceptor;
 
 import it.plio.ext.oxsit.comp.GlobConstantJobs;
-import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveAsDispatch;
+import it.plio.ext.oxsit.jobs.dispatchers.ImplInterceptSaveAsDispatch;
 import it.plio.ext.oxsit.jobs.dispatchers.ImplInterceptSaveDispatch;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
@@ -34,6 +35,7 @@ import com.sun.star.frame.XFrameActionListener;
 import com.sun.star.frame.XInterceptorInfo;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -45,7 +47,7 @@ import com.sun.star.uno.XComponentContext;
  * 
  */
 // FIXME the frameAction may need adjustment (in case of context changing)
-public class DispatchInterceptor extends WeakBase implements
+public class DispatchInterceptor extends ComponentBase implements
 		XDispatchProviderInterceptor, XInterceptorInfo, XDispatchProvider,
 		XFrameActionListener {
 
@@ -88,6 +90,7 @@ public class DispatchInterceptor extends WeakBase implements
 			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstantJobs.m_sUnoSaveURLComplete,
 			GlobConstantJobs.m_sUnoSaveAsURLComplete								};
 
+	protected	DynamicLogger						m_logger;
 	/**
 	 * ctor Initialize the new interceptor. Given frame reference can be used to
 	 * register this interceptor on it automatically later.
@@ -110,7 +113,9 @@ public class DispatchInterceptor extends WeakBase implements
 		m_bDead = false;
 		m_bIsInterceptorRegistered = false;
 		m_bIsFrameActionRegistered = false;
-		printlnName( " ctor" );
+		m_logger = new DynamicLogger(this, xContext);
+		m_logger.enableLogging();
+		m_logger.ctor();
 	}
 
 	/*
@@ -239,7 +244,7 @@ public class DispatchInterceptor extends WeakBase implements
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveAsDispatch == null)
-						m_ImplIntSaveAsDispatch = new ImplIntSaveAsDispatch( m_xFrame,
+						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame,
 								m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveAsDispatch;
 				}
@@ -285,6 +290,7 @@ public class DispatchInterceptor extends WeakBase implements
 	 * isn't guaranteed - in case a newer one was registered ...
 	 */
 	public void startListening() {
+		m_logger.entering("startListening");
 		synchronized (aMutex) {
 			if (m_xFrame == null)
 				return;
@@ -314,10 +320,12 @@ public class DispatchInterceptor extends WeakBase implements
 	 * 
 	 */
 	public void frameAction(FrameActionEvent aEvent) {
+		
+		String aLog;
 
 		if (aEvent.Action.getValue() == com.sun.star.frame.FrameAction.COMPONENT_DETACHING_value) {
 			// this part should be run on another thread
-			print( "frameAction COMPONENT_DETACHING_value,deregistering" );
+			aLog = "frameAction COMPONENT_DETACHING_value,deregistering";
 
 			synchronized (aMutex) {
 				// check if we are already dead (through disposing())
@@ -326,7 +334,7 @@ public class DispatchInterceptor extends WeakBase implements
 				m_bDead = true; // we are going to unregister from this one and
 				if (m_bIsFrameActionRegistered) {
 					// stop the rest of the tasks
-					print( ", deregistering" );
+					aLog = aLog + ", deregistering";
 
 					// unregister the listener
 					m_xFrame.removeFrameActionListener( this );
@@ -336,17 +344,16 @@ public class DispatchInterceptor extends WeakBase implements
 				if (m_bIsInterceptorRegistered) {
 					// remove the interceptor
 					com.sun.star.frame.XDispatchProviderInterception xRegistration = (com.sun.star.frame.XDispatchProviderInterception) UnoRuntime
-							.queryInterface(
-									com.sun.star.frame.XDispatchProviderInterception.class,
+							.queryInterface(com.sun.star.frame.XDispatchProviderInterception.class,
 									m_xFrame );
 					if (xRegistration != null)
 						xRegistration.releaseDispatchProviderInterceptor( this );
 
 					m_bIsInterceptorRegistered = false;
-					print( ", remove interceptor" );
+					aLog = aLog +  ", remove interceptor";
 				}
 			}
-			println( "" );
+			m_logger.info( aLog );
 		} else
 			// give some status indication
 			switch (aEvent.Action.getValue()) {
@@ -369,16 +376,16 @@ public class DispatchInterceptor extends WeakBase implements
 
 				break;
 			case com.sun.star.frame.FrameAction.COMPONENT_ATTACHED_value:
-				println( "frameAction COMPONENT_ATTACHED_value" );
+				m_logger.info( "frameAction COMPONENT_ATTACHED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.COMPONENT_REATTACHED_value:
-				println( "frameAction COMPONENT_REATTACHED_value" );
+				m_logger.info( "frameAction COMPONENT_REATTACHED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_ACTIVATED_value:
-				println( "frameAction FRAME_ACTIVATED_value" );
+				m_logger.info( "frameAction FRAME_ACTIVATED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
-				println( "frameAction FRAME_DEACTIVATING_value" );
+				m_logger.info( "frameAction FRAME_DEACTIVATING_value" );
 				// ///////////// not good...
 				// //check if we are frame action m_aListeners, if yes unregister,
 				// surround with mutex
@@ -404,18 +411,18 @@ public class DispatchInterceptor extends WeakBase implements
 				// }
 				break;
 			case com.sun.star.frame.FrameAction.CONTEXT_CHANGED_value:
-				println( "frameAction CONTEXT_CHANGED_value" );
+				m_logger.info( "frameAction CONTEXT_CHANGED_value" );
 				// need to reregister??? It seems that this becomes and endless
 				// loop...
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_UI_ACTIVATED_value:
-				println( "frameAction FRAME_UI_ACTIVATED_value" );
+				m_logger.info( "frameAction FRAME_UI_ACTIVATED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_UI_DEACTIVATING_value:
-				println( "frameAction FRAME_UI_DEACTIVATING_value" );
+				m_logger.info( "frameAction FRAME_UI_DEACTIVATING_value" );
 				break;
 			default:
-				println( "frameAction other value" );
+				m_logger.info( "frameAction other value" );
 			}
 	}
 
@@ -425,6 +432,7 @@ public class DispatchInterceptor extends WeakBase implements
 	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 	 */
 	public void disposing(EventObject arg0) {
+		m_logger.entering("disposing");
 		synchronized (aMutex) {
 			if (m_bDead)
 				return;
@@ -433,12 +441,12 @@ public class DispatchInterceptor extends WeakBase implements
 			m_bDead = true; // we are going to unregister from this one
 
 			if (m_bIsFrameActionRegistered) {
-				printName( "disposing" );
+//				printName( "disposing" );
 				m_xFrame.removeFrameActionListener( this );
 				m_bIsFrameActionRegistered = false;
 			}
 
-			println( ", deregistering..." );
+//			println( ", deregistering..." );
 			if (m_bIsInterceptorRegistered) {
 				com.sun.star.frame.XDispatchProviderInterception xRegistration = (com.sun.star.frame.XDispatchProviderInterception) UnoRuntime
 						.queryInterface(
@@ -459,28 +467,6 @@ public class DispatchInterceptor extends WeakBase implements
 		// return;
 		// //check if we are frame action listener
 		// }
-		printlnName("shutdown");
-	}
-
-	// //////////////// debug methods
-	public String getHashHex() {
-		return String.format( "%8H", hashCode() );
-	}
-
-	public void printlnName(String _sMex) {
-		System.out
-				.println( getHashHex() + " " + this.getClass().getName() + ": " + _sMex );
-	}
-
-	public void printName(String _sMex) {
-		System.out.print( getHashHex() + " " + this.getClass().getName() + ": " + _sMex );
-	}
-
-	public void print(String _sMex) {
-		System.out.print( " " + _sMex );
-	}
-
-	public void println(String _sMex) {
-		System.out.println( getHashHex() + " " + _sMex );
+		m_logger.entering("shutdown");
 	}
 }

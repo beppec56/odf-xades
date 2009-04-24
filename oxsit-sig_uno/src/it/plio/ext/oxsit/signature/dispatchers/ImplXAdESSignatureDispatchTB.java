@@ -572,14 +572,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 	 */
 	public void disposing(com.sun.star.lang.EventObject aEvent) {
-		m_logger.info(" disposing (lang)" );
+		String aLog = " disposing (lang)";
 
 		com.sun.star.document.XEventBroadcaster xBroad = 
 			(XEventBroadcaster) UnoRuntime.queryInterface(com.sun.star.document.XEventBroadcaster.class, aEvent.Source);
 
 		if(xBroad != null ) {
 //it's the document, unregister from it and from the frame data changes			
-			m_logger.info("disposing: we have an XEventBroadcaster (so we have a docu)");
+			aLog = aLog + ", we have an XEventBroadcaster (so we have a docu)";
 			
 			boolean bIsDocEventRegistered;
 			synchronized (m_bIsDocEventRegisteredMutex) {
@@ -587,11 +587,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				m_bIsDocEventRegistered = false;
 			}
 			if (bIsDocEventRegistered == true) {
-				m_logger.info( "disposing: doc listening" );
+				aLog = aLog + ", doc listening";
 				m_DocBroad.removeEventListener( this );
 			}
 			
 //remove from the documentSignatures as well
+			m_logger.info(aLog);
 			XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
 			if(aNotifier != null) {
 				aNotifier.removeChangesListener(this);
@@ -611,7 +612,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			// it's the frame, unregister from the frame
 			// and from the frame data changes (not needed anymore because this object
 			// it's gonna disposed of
-			m_logger.info("disposing: got a frame");
+			aLog = aLog + ", got a frame";
 			boolean bIsDocEventRegistered;
 			synchronized (m_bIsDocEventRegisteredMutex) {
 				bIsDocEventRegistered = m_bIsDocEventRegistered;
@@ -619,7 +620,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			}
 
 			if (bIsDocEventRegistered == true) {
-				m_logger.info("disposing: frame listening (1)" );
+				aLog = aLog + ", frame listening (1)";
 				m_DocBroad.removeEventListener( this );
 			}
 			//remove from the documentSignatures as well
@@ -633,8 +634,9 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			if (m_bIsFrameActionRegistered) {
 				m_xFrame.removeFrameActionListener( this );
 				m_bIsFrameActionRegistered = false;
-				m_logger.info("disposing: frame listening (2)" );
+				aLog = aLog + ", frame listening (2)";
 			}
+			m_logger.info(aLog);
 		}
 	}
 

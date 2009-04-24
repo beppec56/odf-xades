@@ -67,7 +67,7 @@ public class ImplDispatchSynch implements XDispatch {
 	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.log("addStatusListener "+String.format("%8H",hashCode())+" "+aURL.Complete);		
+		m_logger.log("addStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.addStatusListener(aListener, aURL);
 	}
@@ -89,7 +89,7 @@ public class ImplDispatchSynch implements XDispatch {
 	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void removeStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.log("removeStatusListener "+String.format("%8H",hashCode())+" "+aURL.Complete);		
+		m_logger.log("removeStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener(aListener, aURL);
 	}	

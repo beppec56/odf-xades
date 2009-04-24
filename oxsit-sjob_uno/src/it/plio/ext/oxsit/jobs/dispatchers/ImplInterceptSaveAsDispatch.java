@@ -42,9 +42,9 @@ import com.sun.star.util.XURLTransformer;
  * @author beppe
  *
  */
-public class ImplIntSaveAsDispatch extends ImplDispatchAsynch implements
+public class ImplInterceptSaveAsDispatch extends ImplDispatchAsynch implements
 		XDispatch, IDispatchImplementer {
-	public ImplIntSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
+	public ImplInterceptSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
@@ -102,10 +102,10 @@ public class ImplIntSaveAsDispatch extends ImplDispatchAsynch implements
 							xDispatcher.dispatch(aParseURL[0],lProperties);					
 				}
 				else
-					m_logger.info(" No dispatcher for"+aParseURL[0].Complete);
+					m_logger.info("NO dispatcher for"+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info(this.getClass().getName()+" No provider for "+aParseURL[0].Complete);
+				m_logger.info("NO provider for "+aParseURL[0].Complete);
 
 //			Dispatch the URL into the frame.
 			super.impl_dispatch(aURL, lArguments);

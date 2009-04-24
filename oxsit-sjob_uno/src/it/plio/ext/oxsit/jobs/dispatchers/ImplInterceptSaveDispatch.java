@@ -50,13 +50,13 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 
 		super(xFrame, xContext, xMCF, unoSaveSlaveDispatch);
 		m_logger.enableLogging();
+		m_logger.ctor();
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 
-		m_logger.info("aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
+		m_logger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
 		if(	lArguments.length > 0) {
-//			m_logger.info(" lArguments.lenght: "+lArguments.length);
 			for(int i = 0; i <lArguments.length; i++) {
 				PropertyValue aValue = lArguments[i];
 				
@@ -95,21 +95,24 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 					com.sun.star.frame.XNotifyingDispatch xNotifyingDispatcher = 
 						(com.sun.star.frame.XNotifyingDispatch)UnoRuntime.queryInterface(
 								com.sun.star.frame.XNotifyingDispatch.class,xDispatcher);
-					if( xNotifyingDispatcher != null )
-						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lProperties, null);
-					else
+/*					if( xNotifyingDispatcher != null )
+						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lArgumentslProperties, null);
+					else*/
 						//trow exception: unimplemented interface !...
-						xDispatcher.dispatch(aParseURL[0],lProperties);
+					m_logger.info("dispatching "+aParseURL[0].Complete);
+						xDispatcher.dispatch(aParseURL[0],lArguments/*lProperties*/);
 //					then get from the Notify the value we need of the user answer.
 
 				}
 				else
-					m_logger.info("No dispatcher for "+aParseURL[0]);
+					m_logger.info("NO dispatcher for "+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info("No provider for "+aParseURL[0]);
+				m_logger.info("NO provider for "+aParseURL[0].Complete);
 
-//			Dispatch the URL into the frame.
+			//Dispatch the URL into the frame.
+			//please note that this last one is to be dispatched only if the save is enabled by the user
+			m_logger.info("Drop down to superclass");
 			super.impl_dispatch(aURL, lArguments);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
