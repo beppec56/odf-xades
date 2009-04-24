@@ -118,7 +118,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public SignatureHandler(XComponentContext context) {
 		m_logger = new DynamicLogger(this,context);
-//FIXME DEBUG		m_logger.enableLogging();
+//FIXME DEBUG	m_logger.enableLogging();
 		m_logger.ctor();
 		m_xComponentContext = context;
 		// passert("m_xComponentContext",m_xComponentContext);
@@ -201,6 +201,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public com.sun.star.frame.XDispatch queryDispatch(com.sun.star.util.URL aURL,
 			String sTargetFrameName, int iSearchFlags) {
+		m_logger.log("queryDispatch",aURL.Complete);
 		try {
 			if (aURL.Protocol.compareTo( GlobConstant.m_sSIGN_PROTOCOL_BASE_URL ) == 0) {
 				// if ( aURL.Path.compareTo(GlobConstant.m_sSelectSignPath) == 0

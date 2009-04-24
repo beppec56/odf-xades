@@ -24,7 +24,7 @@ package it.plio.ext.oxsit.ooo.interceptor;
 
 import it.plio.ext.oxsit.comp.GlobConstantJobs;
 import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveAsDispatch;
-import it.plio.ext.oxsit.jobs.dispatchers.ImplIntSaveDispatch;
+import it.plio.ext.oxsit.jobs.dispatchers.ImplInterceptSaveDispatch;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
@@ -204,8 +204,8 @@ public class DispatchInterceptor extends WeakBase implements
 					return m_ImplIntSignatureDispatch;
 				}
 			}
-
-*/			// intercept .uno:Save
+*/
+			// intercept .uno:Save
 			if (aURL.Complete.equalsIgnoreCase( GlobConstantJobs.m_sUnoSaveURLComplete ) == true) {
 				// printlnName("com.sun.star.frame.XDispatchProvider#queryDispatch
 				// intercept: "+aURL.Complete);
@@ -225,7 +225,7 @@ public class DispatchInterceptor extends WeakBase implements
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveDispatch == null)
-						m_ImplIntSaveDispatch = new ImplIntSaveDispatch( m_xFrame, m_xCC,
+						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveDispatch;
 				}

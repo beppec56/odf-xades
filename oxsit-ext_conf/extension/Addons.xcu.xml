@@ -78,7 +78,7 @@
 						<!-- valori possibili per MergeCommand:
 							AddAfter	dopo il target
 							AddBefore	prima del target
-							Replace		al posto del target (e lo ripristina togliendo la estensione)
+							Replace		al posto del target (e lo ripristina togliendo l'estensione)
 							Remove		
 						-->
 						<value>AddAfter</value>

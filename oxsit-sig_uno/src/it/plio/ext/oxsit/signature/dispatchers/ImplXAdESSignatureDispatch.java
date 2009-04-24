@@ -134,45 +134,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 			} else
 				m_logger.info( "no frame!" );		
 	}
-
-	protected void impl_dispatch_unused(URL aURL, PropertyValue[] lArguments) {
-//call the dispatch of the toolbar, so the status will be updated
-		try {
-			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
-			aParseURL[0] = new com.sun.star.util.URL();
-			aParseURL[0].Complete = it.plio.ext.oxsit.ooo.GlobConstant.m_sSIGN_PROTOCOL_BASE_URL
-			+ it.plio.ext.oxsit.ooo.GlobConstant.m_sSIGN_DIALOG_PATH_TB;
-			com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];
-
-			com.sun.star.frame.XDispatchProvider xProvider = (com.sun.star.frame.XDispatchProvider) UnoRuntime
-			.queryInterface( com.sun.star.frame.XDispatchProvider.class, m_xFrame );
-			// need an URLTransformer
-			Object obj;
-			obj = m_axMCF.createInstanceWithContext( "com.sun.star.util.URLTransformer",m_xCC );
-			XURLTransformer xTransformer = (XURLTransformer) UnoRuntime.queryInterface(
-					XURLTransformer.class, obj );
-			xTransformer.parseStrict( aParseURL );
-
-			// Ask it for right dispatch object for our URL.
-			// Force given frame as target for following dispatch by using "",
-			// it's the same as "_self".
-			if (xProvider != null) {
-				com.sun.star.frame.XDispatch xDispatcher = null;
-				xDispatcher = xProvider.queryDispatch( aParseURL[0], "", 0 );
-
-				// Dispatch the URL into the frame.
-				if (xDispatcher != null) {
-					xDispatcher.dispatch( aParseURL[0], lProperties );
-				}
-			}
-		} catch (com.sun.star.uno.RuntimeException e) {
-			e.printStackTrace();			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 	
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 		// call the select signature dialog

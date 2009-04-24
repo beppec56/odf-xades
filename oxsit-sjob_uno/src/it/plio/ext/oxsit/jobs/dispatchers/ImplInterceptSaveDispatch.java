@@ -43,25 +43,28 @@ import com.sun.star.util.XURLTransformer;
  * @author beppe
  *
  */
-public class ImplIntSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
+public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
 
-	public ImplIntSaveDispatch(XFrame xFrame, XComponentContext xContext,
+	public ImplInterceptSaveDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super(xFrame, xContext, xMCF, unoSaveSlaveDispatch);
+		m_logger.enableLogging();
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 
+		m_logger.info("aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
 		if(	lArguments.length > 0) {
-			m_logger.info(" lArguments.lenght: "+lArguments.length);
+//			m_logger.info(" lArguments.lenght: "+lArguments.length);
 			for(int i = 0; i <lArguments.length; i++) {
 				PropertyValue aValue = lArguments[i];
 				
-				m_logger.info("name: "+aValue.Name);
+				m_logger.info("name: "+aValue.Name+" "+aValue.Value.toString());
 			}
 			m_logger.info("");
 		}
+
 		try {
 //			check the slave one
 			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
