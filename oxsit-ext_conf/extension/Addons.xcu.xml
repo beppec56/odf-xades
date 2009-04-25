@@ -29,6 +29,7 @@
 		<node oor:name="OfficeToolBar">
 			<node oor:name="it.plio.ext.oxsit.OfficeToolBar" oor:op="replace">
 				<node oor:name="button1" oor:op="replace">
+				<!-- if a document type is changed here, change it below for menu and inside the code, look for DOCUMENTTYPE text key -->
 					<prop oor:name="Context" oor:type="xs:string">
 						<value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.drawing.DrawingDocument,com.sun.star.presentation.PresentationDocument</value>
 					</prop>

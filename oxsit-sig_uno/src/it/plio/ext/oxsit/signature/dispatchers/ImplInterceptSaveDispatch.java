@@ -36,9 +36,9 @@ import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 
-public class ImplBeforeSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
+public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
 
-	public ImplBeforeSaveDispatch(XFrame xFrame, XComponentContext xContext,
+	public ImplInterceptSaveDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);

@@ -215,7 +215,7 @@ public class SignatureHandler extends ComponentBase
 				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSavePath) == 0 ) {
 				// if(m_aImplBeforeSaveDispatch == null)
 				// m_aImplBeforeSaveDispatch = new
-				// ImplBeforeSaveDispatch(m_xFrame,
+				// ImplInterceptSaveDispatch(m_xFrame,
 				// m_xComponentContext, m_xMultiComponentFactory, null);
 				// return m_aImplBeforeSaveDispatch;
 				// }

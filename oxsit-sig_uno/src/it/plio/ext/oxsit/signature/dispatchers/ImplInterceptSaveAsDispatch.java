@@ -20,9 +20,8 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.jobs.dispatchers;
+package it.plio.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.comp.GlobConstantJobs;
 import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
@@ -39,41 +38,36 @@ import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 import com.sun.star.util.XURLTransformer;
 
-/** implement the intercepted Save dispatch
+/**
  * @author beppe
  *
  */
-public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
-
-	public ImplInterceptSaveDispatch(XFrame xFrame, XComponentContext xContext,
+public class ImplInterceptSaveAsDispatch extends ImplDispatchAsynch implements
+		XDispatch, IDispatchImplementer {
+	public ImplInterceptSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
-		super(xFrame, xContext, xMCF, unoSaveSlaveDispatch);
-		m_logger.enableLogging();
-		m_logger.ctor();
+		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-
-		m_logger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
-		if(	lArguments.length > 0) {
-			String aLog = "";
-			for(int i = 0; i <lArguments.length; i++) {
-				PropertyValue aValue = lArguments[i];
-				
-				aLog = aLog+ "name: "+aValue.Name+" "+aValue.Value.toString()+",";
-			}
-			m_logger.info(aLog);
-		}
-
-/*		try {
+		// TODO Auto-generated method stub
+//		we need to first call our internal method and then call the original one
+		m_logger.info(" lArguments.length: "+lArguments.length);
+		
+/** check if a CNIPA signature is present, if yes, call a message box to
+ * ask the user confirmation before saving (need to check for a better method, actually
+ */
+		
+		try {
 //			check the slave one
 			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
 			aParseURL[0] = new com.sun.star.util.URL();
-			aParseURL[0].Complete = GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+ GlobConstant.m_sBEFORE_SAVE_PATH;
-			com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];*/
+			aParseURL[0].Complete = GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+
+													GlobConstant.m_sBEFORE_SAVE_AS_PATH;
+			com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];
 
-/*			com.sun.star.frame.XDispatchProvider xProvider =
+			com.sun.star.frame.XDispatchProvider xProvider =
 				(com.sun.star.frame.XDispatchProvider)UnoRuntime.queryInterface(
 						com.sun.star.frame.XDispatchProvider.class, m_xFrame);
 //			need an URLTransformer
@@ -83,42 +77,41 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 					XURLTransformer.class, obj);
 			xTransformer.parseStrict( aParseURL );
 			m_logger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
-*/
+
 //			Ask it for right dispatch object for our URL.
 //			Force given frame as target for following dispatch by using "",
 //			it's the same as "_self".
-/*			if( xProvider != null ) {
+			if( xProvider != null ) {
 				com.sun.star.frame.XDispatch xDispatcher = null;
 				xDispatcher = xProvider.queryDispatch(aParseURL[0],"",0);
 
-				m_logger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
 				// Dispatch the URL into the frame.
 				if(xDispatcher != null) {
 					com.sun.star.frame.XNotifyingDispatch xNotifyingDispatcher = 
 						(com.sun.star.frame.XNotifyingDispatch)UnoRuntime.queryInterface(
-								com.sun.star.frame.XNotifyingDispatch.class,xDispatcher);*/
-/*					if( xNotifyingDispatcher != null )
-						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lArgumentslProperties, null);
-					else*/
-						//trow exception: unimplemented interface !...
-//					m_logger.info("dispatching "+aParseURL[0].Complete);
-//						xDispatcher.dispatch(aParseURL[0],lArguments/*lProperties*/);
-//					then get from the Notify the value we need of the user answer.
-/*
+								com.sun.star.frame.XNotifyingDispatch.class,xDispatcher);
+					if( xNotifyingDispatcher != null )
+						try {
+							xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lProperties, null);
+						} catch (com.sun.star.uno.RuntimeException e) {
+							//trow exception: unimplemented interface !...
+							xDispatcher.dispatch(aParseURL[0],lProperties);
+							//					then get from the Notify the value we need of the user answer.
+						}
+						else
+							xDispatcher.dispatch(aParseURL[0],lProperties);					
 				}
 				else
-					m_logger.info("NO dispatcher for "+aParseURL[0].Complete);
+					m_logger.info("NO dispatcher for"+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info("NO provider for "+aParseURL[0].Complete);*/
+				m_logger.info("NO provider for "+aParseURL[0].Complete);
 
-			//Dispatch the URL into the frame.
-			//please note that this last one is to be dispatched only if the save is enabled by the user
-			m_logger.info("Drop down to superclass");
+//			Dispatch the URL into the frame.
 			super.impl_dispatch(aURL, lArguments);
-/*		} catch (Exception e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 	}
 }

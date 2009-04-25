@@ -26,7 +26,7 @@ import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
-import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveDispatch;
+import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
@@ -278,7 +278,7 @@ public class DispatchIntercept extends ComponentBase
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveDispatch == null)
-						m_ImplIntSaveDispatch = new ImplBeforeSaveDispatch( m_xFrame, m_xCC,
+						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveDispatch;
 				}
