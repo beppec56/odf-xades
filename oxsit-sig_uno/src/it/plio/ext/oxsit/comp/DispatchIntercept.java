@@ -28,6 +28,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveAsDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
+import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
 import com.sun.star.frame.FrameActionEvent;
@@ -99,7 +100,7 @@ public class DispatchIntercept extends ComponentBase
 	private XDispatch								m_ImplIntSaveAsDispatch		= null;
 	
 	private IDispatchBaseObject						m_aImplXAdESSignatureDispatchTB	= null;	
-
+	private IDispatchBaseObject						m_aImplXAdESSignatureDispatch = null;
 	private Object									m_aMutex						= new Object();
 
 	private boolean									m_bDead;
@@ -306,11 +307,15 @@ public class DispatchIntercept extends ComponentBase
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatchTB == null)
 					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
-							m_xFrame, m_xCC, m_axMCF,	null );
+							m_xFrame, m_xCC, m_axMCF, null );
 				return m_aImplXAdESSignatureDispatchTB;
 			}
-
-			
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
+				if (m_aImplXAdESSignatureDispatch == null)
+					m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(
+							m_xFrame, m_xCC, m_axMCF, null );
+				return m_aImplXAdESSignatureDispatch;
+			}
 			
 			synchronized (this) {
 				if (m_xSlave != null)// if a slave exist pass the request

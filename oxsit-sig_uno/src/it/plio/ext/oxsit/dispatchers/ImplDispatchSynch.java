@@ -59,10 +59,6 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 		m_xCC = xContext;
 		m_aUnoSlaveDispatch = unoSaveSlaveDispatch;
 		m_logger = new DynamicLogger(this,xContext);
-
-/*		DateFormat timeFormatter =
-			DateFormat.getTimeInstance(DateFormat.DEFAULT, new Locale("it"));
-		today =  timeFormatter.format(new Date());*/
 		m_logger.info("ctor");
 	}
 

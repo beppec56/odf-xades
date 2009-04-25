@@ -47,6 +47,7 @@ import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
+import com.sun.star.util.XChangesNotifier;
 import com.sun.star.util.XModifiable;
 import com.sun.star.util.XURLTransformer;
 
@@ -254,11 +255,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 				LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
 						m_aDocumentURL );
 				Listeners.put( aListener, MyListener );
-//				println("+ listener: "+ new String(String.format("%8H",aListener.hashCode() ) ) + " URL: "+aURL.Complete);
-//grab the document status
-
-				// prepare the new image for the toolbar and send it
-
 				aListener.statusChanged( prepareFeatureState() );
 			}	
 
@@ -281,7 +277,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		aState.Source = this;
 		return aState;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -292,7 +288,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		m_logger.entering("removeStatusListener");
 		try {
 			Listeners.remove( aListener );
-//			println("- m_aListeners: "+Listeners.size()+ " URL: "+aURL.Complete);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -364,5 +359,13 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	public void disposing(com.sun.star.lang.EventObject aEventObj) {
 		// TODO Auto-generated method stub
 		
+	}
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+
+		m_logger.entering("dispose");
 	}
 }

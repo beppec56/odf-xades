@@ -198,13 +198,13 @@ public class SignatureHandler extends ComponentBase
 				// null);
 				// return m_aImplSelSignatureDispatch;
 				// }
-				if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH ) == 0) {
+				/*if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH ) == 0) {
 					if (m_aImplXAdESSignatureDispatch == null)
 						m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(
 								m_xFrame, m_xComponentContext, m_xMultiComponentFactory,
 								null );
 					return m_aImplXAdESSignatureDispatch;
-				}
+				}*/
 /*				if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH_TB ) == 0) {
 					if (m_aImplXAdESSignatureDispatchTB == null)
 						m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
