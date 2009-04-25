@@ -37,12 +37,14 @@ import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatchProviderInterception;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.presentation.XPresentation;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
 import com.sun.star.task.XStatusIndicator;
@@ -380,43 +382,11 @@ public class SyncJob extends ComponentBase
 					 */
 					if (xFrame != null) {
 						m_xFrame = xFrame;
-						xModel = m_xFrame.getController().getModel();
-						// get the component and the model, so the interceptor
-						// will have all done
-						// detect if the document we are linked to is a Writer,
-						// an Impress or a Draw one
-						// if false the CNIPA signature is not supported
-						// get the component
-						// we query the interface XSpreadsheetDocument from the
-						// model
-						XSpreadsheetDocument xSpreadsheetDocument = (XSpreadsheetDocument) UnoRuntime
-								.queryInterface( XSpreadsheetDocument.class, xModel );
-						// we query the interface XTextDocument from the model
-						XTextDocument xTextDocument = (XTextDocument) UnoRuntime
-								.queryInterface( XTextDocument.class, xModel );
-						// we query the interface XDrawPagesSupplier from the
-						// model
-						XDrawPagesSupplier xDrawDocument = (XDrawPagesSupplier) UnoRuntime
-								.queryInterface( XDrawPagesSupplier.class, xModel );
-
-						if (xSpreadsheetDocument != null || xTextDocument != null
-								|| xDrawDocument != null) {
-							// a CNIPA signable type of document, then start the
-							// interceptor
-/*							DispatchInterceptor aInterceptor = new DispatchInterceptor(
-									xFrame, m_xComponentContext, m_xServiceManager );
-							
-							
-							aInterceptor.startListening();*/
-
+						if (canBeSigned(xFrame)) {
 							try {
-							Object aObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE, m_xComponentContext);
-							if(aObj != null) {
+								Object aObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE, m_xComponentContext);
 								XOX_DispatchInterceptor xD = (XOX_DispatchInterceptor)UnoRuntime.queryInterface(XOX_DispatchInterceptor.class, aObj);
 								xD.startListening(xFrame);
-							}
-							else
-								m_logger.severe("", "cannot create DispatchInterceptor");
 							}
 							catch (RuntimeException ex) {
 								m_logger.severe("", "cannot create DispatchInterceptor", ex);
@@ -641,5 +611,45 @@ public class SyncJob extends ComponentBase
 	public void removeCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
 		m_logger.info( "removeCloseListener called" );
+	}
+
+	/** check if the document type can be signed
+	 * 
+	 * @param _theModel
+	 * @return
+	 */
+	protected boolean canBeSigned(XModel _theModel) {
+		// detect if the document we are linked to is a Writer,
+		// an Impress or a Draw one
+		// if false the CNIPA signature is not supported
+		// get the component
+		// we query the interface XSpreadsheetDocument from the
+		// model
+		XSpreadsheetDocument xSpreadsheetDocument = (XSpreadsheetDocument) UnoRuntime
+				.queryInterface( XSpreadsheetDocument.class, _theModel );
+		// we query the interface XTextDocument from the model
+		XTextDocument xTextDocument = (XTextDocument) UnoRuntime
+				.queryInterface( XTextDocument.class, _theModel );
+		// we query the interface XDrawPagesSupplier from the
+		// model
+		XDrawPagesSupplier xDrawDocument = (XDrawPagesSupplier) UnoRuntime
+				.queryInterface( XDrawPagesSupplier.class, _theModel );
+		
+		XPresentation xPresentation = (XPresentation) UnoRuntime
+		.queryInterface( XPresentation.class, _theModel );
+
+		// test if it's a XAdES (CNIPA) signable type of document, then start the
+		// interceptor
+		//DOCUMENTTYPE    <<--= don't remove that text key, is needed if document
+		//type is changed
+		if (xSpreadsheetDocument != null || xTextDocument != null
+				|| xDrawDocument != null || xPresentation != null)
+			return true;
+		return false;
+	}
+
+	protected boolean canBeSigned(XFrame _theFrame) {
+		
+		return canBeSigned(_theFrame.getController().getModel());
 	}
 }
