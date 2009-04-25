@@ -35,8 +35,8 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 
-import it.plio.ext.oxsit.dispatchers.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.ImplDispatchSynch;
+import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogAbout;

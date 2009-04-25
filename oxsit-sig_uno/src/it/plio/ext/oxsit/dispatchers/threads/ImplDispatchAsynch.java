@@ -20,10 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.dispatchers;
+package it.plio.ext.oxsit.dispatchers.threads;
 
-import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
-import it.plio.ext.oxsit.dispatchers.threads.OnewayDispatchExecutor;
+import it.plio.ext.oxsit.dispatchers.ImplDispatchSynch;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;
