@@ -289,7 +289,7 @@ public class DispatchIntercept extends ComponentBase
 					return m_ImplIntSaveDispatch;
 				}
 			}
-/*			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					XDispatch aUnoSaveSlaveDispatch = null;
@@ -301,7 +301,7 @@ public class DispatchIntercept extends ComponentBase
 								m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveAsDispatch;
 				}
-			}*/
+			}
 
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatchTB == null)
