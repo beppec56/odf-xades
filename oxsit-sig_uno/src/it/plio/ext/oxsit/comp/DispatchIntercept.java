@@ -23,10 +23,12 @@
 package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
+import it.plio.ext.oxsit.dispatchers.IDispatchBaseObject;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
+import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
@@ -95,6 +97,8 @@ public class DispatchIntercept extends ComponentBase
 //	private XDispatch								m_ImplIntSignatureDispatch	= null;
 	private XDispatch								m_ImplIntSaveDispatch		= null;
 	private XDispatch								m_ImplIntSaveAsDispatch		= null;
+	
+	private IDispatchBaseObject						m_aImplXAdESSignatureDispatchTB	= null;	
 
 	private Object									m_aMutex						= new Object();
 
@@ -106,7 +110,9 @@ public class DispatchIntercept extends ComponentBase
 
 	private static final String[]					m_InterceptedURLs			= {
 			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstant.m_sUnoSaveURLComplete,
-			GlobConstant.m_sUnoSaveAsURLComplete								};
+			GlobConstant.m_sUnoSaveAsURLComplete,
+			GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+GlobConstant.m_sSIGN_DIALOG_PATH_TB
+			};
 
 	protected	DynamicLogger						m_logger;
 	/**
@@ -297,6 +303,15 @@ public class DispatchIntercept extends ComponentBase
 				}
 			}
 
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
+				if (m_aImplXAdESSignatureDispatchTB == null)
+					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
+							m_xFrame, m_xCC, m_axMCF,	null );
+				return m_aImplXAdESSignatureDispatchTB;
+			}
+
+			
+			
 			synchronized (this) {
 				if (m_xSlave != null)// if a slave exist pass the request
 					// down the chain of responsibility

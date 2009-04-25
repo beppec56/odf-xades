@@ -22,7 +22,6 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.comp.GlobConstantJobs;
 import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;

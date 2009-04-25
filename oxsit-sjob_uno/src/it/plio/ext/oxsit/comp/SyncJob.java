@@ -27,7 +27,6 @@ import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.interceptor.DispatchInterceptor;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import com.sun.star.beans.NamedValue;

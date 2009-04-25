@@ -205,13 +205,13 @@ public class SignatureHandler extends ComponentBase
 								null );
 					return m_aImplXAdESSignatureDispatch;
 				}
-				if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH_TB ) == 0) {
+/*				if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH_TB ) == 0) {
 					if (m_aImplXAdESSignatureDispatchTB == null)
 						m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
 								m_xFrame, m_xComponentContext, m_xMultiComponentFactory,
 								null );
 					return m_aImplXAdESSignatureDispatchTB;
-				}
+				}*/
 				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSavePath) == 0 ) {
 				// if(m_aImplBeforeSaveDispatch == null)
 				// m_aImplBeforeSaveDispatch = new
