@@ -22,6 +22,12 @@
 
 package it.plio.ext.oxsit.logging;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -65,9 +71,15 @@ public class LocalLogFormatter extends Formatter {
 	}
 
 	private String getTimeMs(LogRecord _rec) {
-//		Date aDate = new Date();		
-		String time = String.format( "%20d ", _rec.getMillis() );
-		return time.substring( 14,17 ) +"."+ time.substring( 17 );		
+		Date aDate = new Date(_rec.getMillis());
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(aDate);	
+		
+//string with date and time
+//		String time = String.format("%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL", calendar);
+//string with time only
+		String time = String.format("%1$tH:%1$tM:%1$tS.%1$tL", calendar);
+		return time;
 	}
 	
 	public String getHead(Handler h) {
