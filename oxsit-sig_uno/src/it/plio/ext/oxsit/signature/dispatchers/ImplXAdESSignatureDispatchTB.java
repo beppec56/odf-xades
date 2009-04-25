@@ -117,9 +117,9 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	private XComponentContext									m_aComponentContext;
 	private XMultiComponentFactory								m_aMultiComponentFctry;
 	
-	protected boolean											m_aObjectActive;
+	protected boolean											m_bObjectActive;
 
-	private boolean m_bSignatureIsEnabled = false;
+	private boolean 											m_bSignatureIsEnabled;
 
 	public ImplXAdESSignatureDispatchTB(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -132,15 +132,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_aMultiComponentFctry = xContext.getServiceManager();
 		m_bHasLocation = false;
 		m_bSignatureIsEnabled = false;
-
-//FIXME DEBUG 
+//FIXME DEBUG 	
 		m_logger.enableLogging();
 		m_logger.ctor(" frame hash: "+Utilities.getHashHex(m_xFrame));
 
 		try {
 			m_SingletonDataObject = xContext.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 			if(m_SingletonDataObject != null) {
-				m_logger.info(" singleton service data "+String.format( "%8H", m_SingletonDataObject.hashCode() ));
+				m_logger.info(" singleton service data "+Utilities.getHashHex(m_SingletonDataObject));
 				m_xSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_SingletonDataObject);
 				if(m_xSingletonDataAccess == null)
 					m_logger.ctor("XOX_SingletonDataAccess missing!");
@@ -153,6 +152,19 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		}
 
 		grabModel();
+
+		m_imagesUrl = null;
+		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( m_xCC );
+		if(xPkgInfo != null) {
+			String sLoc = xPkgInfo
+			.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
+			if(sLoc != null) 
+				m_imagesUrl = sLoc + "/images";
+			else //FIXME, TODO devise a better method, if the call fails
+				m_logger.severe("ctor","no package location !");
+		}
+		else
+			m_logger.info("ctor: No pkginfo!");
 		// Utilities.showInterfaces( m_xModel );
 		if (m_xModel != null) {
 			// init the status structure from the configuration
@@ -197,20 +209,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		m_imagesUrl = null;
-		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( m_xCC );
-		if(xPkgInfo != null) {
-			String sLoc = xPkgInfo
-			.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
-			if(sLoc != null) 
-				m_imagesUrl = sLoc + "/images";
-			else //FIXME, TODO devise a better method, if the call fails
-				m_logger.info("ctor: no package location !");
-		}
-		else
-			m_logger.info("ctor: No pkginfo!");
 		aMex.dispose();
-		m_aObjectActive = true;
+		m_bObjectActive = true;
 	}
 
 	private void grabModel() {
@@ -256,8 +256,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		 * xPkgInfo.getPackageLocation("org.openoffice.test.ResourceTest");
 		 * 
 		 */
-		if(!m_aObjectActive) {
-			m_logger.severe("impl_dispatch", " m_aObjectActive not active");
+		if(!m_bObjectActive) {
+			m_logger.severe("impl_dispatch", " m_bObjectActive not active");
 			return;
 		}
 
@@ -391,11 +391,16 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * this function implements the control of the toolbars introduced in OOo
 	 * 2.3
 	 */
-	private void changeSignatureStatus() {
+	private void changeSignatureStatus(int newState) {
+		if(!m_bObjectActive)
+			return;
 		synchronized (Listeners) {				
 			// get the collection of m_aListeners
 			Collection<LinkingStatusListeners> cListenters = Listeners.values();
 			if (!cListenters.isEmpty()) {
+				if(newState == m_nState)
+					return;
+				m_nState = newState;
 				Iterator<LinkingStatusListeners> aIter = cListenters.iterator();
 				// grab the package image base url
 				String m_imagesUrl = getImageURL();
@@ -408,8 +413,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 						aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
 						aLink.m_aMaster
 								.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
-						 m_logger.info("changeSignatureStatus: send listener:" + 
-								 new String( String.format( "%8H", aLink.m_aMaster.hashCode() ) ) );
+						 m_logger.info("changeSignatureStatus: send listener:" + Utilities.getHashHex(aLink.m_aMaster)+
+								 " state: "+m_nState);
 					}
 					catch (RuntimeException ex) {
 						m_logger.severe("changeSignatureStatus", "thereis no XStatusListener element: remove it!", ex);
@@ -421,13 +426,13 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		}
 	}
 
-	private void changeSignatureStatus(int newState) {
-		if (newState != m_nState && m_aObjectActive) {
+/*	private void changeSignatureStatus(int newState) {
+		if (newState != m_nState && m_bObjectActive) {
 			m_logger.info(  "changeSignatureStatus: state changed" );
 			m_nState = newState;
 			changeSignatureStatus();
 		}
-	}
+	}*/
 
 	/**
 	 * 
@@ -495,8 +500,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	// only one listener is expected: from the custom image toolbar
 	//
 	public void addStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		m_logger.log("addStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete);
 		try {
+//			m_nState = m_xDocumentSignatures.getDocumentSignatureState();
 			synchronized (Listeners) {
 				if (aListener != null) {
 					LinkingStatusListeners MyListener = new LinkingStatusListeners(
@@ -508,9 +513,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
 					aListener.statusChanged( prepareTooltipFeatureState( getNewTooltip() ) );
 				}
+				else
+					m_logger.log("addStatusListener, already present:",Utilities.getHashHex(aListener)+" "+aURL.Complete);					
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
-			e.printStackTrace();
+			m_logger.severe("addStatusListener", "", e);
 		}
 	}
 
@@ -536,9 +543,10 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	@Override
 	public void removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
-/*		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
-		aThread.start();*/
+//		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
+		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete);
+		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
+		aThread.start();
 	}
 
 	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
@@ -574,7 +582,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		String aLog = "exiting ";
 //remove form listening state
 /*		boolean bIsDocEventRegistered;
-		m_aObjectActive = false;
+		m_bObjectActive = false;
 		synchronized (m_bIsDocEventRegisteredMutex) {
 			bIsDocEventRegistered = m_bIsDocEventRegistered;
 			m_bIsDocEventRegistered = false;
@@ -626,7 +634,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				||*/ aEventObj.EventName.equalsIgnoreCase( "OnModifyChanged" )) {
 //set the modified status accordingly
 			grabModel();
-			changeSignatureStatus();
+			changeSignatureStatus(m_nState);
 		}
 	}
 
@@ -732,8 +740,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			synchronized(m_aFrameConfMutex) {
 				changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
 			}
-		// grab the new status, updates ours
-			m_logger.info(" state: " + m_nState );
 	}
 
 	/*

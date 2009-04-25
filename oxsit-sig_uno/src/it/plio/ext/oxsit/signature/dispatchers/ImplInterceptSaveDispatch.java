@@ -43,6 +43,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
 		m_logger.enableLogging();
+		m_logger.ctor();
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
@@ -58,6 +59,9 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 			m_logger.info(aLog);
 		}
 
+// check the document status, if has XAdES signatures,
+// then alert the user the signatures are lost if saved.
+		
 /*		try {
 //			check the slave one
 			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];

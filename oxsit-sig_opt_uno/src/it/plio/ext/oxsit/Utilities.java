@@ -452,7 +452,7 @@ public class Utilities {
 		String ret;
 		try {
 //grab from the Object the has code and returns it
-			ret = Integer.toHexString( _oObj.hashCode() );
+			ret = String.format( "%8H", _oObj );
 		} catch (java.lang.Exception e) {
 			e.printStackTrace(System.out);
 			ret = "caught exception!";

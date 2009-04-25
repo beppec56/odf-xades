@@ -113,7 +113,8 @@ public class SyncJob extends ComponentBase
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_logger = new DynamicLogger(this,context);
-//DEBUG  comment this if no logging needed		m_logger.enableLogging();
+//DEBUG  comment this if no logging needed
+		m_logger.enableLogging();
 
 		m_logger.ctor();
 		m_xComponentContext = context;
@@ -354,17 +355,10 @@ public class SyncJob extends ComponentBase
 			 */
 			if (sEventName != null) {
 				m_logger.info("execute", "event received: " + sEventName );
-
-/*				GlobalVariables test = GlobalVariables.getInstance();
-				test.logSomething(this.toString()+ " "+sEventName);
 				
-				if(globalSign_data == null)
-					m_logger.info("execute", "No singleton data (Java)");
-*/				
-				// if (sEventName.equalsIgnoreCase( "onFirstVisibleTask" )) {
 				if (sEventName.equalsIgnoreCase( "OnStartApp" )
 						/*|| sEventName.equalsIgnoreCase( "OnCloseApp" )*/) {
-//well need to initialize the security stuff, done once on init.					
+//we'll need to initialize the security stuff, done once on init.					
 
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
 ///////////////////// OnViewCreated //////////////////////////7
