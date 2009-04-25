@@ -62,7 +62,7 @@
 			</node>
 		</node>
 		<!-- currently disabled, methods needed only partially implemented. 
-		seems that the Save URL needs some property passed down on.-->
+		seems that the Save URL needs some property passed down on. -->
 		<node oor:name="OnViewCreated" oor:op="fuse">
 			<node oor:name="JobList">
 				<node oor:name="SyncSignatureHandlerJob" oor:op="replace"/>

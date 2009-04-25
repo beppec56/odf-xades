@@ -109,7 +109,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	private String												m_imagesUrl					= null;
 	
 	private Object												m_aFrameConfMutex			= new Object();
-//	DocumentURLStatusHelper										m_aDocumentConf				= null;
 	
 	protected Object											m_SingletonDataObject;
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
@@ -526,7 +525,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	public void addEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.info( "addEventListener" );
+		m_logger.entering( "addEventListener (XComponent)" );
 	}
 
 	/*
@@ -536,7 +535,23 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	public void dispose() {
 		// TODO Auto-generated method stub
-		m_logger.info( "dispose called" );
+		String aLog = "";
+//remove form listening state
+		boolean bIsDocEventRegistered;
+		synchronized (m_bIsDocEventRegisteredMutex) {
+			bIsDocEventRegistered = m_bIsDocEventRegistered;
+			m_bIsDocEventRegistered = false;
+		}
+		if (bIsDocEventRegistered == true) {
+			aLog = aLog + ", doc listening";
+			m_DocBroad.removeEventListener( this );
+		}
+		if (m_bIsFrameActionRegistered) {
+			m_xFrame.removeFrameActionListener( this );
+			m_bIsFrameActionRegistered = false;
+			aLog = aLog + ", frame listening (2)";
+		}
+		m_logger.exiting(" dispose (XComponent)",aLog);
 	}
 
 	/*
@@ -546,7 +561,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	public void removeEventListener(com.sun.star.lang.XEventListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.info( "removeEventListener(XComponent) called" );
+		m_logger.entering( "removeEventListener(XComponent)" );
 	}
 
 	/*
@@ -564,6 +579,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			grabModel();
 			changeSignatureStatus();
 		}
+		XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
+		if(aNotifier != null) {
+			aNotifier.removeChangesListener(this);
+		}
+		else
+			m_logger.severe("disposing (docu)", "XChangesNotifier missing");
 	}
 
 	/*

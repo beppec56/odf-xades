@@ -31,6 +31,8 @@ import com.sun.star.frame.XFrame;
 //import com.sun.star.frame.XModel;
 //import com.sun.star.frame.XNotifyingDispatch;
 import com.sun.star.frame.XStatusListener;
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
@@ -39,7 +41,8 @@ import com.sun.star.util.URL;
  * @author beppe
  *
  */
-public class ImplDispatchSynch implements XDispatch {
+public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComponent 
+{
 
 	protected XFrame m_xFrame;
 	protected XMultiComponentFactory m_axMCF;
@@ -92,5 +95,29 @@ public class ImplDispatchSynch implements XDispatch {
 		m_logger.log("removeStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener(aListener, aURL);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {		
+		m_logger.severe("addEventListener", "implements it in subclass!");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		m_logger.severe("dispose", "implements it in subclass!");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		m_logger.severe("removeEventListener", "implements it in subclass!");		
 	}	
 }

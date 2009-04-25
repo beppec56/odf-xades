@@ -38,7 +38,7 @@ import com.sun.star.util.URL;
  * @author beppe
  *
  */
-public class ImplDispatchAsynch extends ImplDispatchSynch implements XDispatch, IDispatchImplementer {
+public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchImplementer {
 
 	protected Thread m_aThread = null;
 

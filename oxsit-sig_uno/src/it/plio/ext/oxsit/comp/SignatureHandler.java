@@ -22,44 +22,28 @@
 
 package it.plio.ext.oxsit.comp;
 
-import java.util.Date;
-
+import it.plio.ext.oxsit.dispatchers.IDispatchBaseObject;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes;
-import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
-import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplOnHelpDispatch;
-import it.plio.ext.oxsit.signature.dispatchers.ImplSelectSignatureDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
-//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 
-import com.sun.star.awt.Rectangle;
-import com.sun.star.awt.WindowAttribute;
-import com.sun.star.awt.WindowClass;
-import com.sun.star.awt.WindowDescriptor;
-import com.sun.star.awt.XMessageBox;
 import com.sun.star.awt.XToolkit;
-import com.sun.star.awt.XWindowPeer;
-import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XDispatchProvider;
-import com.sun.star.frame.XDispatchResultListener;
 import com.sun.star.frame.XFrame;
-import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;
-import com.sun.star.util.URL;
 import com.sun.star.util.XCloseListener;
 import com.sun.star.util.XCloseable;
 
@@ -73,7 +57,8 @@ public class SignatureHandler extends ComponentBase
 			implements XServiceInfo, // general
 						XInitialization, // to implement the ProtocolHandler service
 						XDispatchProvider, // to implement the ProtocolHandler service
-						XCloseable {
+						XCloseable
+						{
 
 	// needed for registration
 	public static final String			m_sImplementationName			= SignatureHandler.class
@@ -105,9 +90,9 @@ public class SignatureHandler extends ComponentBase
 	private XDispatch					m_aImplSelSignatureDispatch		= null;
 	private XDispatch					m_aImplBeforeSaveDispatch		= null;
 	private XDispatch					m_aImplBeforeSaveAsDispatch		= null;
-	private XDispatch					m_aImplXAdESSignatureDispatchTB	= null;
+	private IDispatchBaseObject			m_aImplXAdESSignatureDispatchTB	= null;
 	private XDispatch					m_aImplOnHelpDispatch			= null;
-	private XDispatch					m_aImplXAdESSignatureDispatch	= null;
+	private IDispatchBaseObject			m_aImplXAdESSignatureDispatch	= null;
 	private DynamicLogger				m_logger;
 
 	/**
@@ -118,7 +103,8 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public SignatureHandler(XComponentContext context) {
 		m_logger = new DynamicLogger(this,context);
-//FIXME DEBUG	m_logger.enableLogging();
+//FIXME DEBUG	
+		m_logger.enableLogging();
 		m_logger.ctor();
 		m_xComponentContext = context;
 		// passert("m_xComponentContext",m_xComponentContext);
@@ -181,11 +167,11 @@ public class SignatureHandler extends ComponentBase
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
 	 */
 	public void initialize(Object[] object) throws com.sun.star.uno.Exception {
+		m_logger.entering("initialize");
 		if (object.length > 0) {
 
 			m_xFrame = (com.sun.star.frame.XFrame) UnoRuntime.queryInterface(
 					com.sun.star.frame.XFrame.class, object[0] );
-			m_logger.log( "frame Initialized!" );
 		}
 		// Create the toolkit to have access to it later
 		m_xToolkit = (XToolkit) UnoRuntime.queryInterface( XToolkit.class,
@@ -201,7 +187,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public com.sun.star.frame.XDispatch queryDispatch(com.sun.star.util.URL aURL,
 			String sTargetFrameName, int iSearchFlags) {
-		m_logger.log("queryDispatch",aURL.Complete);
+		m_logger.info("queryDispatch",aURL.Complete);
 		try {
 			if (aURL.Protocol.compareTo( GlobConstant.m_sSIGN_PROTOCOL_BASE_URL ) == 0) {
 				// if ( aURL.Path.compareTo(GlobConstant.m_sSelectSignPath) == 0
@@ -227,17 +213,14 @@ public class SignatureHandler extends ComponentBase
 								null );
 					return m_aImplXAdESSignatureDispatchTB;
 				}
-				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSavePath) == 0
-				// ) {
+				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSavePath) == 0 ) {
 				// if(m_aImplBeforeSaveDispatch == null)
 				// m_aImplBeforeSaveDispatch = new
 				// ImplBeforeSaveDispatch(m_xFrame,
-				// m_xComponentContext, m_xMultiComponentFactory,
-				// null);
+				// m_xComponentContext, m_xMultiComponentFactory, null);
 				// return m_aImplBeforeSaveDispatch;
 				// }
-				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSaveAsPath) ==
-				// 0 ) {
+				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSaveAsPath) == 0 ) {
 				// if(m_aImplBeforeSaveAsDispatch == null)
 				// m_aImplBeforeSaveAsDispatch = new
 				// ImplBeforeSaveAsDispatch(m_xFrame,
@@ -257,6 +240,7 @@ public class SignatureHandler extends ComponentBase
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		m_logger.info("queryDispatch","return null: "+aURL.Complete);
 		return null;
 	}
 
@@ -349,5 +333,40 @@ public class SignatureHandler extends ComponentBase
 	public void removeCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
 		m_logger.log("removeCloseListener");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
+		m_logger.entering("addEventListener (XComponent)");
+		super.addEventListener(arg0);		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		m_logger.entering("dispose (XComponent)");
+//call disposing of internal classes, deregistering
+		if(m_aImplXAdESSignatureDispatchTB != null)
+			m_aImplXAdESSignatureDispatchTB.dispose();
+		if(m_aImplXAdESSignatureDispatch != null)
+			m_aImplXAdESSignatureDispatch.dispose();
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
+		m_logger.entering("removeEventListener (XComponent)");
+		super.removeEventListener(arg0);
 	}
 }

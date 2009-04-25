@@ -163,7 +163,7 @@ public class SingletonGlobalVariables extends ComponentBase
 						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures missing.");
 					else
 						aDoc.setDocumentId(_aDocumentId);
-					m_logger.exiting("initDocumentAndListener", "");
+					m_logger.exiting("initDocumentAndListener", _aDocumentId);
 					return aDoc;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

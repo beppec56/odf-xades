@@ -78,7 +78,7 @@ public class DispatchInterceptor extends ComponentBase implements
 	private XDispatch								m_ImplIntSaveDispatch		= null;
 	private XDispatch								m_ImplIntSaveAsDispatch		= null;
 
-	private Object									aMutex						= new Object();
+	private Object									m_aMutex						= new Object();
 
 	private boolean									m_bDead;
 	private boolean									m_bIsInterceptorRegistered;				// we
@@ -185,10 +185,10 @@ public class DispatchInterceptor extends ComponentBase implements
 	 *      java.lang.String, int)
 	 */
 	public XDispatch queryDispatch(/* IN */com.sun.star.util.URL aURL,/* IN */
-	String sTarget,
-	/* IN */int nSearchFlags) {
+									String sTarget,	/* IN */int nSearchFlags) {
+//		m_logger.info("queryDispatch:", aURL.Complete);
 		try {
-			synchronized (aMutex) {
+			synchronized (m_aMutex) {
 				if (m_bDead)
 					return null;
 			}
@@ -212,8 +212,7 @@ public class DispatchInterceptor extends ComponentBase implements
 */
 			// intercept .uno:Save
 			if (aURL.Complete.equalsIgnoreCase( GlobConstantJobs.m_sUnoSaveURLComplete ) == true) {
-				// printlnName("com.sun.star.frame.XDispatchProvider#queryDispatch
-				// intercept: "+aURL.Complete);
+				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					/*
 					 * http://www.mail-archive.com/dev@api.openoffice.org/msg03786.html ()
@@ -236,8 +235,7 @@ public class DispatchInterceptor extends ComponentBase implements
 				}
 			}
 			if (aURL.Complete.equalsIgnoreCase( GlobConstantJobs.m_sUnoSaveAsURLComplete ) == true) {
-				// printlnName("com.sun.star.frame.XDispatchProvider#queryDispatch
-				// intercept: "+aURL.Complete);
+				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					XDispatch aUnoSaveSlaveDispatch = null;
 					if (m_xSlave != null)
@@ -252,7 +250,7 @@ public class DispatchInterceptor extends ComponentBase implements
 
 			synchronized (this) {
 				if (m_xSlave != null)// if a slave exist pass the request
-					// down the chain of responsability
+					// down the chain of responsibility
 					return m_xSlave.queryDispatch( aURL, sTarget, nSearchFlags );
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
@@ -291,7 +289,7 @@ public class DispatchInterceptor extends ComponentBase implements
 	 */
 	public void startListening() {
 		m_logger.entering("startListening");
-		synchronized (aMutex) {
+		synchronized (m_aMutex) {
 			if (m_xFrame == null)
 				return;
 
@@ -327,7 +325,7 @@ public class DispatchInterceptor extends ComponentBase implements
 			// this part should be run on another thread
 			aLog = "frameAction COMPONENT_DETACHING_value,deregistering";
 
-			synchronized (aMutex) {
+			synchronized (m_aMutex) {
 				// check if we are already dead (through disposing())
 				if (m_bDead)
 					return;
@@ -389,7 +387,7 @@ public class DispatchInterceptor extends ComponentBase implements
 				// ///////////// not good...
 				// //check if we are frame action m_aListeners, if yes unregister,
 				// surround with mutex
-				// synchronized (aMutex) {
+				// synchronized (m_aMutex) {
 				// if( m_bIsFrameActionRegistered ) {
 				// println("deregistering frame listener...");
 				// m_xFrame.removeFrameActionListener(this);
@@ -433,7 +431,7 @@ public class DispatchInterceptor extends ComponentBase implements
 	 */
 	public void disposing(EventObject arg0) {
 		m_logger.entering("disposing");
-		synchronized (aMutex) {
+		synchronized (m_aMutex) {
 			if (m_bDead)
 				return;
 			// if (!m_bIsInterceptorRegistered && !m_bIsFrameActionRegistered)
@@ -461,7 +459,7 @@ public class DispatchInterceptor extends ComponentBase implements
 	}
 
 	private void shutdown() {
-		// synchronized (aMutex) {
+		// synchronized (m_aMutex) {
 		
 		// if(m_bDead)
 		// return;

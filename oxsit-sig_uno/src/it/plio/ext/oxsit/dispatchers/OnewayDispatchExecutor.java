@@ -47,12 +47,10 @@ public class OnewayDispatchExecutor extends Thread {
 	/**
 	 * implements the thread function
 	 * Here we call the internal set link object back and
-	 * give him all neccessary parameters.
-	 * After that we die by ouerself ...
+	 * give him all necessary parameters.
+	 * After that we die by ourself ...
 	 */
 	public void run() {
-//		System.out.println(String.format("%8s", Integer.toString(hashCode(), 16).toUpperCase())+
-//				" "+this.getClass().getName()+" started");
 		if (m_rLink == null)
 			System.out.println("run ... m_rLink == null");
 		if (m_lParams == null)
