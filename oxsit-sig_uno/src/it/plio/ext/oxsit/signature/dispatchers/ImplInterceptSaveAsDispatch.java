@@ -36,8 +36,8 @@ import com.sun.star.util.URL;
  * @author beppe
  *
  */
-public class ImplBeforeSaveAsDispatch  extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
-	public ImplBeforeSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
+public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
+	public ImplInterceptSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);

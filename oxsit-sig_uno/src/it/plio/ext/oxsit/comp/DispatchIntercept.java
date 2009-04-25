@@ -26,7 +26,7 @@ import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.dispatchers.IDispatchBaseObject;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
+import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveAsDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
@@ -289,7 +289,7 @@ public class DispatchIntercept extends ComponentBase
 					return m_ImplIntSaveDispatch;
 				}
 			}
-			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+/*			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					XDispatch aUnoSaveSlaveDispatch = null;
@@ -297,11 +297,11 @@ public class DispatchIntercept extends ComponentBase
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveAsDispatch == null)
-						m_ImplIntSaveAsDispatch = new ImplBeforeSaveAsDispatch( m_xFrame,
+						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame,
 								m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveAsDispatch;
 				}
-			}
+			}*/
 
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatchTB == null)
