@@ -147,7 +147,14 @@ the default target must be removed
 		<!-- delete the build directory, after this target, target build-jar needs to be rebuilt -->
 		<delete dir="${build-eclipse}" />
 		<delete dir="${build}" />
-
+		
+		<antcall target="compile-idl">
+			<!--interface name -->
+			<param name="parm1" value="XOX_DispatchInterceptor"/>
+			<!--interface path -->
+			<param name="parm2" value="it.plio.ext.oxsit"/>
+		</antcall>
+		
 		<antcall target="compile-idl">
 			<param name="parm1" value="XOX_Logger"/>
 			<param name="parm2" value="it.plio.ext.oxsit.logging"/>

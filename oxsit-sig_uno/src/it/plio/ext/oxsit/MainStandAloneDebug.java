@@ -128,7 +128,7 @@ public class MainStandAloneDebug {
 		 * finestra genetrice // (in questo caso la frame) aDialog1.initialize(
 		 * 80, 30 ); } catch (BasicErrorException e) { e.printStackTrace(); }
 		 * aDialog1.executeDialog(); // //////////////////////////////////////
-		 *  // //////// test the DispatchInterceptor XComponentContext xCtx =
+		 *  // //////// test the DispatchIntercept XComponentContext xCtx =
 		 * aOOo.getCompCtx(); // try to get a document Object desktop =
 		 * aOOo.getFactory().createInstanceWithContext(
 		 * "com.sun.star.frame.Desktop", xCtx ); // get the remote service

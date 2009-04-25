@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_SingletonDataAccess_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_SingletonDataAccess_idl__
+#ifndef __it_plio_ext_oxsit_XOX_SingletonDataAccess_idl__
+#define __it_plio_ext_oxsit_XOX_SingletonDataAccess_idl__
 
 #include <com/sun/star/util/XChangesListener.idl>
 #include "XOX_DocumentSignatures.idl"

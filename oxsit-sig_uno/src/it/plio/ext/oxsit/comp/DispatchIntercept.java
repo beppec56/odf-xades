@@ -20,23 +20,27 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.interceptor;
+package it.plio.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.comp.GlobConstantJobs;
-import it.plio.ext.oxsit.jobs.dispatchers.ImplInterceptSaveAsDispatch;
-import it.plio.ext.oxsit.jobs.dispatchers.ImplInterceptSaveDispatch;
+import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveAsDispatch;
+import it.plio.ext.oxsit.signature.dispatchers.ImplBeforeSaveDispatch;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XDispatchProviderInterceptor;
+import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFrameActionListener;
 import com.sun.star.frame.XInterceptorInfo;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.lib.uno.helper.WeakBase;
+import com.sun.star.task.XStatusIndicator;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -47,10 +51,24 @@ import com.sun.star.uno.XComponentContext;
  * 
  */
 // FIXME the frameAction may need adjustment (in case of context changing)
-public class DispatchInterceptor extends ComponentBase implements
-		XDispatchProviderInterceptor, XInterceptorInfo, XDispatchProvider,
-		XFrameActionListener {
+public class DispatchIntercept extends ComponentBase 
+		implements
+		XServiceInfo,
+		XDispatchProviderInterceptor,
+		XInterceptorInfo,
+		XDispatchProvider,
+		XOX_DispatchInterceptor,
+		XFrameActionListener
+		 {
 
+	
+	// the name of the class implementing this object
+	public static final String			m_sImplementationName	= DispatchIntercept.class.getName();
+
+	// the Object name, used to instantiate it inside the OOo API
+	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE };
+	
+	
 	/**
 	 * @member m_xSlave we can forward all unhandled requests to this slave
 	 *         interceptor
@@ -87,8 +105,8 @@ public class DispatchInterceptor extends ComponentBase implements
 	// are registered as frame action m_aListeners
 
 	private static final String[]					m_InterceptedURLs			= {
-			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstantJobs.m_sUnoSaveURLComplete,
-			GlobConstantJobs.m_sUnoSaveAsURLComplete								};
+			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstant.m_sUnoSaveURLComplete,
+			GlobConstant.m_sUnoSaveAsURLComplete								};
 
 	protected	DynamicLogger						m_logger;
 	/**
@@ -101,23 +119,53 @@ public class DispatchInterceptor extends ComponentBase implements
 	 *            this interceptor will register himself at this frame to
 	 *            intercept dispatched URLs
 	 */
-	public DispatchInterceptor(
-	/* IN */com.sun.star.frame.XFrame xFrame,
-			XComponentContext xContext,
-			XMultiComponentFactory xMCF) {
-		m_xFrame = xFrame;
+	public DispatchIntercept(XComponentContext xContext) {
+		m_xFrame = null;
 		m_xSlave = null;
 		m_xMaster = null;
-		m_axMCF = xMCF;
+		m_axMCF = xContext.getServiceManager();
 		m_xCC = xContext;
 		m_bDead = false;
 		m_bIsInterceptorRegistered = false;
 		m_bIsFrameActionRegistered = false;
 		m_logger = new DynamicLogger(this, xContext);
-//DEBUG		m_logger.enableLogging();
+//DEBUG
+		m_logger.enableLogging();
 		m_logger.ctor();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XServiceInfo#getImplementationName()
+	 */
+	@Override
+	public String getImplementationName() {
+		return m_sImplementationName;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
+	 */
+	@Override
+	public String[] getSupportedServiceNames() {
+		// TODO Auto-generated method stub
+		m_logger.info("getSupportedServiceNames");
+		return m_sServiceNames;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
+	 */
+	@Override
+	public boolean supportsService(String _sService) {
+		int len = m_sServiceNames.length;
+
+		for (int i = 0; i < len; i++) {
+			if (_sService.equals( m_sServiceNames[i] ))
+				return true;
+		}
+		return false;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -175,6 +223,7 @@ public class DispatchInterceptor extends ComponentBase implements
 	 */
 	public String[] getInterceptedURLs() {
 		// printlnName("com.sun.star.frame.XInterceptorInfo#getInterceptedURLs");
+		m_logger.entering("getInterceptedURLs");
 		return m_InterceptedURLs;
 	}
 
@@ -211,7 +260,7 @@ public class DispatchInterceptor extends ComponentBase implements
 			}
 */
 			// intercept .uno:Save
-			if (aURL.Complete.equalsIgnoreCase( GlobConstantJobs.m_sUnoSaveURLComplete ) == true) {
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					/*
@@ -229,12 +278,12 @@ public class DispatchInterceptor extends ComponentBase implements
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveDispatch == null)
-						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
+						m_ImplIntSaveDispatch = new ImplBeforeSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveDispatch;
 				}
 			}
-			if (aURL.Complete.equalsIgnoreCase( GlobConstantJobs.m_sUnoSaveAsURLComplete ) == true) {
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					XDispatch aUnoSaveSlaveDispatch = null;
@@ -242,7 +291,7 @@ public class DispatchInterceptor extends ComponentBase implements
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					if (m_ImplIntSaveAsDispatch == null)
-						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame,
+						m_ImplIntSaveAsDispatch = new ImplBeforeSaveAsDispatch( m_xFrame,
 								m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
 					return m_ImplIntSaveAsDispatch;
 				}
@@ -287,11 +336,17 @@ public class DispatchInterceptor extends ComponentBase implements
 	 * should update our interception. Because such using of an interceptor
 	 * isn't guaranteed - in case a newer one was registered ...
 	 */
-	public void startListening() {
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_DispatchInterceptor#startListening(com.sun.star.frame.XFrame)
+	 */
+	@Override
+	public boolean startListening(XFrame _xFrame) {
+		// TODO Auto-generated method stub
 		m_logger.entering("startListening");
+		m_xFrame = _xFrame;
 		synchronized (m_aMutex) {
 			if (m_xFrame == null)
-				return;
+				return false;
 
 			m_bIsFrameActionRegistered = true;
 			m_xFrame.addFrameActionListener( this );
@@ -301,10 +356,11 @@ public class DispatchInterceptor extends ComponentBase implements
 							com.sun.star.frame.XDispatchProviderInterception.class,
 							m_xFrame );
 			if (xRegistration == null)
-				return;
+				return false;
 			xRegistration.registerDispatchProviderInterceptor( this );
 			m_bIsInterceptorRegistered = true;
 		}
+		return true;
 	}
 
 	/*

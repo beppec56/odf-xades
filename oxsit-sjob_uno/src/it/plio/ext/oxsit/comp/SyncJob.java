@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -34,6 +35,7 @@ import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XController;
+import com.sun.star.frame.XDispatchProviderInterception;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
@@ -43,8 +45,10 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
+import com.sun.star.task.XStatusIndicator;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;
@@ -108,7 +112,7 @@ public class SyncJob extends ComponentBase
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_logger = new DynamicLogger(this,context);
-		m_logger.enableLogging(); // comment this if no logging needed
+//DEBUG  comment this if no logging needed		m_logger.enableLogging();
 
 		m_logger.ctor();
 		m_xComponentContext = context;
@@ -399,9 +403,24 @@ public class SyncJob extends ComponentBase
 								|| xDrawDocument != null) {
 							// a CNIPA signable type of document, then start the
 							// interceptor
-							DispatchInterceptor aInterceptor = new DispatchInterceptor(
+/*							DispatchInterceptor aInterceptor = new DispatchInterceptor(
 									xFrame, m_xComponentContext, m_xServiceManager );
-							aInterceptor.startListening();
+							
+							
+							aInterceptor.startListening();*/
+
+							try {
+							Object aObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE, m_xComponentContext);
+							if(aObj != null) {
+								XOX_DispatchInterceptor xD = (XOX_DispatchInterceptor)UnoRuntime.queryInterface(XOX_DispatchInterceptor.class, aObj);
+								xD.startListening(xFrame);
+							}
+							else
+								m_logger.severe("", "cannot create DispatchInterceptor");
+							}
+							catch (RuntimeException ex) {
+								m_logger.severe("", "cannot create DispatchInterceptor", ex);
+							}
 						}
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnLoad" )) {

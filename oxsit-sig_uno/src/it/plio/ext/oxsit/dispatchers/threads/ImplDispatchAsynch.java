@@ -50,6 +50,7 @@ public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchIm
 	/* (non-Javadoc)
 	 * @see com.sun.star.frame.XDispatch#dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
 	 */
+	@Override
 	public void dispatch(URL aURL, PropertyValue[] lArguments) {
 		m_logger.log("dispatch (ImplDispatchAsynch)",aURL.Complete);		
 		OnewayDispatchExecutor aExecutor = new OnewayDispatchExecutor((IDispatchImplementer) this,aURL, lArguments);
@@ -60,6 +61,7 @@ public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchIm
 	/* (non-Javadoc)
 	 * @see it.plio.ext.cnipa.dispatchers.IDispatchImplementer#impl_dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
 	 */
+	@Override
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 		m_logger.log("impl_dispatch (ImplDispatchAsynch)",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)

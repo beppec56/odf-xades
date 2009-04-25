@@ -143,4 +143,14 @@ public class GlobConstant {
 	//service to hold a single certificate
 	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.QualifiedCertificate";
 	
+	//service to implement a dispatch interceptor
+	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
+	//intercepted url
+	public static final String m_sUnoSignatureURLComplete = ".uno:Signature";
+	public static final String m_sUnoSaveURLComplete = ".uno:Save";
+	public static final String m_sUnoSaveAsURLComplete = ".uno:SaveAs";
+	public static final String	m_sUnoSignatureURLProtocol	= ".uno:";
+	public static final String	m_sUnoSignatureURLPath	= "Signature";
+
+	
 }

@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit;
 
+import it.plio.ext.oxsit.comp.DispatchIntercept;
 import it.plio.ext.oxsit.comp.SignatureHandler;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -45,10 +46,17 @@ public class RegisterServices {
 	public synchronized static XSingleComponentFactory __getComponentFactory(
 			String sImplementationName) {
 		XSingleComponentFactory xFactory = null;
-		if (sImplementationName.equals(
-				SignatureHandler.m_sImplementationName))
+		if (sImplementationName.equals(	SignatureHandler.m_sImplementationName))
 			xFactory = Factory.createComponentFactory(SignatureHandler.class,
 					SignatureHandler.m_sServiceNames);
+//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+		else if ( sImplementationName.equals( DispatchIntercept.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( 
+					DispatchIntercept.class,
+					DispatchIntercept.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+DispatchIntercept.m_sImplementationName);
+		}
+
 		return xFactory;
 	}
 
@@ -65,9 +73,16 @@ public class RegisterServices {
 	 */
 	public synchronized static boolean __writeRegistryServiceInfo(
 			XRegistryKey xRegistryKey) {
-		return Factory.writeRegistryServiceInfo(
+		boolean regSignature =  Factory.writeRegistryServiceInfo(
 				SignatureHandler.m_sImplementationName,  // the class implementing the service
 				SignatureHandler.m_sServiceNames, // the names of the implemented services
 				xRegistryKey);
+		
+		boolean regSDispatcher =  Factory.writeRegistryServiceInfo(
+				DispatchIntercept.m_sImplementationName,  // the class implementing the service
+				DispatchIntercept.m_sServiceNames, // the names of the implemented services
+				xRegistryKey);
+		
+		return regSignature && regSDispatcher;
 	}
 }

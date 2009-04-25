@@ -116,6 +116,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	
 	private XComponentContext									m_aComponentContext;
 	private XMultiComponentFactory								m_aMultiComponentFctry;
+	
+	protected boolean											m_aObjectActive;
 
 	private boolean m_bSignatureIsEnabled = false;
 
@@ -208,6 +210,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		else
 			m_logger.info("ctor: No pkginfo!");
 		aMex.dispose();
+		m_aObjectActive = true;
 	}
 
 	private void grabModel() {
@@ -253,8 +256,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		 * xPkgInfo.getPackageLocation("org.openoffice.test.ResourceTest");
 		 * 
 		 */
+		if(!m_aObjectActive) {
+			m_logger.severe("impl_dispatch", " m_aObjectActive not active");
+			return;
+		}
 
-		synchronized (this) {			
+		synchronized (this) {
 			try {
 				/**
 				 * returned value: 1 2 0 = Cancel
@@ -385,30 +392,37 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 2.3
 	 */
 	private void changeSignatureStatus() {
-		// get the collection of m_aListeners
-		Collection<LinkingStatusListeners> cListenters = Listeners.values();
-		// printlnName( "changeSignatureStatus " + cListenters.size() );
-		if (!cListenters.isEmpty()) {
-			Iterator<LinkingStatusListeners> aIter = cListenters.iterator();
-			// grab the package image base url
-			String m_imagesUrl = getImageURL();
-			String m_NewTooltimp = getNewTooltip();
-			grabModel();
-			// println ("m_bHasLocation "+m_bHasLocation);
-			// scan the array and for every one send the status
-			while (aIter.hasNext()) {
-				LinkingStatusListeners aLink = aIter.next();
-				aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
-				aLink.m_aMaster
-						.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
-				 m_logger.info("changeSignatureStatus: send listener:" + 
-						 new String( String.format( "%8H", aLink.m_aMaster.hashCode() ) ) );
+		synchronized (Listeners) {				
+			// get the collection of m_aListeners
+			Collection<LinkingStatusListeners> cListenters = Listeners.values();
+			if (!cListenters.isEmpty()) {
+				Iterator<LinkingStatusListeners> aIter = cListenters.iterator();
+				// grab the package image base url
+				String m_imagesUrl = getImageURL();
+				String m_NewTooltimp = getNewTooltip();
+				grabModel();
+				// scan the array and for every one send the status
+				while (aIter.hasNext()) {
+					LinkingStatusListeners aLink = aIter.next();
+					try {
+						aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
+						aLink.m_aMaster
+								.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
+						 m_logger.info("changeSignatureStatus: send listener:" + 
+								 new String( String.format( "%8H", aLink.m_aMaster.hashCode() ) ) );
+					}
+					catch (RuntimeException ex) {
+						m_logger.severe("changeSignatureStatus", "thereis no XStatusListener element: remove it!", ex);
+					}
+				}
 			}
+			else
+				m_logger.log("changeSignatureStatus","there are no status listeners");
 		}
 	}
 
 	private void changeSignatureStatus(int newState) {
-		if (newState != m_nState) {
+		if (newState != m_nState && m_aObjectActive) {
 			m_logger.info(  "changeSignatureStatus: state changed" );
 			m_nState = newState;
 			changeSignatureStatus();
@@ -481,12 +495,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	// only one listener is expected: from the custom image toolbar
 	//
 	public void addStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
+		m_logger.log("addStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete);
 		try {
-			synchronized (this) {
+			synchronized (Listeners) {
 				if (aListener != null) {
 					LinkingStatusListeners MyListener = new LinkingStatusListeners(
 							aListener, aURL, m_aDocumentURL );
 					Listeners.put( aListener, MyListener );
+					m_logger.log("addStatusListener, added:",Utilities.getHashHex(aListener)+" "+aURL.Complete);
 					// grab the document status
 					grabModel();//update model
 					aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
@@ -503,18 +519,36 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener,
 	 *      com.sun.star.util.URL)
+	 *      
+	 *  IMPORTANT: the StatusListener list removal was commented out because it was 
+	 *  called wrongly when registering the dispatch interceptor.
+	 *  The net result is that the toolbar register itself to first class instantiation
+	 *  then unregister the first instantiation when dispatch interceptor is called,
+	 *  even though the main dispatch dispose method is not called.
+	 *  It registers to the new instance the interceptor creates, unregister from this when
+	 *  interceptor finisces analizing the dispatches, but it stays unregisterd.
+	 *  
+	 *  So the StatusListener is disposed of when it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB
+	 *  class is disposed of (from main UNO dispatch object).
+	 *  
+	 *  So we we'll remove the list when closing.
+	 *  
 	 */
+	@Override
 	public void removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		
-		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
-		aThread.start();		
+		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
+/*		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
+		aThread.start();*/
 	}
-	
+
 	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		try {
-			Listeners.remove( aListener );
-		} catch (RuntimeException e) {
-			e.printStackTrace();
+		m_logger.entering("impl_removeStatusListener");
+		synchronized (Listeners) {
+			try {
+				Listeners.remove( aListener );
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 
@@ -523,6 +557,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
 	 */
+	@Override
 	public void addEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering( "addEventListener (XComponent)" );
@@ -533,11 +568,13 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.lang.XComponent#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		String aLog = "";
+		String aLog = "exiting ";
 //remove form listening state
-		boolean bIsDocEventRegistered;
+/*		boolean bIsDocEventRegistered;
+		m_aObjectActive = false;
 		synchronized (m_bIsDocEventRegisteredMutex) {
 			bIsDocEventRegistered = m_bIsDocEventRegistered;
 			m_bIsDocEventRegistered = false;
@@ -549,9 +586,19 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		if (m_bIsFrameActionRegistered) {
 			m_xFrame.removeFrameActionListener( this );
 			m_bIsFrameActionRegistered = false;
-			aLog = aLog + ", frame listening (2)";
+			aLog = aLog + ", frame listening";
 		}
-		m_logger.exiting(" dispose (XComponent)",aLog);
+
+		XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
+		if(aNotifier != null) {
+			aNotifier.removeChangesListener(this);
+		}
+		else
+			m_logger.severe("disposing (docu)", "XChangesNotifier missing");
+//now remove all the StatusListeners
+		Listeners.clear();
+*/		
+		m_logger.info("dispose (XComponent)",aLog);
 	}
 
 	/*
@@ -559,6 +606,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
 	 */
+	@Override
 	public void removeEventListener(com.sun.star.lang.XEventListener arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering( "removeEventListener(XComponent)" );
@@ -569,22 +617,18 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.document.XEventListener#notifyEvent(com.sun.star.document.EventObject)
 	 * 
+	 * This is a document event listener, to monitor changes
 	 */
+	@Override
 	public void notifyEvent(com.sun.star.document.EventObject aEventObj) {
 		// TODO Auto-generated method stub
-//		println( "notifyEvent: " + aEventObj.EventName );
+		m_logger.entering("notifyEvent");
 		if (/*aEventObj.EventName.equalsIgnoreCase( "OnSaveAsDone" )
 				||*/ aEventObj.EventName.equalsIgnoreCase( "OnModifyChanged" )) {
 //set the modified status accordingly
 			grabModel();
 			changeSignatureStatus();
 		}
-		XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
-		if(aNotifier != null) {
-			aNotifier.removeChangesListener(this);
-		}
-		else
-			m_logger.severe("disposing (docu)", "XChangesNotifier missing");
 	}
 
 	/*
@@ -592,6 +636,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * 
 	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 	 */
+	@Override
 	public void disposing(com.sun.star.lang.EventObject aEvent) {
 		String aLog = " disposing (lang)";
 
@@ -667,6 +712,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * @see com.sun.star.util.XChangesListener#changesOccurred(com.sun.star.util.ChangesEvent)
 	 */
 	//start the Java thread to manage the task, this is a [oneway] method
+	@Override
 	public void changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
 		m_logger.info("changesOccurred()" );
 		ImplXAdESThread aWorkerThread = new ImplXAdESThread(this,ImplXAdESThread.RUN_changesOccurred, aChangesEvent);
@@ -700,6 +746,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * The frame listener is used as a means to unregister and dispose of this object (ImpXAdES....)
 	 */
 	// [oneway] function, not implemented because short function
+	@Override
 	public void frameAction(FrameActionEvent aEvent) {
 		// give some status indication
 /*		printHash("frameAction");
@@ -738,7 +785,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * our private status listener, used to grab the statusChanged event from
 	 * the .uno:Signature slave dispatcher
 	 * 
-	 * @author beppe
+	 * Pratically a wrapper around XStatusListener UNO interface.
+	 * @author beppec56
 	 * 
 	 */
 	public class LinkingStatusListeners implements XStatusListener {
@@ -773,6 +821,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		 * signature is ready
 		 * 
 		 */
+		@Override
 		public void statusChanged(FeatureStateEvent aEvent) {
 			if (m_aMaster != null) {
 				m_aMaster.statusChanged( aEvent );
@@ -784,6 +833,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		 * 
 		 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 		 */
+		@Override
 		public void disposing(EventObject arg0) {
 			// TODO Auto-generated method stub
 			m_logger.info( "LinkingStatusListeners disposing" );
