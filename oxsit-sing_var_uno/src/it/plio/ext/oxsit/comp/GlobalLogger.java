@@ -33,6 +33,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.logging.XLogHandler;
@@ -59,32 +61,32 @@ public class GlobalLogger extends ComponentBase
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_LOGGER_SERVICE };
 
 /// This instead is the global logger, instantiated to have a Java singleton available	
-	protected static ConsoleHandler		myHandl;
-	protected static LocalLogFormatter 	myformatter;
-	protected static FileHandler			myFileHandl;
-	protected static LocalLogFormatter 	myFileformatter;
+	protected static ConsoleHandler		m_aConsoleHandl;
+	protected static LocalLogFormatter 	m_aLogFormatter;
+	protected static FileHandler		m_aLogFileHandl;
+	protected static LocalLogFormatter 	m_aLogFileFormatter;
 
 	//logger configuration
 	protected int m_nLogLevel; // not yet used... TODO
 
 	protected static String		m_sName;
-	protected static boolean	m_sEnableInfoLevel = true;
-	protected static boolean	m_sEnableWarningLevel = true;
-	protected static boolean	m_sEnableConsoleOutput = false;
-	protected static boolean	m_sEnableFileOutput = true;
+	protected static boolean	m_bEnableInfoLevel = true;
+	protected static boolean	m_bEnableWarningLevel = true;
+	protected static boolean	m_bEnableConsoleOutput = false;
+	protected static boolean	m_bEnableFileOutput = true;
 	protected static String		m_sLogFilePath = "";
-	protected static int		m_sFileRotationCount = 1;
-	protected static int		m_sMaxFileSize = 200000;
-	protected	boolean			m_nCanLogMyself;
+	protected static int		m_nFileRotationCount = 1;
+	protected static int		m_nMaxFileSize = 200000;
+	protected	boolean			m_bCanLogMyself;
 
 //only used as a synchronizing object
 	private static Boolean 				m_bLogConfigChanged = new Boolean(false);
 
 // the 'real' global logger
-	private static	Logger				m_log;
+	private static	Logger				m_aLogger;
 	private static	boolean				m_bEnableLogging = true;
 
-    private LoggerParametersAccess m_LoggerConfigAccess;
+    private LoggerParametersAccess m_aLoggerConfigAccess;
 
 	/**
 	 * 
@@ -94,17 +96,17 @@ public class GlobalLogger extends ComponentBase
 	public GlobalLogger(XComponentContext _ctx) {
 		//read the logger configuration locally
 		//get configuration access, using standard registry functions
-		m_LoggerConfigAccess = new LoggerParametersAccess(_ctx);
+		m_aLoggerConfigAccess = new LoggerParametersAccess(_ctx);
 
 		m_sName = GlobConstant.m_sEXTENSION_IDENTIFIER;
-		m_log = Logger.getLogger(m_sName);
-		m_log.setUseParentHandlers(false);//disables the console output of the root logger
+		m_aLogger = Logger.getLogger(m_sName);
+		m_aLogger.setUseParentHandlers(false);//disables the console output of the root logger
 
 		getLoggingConfiguration();
 		configureLogger();
 
-		if(m_nCanLogMyself)
-			m_log.info("ctor");
+		if(m_bCanLogMyself)
+			m_aLogger.info("ctor");
 	}
 
 	/* (non-Javadoc)
@@ -120,8 +122,8 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		if(m_nCanLogMyself)
-			m_log.info("getSupportedServiceNames");
+		if(m_bCanLogMyself)
+			m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -145,29 +147,28 @@ public class GlobalLogger extends ComponentBase
 	 * read logging configuration from registry and set internal variables
 	 */
 	protected void getLoggingConfiguration() {
-		m_sEnableInfoLevel = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_INFO_LEVEL);
-		m_sEnableWarningLevel = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_WARNING_LEVEL);
-		m_sEnableConsoleOutput = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_CONSOLE_OUTPUT);
-		m_sEnableFileOutput = m_LoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_FILE_OUTPUT);
-		m_sLogFilePath = m_LoggerConfigAccess.getText(GlobConstant.m_sLOG_FILE_PATH);
+		m_bEnableInfoLevel = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_INFO_LEVEL);
+		m_bEnableWarningLevel = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_WARNING_LEVEL);
+		m_bEnableConsoleOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_CONSOLE_OUTPUT);
+		m_bEnableFileOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_FILE_OUTPUT);
+		m_sLogFilePath = m_aLoggerConfigAccess.getText(GlobConstant.m_sLOG_FILE_PATH);
 //FIXME: the file path need to be converted according to the platform
 // e.g.: get the path separator, then scan the file path and change from whatever value to '/'
-		m_sFileRotationCount = m_LoggerConfigAccess.getNumber(GlobConstant.m_sFILE_ROTATION_COUNT);
-		m_sMaxFileSize = m_LoggerConfigAccess.getNumber(GlobConstant.m_sMAX_FILE_SIZE);
+		m_nFileRotationCount = m_aLoggerConfigAccess.getNumber(GlobConstant.m_sFILE_ROTATION_COUNT);
+		m_nMaxFileSize = m_aLoggerConfigAccess.getNumber(GlobConstant.m_sMAX_FILE_SIZE);
 	}
 
 	protected void configureLogger() {
-		if(m_sEnableConsoleOutput) {
-			myHandl = new ConsoleHandler();
-			myformatter = new LocalLogFormatter();
-			myHandl.setFormatter(myformatter);		
-			m_log.addHandler(myHandl);
+		if(m_bEnableConsoleOutput) {
+			m_aConsoleHandl = new ConsoleHandler();
+			m_aLogFormatter = new LocalLogFormatter();
+			m_aConsoleHandl.setFormatter(m_aLogFormatter);		
+			m_aLogger.addHandler(m_aConsoleHandl);
 			System.out.println("console logging enabled");
 		}
-/*		else
-			System.out.println("console logging NOT enabled");*/
+//DEBUG		else	System.out.println("console logging NOT enabled");
 
-		if(m_sEnableFileOutput) {
+		if(m_bEnableFileOutput) {
 			String sFileName = GlobConstant.m_sEXTENSION_IDENTIFIER+".log";
 			try {
 // TODO document the default position of log file: $HOME/<extension id>.log, maximum
@@ -175,34 +176,33 @@ public class GlobalLogger extends ComponentBase
 					sFileName = m_sLogFilePath+"/"+sFileName;
 				else
 					sFileName = "%h/"+sFileName;
-				myFileHandl = new FileHandler( sFileName,m_sMaxFileSize,m_sFileRotationCount);
-				myFileformatter = new LocalLogFormatter();
-				myFileHandl.setFormatter(myFileformatter);
-				m_log.addHandler(myFileHandl);
-//FIXME DEBUG				System.out.println("files logging enabled, path "+" "+sFileName+" size: "+m_sMaxFileSize+" count: "+m_sFileRotationCount);
+				m_aLogFileHandl = new FileHandler( sFileName,m_nMaxFileSize,m_nFileRotationCount);
+				m_aLogFileFormatter = new LocalLogFormatter();
+				m_aLogFileHandl.setFormatter(m_aLogFileFormatter);
+				m_aLogger.addHandler(m_aLogFileHandl);
+//FIXME DEBUG				System.out.println("files logging enabled, path "+" "+sFileName+" size: "+m_nMaxFileSize+" count: "+m_nFileRotationCount);
 			} catch (SecurityException e) {
 				//FIXME it seems the formatter does act accordingly
-/*				if(m_sEnableConsoleOutput)
-					m_log.log(Level.SEVERE, "exception: ", e);
+/*				if(m_bEnableConsoleOutput)
+					m_aLogger.log(Level.SEVERE, "exception: ", e);
 				else*/
 					e.printStackTrace();
 				System.out.println("file logging NOT enabled ");
 			} catch (IOException e) {
 				//FIXME it seems the formatter does act accordingly
-/*				if(m_sEnableConsoleOutput)
-					m_log.log(Level.SEVERE, "exception: ", e);
+/*				if(m_bEnableConsoleOutput)
+					m_aLogger.log(Level.SEVERE, "exception: ", e);
 				else*/
 					e.printStackTrace();
 				System.out.println("file logging NOT enabled: problem with formatter or file access ");
 			}
 		}
-/*FIXME DEBUG		else
-			System.out.println("file logging NOT enabled ");*/
+/*FIXME DEBUG		else System.out.println("file logging NOT enabled ");*/
 			
-		if(!m_sEnableConsoleOutput && !m_sEnableFileOutput)
+		if(!m_bEnableConsoleOutput && !m_bEnableFileOutput)
 			m_bEnableLogging = false;
 
-		m_nCanLogMyself =  m_bEnableLogging && m_sEnableInfoLevel;
+		m_bCanLogMyself =  m_bEnableLogging && m_bEnableInfoLevel;
 	}
 
 	/* (non-Javadoc)
@@ -226,24 +226,24 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void logp(int _nLevel, String arg1, String arg2, String arg3) {
-		if(m_bEnableLogging)		
 			synchronized (m_bLogConfigChanged) {			
-				switch (_nLevel) {
-				default:
-					m_log.logp(Level.FINE, arg1, arg2, arg3);
-					break;
-				case GlobConstant.m_nLOG_LEVEL_INFO:
-					if(m_sEnableInfoLevel)
-						m_log.logp(Level.INFO, arg1, arg2, arg3);						
-					break;
-				case GlobConstant.m_nLOG_LEVEL_SEVERE:
-					m_log.logp(Level.SEVERE, arg1, arg2, arg3);						
-					break;			
-				case GlobConstant.m_nLOG_LEVEL_WARNING:
-					if(m_sEnableWarningLevel)
-						m_log.logp(Level.WARNING, arg1, arg2, arg3);						
-					break;
-				}
+				if(m_bEnableLogging)		
+					switch (_nLevel) {
+					default:
+						m_aLogger.logp(Level.FINE, arg1, arg2, arg3);
+						break;
+					case GlobConstant.m_nLOG_LEVEL_INFO:
+						if(m_bEnableInfoLevel)
+							m_aLogger.logp(Level.INFO, arg1, arg2, arg3);						
+						break;
+					case GlobConstant.m_nLOG_LEVEL_SEVERE:
+						m_aLogger.logp(Level.SEVERE, arg1, arg2, arg3);						
+						break;			
+					case GlobConstant.m_nLOG_LEVEL_WARNING:
+						if(m_bEnableWarningLevel)
+							m_aLogger.logp(Level.WARNING, arg1, arg2, arg3);						
+						break;
+					}
 			}
 	}
 
@@ -254,7 +254,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setLevel(int _nNewVal) {
-		m_nLogLevel = _nNewVal;
+		synchronized (m_bLogConfigChanged) {
+			m_nLogLevel = _nNewVal;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -262,7 +264,7 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public boolean getEnableConsoleOutput() {
-		return m_sEnableConsoleOutput;
+		return m_bEnableConsoleOutput;
 	}
 
 	/* (non-Javadoc)
@@ -270,7 +272,7 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public boolean getEnableFileOutput() {
-		return m_sEnableFileOutput;
+		return m_bEnableFileOutput;
 	}
 
 	/* (non-Javadoc)
@@ -278,7 +280,7 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public boolean getEnableInfoLevel() {
-		return m_sEnableInfoLevel;
+		return m_bEnableInfoLevel;
 	}
 
 	/* (non-Javadoc)
@@ -294,7 +296,7 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public boolean getEnableWarningLevel() {
-		return m_sEnableWarningLevel;
+		return m_bEnableWarningLevel;
 	}
 
 	/* (non-Javadoc)
@@ -303,7 +305,6 @@ public class GlobalLogger extends ComponentBase
 	@Override
 	public void localConfigurationChanged() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -313,7 +314,7 @@ public class GlobalLogger extends ComponentBase
 	public void optionsConfigurationChanged() {
 		// TODO Auto-generated method stub
 		synchronized (m_bLogConfigChanged) {
-			m_log.info("setLevel (change config) called");
+			m_aLogger.info("setLevel (change config) called");
 			// protected area to change base elements of configuration			
 			getLoggingConfiguration();
 // restart logger, what is possible to restart, that is...		
@@ -326,7 +327,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setEnableConsoleOutput(boolean _bNewVal) {
-		m_sEnableConsoleOutput = _bNewVal;
+		synchronized (m_bLogConfigChanged) {
+			m_bEnableConsoleOutput = _bNewVal;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -334,7 +337,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setEnableFileOutput(boolean _bNewVal) {
-		m_sEnableFileOutput = _bNewVal;
+		synchronized (m_bLogConfigChanged) {
+			m_bEnableFileOutput = _bNewVal;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -342,7 +347,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setEnableInfoLevel(boolean _bNewVal) {
-		m_sEnableInfoLevel = _bNewVal;
+		synchronized (m_bLogConfigChanged) {
+			m_bEnableInfoLevel = _bNewVal;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -350,7 +357,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setEnableLogging(boolean _bNewVal) {
-		m_bEnableLogging = _bNewVal;
+		synchronized (m_bLogConfigChanged) {
+			m_bEnableLogging = _bNewVal;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -368,6 +377,38 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void setEnableWarningLevel(boolean _bNewVal) {
-		m_sEnableWarningLevel = _bNewVal;
+		synchronized(m_bLogConfigChanged) {
+			m_bEnableWarningLevel = _bNewVal;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#stopLogging()
+	 */
+	@Override
+	public void stopLogging() {
+		// TODO Auto-generated method stub
+		synchronized(m_bLogConfigChanged) {
+			setEnableLogging(false);
+		}
+
+		synchronized(m_bLogConfigChanged) {
+			if(m_bEnableFileOutput && m_aLogFileHandl != null) {
+				m_aLogFileHandl.close();
+				setEnableFileOutput(false);
+				m_aLogFileHandl = null;
+			}
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		if(m_bCanLogMyself)
+			m_aLogger.entering("dispose", "");
+		stopLogging();
+		super.dispose();
 	}
 }

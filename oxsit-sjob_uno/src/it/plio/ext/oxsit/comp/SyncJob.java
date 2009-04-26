@@ -86,7 +86,7 @@ public class SyncJob extends ComponentBase
 	private XOX_SingletonDataAccess	m_xoxSingletonDataAccess;
 	
 	private Object m_oSingleLogObj;	
-	private	DynamicLogger							m_logger;
+	private	DynamicLogger							m_aLogger;
 	
 	/**
 	 * The toolkit, that we can create UNO dialogs.
@@ -112,21 +112,21 @@ public class SyncJob extends ComponentBase
 
 // the singleton is the first element that need to be build		
 		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
-		m_logger = new DynamicLogger(this,context);
+		m_aLogger = new DynamicLogger(this,context);
 //DEBUG  comment this if no logging needed
-		m_logger.enableLogging();
+		m_aLogger.enableLogging();
 
-		m_logger.ctor();
+		m_aLogger.ctor();
 		m_xComponentContext = context;
 
 		if(m_oSingleVarObj != null) {
-			m_logger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
+			m_aLogger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
 			m_xoxSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_oSingleVarObj);
 			if(m_xoxSingletonDataAccess == null)
-				m_logger.severe("ctor:","No XOX_SingletonDataAccess interface!");			
+				m_aLogger.severe("ctor:","No XOX_SingletonDataAccess interface!");			
 		}
 		else
-			m_logger.severe("ctor:","No singleton service data");
+			m_aLogger.severe("ctor:","No singleton service data");
 
 		/*
 		 * if(m_xComponentContext != null) System.out.println(" got a context!");
@@ -135,7 +135,7 @@ public class SyncJob extends ComponentBase
 			// get the service manager from the component context
 			m_xServiceManager = m_xComponentContext.getServiceManager();
 		} catch (java.lang.Exception ex) {
-			m_logger.severe("ctor", "No service manager!", ex);
+			m_aLogger.severe("ctor", "No service manager!", ex);
 		}
 
 		m_xFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, m_xComponentContext);
@@ -220,7 +220,7 @@ public class SyncJob extends ComponentBase
 
 		// TODO Auto-generated method stub
 //		println( "execute() called !" );
-		m_logger.info("execute", "");
+		m_aLogger.info("execute", "");
 		// detect the reason of calling this job
 		com.sun.star.beans.NamedValue[] lGenericConfig = null;
 		com.sun.star.beans.NamedValue[] lJobConfig = null;
@@ -239,23 +239,23 @@ public class SyncJob extends ComponentBase
 
 			if(oObj != null) {
 //				Utilities.showInterfaces(oObj, oObj);
-				m_logger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
+				m_aLogger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
 				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
 
 				if(xName != null)
 					xName.hasElements();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
+					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
 				
 				XOX_DocumentSignatures xoxD = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, oObj);
 				if(xoxD != null)
 					xoxD.getDocumentURL();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
+					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
 
 			}
 			else
-				m_logger.info("execute","No document signatures service (UNO)");
+				m_aLogger.info("execute","No document signatures service (UNO)");
 			
 			//create a Qualified certificate Object, test only
             args[0] = "arg1"; //here the first arg the URl, may be)
@@ -267,10 +267,10 @@ public class SyncJob extends ComponentBase
 				if(xoxQC != null)
 					xoxQC.getVersion();
 				else
-					m_logger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );				
+					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );				
 			}
 			else
-				m_logger.info("execute","No qualified certificate service (UNO)");				
+				m_aLogger.info("execute","No qualified certificate service (UNO)");				
 			
 		}
 		catch (ClassCastException e) {
@@ -306,7 +306,7 @@ public class SyncJob extends ComponentBase
 		// Analyze the environment info. This sub list is the only guaranteed
 		// one!
 		if (lEnvironment == null)
-			m_logger.info( "lEnvironment is empty" );
+			m_aLogger.info( "lEnvironment is empty" );
 		else {
 			java.lang.String sEnvType = null;
 			java.lang.String sEventName = null;
@@ -354,10 +354,9 @@ public class SyncJob extends ComponentBase
 			 * sfx2/source/appl/appinit.cxx#306 (dev300-m10)
 			 */
 			if (sEventName != null) {
-				m_logger.info("execute", "event received: " + sEventName );
+				m_aLogger.info("execute", "event received: " + sEventName );
 				
-				if (sEventName.equalsIgnoreCase( "OnStartApp" )
-						/*|| sEventName.equalsIgnoreCase( "OnCloseApp" )*/) {
+				if (sEventName.equalsIgnoreCase( "OnStartApp" ) ) {
 //we'll need to initialize the security stuff, done once on init.					
 
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
@@ -382,7 +381,7 @@ public class SyncJob extends ComponentBase
 								xD.startListening(xFrame);
 							}
 							catch (RuntimeException ex) {
-								m_logger.severe("", "cannot create DispatchInterceptor", ex);
+								m_aLogger.severe("", "cannot create DispatchInterceptor", ex);
 							}
 						}
 					}
@@ -397,7 +396,7 @@ public class SyncJob extends ComponentBase
 
 					if (xFrame != null) {
 						m_xFrame = xFrame;
-						m_logger.info("execute", "document loaded URL: " + xModel.getURL() );
+						m_aLogger.info("execute", "document loaded URL: " + xModel.getURL() );
 						
 // grab the XStorage interface of this document
 /*
@@ -412,7 +411,7 @@ public class SyncJob extends ComponentBase
 
 						xStorage = xDocStorage.getDocumentStorage();
 /*						if(xStorage != null) {
-							m_logger.info("execute"+" We have storage available!");
+							m_aLogger.info("execute"+" We have storage available!");
 							Utilities.showInterfaces(xModel, xStorage);
 						}*/
 						/**
@@ -429,7 +428,7 @@ public class SyncJob extends ComponentBase
 						// toolbar dispatcher.
 						// if the dispatcher is dead, then no longer needs them,
 						// then the data will be cleared at the next app start
-						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));						
+						m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));						
 						if(m_xoxSingletonDataAccess != null) {
 							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
 							aDocSign.setDocumentStorage(xStorage);
@@ -440,7 +439,7 @@ public class SyncJob extends ComponentBase
 							
 						}
 						else
-							m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+							m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
 					// delete the single frame data
@@ -448,19 +447,19 @@ public class SyncJob extends ComponentBase
 						if(m_xoxSingletonDataAccess != null)
 							m_xoxSingletonDataAccess.removeDocumentSignatures(Utilities.getHashHex(xModel));
 						else
-							m_logger.log("OnUnload: m_xoxSingletonDataAccess is null");
+							m_aLogger.log("OnUnload: m_xoxSingletonDataAccess is null");
 					}
 					else
-						m_logger.log("OnUnload: xModel is null");
+						m_aLogger.log("OnUnload: xModel is null");
 				} else if (sEventName.equalsIgnoreCase( "OnSaveDone" )) {
 					// only clear the status of the corresponding frame
 					//save done, update status of the model
 					if (xFrame != null) {
 						m_xFrame = xFrame;
-						m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+						m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+							m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 							if(m_xoxSingletonDataAccess != null) {
 								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
 								if(aDocSign != null) {
@@ -468,10 +467,10 @@ public class SyncJob extends ComponentBase
 									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 								}
 								else
-									m_logger.severe("execute","Missing XOX_DocumentSignatures interface");						
+									m_aLogger.severe("execute","Missing XOX_DocumentSignatures interface");						
 							}
 							else
-								m_logger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+								m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
 						}
 					}
 				} else if (sEventName.equalsIgnoreCase( "OnSaveAsDone" )) {
@@ -480,7 +479,7 @@ public class SyncJob extends ComponentBase
 						m_xFrame = xFrame;
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							m_logger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+							m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
 							if(m_xoxSingletonDataAccess != null) {
 								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
 								if(aDocSign != null) {
@@ -488,16 +487,30 @@ public class SyncJob extends ComponentBase
 									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 								}
 								else
-									m_logger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
+									m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
 							}
 							else
-								m_logger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 
+								m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 
 						}
 					}
 				}
+				else if (sEventName.equalsIgnoreCase( "OnCloseApp" ))
+					executeOnCloseApp();
 			}
 		}
 		return null;
+	}
+
+	protected void onViewCreated() {
+		
+	}
+	
+	/**
+	 * executed when application is closed, stops the logger
+	 * close all the log files
+	 */
+	protected void executeOnCloseApp() {
+		m_aLogger.stopLogging();
 	}
 
 	/*
@@ -535,7 +548,7 @@ public class SyncJob extends ComponentBase
 							.createInstanceWithContext( sProviderService, m_xComponentContext ) );
 		} catch (Exception e) {
 			e.printStackTrace();
-			m_logger.info( "error !" );
+			m_aLogger.info( "error !" );
 		}
 		return aConfProvider;
 	}
@@ -583,7 +596,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void close(boolean arg0) throws CloseVetoException {
 		// TODO Auto-generated method stub
-		m_logger.info( "close called" );
+		m_aLogger.info( "close called" );
 	}
 
 	/*
@@ -593,7 +606,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void addCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.info( "addCloseListener called" );
+		m_aLogger.info( "addCloseListener called" );
 	}
 
 	/*
@@ -603,7 +616,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void removeCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.info( "removeCloseListener called" );
+		m_aLogger.info( "removeCloseListener called" );
 	}
 
 	/** check if the document type can be signed

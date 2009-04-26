@@ -68,6 +68,12 @@
             the message to log
     	*/
 	    void    logp( [in] long Level, [in] string SourceClassName, [in] string SourceMethodName, [in] string Message );
+
+		/** The logger is stopped. To be called just before exiting the application, the log files are closed,
+			nothing can be logger afterward. 
+		*/
+		void	stopLogging();
+
 	};
 
   }; }; }; }; };

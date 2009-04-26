@@ -72,7 +72,7 @@ public class DynamicLogger {
 	 * outputs a log with the class hex hash+class full name + "<init>"
 	 * @param _theMethod
 	 */
-public void ctor() {
+	public void ctor() {
 		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init>");
 	}
@@ -222,5 +222,13 @@ public void ctor() {
 	public void disableWarning() {
 		m_bWarningEnabled = false;
 		
+	}
+
+	/**
+	 * this method is modal: it disables the logging
+	 * for ALL the entire extension.
+	 */
+	public	void stopLogging() {
+		m_xLogger.stopLogging();
 	}
 }
