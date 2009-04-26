@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.comp;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
@@ -428,9 +429,9 @@ public class SyncJob extends ComponentBase
 						// toolbar dispatcher.
 						// if the dispatcher is dead, then no longer needs them,
 						// then the data will be cleared at the next app start
-						m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));						
+						m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));						
 						if(m_xoxSingletonDataAccess != null) {
-							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
 							aDocSign.setDocumentStorage(xStorage);
 							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
 //verify signatures, if the case							
@@ -445,7 +446,7 @@ public class SyncJob extends ComponentBase
 					// delete the single frame data
 					if (xModel != null) {
 						if(m_xoxSingletonDataAccess != null)
-							m_xoxSingletonDataAccess.removeDocumentSignatures(Utilities.getHashHex(xModel));
+							m_xoxSingletonDataAccess.removeDocumentSignatures(Helpers.getHashHex(xModel));
 						else
 							m_aLogger.log("OnUnload: m_xoxSingletonDataAccess is null");
 					}
@@ -456,12 +457,12 @@ public class SyncJob extends ComponentBase
 					//save done, update status of the model
 					if (xFrame != null) {
 						m_xFrame = xFrame;
-						m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+						m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+							m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
 							if(m_xoxSingletonDataAccess != null) {
-								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
 								if(aDocSign != null) {
 									//determine the storage, it may be different, set it to the document
 									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
@@ -479,9 +480,9 @@ public class SyncJob extends ComponentBase
 						m_xFrame = xFrame;
 						String aUrl = xModel.getURL();
 						if (aUrl.length() > 0) {
-							m_aLogger.info(" model hash: "+Utilities.getHashHex(xModel) + " frame hash: " + Utilities.getHashHex(xFrame));
+							m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
 							if(m_xoxSingletonDataAccess != null) {
-								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(xModel), null);
+								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
 								if(aDocSign != null) {
 									//determine the storage, it may be different, set it to the document
 									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);

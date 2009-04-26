@@ -22,7 +22,7 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
@@ -52,10 +52,12 @@ import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStorable;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
@@ -110,7 +112,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	
 	private Object												m_aFrameConfMutex			= new Object();
 	
-	protected Object											m_SingletonDataObject;
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
 	protected XOX_DocumentSignatures							m_xDocumentSignatures;
 	
@@ -134,30 +135,12 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_bSignatureIsEnabled = false;
 //FIXME DEBUG 	
 		m_logger.enableLogging();
-		m_logger.ctor(" frame hash: "+Utilities.getHashHex(m_xFrame));
-
-		try {
-			m_SingletonDataObject = xContext.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
-			if(m_SingletonDataObject != null) {
-				m_logger.info(" singleton service data "+Utilities.getHashHex(m_SingletonDataObject));
-				m_xSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_SingletonDataObject);
-				if(m_xSingletonDataAccess == null)
-					m_logger.ctor("XOX_SingletonDataAccess missing!");
-			}
-			else
-				m_logger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!");
-		}
-		catch (ClassCastException e) {
-			e.printStackTrace();
-		}
-
-		grabModel();
+		m_logger.ctor(" frame hash: "+Helpers.getHashHex(m_xFrame));
 
 		m_imagesUrl = null;
 		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( m_xCC );
 		if(xPkgInfo != null) {
-			String sLoc = xPkgInfo
-			.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
+			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
 			if(sLoc != null) 
 				m_imagesUrl = sLoc + "/images";
 			else //FIXME, TODO devise a better method, if the call fails
@@ -165,12 +148,26 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		}
 		else
 			m_logger.info("ctor: No pkginfo!");
+		try {
+			m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
+			m_logger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			
+		}
+		catch (ClassCastException e) {
+			e.printStackTrace();
+		} catch (ServiceNotFoundException e) {
+			m_logger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+		} catch (NoSuchMethodException e) {
+			m_logger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+		}
+
+		grabModel();
+
 		// Utilities.showInterfaces( m_xModel );
 		if (m_xModel != null) {
 			// init the status structure from the configuration
 			if(m_xSingletonDataAccess != null) {
 				//add this to the document-signatures list
-				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), this);
+				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_xModel), this);
 				 if(m_xDocumentSignatures != null )
 					 changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
 			}
@@ -413,7 +410,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 						aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
 						aLink.m_aMaster
 								.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
-						 m_logger.info("changeSignatureStatus: send listener:" + Utilities.getHashHex(aLink.m_aMaster)+
+						 m_logger.info("changeSignatureStatus: send listener:" + Helpers.getHashHex(aLink.m_aMaster)+
 								 " state: "+m_nState);
 					}
 					catch (RuntimeException ex) {
@@ -507,14 +504,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					LinkingStatusListeners MyListener = new LinkingStatusListeners(
 							aListener, aURL, m_aDocumentURL );
 					Listeners.put( aListener, MyListener );
-					m_logger.log("addStatusListener, added:",Utilities.getHashHex(aListener)+" "+aURL.Complete);
+					m_logger.log("addStatusListener, added:",Helpers.getHashHex(aListener)+" "+aURL.Complete);
 					// grab the document status
 					grabModel();//update model
 					aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
 					aListener.statusChanged( prepareTooltipFeatureState( getNewTooltip() ) );
 				}
 				else
-					m_logger.log("addStatusListener, already present:",Utilities.getHashHex(aListener)+" "+aURL.Complete);					
+					m_logger.log("addStatusListener, already present:",Helpers.getHashHex(aListener)+" "+aURL.Complete);					
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
 			m_logger.severe("addStatusListener", "", e);
@@ -544,7 +541,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	@Override
 	public void removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
 //		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
-		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete);
+		m_logger.entering("removeStatusListener",Helpers.getHashHex(aListener)+" "+aURL.Complete);
 		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
 		aThread.start();
 	}

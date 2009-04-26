@@ -46,10 +46,6 @@ public class Utilities {
 		// Conf = OOoPDFMkConfig.Instance();
 	}
 	
-	public static String getFrameHash(String aURL) {
-		return GlobConstant.m_sEXTENSION_CONF_FRAME_ID + Integer.toHexString( aURL.hashCode() );
-	}
-	
 	public static void showProperty(XPropertySet xPropSet, String pName) {
 		try {
 			XPropertySetInfo xPInfo = xPropSet.getPropertySetInfo();
@@ -441,23 +437,6 @@ public class Utilities {
 		} catch (java.lang.Exception e) {
 			e.printStackTrace(System.out);
 		}
-	}
-
-	/** Return the hex hash code.
-	 * 
-	 * @param _oObj the object to be examined
-	 * @return the returned hash code, in hex
-	 */
-	public static String getHashHex(Object _oObj) {
-		String ret;
-		try {
-//grab from the Object the has code and returns it
-			ret = String.format( "%8H", _oObj );
-		} catch (java.lang.Exception e) {
-			e.printStackTrace(System.out);
-			ret = "caught exception!";
-		}
-		return ret;
 	}
 
 	public static String ArraytoString(String[] LocArray) {

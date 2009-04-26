@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
@@ -40,8 +41,10 @@ import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStorable;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
@@ -68,7 +71,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 
 	private boolean	m_bIsModified = false;
 	
-	protected Object											m_SingletonDataObject;
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
 	protected XOX_DocumentSignatures							m_xDocumentSignatures;
 		
@@ -83,18 +85,16 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		m_logger.ctor("");
 		m_bHasLocation = false;
 		try {
-			m_SingletonDataObject = xContext.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
-			if(m_SingletonDataObject != null) {
-				m_logger.info(" singleton service data "+String.format( "%8H", m_SingletonDataObject.hashCode() ));
-				m_xSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_SingletonDataObject);
-				if(m_xSingletonDataAccess == null)
-					m_logger.ctor("XOX_SingletonDataAccess missing!");
-			}
-			else
-				m_logger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!");
+				m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
+				m_logger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );
 		}
 		catch (ClassCastException e) {
-			e.printStackTrace();
+			m_logger.severe("ctor","",e);
+		} catch (ServiceNotFoundException e) {
+			m_logger.severe("ctor","",e);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("ctor","",e);
 		}
 
 		grabModel();
@@ -102,7 +102,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 			// init the status structure from the configuration
 			if(m_xSingletonDataAccess != null) {
 				//add this to the document-signatures list
-				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), null);
+				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_xModel), null);
 			}
 			else
 				m_logger.severe("ctor","XOX_SingletonDataAccess missing!");
@@ -161,7 +161,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 				// init the status structure from the configuration
 				if(m_xSingletonDataAccess != null) {
 					//add this to the document-signatures list
-					 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Utilities.getHashHex(m_xModel), null);
+					 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_xModel), null);
 					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
 					if (ret != 0) {
 						localstate = m_xDocumentSignatures.getDocumentSignatureState();

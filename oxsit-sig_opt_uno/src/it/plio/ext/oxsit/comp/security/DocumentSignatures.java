@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -135,7 +136,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		if(!m_aListeners.containsKey(_ChangesListener) &&
 				_ChangesListener != null ) {
 			m_aListeners.put(_ChangesListener, _ChangesListener);
-			m_logger.entering("addChangesListener "+Utilities.getHashHex(_ChangesListener));
+			m_logger.entering("addChangesListener "+Helpers.getHashHex(_ChangesListener));
 		}		
 	}
 
@@ -147,7 +148,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		// TODO Auto-generated method stub
 		if(m_aListeners.containsKey(_ChangesListener) ) {
 			m_aListeners.remove(_ChangesListener);
-			m_logger.entering("removeChangesListener "+Utilities.getHashHex(_ChangesListener));		
+			m_logger.entering("removeChangesListener "+Helpers.getHashHex(_ChangesListener));		
 		}
 	}
 
