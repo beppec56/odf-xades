@@ -189,15 +189,6 @@ public class SignatureHandler extends ComponentBase
 		m_logger.info("queryDispatch",aURL.Complete);
 		try {
 			if (aURL.Protocol.compareTo( GlobConstant.m_sSIGN_PROTOCOL_BASE_URL ) == 0) {
-				// if ( aURL.Path.compareTo(GlobConstant.m_sSelectSignPath) == 0
-				// ) {
-				// if(m_aImplSelSignatureDispatch == null)
-				// m_aImplSelSignatureDispatch = new
-				// ImplSelectSignatureDispatch(m_xFrame,
-				// m_xComponentContext, m_xMultiComponentFactory,
-				// null);
-				// return m_aImplSelSignatureDispatch;
-				// }
 				/*if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH ) == 0) {
 					if (m_aImplXAdESSignatureDispatch == null)
 						m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(

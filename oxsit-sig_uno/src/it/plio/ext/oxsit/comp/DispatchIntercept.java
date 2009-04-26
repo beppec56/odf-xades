@@ -95,7 +95,6 @@ public class DispatchIntercept extends ComponentBase
 	/**
 	 * members used to really dispatch the save as command down on the chain
 	 */
-//	private XDispatch								m_ImplIntSignatureDispatch	= null;
 	private XDispatch								m_ImplIntSaveDispatch		= null;
 	private XDispatch								m_ImplIntSaveAsDispatch		= null;
 	
@@ -249,23 +248,6 @@ public class DispatchIntercept extends ComponentBase
 					return null;
 			}
 
-			// interpret .uno:Signature
-/*			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSignatureURLComplete ) == true) {
-				// Utilities.showInterfaces(this);
-				// printlnName("com.sun.star.frame.XDispatchProvider#queryDispatch
-				// intercept: "+aURL.Complete);
-				synchronized (this) {
-					XDispatch aUnoSaveSlaveDispatch = null;
-					if (m_xSlave != null)
-						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
-								nSearchFlags );
-					if (m_ImplIntSignatureDispatch == null)
-						m_ImplIntSignatureDispatch = new ImplIntSignatureDispatch(
-								m_xFrame, m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
-					return m_ImplIntSignatureDispatch;
-				}
-			}
-*/
 			// intercept .uno:Save
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);

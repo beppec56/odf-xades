@@ -99,27 +99,6 @@ digitale tipo XAdES, implementazione italiana.
 			</prop>
 		</node>
 		<!--
-		    digital signature selection dialog
-		-->
-		<node oor:name="id_sel_dsig" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Select Digital Signature Types</value>
-				<value xml:lang="it">Seleziona il tipo di firma digitale</value>
-			</prop>
-		</node>
-		<node oor:name="id_sel_dsig_xades" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">XAdES (IT) Digital Signatures...</value>
-				<value xml:lang="it">Firme digitali XAdES (IT)...</value>
-			</prop>
-		</node>
-		<node oor:name="id_sel_dsig_ooo" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">OpenOffice.org Digital Signatures...</value>
-				<value xml:lang="it">Firme digitali OpenOffice.org...</value>
-			</prop>
-		</node>
-		<!--
 		    signature toolbar messages (partly from svx/source/stbctrls/stbctrls.src, id RID_SVXSTR_XMLSEC_SIG_NOT_OK )
 		-->
 		<node oor:name="id_toolbar_disabled" oor:op="replace">

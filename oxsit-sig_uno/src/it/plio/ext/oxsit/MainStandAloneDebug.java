@@ -23,20 +23,12 @@
 package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.registry.ToolbarButtonTitleRegistryAccess;
-import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
-import it.plio.ext.oxsit.ooo.ui.DialogChooseSignatureTypes;
 import it.plio.ext.oxsit.utilities.OOoServerInfo;
-//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
 
-import com.sun.star.frame.XDesktop;
-import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 public class MainStandAloneDebug {
