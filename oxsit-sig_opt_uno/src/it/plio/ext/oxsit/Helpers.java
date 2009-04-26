@@ -47,10 +47,6 @@ public class Helpers {
 	protected Helpers() {
 	}
 	
-	public static String getFrameHash(String aURL) {
-		return GlobConstant.m_sEXTENSION_CONF_FRAME_ID + Integer.toHexString( aURL.hashCode() );
-	}
-
 	/** Return the hex hash code of an object.
 	 * 
 	 * @param _oObj the object to be examined
@@ -60,7 +56,10 @@ public class Helpers {
 		String ret;
 		try {
 //grab from the Object the has code and returns it
-			ret = String.format( "%8H", _oObj );
+			if(_oObj == null)
+				ret ="NULL";
+			else
+				ret = String.format( "%8H", _oObj );
 		} catch (java.lang.Exception e) {
 			e.printStackTrace(System.out);
 			ret = "caught exception!";

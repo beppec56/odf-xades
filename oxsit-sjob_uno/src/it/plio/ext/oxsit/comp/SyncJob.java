@@ -38,7 +38,9 @@ import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatchProviderInterception;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
@@ -49,6 +51,7 @@ import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
 import com.sun.star.task.XStatusIndicator;
 import com.sun.star.text.XTextDocument;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
@@ -74,7 +77,9 @@ public class SyncJob extends ComponentBase
 	public static final String			m_sImplementationName	= SyncJob.class.getName();
 	public static final String[]		m_sServiceNames			= { "com.sun.star.task.Job" };
 
-	private XFrame						m_xFrame;												// use
+	private XModel 						m_axModel;
+	private XFrame						m_axFrame;												// use
+	private XOX_DocumentSignatures 		m_aDocSign;
 	// when frame is needed as reference
 	private XComponentContext			m_xComponentContext;
 	// may be we will need it afterward...
@@ -84,7 +89,7 @@ public class SyncJob extends ComponentBase
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
 	private Object m_oSingleVarObj;
-	private XOX_SingletonDataAccess	m_xoxSingletonDataAccess;
+	private XOX_SingletonDataAccess		m_axoxSingletonDataAccess;
 	
 	private Object m_oSingleLogObj;	
 	private	DynamicLogger							m_aLogger;
@@ -116,18 +121,22 @@ public class SyncJob extends ComponentBase
 		m_aLogger = new DynamicLogger(this,context);
 //DEBUG  comment this if no logging needed
 		m_aLogger.enableLogging();
-
 		m_aLogger.ctor();
 		m_xComponentContext = context;
+		m_axFrame = null;
+		m_axModel = null;
+		m_aDocSign = null;
 
-		if(m_oSingleVarObj != null) {
-			m_aLogger.info(" singleton service data "+String.format( "%8H", m_oSingleVarObj.hashCode() ));
-			m_xoxSingletonDataAccess = (XOX_SingletonDataAccess)UnoRuntime.queryInterface(XOX_SingletonDataAccess.class, m_oSingleVarObj);
-			if(m_xoxSingletonDataAccess == null)
-				m_aLogger.severe("ctor:","No XOX_SingletonDataAccess interface!");			
+		try {
+			m_axoxSingletonDataAccess = Helpers.getSingletonDataAccess(m_xComponentContext);
+			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_axoxSingletonDataAccess));
+		} catch (ClassCastException e) {
+			m_aLogger.severe("", "",e);
+		} catch (ServiceNotFoundException e) {
+			m_aLogger.severe("", "",e);
+		} catch (NoSuchMethodException e) {
+			m_aLogger.severe("", "",e);
 		}
-		else
-			m_aLogger.severe("ctor:","No singleton service data");
 
 		/*
 		 * if(m_xComponentContext != null) System.out.println(" got a context!");
@@ -217,7 +226,6 @@ public class SyncJob extends ComponentBase
 	 * initialize the stuff (change the elements)
 	 */
 	public Object execute(NamedValue[] lArgs) throws IllegalArgumentException, Exception {
-		XOX_DocumentSignatures aDocSign = null;
 
 		// TODO Auto-generated method stub
 //		println( "execute() called !" );
@@ -311,189 +319,52 @@ public class SyncJob extends ComponentBase
 		else {
 			java.lang.String sEnvType = null;
 			java.lang.String sEventName = null;
-			com.sun.star.frame.XFrame xFrame = null;
-			com.sun.star.frame.XModel xModel = null;
 			c = lEnvironment.length;
-			/*
-			 * for (int i=0; i<c; ++i) {
-			 * System.out.println(lEnvironment[i].Name); }
-			 */
+			//////////////////////
+			//DEBUG	for (int i=0; i<c; ++i) {m_aLogger.log(lEnvironment[i].Name); }
+			//////////////////////
 			for (int i = 0; i < c; ++i) {
 				if (lEnvironment[i].Name.equals( "EnvType" )) {
-					sEnvType = com.sun.star.uno.AnyConverter
-							.toString( lEnvironment[i].Value );
+					sEnvType = com.sun.star.uno.AnyConverter.toString( lEnvironment[i].Value );
 				} else if (lEnvironment[i].Name.equals( "EventName" )) {
-					sEventName = com.sun.star.uno.AnyConverter
-							.toString( lEnvironment[i].Value );
+					sEventName = com.sun.star.uno.AnyConverter.toString( lEnvironment[i].Value );
 				} else if (lEnvironment[i].Name.equals( "Frame" )) {
 
-					xFrame = (com.sun.star.frame.XFrame) com.sun.star.uno.AnyConverter
+					m_axFrame = (com.sun.star.frame.XFrame) com.sun.star.uno.AnyConverter
 							.toObject( new com.sun.star.uno.Type(
-									com.sun.star.frame.XFrame.class ),
-									lEnvironment[i].Value );
-					/*
-					 * System.out.println("frame received "); m_xFrame = xFrame;
-					 * showMessageBox("event received", sEventName); m_xFrame =
-					 * null;
-					 */
+									com.sun.star.frame.XFrame.class ),lEnvironment[i].Value );
 				} else if (lEnvironment[i].Name.equals( "Model" )) {
-					xModel = (com.sun.star.frame.XModel) com.sun.star.uno.AnyConverter
+					m_axModel = (com.sun.star.frame.XModel) com.sun.star.uno.AnyConverter
 							.toObject( new com.sun.star.uno.Type(
-									com.sun.star.frame.XModel.class ),
-									lEnvironment[i].Value );
+									com.sun.star.frame.XModel.class ),lEnvironment[i].Value );
 				}
 			}
-			if (xModel != null) {
-				XController xController = xModel.getCurrentController();
+			if (m_axModel != null) {
+				XController xController = m_axModel.getCurrentController();
 				if (xController != null) {
-					xFrame = xController.getFrame();
+					m_axFrame = xController.getFrame();
 				}
 			}
 			/**
 			 * environment analized, so, do as requested
 			 * OOo code dealing with event firing is in
 			 * sfx2/source/appl/appinit.cxx#306 (dev300-m10)
+			 * 
 			 */
 			if (sEventName != null) {
-				m_aLogger.info("execute", "event received: " + sEventName );
-				
+				m_aLogger.info("execute", "event received: " + sEventName );				
 				if (sEventName.equalsIgnoreCase( "OnStartApp" ) ) {
-//we'll need to initialize the security stuff, done once on init.					
-
+					executeOnStartApp();
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
-///////////////////// OnViewCreated //////////////////////////7
-					/**
-					 * this event is fired at the end of the method sal_Bool
-					 * SfxTopFrame::InsertDocument( SfxObjectShell* pDoc ) in
-					 * file sfx2/source/view/topfrm.cxx When the view has been
-					 * created and the model, frame, controller are all
-					 * connected
-					 * 
-					 * try to get the frame, then activate at the frame our
-					 * interceptor
-					 * 
-					 */
-					if (xFrame != null) {
-						m_xFrame = xFrame;
-						if (canBeSigned(xFrame)) {
-							try {
-								Object aObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE, m_xComponentContext);
-								XOX_DispatchInterceptor xD = (XOX_DispatchInterceptor)UnoRuntime.queryInterface(XOX_DispatchInterceptor.class, aObj);
-								xD.startListening(xFrame);
-							}
-							catch (RuntimeException ex) {
-								m_aLogger.severe("", "cannot create DispatchInterceptor", ex);
-							}
-						}
-					}
+					executeOnViewCreated();
 				} else if (sEventName.equalsIgnoreCase( "OnLoad" )) {
-					/**
-					 * this event is fired up when the document loading is finished
-					 * 
-					 * seems in sfx2/source/doc/objstor.cxx#577 (dev300-m10)
-					 * though I'm not sure
-					 * 
-					 */
-
-					if (xFrame != null) {
-						m_xFrame = xFrame;
-						m_aLogger.info("execute", "document loaded URL: " + xModel.getURL() );
-						
-// grab the XStorage interface of this document
-/*
- * unfortunately, the storage we get this way doesn't give us access to the
- * whole stuff
- * some part of the storage throw an IOError exception, something that doesn't happen
- * if the package is opened anew using the URL
- */
-						XStorage xStorage = null;
-						XStorageBasedDocument xDocStorage =
-									(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xModel );
-
-						xStorage = xDocStorage.getDocumentStorage();
-/*						if(xStorage != null) {
-							m_aLogger.info("execute"+" We have storage available!");
-							Utilities.showInterfaces(xModel, xStorage);
-						}*/
-						/**
-						 * we can read the file and check if a CNIPA signature
-						 * TODO start a thread to do the job? may be creating a
-						 * sort of user feedback if the file is big or composed
-						 * of a lot of images
-						 * 
-						 */
-						// check the signature status and init the proper value
-						// in the configuration, check the signature and set the
-						// status properly
-						// after the creation the frame data are manipulated by the
-						// toolbar dispatcher.
-						// if the dispatcher is dead, then no longer needs them,
-						// then the data will be cleared at the next app start
-						m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));						
-						if(m_xoxSingletonDataAccess != null) {
-							aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
-							aDocSign.setDocumentStorage(xStorage);
-							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
-//verify signatures, if the case							
-
-							aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-							
-						}
-						else
-							m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
-					}
+					executeOnLoad();
 				} else if (sEventName.equalsIgnoreCase( "OnUnload" )) {
-					// delete the single frame data
-					if (xModel != null) {
-						if(m_xoxSingletonDataAccess != null)
-							m_xoxSingletonDataAccess.removeDocumentSignatures(Helpers.getHashHex(xModel));
-						else
-							m_aLogger.log("OnUnload: m_xoxSingletonDataAccess is null");
-					}
-					else
-						m_aLogger.log("OnUnload: xModel is null");
+					executeOnUnload();
 				} else if (sEventName.equalsIgnoreCase( "OnSaveDone" )) {
-					// only clear the status of the corresponding frame
-					//save done, update status of the model
-					if (xFrame != null) {
-						m_xFrame = xFrame;
-						m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
-						String aUrl = xModel.getURL();
-						if (aUrl.length() > 0) {
-							m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
-							if(m_xoxSingletonDataAccess != null) {
-								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
-								if(aDocSign != null) {
-									//determine the storage, it may be different, set it to the document
-									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-								}
-								else
-									m_aLogger.severe("execute","Missing XOX_DocumentSignatures interface");						
-							}
-							else
-								m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
-						}
-					}
+					executeOnSaveDone();
 				} else if (sEventName.equalsIgnoreCase( "OnSaveAsDone" )) {
-					//a new document, see if already there, init signature states if necessary
-					if (xFrame != null) {
-						m_xFrame = xFrame;
-						String aUrl = xModel.getURL();
-						if (aUrl.length() > 0) {
-							m_aLogger.info(" model hash: "+Helpers.getHashHex(xModel) + " frame hash: " + Helpers.getHashHex(xFrame));
-							if(m_xoxSingletonDataAccess != null) {
-								aDocSign  = m_xoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(xModel), null);
-								if(aDocSign != null) {
-									//determine the storage, it may be different, set it to the document
-									aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-								}
-								else
-									m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
-							}
-							else
-								m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 
-						}
-					}
+					executeOnSaveAsDone();
 				}
 				else if (sEventName.equalsIgnoreCase( "OnCloseApp" ))
 					executeOnCloseApp();
@@ -502,7 +373,147 @@ public class SyncJob extends ComponentBase
 		return null;
 	}
 
-	protected void onViewCreated() {
+	protected void executeOnStartApp() {
+		//we'll need to initialize the security stuff, done once on init.					
+	}
+
+	protected void executeOnUnload() {
+		// delete the single frame data
+		if (m_axModel != null) {
+			if(m_axoxSingletonDataAccess != null)
+				m_axoxSingletonDataAccess.removeDocumentSignatures(Helpers.getHashHex(m_axModel));
+			else
+				m_aLogger.log("OnUnload: m_axoxSingletonDataAccess is null");
+		}
+		else
+			m_aLogger.log("OnUnload: m_axModel is null");		
+	}
+
+	protected void executeOnSaveDone() {
+		// only clear the status of the corresponding frame
+		//save done, update status of the model
+		if (m_axFrame != null) {
+			m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+			String aUrl = m_axModel.getURL();
+			if (aUrl.length() > 0) {
+				m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+				if(m_axoxSingletonDataAccess != null) {
+					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
+					if(m_aDocSign != null) {
+						//determine the storage, it may be different, set it to the document
+						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+					}
+					else
+						m_aLogger.severe("execute","Missing XOX_DocumentSignatures interface");						
+				}
+				else
+					m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+			}
+		}
+	}
+
+	protected void executeOnSaveAsDone() {
+		//a new document, see if already there, init signature states if necessary
+		if (m_axFrame != null) {
+			String aUrl = m_axModel.getURL();
+			if (aUrl.length() > 0) {
+				m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+				if(m_axoxSingletonDataAccess != null) {
+					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
+					if(m_aDocSign != null) {
+						//determine the storage, it may be different, set it to the document
+						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+					}
+					else
+						m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
+				}
+				else
+					m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 
+			}
+		}
+	}
+
+	protected void executeOnLoad() throws IOException, Exception {
+		/**
+		 * this event is fired up when the document loading is finished
+		 * 
+		 * seems in sfx2/source/doc/objstor.cxx#577 (dev300-m10)
+		 * though I'm not sure
+		 * 
+		 */
+
+		if (m_axFrame != null) {
+			m_aLogger.info("execute", "document loaded URL: " + m_axModel.getURL() );
+			
+//grab the XStorage interface of this document
+/*
+* unfortunately, the storage we get this way doesn't give us access to the
+* whole stuff
+* some part of the storage throw an IOError exception, something that doesn't happen
+* if the package is opened anew using the URL
+*/
+			XStorage xStorage = null;
+			XStorageBasedDocument xDocStorage =
+						(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, m_axModel );
+
+			xStorage = xDocStorage.getDocumentStorage();
+/*						if(xStorage != null) {
+				m_aLogger.info("execute"+" We have storage available!");
+				Utilities.showInterfaces(xModel, xStorage);
+			}*/
+			/**
+			 * we can read the file and check if a CNIPA signature
+			 * TODO start a thread to do the job? may be creating a
+			 * sort of user feedback if the file is big or composed
+			 * of a lot of images
+			 * 
+			 */
+			// check the signature status and init the proper value
+			// in the configuration, check the signature and set the
+			// status properly
+			// after the creation the frame data are manipulated by the
+			// toolbar dispatcher.
+			// if the dispatcher is dead, then no longer needs them,
+			// then the data will be cleared at the next app start
+			m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));						
+			if(m_axoxSingletonDataAccess != null) {
+				m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
+				m_aDocSign.setDocumentStorage(xStorage);
+				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+//verify signatures, if the case							
+				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+			}
+			else
+				m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
+		}
+		
+	}
+
+	///////////////////// OnViewCreated //////////////////////////7
+	protected void executeOnViewCreated() throws Exception {
+		/**
+		 * this event is fired at the end of the method sal_Bool
+		 * SfxTopFrame::InsertDocument( SfxObjectShell* pDoc ) in
+		 * file sfx2/source/view/topfrm.cxx When the view has been
+		 * created and the model, frame, controller are all
+		 * connected
+		 * 
+		 * try to get the frame, then activate at the frame our
+		 * interceptor
+		 * 
+		 */
+		if (m_axFrame != null) {
+			if (canBeSigned(m_axFrame)) {
+				try {
+					Object aObj = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDISPATCH_INTERCEPTOR_SERVICE, m_xComponentContext);
+					XOX_DispatchInterceptor xD = (XOX_DispatchInterceptor)UnoRuntime.queryInterface(XOX_DispatchInterceptor.class, aObj);
+					xD.startListening(m_axFrame);
+				}
+				catch (RuntimeException ex) {
+					m_aLogger.severe("", "cannot create DispatchInterceptor", ex);
+				}
+			}
+		}
 		
 	}
 	
