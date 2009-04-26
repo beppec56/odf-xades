@@ -348,7 +348,8 @@ public class SyncJob extends ComponentBase
 			/**
 			 * environment analized, so, do as requested
 			 * OOo code dealing with event firing is in
-			 * sfx2/source/appl/appinit.cxx#306 (dev300-m10)
+			 * http://svn.services.openoffice.org/opengrok/xref/Current%20(trunk)/sfx2/source/appl/appinit.cxx#306
+			 * http://svn.services.openoffice.org/opengrok/xref/Current%20(trunk)/sfx2/source/doc/objxtor.cxx#929
 			 * 
 			 */
 			if (sEventName != null) {
