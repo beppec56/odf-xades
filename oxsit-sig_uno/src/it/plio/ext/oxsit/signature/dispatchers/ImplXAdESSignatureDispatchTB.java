@@ -134,8 +134,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_bHasLocation = false;
 		m_bSignatureIsEnabled = false;
 //FIXME DEBUG 	
-		m_logger.enableLogging();
-		m_logger.ctor(" frame hash: "+Helpers.getHashHex(m_xFrame));
+		m_aLogger.enableLogging();
+		m_aLogger.ctor(" frame hash: "+Helpers.getHashHex(m_xFrame));
 
 		m_imagesUrl = null;
 		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( m_xCC );
@@ -144,20 +144,20 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			if(sLoc != null) 
 				m_imagesUrl = sLoc + "/images";
 			else //FIXME, TODO devise a better method, if the call fails
-				m_logger.severe("ctor","no package location !");
+				m_aLogger.severe("ctor","no package location !");
 		}
 		else
-			m_logger.info("ctor: No pkginfo!");
+			m_aLogger.info("ctor: No pkginfo!");
 		try {
 			m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
-			m_logger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			
+			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			
 		}
 		catch (ClassCastException e) {
 			e.printStackTrace();
 		} catch (ServiceNotFoundException e) {
-			m_logger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+			m_aLogger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
 		} catch (NoSuchMethodException e) {
-			m_logger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+			m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
 		}
 
 		grabModel();
@@ -172,7 +172,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					 changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
 			}
 			else
-				m_logger.severe("ctor","XOX_SingletonDataAccess missing!");
+				m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!");
 			// register ourself at the document as m_aListeners
 			// we register the modified status (when modified signature becomes
 			// broken)
@@ -232,11 +232,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 							m_bIsModified = xMod.isModified();
 						m_bSignatureIsEnabled  = ( m_bHasLocation & !m_bIsModified );
 					} else
-						m_logger.warning( "grabModel: no model!" );
+						m_aLogger.warning( "grabModel: no model!" );
 				} else
-					m_logger.warning( "grabModel: no controller!" );
+					m_aLogger.warning( "grabModel: no controller!" );
 			} else
-				m_logger.warning( "grabModel: no frame!" );
+				m_aLogger.warning( "grabModel: no frame!" );
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		 * 
 		 */
 		if(!m_bObjectActive) {
-			m_logger.severe("impl_dispatch", " m_bObjectActive not active");
+			m_aLogger.severe("impl_dispatch", " m_bObjectActive not active");
 			return;
 		}
 
@@ -268,7 +268,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * These are here only to test extension behavior.
 				 */
 				XModel xModel = m_xFrame.getController().getModel();
-				m_logger.info("impl_dispatch: \tthe url of the document under signature is: "
+				m_aLogger.info("impl_dispatch: \tthe url of the document under signature is: "
 						+ xModel.getURL() );
 
 				TestWriteDigitalSignature aCls = new TestWriteDigitalSignature();				
@@ -304,7 +304,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * 
 				 */
 			} catch (RuntimeException e) {
-				m_logger.severe("impl_dispatch", "", e);
+				m_aLogger.severe("impl_dispatch", "", e);
 			}
 		}
 	}
@@ -410,22 +410,22 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 						aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
 						aLink.m_aMaster
 								.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
-						 m_logger.info("changeSignatureStatus: send listener:" + Helpers.getHashHex(aLink.m_aMaster)+
+						 m_aLogger.info("changeSignatureStatus: send listener:" + Helpers.getHashHex(aLink.m_aMaster)+
 								 " state: "+m_nState);
 					}
 					catch (RuntimeException ex) {
-						m_logger.severe("changeSignatureStatus", "thereis no XStatusListener element: remove it!", ex);
+						m_aLogger.severe("changeSignatureStatus", "thereis no XStatusListener element: remove it!", ex);
 					}
 				}
 			}
 			else
-				m_logger.log("changeSignatureStatus","there are no status listeners");
+				m_aLogger.log("changeSignatureStatus","there are no status listeners");
 		}
 	}
 
 /*	private void changeSignatureStatus(int newState) {
 		if (newState != m_nState && m_bObjectActive) {
-			m_logger.info(  "changeSignatureStatus: state changed" );
+			m_aLogger.info(  "changeSignatureStatus: state changed" );
 			m_nState = newState;
 			changeSignatureStatus();
 		}
@@ -453,7 +453,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		aArgs[0].Name = new String( "URL" );
 		aArgs[0].Value = _sImageURL;
 		
-//		m_logger.log(_sImageURL);
+//		m_aLogger.log(_sImageURL);
 		
 		ControlCommand aCommand = new ControlCommand();
 		aCommand.Command = "SetImage";
@@ -504,17 +504,17 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					LinkingStatusListeners MyListener = new LinkingStatusListeners(
 							aListener, aURL, m_aDocumentURL );
 					Listeners.put( aListener, MyListener );
-					m_logger.log("addStatusListener, added:",Helpers.getHashHex(aListener)+" "+aURL.Complete);
+					m_aLogger.log("addStatusListener, added:",Helpers.getHashHex(aListener)+" "+aURL.Complete);
 					// grab the document status
 					grabModel();//update model
 					aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
 					aListener.statusChanged( prepareTooltipFeatureState( getNewTooltip() ) );
 				}
 				else
-					m_logger.log("addStatusListener, already present:",Helpers.getHashHex(aListener)+" "+aURL.Complete);					
+					m_aLogger.log("addStatusListener, already present:",Helpers.getHashHex(aListener)+" "+aURL.Complete);					
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
-			m_logger.severe("addStatusListener", "", e);
+			m_aLogger.severe("addStatusListener", "", e);
 		}
 	}
 
@@ -540,14 +540,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	@Override
 	public void removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-//		m_logger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
-		m_logger.entering("removeStatusListener",Helpers.getHashHex(aListener)+" "+aURL.Complete);
+//		m_aLogger.entering("removeStatusListener",Utilities.getHashHex(aListener)+" "+aURL.Complete+" not implemented due to dispatch interceptor behavior !");
+		m_aLogger.entering("removeStatusListener",Helpers.getHashHex(aListener)+" "+aURL.Complete);
 		ImplXAdESThread aThread = new ImplXAdESThread(this, ImplXAdESThread.RUN_removeStatusListener, aListener, aURL);
 		aThread.start();
 	}
 
 	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		m_logger.entering("impl_removeStatusListener");
+		m_aLogger.entering("impl_removeStatusListener");
 		synchronized (Listeners) {
 			try {
 				Listeners.remove( aListener );
@@ -565,7 +565,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	@Override
 	public void addEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering( "addEventListener (XComponent)" );
+		m_aLogger.entering( "addEventListener (XComponent)" );
 	}
 
 	/*
@@ -599,11 +599,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			aNotifier.removeChangesListener(this);
 		}
 		else
-			m_logger.severe("disposing (docu)", "XChangesNotifier missing");
+			m_aLogger.severe("disposing (docu)", "XChangesNotifier missing");
 //now remove all the StatusListeners
 		Listeners.clear();
 */		
-		m_logger.info("dispose (XComponent)",aLog);
+		m_aLogger.info("dispose (XComponent)",aLog);
 	}
 
 	/*
@@ -614,7 +614,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	@Override
 	public void removeEventListener(com.sun.star.lang.XEventListener arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering( "removeEventListener(XComponent)" );
+		m_aLogger.entering( "removeEventListener(XComponent)" );
 	}
 
 	/*
@@ -626,7 +626,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	@Override
 	public void notifyEvent(com.sun.star.document.EventObject aEventObj) {
-		// DEBUG		m_logger.entering("notifyEvent");
+		// DEBUG		m_aLogger.entering("notifyEvent");
 		if (/*aEventObj.EventName.equalsIgnoreCase( "OnSaveAsDone" )
 				||*/ aEventObj.EventName.equalsIgnoreCase( "OnModifyChanged" )) {
 //set the modified status accordingly
@@ -662,13 +662,13 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			}
 			
 //remove from the documentSignatures as well
-			m_logger.info(aLog);
+			m_aLogger.info(aLog);
 			XChangesNotifier aNotifier = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, m_xDocumentSignatures);
 			if(aNotifier != null) {
 				aNotifier.removeChangesListener(this);
 			}
 			else
-				m_logger.severe("disposing (docu)", "XChangesNotifier missing");
+				m_aLogger.severe("disposing (docu)", "XChangesNotifier missing");
 
 			return;
 		}
@@ -699,14 +699,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				aNotifier.removeChangesListener(this);
 			}
 			else
-				m_logger.severe("disposing (frame)", "XChangesNotifier missing");
+				m_aLogger.severe("disposing (frame)", "XChangesNotifier missing");
 
 			if (m_bIsFrameActionRegistered) {
 				m_xFrame.removeFrameActionListener( this );
 				m_bIsFrameActionRegistered = false;
 				aLog = aLog + ", frame listening (2)";
 			}
-			m_logger.info(aLog);
+			m_aLogger.info(aLog);
 		}
 	}
 
@@ -718,7 +718,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	//start the Java thread to manage the task, this is a [oneway] method
 	@Override
 	public void changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
-		m_logger.info("changesOccurred()" );
+		m_aLogger.info("changesOccurred()" );
 		ImplXAdESThread aWorkerThread = new ImplXAdESThread(this,ImplXAdESThread.RUN_changesOccurred, aChangesEvent);
 		aWorkerThread.start();
 	}
@@ -730,7 +730,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	// oneway function: implemented as separate task, comes from changesOccurred above
 	public void impl_changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
-		m_logger.log(" impl_changesOccurred()" );
+		m_aLogger.log(" impl_changesOccurred()" );
 		// refresh status of the document model/component
 			grabModel();
 			
@@ -754,31 +754,31 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 /*		printHash("frameAction");
 		switch (aEvent.Action.getValue()) {
 		case com.sun.star.frame.FrameAction.COMPONENT_DETACHING_value:
-			m_logger.log( "COMPONENT_DETACHING_value" );
+			m_aLogger.log( "COMPONENT_DETACHING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_ATTACHED_value:
-			m_logger.log( "COMPONENT_ATTACHED_value" );
+			m_aLogger.log( "COMPONENT_ATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_REATTACHED_value:
-			m_logger.log( "COMPONENT_REATTACHED_value" );
+			m_aLogger.log( "COMPONENT_REATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_ACTIVATED_value:
-			m_logger.log( "FRAME_ACTIVATED_value" );
+			m_aLogger.log( "FRAME_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
-			m_logger.log( "FRAME_DEACTIVATING_value" );
+			m_aLogger.log( "FRAME_DEACTIVATING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.CONTEXT_CHANGED_value:
-			m_logger.log( "CONTEXT_CHANGED_value" );
+			m_aLogger.log( "CONTEXT_CHANGED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_ACTIVATED_value:
-			m_logger.log( "FRAME_UI_ACTIVATED_value" );
+			m_aLogger.log( "FRAME_UI_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_DEACTIVATING_value:
-			m_logger.log( "FRAME_UI_DEACTIVATING_value" );
+			m_aLogger.log( "FRAME_UI_DEACTIVATING_value" );
 			break;
 		default:
-			m_logger.log( "frameAction other value" );
+			m_aLogger.log( "frameAction other value" );
 		}
 		print("\n");*/
 	}
@@ -838,7 +838,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		@Override
 		public void disposing(EventObject arg0) {
 			// TODO Auto-generated method stub
-			m_logger.info( "LinkingStatusListeners disposing" );
+			m_aLogger.info( "LinkingStatusListeners disposing" );
 		}
 	}
 }

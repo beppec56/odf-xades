@@ -103,7 +103,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public SignatureHandler(XComponentContext context) {
 		m_logger = new DynamicLogger(this,context);
-//FIXME DEBUG	m_logger.enableLogging();
+//FIXME DEBUG	m_aLogger.enableLogging();
 		m_logger.ctor();
 		m_xComponentContext = context;
 		// passert("m_xComponentContext",m_xComponentContext);

@@ -241,7 +241,7 @@ public class DispatchIntercept extends ComponentBase
 	 */
 	public XDispatch queryDispatch(/* IN */com.sun.star.util.URL aURL,/* IN */
 									String sTarget,	/* IN */int nSearchFlags) {
-//		m_logger.info("queryDispatch:", aURL.Complete);
+//		m_aLogger.info("queryDispatch:", aURL.Complete);
 		try {
 			synchronized (m_aMutex) {
 				if (m_bDead)
@@ -273,7 +273,7 @@ public class DispatchIntercept extends ComponentBase
 				}
 			}
 /*			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
-				m_logger.info("queryDispatch", aURL.Complete);
+				m_aLogger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					XDispatch aUnoSaveSlaveDispatch = null;
 					if (m_xSlave != null)

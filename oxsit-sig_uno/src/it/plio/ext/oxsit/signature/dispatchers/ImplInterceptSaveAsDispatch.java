@@ -41,13 +41,13 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
-		m_logger.enableLogging();
+		m_aLogger.enableLogging();
 	}
 
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 
-		m_logger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
+		m_aLogger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
 		if(	lArguments.length > 0) {
 			String aLog = "";
 			for(int i = 0; i <lArguments.length; i++) {
@@ -55,7 +55,7 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 				
 				aLog = aLog+ "name: "+aValue.Name+" "+aValue.Value.toString()+",";
 			}
-			m_logger.info(aLog);
+			m_aLogger.info(aLog);
 		}
 
 // check the document status, if has XAdES signatures,
@@ -77,7 +77,7 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 			XURLTransformer xTransformer = (XURLTransformer)UnoRuntime.queryInterface(
 					XURLTransformer.class, obj);
 			xTransformer.parseStrict( aParseURL );
-			m_logger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
+			m_aLogger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
 */
 //			Ask it for right dispatch object for our URL.
 //			Force given frame as target for following dispatch by using "",
@@ -86,7 +86,7 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 				com.sun.star.frame.XDispatch xDispatcher = null;
 				xDispatcher = xProvider.queryDispatch(aParseURL[0],"",0);
 
-				m_logger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
+				m_aLogger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
 				// Dispatch the URL into the frame.
 				if(xDispatcher != null) {
 					com.sun.star.frame.XNotifyingDispatch xNotifyingDispatcher = 
@@ -96,20 +96,20 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lArgumentslProperties, null);
 					else*/
 						//trow exception: unimplemented interface !...
-//					m_logger.info("dispatching "+aParseURL[0].Complete);
+//					m_aLogger.info("dispatching "+aParseURL[0].Complete);
 //						xDispatcher.dispatch(aParseURL[0],lArguments/*lProperties*/);
 //					then get from the Notify the value we need of the user answer.
 /*
 				}
 				else
-					m_logger.info("NO dispatcher for "+aParseURL[0].Complete);
+					m_aLogger.info("NO dispatcher for "+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info("NO provider for "+aParseURL[0].Complete);*/
+				m_aLogger.info("NO provider for "+aParseURL[0].Complete);*/
 
 			//Dispatch the URL into the frame.
 			//please note that this last one is to be dispatched only if the save is enabled by the user
-			m_logger.info("Drop down to superclass");
+			m_aLogger.info("Drop down to superclass");
 			super.impl_dispatch(aURL, lArguments);
 /*		} catch (Exception e) {
 			// TODO Auto-generated catch block

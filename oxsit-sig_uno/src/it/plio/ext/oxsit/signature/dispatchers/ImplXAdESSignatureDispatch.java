@@ -81,20 +81,20 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		// form the complete Url being intercepted
 		// may be we need to check for the interface existence...
 		Listeners = new HashMap<XStatusListener, LinkingStatusListeners>( 4 );
-		m_logger.enableLogging();
-		m_logger.ctor("");
+		m_aLogger.enableLogging();
+		m_aLogger.ctor("");
 		m_bHasLocation = false;
 		try {
 				m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
-				m_logger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );
+				m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );
 		}
 		catch (ClassCastException e) {
-			m_logger.severe("ctor","",e);
+			m_aLogger.severe("ctor","",e);
 		} catch (ServiceNotFoundException e) {
-			m_logger.severe("ctor","",e);
+			m_aLogger.severe("ctor","",e);
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("ctor","",e);
+			m_aLogger.severe("ctor","",e);
 		}
 
 		grabModel();
@@ -105,7 +105,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 				 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_xModel), null);
 			}
 			else
-				m_logger.severe("ctor","XOX_SingletonDataAccess missing!");
+				m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!");
 		}		
 	}
 
@@ -122,18 +122,18 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 						if(xStore != null)
 							m_bHasLocation = xStore.hasLocation();
 						if(m_bHasLocation)
-							m_logger.info("URL: "+m_aDocumentURL);
+							m_aLogger.info("URL: "+m_aDocumentURL);
 //check to see if modified or not
 						XModifiable xMod = (XModifiable) UnoRuntime.queryInterface( XModifiable.class, m_xModel );
 						if(xMod != null)
 							m_bIsModified = xMod.isModified();
 					}
 					else
-						m_logger.info( "no model!" );
+						m_aLogger.info( "no model!" );
 				} else
-					m_logger.info( "no controller!" );
+					m_aLogger.info( "no controller!" );
 			} else
-				m_logger.info( "no frame!" );		
+				m_aLogger.info( "no frame!" );		
 	}
 	
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
@@ -165,7 +165,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
 					if (ret != 0) {
 						localstate = m_xDocumentSignatures.getDocumentSignatureState();
-						m_logger.info("localstate: "+localstate+" "+m_xDocumentSignatures.getDocumentId());
+						m_aLogger.info("localstate: "+localstate+" "+m_xDocumentSignatures.getDocumentId());
 						localstate = localstate + 1;
 						localstate = ( localstate > 4 ) ? 0 : localstate;
 					}
@@ -174,7 +174,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 					m_xDocumentSignatures.setDocumentSignatureState( localstate );
 				}
 				else
-					m_logger.severe("ctor","XOX_SingletonDataAccess missing!");		
+					m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!");		
 			}
 			/**
 			 * while returning we will do as follow Ok was hit: grab the added
@@ -235,7 +235,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	 * according to the rest of the document state (save/non saved/changed, etc...)
 	 */
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.entering("addStatusListener");
+		m_aLogger.entering("addStatusListener");
 		try {
 			if(aListener != null ) {
 				LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
@@ -249,7 +249,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	}
 
 	private void impl_addStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.entering("impl_addStatusListener");
+		m_aLogger.entering("impl_addStatusListener");
 		try {
 			if(aListener != null ) {
 				LinkingStatusListeners MyListener = new LinkingStatusListeners( aListener, aURL,
@@ -285,7 +285,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	 *      com.sun.star.util.URL)
 	 */
 	public void removeStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.entering("removeStatusListener");
+		m_aLogger.entering("removeStatusListener");
 		try {
 			Listeners.remove( aListener );
 		} catch (RuntimeException e) {
@@ -348,12 +348,12 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 
 	public void notifyEvent(com.sun.star.document.EventObject aEventObj) {
 		// TODO Auto-generated method stub
-		m_logger.info("notifyEvent");
+		m_aLogger.info("notifyEvent");
 	}
 
 	public void disposing(com.sun.star.document.EventObject aEventObj) {
 		// TODO Auto-generated method stub
-		m_logger.info("disposing (doc)");		
+		m_aLogger.info("disposing (doc)");		
 	}
 
 	public void disposing(com.sun.star.lang.EventObject aEventObj) {
@@ -366,6 +366,6 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	@Override
 	public void dispose() {
 
-		m_logger.entering("dispose");
+		m_aLogger.entering("dispose");
 	}
 }

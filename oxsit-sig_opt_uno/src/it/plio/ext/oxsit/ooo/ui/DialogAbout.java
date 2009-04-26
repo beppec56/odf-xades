@@ -65,7 +65,7 @@ public class DialogAbout extends BasicDialog {
 			m_sBtnOKLabel = m_aRegAcc.getStringFromRegistry( "id_ok" );
 			m_sShowLicense = m_aRegAcc.getStringFromRegistry( "id_show_license" );
 		} catch (com.sun.star.uno.Exception e) {
-			e.printStackTrace();
+			m_logger.severe("", "", e);
 		}
 		m_aRegAcc.dispose();
 	}

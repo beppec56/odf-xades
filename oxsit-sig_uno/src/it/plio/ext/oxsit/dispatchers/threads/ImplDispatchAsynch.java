@@ -52,7 +52,7 @@ public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchIm
 	 */
 	@Override
 	public void dispatch(URL aURL, PropertyValue[] lArguments) {
-		m_logger.log("dispatch (ImplDispatchAsynch)",aURL.Complete);		
+		m_aLogger.log("dispatch (ImplDispatchAsynch)",aURL.Complete);		
 		OnewayDispatchExecutor aExecutor = new OnewayDispatchExecutor((IDispatchImplementer) this,aURL, lArguments);
 		m_aThread = aExecutor;
 		aExecutor.start();
@@ -63,7 +63,7 @@ public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchIm
 	 */
 	@Override
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-		m_logger.log("impl_dispatch (ImplDispatchAsynch)",aURL.Complete);		
+		m_aLogger.log("impl_dispatch (ImplDispatchAsynch)",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.dispatch(aURL,lArguments);		
 	}

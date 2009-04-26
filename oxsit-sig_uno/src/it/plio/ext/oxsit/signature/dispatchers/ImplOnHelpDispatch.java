@@ -22,24 +22,15 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
-import com.sun.star.awt.XToolkit;
-import com.sun.star.awt.XWindow;
-import com.sun.star.awt.XWindowPeer;
+import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
+import it.plio.ext.oxsit.ooo.ui.DialogAbout;
+
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.script.BasicErrorException;
-import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
-
-import it.plio.ext.oxsit.dispatchers.ImplDispatchSynch;
-import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 
 /**
  * @author beppe
@@ -54,7 +45,7 @@ public class ImplOnHelpDispatch extends ImplDispatchAsynch {
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-		m_logger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);
+		m_aLogger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);
 		DialogAbout.showDialog(m_xFrame, m_xCC, m_axMCF);
 	}
 }

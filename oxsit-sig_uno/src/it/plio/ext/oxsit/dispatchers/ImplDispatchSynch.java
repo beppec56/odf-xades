@@ -49,7 +49,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	protected XComponentContext m_xCC;
 	protected XDispatch m_aUnoSlaveDispatch = null;
 	
-	protected DynamicLogger		m_logger;
+	protected DynamicLogger		m_aLogger;
 
 	public ImplDispatchSynch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -58,15 +58,15 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 		m_axMCF = xMCF;
 		m_xCC = xContext;
 		m_aUnoSlaveDispatch = unoSaveSlaveDispatch;
-		m_logger = new DynamicLogger(this,xContext);
-		m_logger.info("ctor");
+		m_aLogger = new DynamicLogger(this,xContext);
+		m_aLogger.info("ctor");
 	}
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.log("addStatusListener",aURL.Complete);		
+		m_aLogger.log("addStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.addStatusListener(aListener, aURL);
 	}
@@ -79,7 +79,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 * 
 	 */
 	public void dispatch(URL aURL, PropertyValue[] lArguments) {
-		m_logger.log("dispatch (ImplDispatchSynch)  "+aURL.Complete);		
+		m_aLogger.log("dispatch (ImplDispatchSynch)  "+aURL.Complete);		
 		if(m_aUnoSlaveDispatch!=null)
 			m_aUnoSlaveDispatch.dispatch(aURL,lArguments);
 	}
@@ -88,7 +88,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void removeStatusListener(XStatusListener aListener, URL aURL) {
-		m_logger.log("removeStatusListener",aURL.Complete);		
+		m_aLogger.log("removeStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener(aListener, aURL);
 	}
@@ -98,7 +98,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {		
-		m_logger.severe("addEventListener", "implements it in subclass!");
+		m_aLogger.severe("addEventListener", "implements it in subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -106,7 +106,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 */
 	@Override
 	public void dispose() {
-		m_logger.severe("dispose", "implements it in subclass!");
+		m_aLogger.severe("dispose", "implements it in subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -114,6 +114,6 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 */
 	@Override
 	public void removeEventListener(XEventListener arg0) {
-		m_logger.severe("removeEventListener", "implements it in subclass!");		
+		m_aLogger.severe("removeEventListener", "implements it in subclass!");		
 	}	
 }

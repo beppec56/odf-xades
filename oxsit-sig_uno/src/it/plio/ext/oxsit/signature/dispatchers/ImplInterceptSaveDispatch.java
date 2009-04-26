@@ -22,17 +22,14 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.dispatchers.ImplDispatchSynch;
 import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
-import it.plio.ext.oxsit.ooo.GlobConstant;
-//import it.plio.ext.oxsit.ooo.ui.DialogListCertificates;
+import it.plio.ext.oxsit.ooo.ui.DialogQuery;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 
@@ -42,13 +39,13 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
-		m_logger.enableLogging();
-		m_logger.ctor();
+		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 
-		m_logger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
+		m_aLogger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
 		if(	lArguments.length > 0) {
 			String aLog = "";
 			for(int i = 0; i <lArguments.length; i++) {
@@ -56,11 +53,20 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 				
 				aLog = aLog+ "name: "+aValue.Name+" "+aValue.Value.toString()+",";
 			}
-			m_logger.info(aLog);
+			m_aLogger.info(aLog);
 		}
 
-// check the document status, if has XAdES signatures,
-// then alert the user the signatures are lost if saved.
+		// check the document status, if has XAdES signatures,
+		// then alert the user the signatures are lost if saved.
+
+		DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		
+		short ret = aDlg.executeDialog("Domanda", "Il documento contiene delle firme.\r\nSalvando, le firme verranno cancellate.\r\n\r\nConfermate salvataggio ?");
+		m_aLogger.log("impl_dispatch", "ret = "+ret);
+		// ret = 3: NO
+		// ret = 2: SI
+		
+		if(ret == 3)
+			return;
 		
 /*		try {
 //			check the slave one
@@ -78,7 +84,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 			XURLTransformer xTransformer = (XURLTransformer)UnoRuntime.queryInterface(
 					XURLTransformer.class, obj);
 			xTransformer.parseStrict( aParseURL );
-			m_logger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
+			m_aLogger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
 */
 //			Ask it for right dispatch object for our URL.
 //			Force given frame as target for following dispatch by using "",
@@ -87,7 +93,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 				com.sun.star.frame.XDispatch xDispatcher = null;
 				xDispatcher = xProvider.queryDispatch(aParseURL[0],"",0);
 
-				m_logger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
+				m_aLogger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
 				// Dispatch the URL into the frame.
 				if(xDispatcher != null) {
 					com.sun.star.frame.XNotifyingDispatch xNotifyingDispatcher = 
@@ -97,20 +103,20 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lArgumentslProperties, null);
 					else*/
 						//trow exception: unimplemented interface !...
-//					m_logger.info("dispatching "+aParseURL[0].Complete);
+//					m_aLogger.info("dispatching "+aParseURL[0].Complete);
 //						xDispatcher.dispatch(aParseURL[0],lArguments/*lProperties*/);
 //					then get from the Notify the value we need of the user answer.
 /*
 				}
 				else
-					m_logger.info("NO dispatcher for "+aParseURL[0].Complete);
+					m_aLogger.info("NO dispatcher for "+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info("NO provider for "+aParseURL[0].Complete);*/
+				m_aLogger.info("NO provider for "+aParseURL[0].Complete);*/
 
 			//Dispatch the URL into the frame.
 			//please note that this last one is to be dispatched only if the save is enabled by the user
-			m_logger.info("Drop down to superclass");
+			m_aLogger.info("Drop down to superclass");
 			super.impl_dispatch(aURL, lArguments);
 /*		} catch (Exception e) {
 			// TODO Auto-generated catch block

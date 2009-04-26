@@ -53,7 +53,7 @@ public class ImplInterceptSaveAsDispatch extends ImplDispatchAsynch implements
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 		// TODO Auto-generated method stub
 //		we need to first call our internal method and then call the original one
-		m_logger.info(" lArguments.length: "+lArguments.length);
+		m_aLogger.info(" lArguments.length: "+lArguments.length);
 		
 /** check if a CNIPA signature is present, if yes, call a message box to
  * ask the user confirmation before saving (need to check for a better method, actually
@@ -76,7 +76,7 @@ public class ImplInterceptSaveAsDispatch extends ImplDispatchAsynch implements
 			XURLTransformer xTransformer = (XURLTransformer)UnoRuntime.queryInterface(
 					XURLTransformer.class, obj);
 			xTransformer.parseStrict( aParseURL );
-			m_logger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
+			m_aLogger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
 
 //			Ask it for right dispatch object for our URL.
 //			Force given frame as target for following dispatch by using "",
@@ -102,10 +102,10 @@ public class ImplInterceptSaveAsDispatch extends ImplDispatchAsynch implements
 							xDispatcher.dispatch(aParseURL[0],lProperties);					
 				}
 				else
-					m_logger.info("NO dispatcher for"+aParseURL[0].Complete);
+					m_aLogger.info("NO dispatcher for"+aParseURL[0].Complete);
 			}
 			else
-				m_logger.info("NO provider for "+aParseURL[0].Complete);
+				m_aLogger.info("NO provider for "+aParseURL[0].Complete);
 
 //			Dispatch the URL into the frame.
 			super.impl_dispatch(aURL, lArguments);
