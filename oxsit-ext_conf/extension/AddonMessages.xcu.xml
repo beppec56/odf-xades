@@ -455,6 +455,21 @@ Roberto Resoli, developer
 				<value xml:lang="it">eCA non accreditata, certificato CA scaduto</value>
 			</prop>
 		</node>
+		<node oor:name="id_question_savedoc" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The document is signed.
+By saving, the signatures will be removed.
+
+Confirm save ?
+</value>
+				<value xml:lang="it">Il documento è firmato.
+Salvando, le firme saranno rimosse.
+
+Confermate Salva ?
+
+</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

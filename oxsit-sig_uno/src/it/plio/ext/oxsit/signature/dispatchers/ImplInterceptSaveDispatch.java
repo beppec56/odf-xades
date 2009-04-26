@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.signature.dispatchers;
 
 import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
 
 import com.sun.star.beans.PropertyValue;
@@ -35,16 +36,29 @@ import com.sun.star.util.URL;
 
 public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
 
+	protected String m_sTitle;
+	protected String m_sMessage;
+
 	public ImplInterceptSaveDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
 		m_aLogger.enableLogging();
 		m_aLogger.ctor();
+//get strings
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_axMCF);
+
+		try {
+			m_sTitle = m_aRegAcc.getStringFromRegistry( "id_descr" );
+			m_sMessage = m_aRegAcc.getStringFromRegistry( "id_question_savedoc" );				
+		} catch (com.sun.star.uno.Exception e) {
+			m_aLogger.severe("", "", e);
+		}
+		m_aRegAcc.dispose();	
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-
 		m_aLogger.info("impl_dispatch","aURL "+aURL.Complete+" lArguments.length: "+lArguments.length);
 		if(	lArguments.length > 0) {
 			String aLog = "";
@@ -60,7 +74,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 		// then alert the user the signatures are lost if saved.
 
 		DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		
-		short ret = aDlg.executeDialog("Domanda", "Il documento contiene delle firme.\r\nSalvando, le firme verranno cancellate.\r\n\r\nConfermate salvataggio ?");
+		short ret = aDlg.executeDialog(m_sTitle, m_sMessage);
 		m_aLogger.log("impl_dispatch", "ret = "+ret);
 		// ret = 3: NO
 		// ret = 2: SI
