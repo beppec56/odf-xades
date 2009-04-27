@@ -45,7 +45,7 @@ public class DialogQuery {
 		m_xFrame = _xFrame;
 	}
 
-	public short executeDialog(String _sTitle, String _sMessage){
+	public short executeDialog(String _sTitle, String _sMessage, int _nType, int _nDefault){
 		XComponent xComponent = null; 
 		short nResult = 0;		  
 		try {
@@ -57,9 +57,9 @@ public class DialogQuery {
 				// rectangle may be empty if position is in the center of the parent peer
 				Rectangle aRectangle = new Rectangle();
 				XMessageBox xMessageBox = xMessageBoxFactory.createMessageBox(xWPeer, aRectangle, "querybox",
-						com.sun.star.awt.MessageBoxButtons.BUTTONS_YES_NO, _sTitle, _sMessage);
+						_nType | _nDefault, _sTitle, _sMessage);
 				xComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, xMessageBox);
-				if (xMessageBox != null){
+				if (xMessageBox != null) {
 					nResult = xMessageBox.execute();
 				}
 			}

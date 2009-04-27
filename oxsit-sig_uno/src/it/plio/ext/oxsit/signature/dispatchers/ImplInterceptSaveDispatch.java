@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
+import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatch;
@@ -94,11 +95,11 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES &&
 								 sigState != GlobConstant.m_nSIGNATURESTATE_UNKNOWN) {
 							DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		
-							short ret = aDlg.executeDialog(m_sTitle, m_sMessage);
-							m_aLogger.log("impl_dispatch", "ret = "+ret);
+							short ret = aDlg.executeDialog(m_sTitle, m_sMessage,
+									MessageBoxButtons.BUTTONS_YES_NO, //message box type
+									MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
 							// ret = 3: NO
-							// ret = 2: SI
-
+							// ret = 2: Yes
 							if(ret == 3)
 								return;
 						 }
@@ -126,23 +127,5 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 		//please note that this last one is to be dispatched only if the save is enabled by the user
 		m_aLogger.info("Drop down to superclass");
 		super.impl_dispatch(aURL, lArguments);
-	}
-	
-	public void signatureDialog() {
-
-//		a simple debug dialog
-//		showMessageBox( m_ProtocolBaseUrl , "Signature functions started..." );
-
-/*		DialogListCertificates aDialog1 =
-			new DialogListCertificates(
-					m_xFrame,
-					m_xCC,
-					m_axMCF); 		
-		try {
-			aDialog1.initialize(10,30);
-		} catch (BasicErrorException e) {
-			e.printStackTrace();
-		}
-		aDialog1.executeDialog();
-*/	}	
+	}	
 }
