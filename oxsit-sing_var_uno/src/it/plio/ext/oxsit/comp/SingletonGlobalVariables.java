@@ -126,8 +126,25 @@ public class SingletonGlobalVariables extends ComponentBase
 	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
-	public XOX_DocumentSignatures getDocumentSignatures(String arg0) {
+	public XOX_DocumentSignatures getDocumentSignatures(String _aDocumentId) {
 		// TODO Auto-generated method stub
+		synchronized (theDocumentList) {				
+			//see if the document already exists
+			if(theDocumentList.containsKey(_aDocumentId)) {
+				//if exists, returns the document signatures element
+				m_logger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
+				XOX_DocumentSignatures aDoc = null;
+				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
+				if(aObj != null) {
+					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					if(aDoc == null) 
+						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");					
+				}
+				else
+					m_logger.severe("initDocumentAndListener", "aObj is null");					
+				return aDoc;
+			}
+		}
 		return null;
 	}
 
@@ -138,7 +155,6 @@ public class SingletonGlobalVariables extends ComponentBase
 	 */
 	@Override
 	public XOX_DocumentSignatures initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
-		// TODO Auto-generated method stub
 		synchronized (theDocumentList) {				
 			//see if the document already exists
 			if(!theDocumentList.containsKey(_aDocumentId)) {
@@ -187,7 +203,6 @@ public class SingletonGlobalVariables extends ComponentBase
 					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
 					if(aDoc == null) 
 						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");
-					
 				}
 				else
 					m_logger.severe("initDocumentAndListener", "aObj is null");					

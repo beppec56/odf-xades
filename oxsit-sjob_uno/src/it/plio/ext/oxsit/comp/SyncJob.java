@@ -82,17 +82,13 @@ public class SyncJob extends ComponentBase
 	private XOX_DocumentSignatures 		m_aDocSign;
 	// when frame is needed as reference
 	private XComponentContext			m_xComponentContext;
-	// may be we will need it afterward...
-	private XMultiServiceFactory		m_xFactory				= null;
 
-	// protected XMultiComponentFactory m_xRemoteServiceManager = null;
 	protected XMultiComponentFactory	m_xServiceManager		= null;
 	
-	private Object m_oSingleVarObj;
 	private XOX_SingletonDataAccess		m_axoxSingletonDataAccess;
 	
 	private Object m_oSingleLogObj;	
-	private	DynamicLogger							m_aLogger;
+	private	DynamicLogger				m_aLogger;
 	
 	/**
 	 * The toolkit, that we can create UNO dialogs.
@@ -116,8 +112,6 @@ public class SyncJob extends ComponentBase
 		if(m_oSingleLogObj == null)
 			System.out.println("cannot build first singleton logger!");
 
-// the singleton is the first element that need to be build		
-		m_oSingleVarObj = context.getValueByName(GlobConstant.m_sSINGLETON_SERVICE_INSTANCE);
 		m_aLogger = new DynamicLogger(this,context);
 //DEBUG  comment this if no logging needed
 		m_aLogger.enableLogging();
@@ -147,8 +141,6 @@ public class SyncJob extends ComponentBase
 		} catch (java.lang.Exception ex) {
 			m_aLogger.severe("ctor", "No service manager!", ex);
 		}
-
-		m_xFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, m_xComponentContext);
 	}
 
 	/*
