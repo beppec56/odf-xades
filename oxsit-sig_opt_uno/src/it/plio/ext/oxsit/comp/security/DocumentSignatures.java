@@ -82,6 +82,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	protected int			m_nDocumentSignatureState;
 	protected String		m_sDocumentId;
 
+	protected Boolean		m_aMtx_setDocumentSignatureState = new Boolean(false);
 	/**
 	 * 
 	 * 
@@ -207,6 +208,10 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			return m_nDocumentSignatureState;			
 		}
 	}
+	
+	public void imp_DeliverChangesOccurred() {
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentSignatureState(int)
@@ -214,72 +219,32 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * 
 	 */
 	@Override
-	public void setDocumentSignatureState(int arg0) {
+	public void setDocumentSignatureState(int _nState) {
 		// TODO Auto-generated method stub
+		m_logger.entering("setDocumentSignatureState","_nState is: "+_nState);
 		synchronized (this) {
-			m_nDocumentSignatureState = arg0;
-//call all the listeners
-			Collection<XChangesListener> aColl = m_aListeners.values();
-			if(!aColl.isEmpty()) {
-				Iterator<XChangesListener> aIter = aColl.iterator();
-
-				// scan the array and for every one send the status
-				while (aIter.hasNext()) {
-					XChangesListener aThisOne =aIter.next();
-					
-/*					FeatureStateEvent aState = new FeatureStateEvent();
-					aState.FeatureDescriptor = new String( "" );
-					aState.FeatureURL.Complete = GlobConstantJobs.m_sUnoSignatureURLComplete;
-					aState.FeatureURL.Protocol = GlobConstantJobs.m_sUnoSignatureURLProtocol;
-					aState.FeatureURL.Path = GlobConstantJobs.m_sUnoSignatureURLPath;
-					aState.IsEnabled = Boolean.TRUE;
-					aState.Requery = Boolean.FALSE;
-					aState.Source = this;*/
-					// we form the signature status to forward:
-					// public static final int SIGNATURESTATE_UNKNOWN = -1;
-					// public static final int SIGNATURESTATE_NOSIGNATURES = 0;
-					// public static final int SIGNATURESTATE_SIGNATURES_OK = 1;
-					// public static final int SIGNATURESTATE_SIGNATURES_BROKEN = 2;
-					// /** State was SIGNATURES_OK, but doc is modified now
-					// */
-					// public static final int SIGNATURESTATE_SIGNATURES_INVALID =
-					// 3;
-					// /**
-					// * signature is OK, but certificate could not be validated
-					// */
-					// public static final int
-					// SIGNATURESTATE_SIGNATURES_NOTVALIDATED = 4;
-					//				
-					// TODO this logic need to be implemented correctly when all
-					// done
-/*					int StateToForwad = GlobConstantJobs.SIGNATURESTATE_NOSIGNATURES;
-					switch (m_nCNIPASignatureStatus) {
-					case GlobConstantJobs.SIGNATURESTATE_SIGNATURES_INVALID:
-						StateToForwad = GlobConstantJobs.SIGNATURESTATE_SIGNATURES_INVALID;
-						break;
-					case GlobConstantJobs.SIGNATURESTATE_SIGNATURES_OK:
-						if (m_nOOoSignatureStatus == GlobConstantJobs.SIGNATURESTATE_SIGNATURES_OK
-								|| m_nOOoSignatureStatus == GlobConstantJobs.SIGNATURESTATE_NOSIGNATURES)
-							StateToForwad = GlobConstantJobs.SIGNATURESTATE_SIGNATURES_OK;
-						break;
-					case GlobConstantJobs.SIGNATURESTATE_SIGNATURES_NOTVALIDATED:
-						StateToForwad = GlobConstantJobs.SIGNATURESTATE_SIGNATURES_NOTVALIDATED;
-						break;
-					default:
-						StateToForwad = m_nOOoSignatureStatus;
-						break;
+			m_nDocumentSignatureState = _nState;
+		}
+		//call all the listeners, start a new thread for this
+		(new Thread(new Runnable() {
+			public void run() {
+				synchronized (m_aMtx_setDocumentSignatureState) {
+					m_logger.log("inter thread started");
+					Collection<XChangesListener> aColl = m_aListeners.values();
+					if(!aColl.isEmpty()) {
+						Iterator<XChangesListener> aIter = aColl.iterator();
+						// scan the array and for every one send the status
+						while (aIter.hasNext()) {
+							XChangesListener aThisOne =aIter.next();
+							aThisOne.changesOccurred(null);
+						}
 					}
-					aState.State = new Integer( StateToForwad );
-					aLink.m_aMaster.statusChanged( aState );*/
-					
-					aThisOne.changesOccurred(null);
-					// println("send listener:"+ new
-					// String(String.format("%8H",aLink.m_aMaster.hashCode())));
+					m_logger.log("inter thread exits, there were", ((aColl.isEmpty()) ? " none " : " some ")+"listener");				
 				}
-				
 			}
 		}
-		m_logger.log("setDocumentSignatureState");
+		)).start();
+		m_logger.exiting("setDocumentSignatureState","");
 	}
 
 	/* (non-Javadoc)

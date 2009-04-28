@@ -66,7 +66,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void addStatusListener(XStatusListener aListener, URL aURL) {
-		m_aLogger.log("addStatusListener",aURL.Complete);		
+//		m_aLogger.log("addStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.addStatusListener(aListener, aURL);
 	}
@@ -88,7 +88,7 @@ public class ImplDispatchSynch implements IDispatchBaseObject //XDispatch, XComp
 	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
 	 */
 	public void removeStatusListener(XStatusListener aListener, URL aURL) {
-		m_aLogger.log("removeStatusListener",aURL.Complete);		
+//		m_aLogger.log("removeStatusListener",aURL.Complete);		
 		if(m_aUnoSlaveDispatch != null)
 			m_aUnoSlaveDispatch.removeStatusListener(aListener, aURL);
 	}

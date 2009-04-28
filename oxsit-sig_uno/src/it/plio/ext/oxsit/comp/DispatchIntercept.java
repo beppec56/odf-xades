@@ -272,16 +272,15 @@ public class DispatchIntercept extends ComponentBase
 					if (m_xSlave != null)
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
-					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
-					m_logger.info("XNotifyingDispatch: "+Xnf);
+/*					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
+					m_logger.info("XNotifyingDispatch: "+Xnf);*/
 					if (m_ImplIntSaveDispatch == null)
 						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
 					return this;
-//					return m_ImplIntSaveDispatch;
 				}
 			}
-/*			disabled it locks the office 
+/*			disabled 'cause it locks the office 
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				XDispatch aUnoSaveSlaveDispatch = null;
@@ -303,7 +302,6 @@ public class DispatchIntercept extends ComponentBase
 					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
 							m_xFrame, m_xCC, m_axMCF, null );
 				return this;
-//				return m_aImplXAdESSignatureDispatchTB;
 			}
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatch == null)

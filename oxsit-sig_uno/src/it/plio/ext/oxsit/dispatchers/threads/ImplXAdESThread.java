@@ -64,7 +64,7 @@ public class ImplXAdESThread extends Thread {
 	
 	public void run() {
 //		println("started, code: "+m_nRunCode);
-		if(m_theClassTB != null) {
+/*		if(m_theClassTB != null) {
 			switch(m_nRunCode) {
 			case RUN_changesOccurred:
 				m_theClassTB.impl_changesOccurred(m_aChangesEvent);
@@ -75,7 +75,7 @@ public class ImplXAdESThread extends Thread {
 			default:
 //				m_aLogger.info("no code supplied!");
 			}
-		}
+		}*/
 	}
 
 	public static String getTimeMs() {
