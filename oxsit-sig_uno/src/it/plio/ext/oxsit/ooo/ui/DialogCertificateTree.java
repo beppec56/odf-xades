@@ -494,13 +494,13 @@ public class DialogCertificateTree extends BasicDialog implements
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(oTreeModel == null) {
-				printlnName("the oTreeModel not available!");
+				m_logger.info("the oTreeModel not available!");
 				return null;
 			}
 			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime
 								.queryInterface( XMultiPropertySet.class, oTreeModel );
 			if(xTreeMPSet == null ) {
-				printlnName("no XMultiPropertySet");
+				m_logger.info("no XMultiPropertySet");
 				return null;
 			}
 

@@ -31,13 +31,17 @@ import it.plio.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
+import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XDispatchProviderInterceptor;
+import com.sun.star.frame.XDispatchResultListener;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFrameActionListener;
 import com.sun.star.frame.XInterceptorInfo;
+import com.sun.star.frame.XNotifyingDispatch;
+import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
@@ -46,6 +50,7 @@ import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.task.XStatusIndicator;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.URL;
 
 /**
  * implements the interceptor for the dispatches that need to be 'tweaked'
@@ -60,6 +65,7 @@ public class DispatchIntercept extends ComponentBase
 		XDispatchProviderInterceptor,
 		XInterceptorInfo,
 		XDispatchProvider,
+		XDispatch,
 		XOX_DispatchInterceptor,
 		XFrameActionListener
 		 {
@@ -266,31 +272,37 @@ public class DispatchIntercept extends ComponentBase
 					if (m_xSlave != null)
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
+					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
+					m_logger.info("XNotifyingDispatch: "+Xnf);
 					if (m_ImplIntSaveDispatch == null)
 						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
-					return m_ImplIntSaveDispatch;
+					return this;
+//					return m_ImplIntSaveDispatch;
 				}
 			}
-/*			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
-				m_aLogger.info("queryDispatch", aURL.Complete);
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+				m_logger.info("queryDispatch", aURL.Complete);
+				XDispatch aUnoSaveSlaveDispatch = null;
 				synchronized (this) {
-					XDispatch aUnoSaveSlaveDispatch = null;
 					if (m_xSlave != null)
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
+					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
+					m_logger.info("XNotifyingDispatch: "+Xnf);
 					if (m_ImplIntSaveAsDispatch == null)
-						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame,
-								m_xCC, m_axMCF, aUnoSaveSlaveDispatch );
-					return m_ImplIntSaveAsDispatch;
+						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame, m_xCC,
+								m_axMCF, aUnoSaveSlaveDispatch );
+					return this;
+//					return m_ImplIntSaveAsDispatch;
 				}
-			}*/
-
+			}
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatchTB == null)
 					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
 							m_xFrame, m_xCC, m_axMCF, null );
-				return m_aImplXAdESSignatureDispatchTB;
+				return this;
+//				return m_aImplXAdESSignatureDispatchTB;
 			}
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatch == null)
@@ -309,6 +321,81 @@ public class DispatchIntercept extends ComponentBase
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
+	 */
+	@Override
+	public void dispatch(URL _aURL, PropertyValue[] _lArguments) {
+		//check the URL, then run the real dispatcher
+		m_logger.log("main dispatch", _aURL.Complete);
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+				if (m_ImplIntSaveDispatch != null)
+					m_ImplIntSaveDispatch.dispatch(_aURL, _lArguments);				
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+				if (m_ImplIntSaveAsDispatch != null)
+					m_ImplIntSaveAsDispatch.dispatch(_aURL, _lArguments);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatchTB != null)
+				m_aImplXAdESSignatureDispatchTB.dispatch(_aURL, _lArguments);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatch != null)
+				m_aImplXAdESSignatureDispatch.dispatch(_aURL, _lArguments);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
+	 */
+	@Override
+	public void addStatusListener(XStatusListener _aListener, URL _aURL) {
+		//check the URL then run the real method
+		m_logger.log("main addStatusListener", _aURL.Complete);
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+				if (m_ImplIntSaveDispatch != null)
+					m_ImplIntSaveDispatch.addStatusListener(_aListener, _aURL);				
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+				if (m_ImplIntSaveAsDispatch != null)
+					m_ImplIntSaveAsDispatch.addStatusListener(_aListener, _aURL);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatchTB != null)
+				m_aImplXAdESSignatureDispatchTB.addStatusListener(_aListener, _aURL);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatch != null)
+				m_aImplXAdESSignatureDispatch.addStatusListener(_aListener, _aURL);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
+	 */
+	@Override
+	public void removeStatusListener(XStatusListener _aListener, URL _aURL) {
+		//check the URL then run the real method
+		m_logger.log("main removeStatusListener", _aURL.Complete);
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+				if (m_ImplIntSaveDispatch != null)
+					m_ImplIntSaveDispatch.removeStatusListener(_aListener, _aURL);				
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+				if (m_ImplIntSaveAsDispatch != null)
+					m_ImplIntSaveAsDispatch.removeStatusListener(_aListener, _aURL);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatchTB != null)
+				m_aImplXAdESSignatureDispatchTB.removeStatusListener(_aListener, _aURL);
+		}
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
+			if (m_aImplXAdESSignatureDispatch != null)
+				m_aImplXAdESSignatureDispatch.removeStatusListener(_aListener, _aURL);
+		}
 	}
 
 	/*
@@ -514,15 +601,5 @@ public class DispatchIntercept extends ComponentBase
 				m_bIsInterceptorRegistered = false;
 			}
 		}
-	}
-
-	private void shutdown() {
-		// synchronized (m_aMutex) {
-		
-		// if(m_bDead)
-		// return;
-		// //check if we are frame action listener
-		// }
-		m_logger.entering("shutdown");
 	}
 }

@@ -22,13 +22,23 @@
 
 package it.plio.ext.oxsit.signature.dispatchers;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.DialogQuery;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
+import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XModel;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 
@@ -36,14 +46,29 @@ import com.sun.star.util.URL;
  * @author beppe
  *
  */
-public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
+public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements IDispatchImplementer {
+
+	protected String m_sTitle;
+	protected String m_sMessage;
+
 	public ImplInterceptSaveAsDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
 		m_aLogger.enableLogging();
-	}
+		m_aLogger.ctor();
+//get strings
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_axMCF);
 
+		try {
+			m_sTitle = m_aRegAcc.getStringFromRegistry( "id_descr" );
+			m_sMessage = m_aRegAcc.getStringFromRegistry( "id_question_saveasdoc" );				
+		} catch (com.sun.star.uno.Exception e) {
+			m_aLogger.severe("", "", e);
+		}
+		m_aRegAcc.dispose();			
+	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
 
@@ -61,59 +86,44 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 // check the document status, if has XAdES signatures,
 // then alert the user the signatures are lost if saved.
 		
-/*		try {
-//			check the slave one
-			com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
-			aParseURL[0] = new com.sun.star.util.URL();
-			aParseURL[0].Complete = GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+ GlobConstant.m_sBEFORE_SAVE_PATH;
-			com.sun.star.beans.PropertyValue[] lProperties = new com.sun.star.beans.PropertyValue[1];*/
-
-/*			com.sun.star.frame.XDispatchProvider xProvider =
-				(com.sun.star.frame.XDispatchProvider)UnoRuntime.queryInterface(
-						com.sun.star.frame.XDispatchProvider.class, m_xFrame);
-//			need an URLTransformer
-			Object obj;
-			obj = m_axMCF.createInstanceWithContext("com.sun.star.util.URLTransformer", m_xCC);
-			XURLTransformer xTransformer = (XURLTransformer)UnoRuntime.queryInterface(
-					XURLTransformer.class, obj);
-			xTransformer.parseStrict( aParseURL );
-			m_aLogger.info(aParseURL[0].Protocol+" "+aParseURL[0].Path);
-*/
-//			Ask it for right dispatch object for our URL.
-//			Force given frame as target for following dispatch by using "",
-//			it's the same as "_self".
-/*			if( xProvider != null ) {
-				com.sun.star.frame.XDispatch xDispatcher = null;
-				xDispatcher = xProvider.queryDispatch(aParseURL[0],"",0);
-
-				m_aLogger.info("impl_dispatch","xDispatcher "+(xDispatcher == null));
-				// Dispatch the URL into the frame.
-				if(xDispatcher != null) {
-					com.sun.star.frame.XNotifyingDispatch xNotifyingDispatcher = 
-						(com.sun.star.frame.XNotifyingDispatch)UnoRuntime.queryInterface(
-								com.sun.star.frame.XNotifyingDispatch.class,xDispatcher);*/
-/*					if( xNotifyingDispatcher != null )
-						xNotifyingDispatcher.dispatchWithNotification(aParseURL[0], lArgumentslProperties, null);
-					else*/
-						//trow exception: unimplemented interface !...
-//					m_aLogger.info("dispatching "+aParseURL[0].Complete);
-//						xDispatcher.dispatch(aParseURL[0],lArguments/*lProperties*/);
-//					then get from the Notify the value we need of the user answer.
-/*
-				}
-				else
-					m_aLogger.info("NO dispatcher for "+aParseURL[0].Complete);
-			}
-			else
-				m_aLogger.info("NO provider for "+aParseURL[0].Complete);*/
-
-			//Dispatch the URL into the frame.
-			//please note that this last one is to be dispatched only if the save is enabled by the user
-			m_aLogger.info("Drop down to superclass");
-			super.impl_dispatch(aURL, lArguments);
-/*		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		if (m_xFrame != null) {
+			XController xCont = m_xFrame.getController();
+			if (xCont != null) {
+				XModel m_xModel = xCont.getModel();
+				if (m_xModel != null) {	
+					try {
+						 XOX_DocumentSignatures xoxDocSigns = Helpers.getDocumentSignatures(m_xCC,m_xModel);						 
+						 int sigState = xoxDocSigns.getDocumentSignatureState();
+						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES &&
+								 sigState != GlobConstant.m_nSIGNATURESTATE_UNKNOWN) {
+							DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		
+							short ret = aDlg.executeDialog(m_sTitle, m_sMessage,
+									MessageBoxButtons.BUTTONS_YES_NO, //message box type
+									MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
+							// ret = 3: NO
+							// ret = 2: Yes
+							if(ret == 3)
+								return;
+						 }
+					} catch (ClassCastException e) {
+						m_aLogger.severe("impl_dispatch", "", e);
+					} catch (ServiceNotFoundException e) {
+						m_aLogger.severe("impl_dispatch", "", e);
+					} catch (NoSuchMethodException e) {
+						m_aLogger.severe("impl_dispatch", "", e);
+					}					
+				} else
+					m_aLogger.warning( "grabModel: no model!" );
+			} else
+				m_aLogger.warning( "grabModel: no controller!" );
+		}
+		else
+			m_aLogger.warning( "grabModel: no frame!" );
+		
+		//Dispatch the URL into the frame.
+		//please note that this last one is to be dispatched only if the save is enabled by the user
+		m_aLogger.info("Drop down to superclass");
+		super.impl_dispatch(aURL, lArguments);
+		m_aLogger.info("return from superclass");		
 	}
 }

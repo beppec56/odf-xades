@@ -121,8 +121,8 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 						// decide if new or already saved
 						if(xStore != null)
 							m_bHasLocation = xStore.hasLocation();
-						if(m_bHasLocation)
-							m_aLogger.info("URL: "+m_aDocumentURL);
+/*						if(m_bHasLocation)
+							m_aLogger.info("URL: "+m_aDocumentURL);*/
 //check to see if modified or not
 						XModifiable xMod = (XModifiable) UnoRuntime.queryInterface( XModifiable.class, m_xModel );
 						if(xMod != null)

@@ -127,5 +127,6 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 		//please note that this last one is to be dispatched only if the save is enabled by the user
 		m_aLogger.info("Drop down to superclass");
 		super.impl_dispatch(aURL, lArguments);
+		m_aLogger.info("return from superclass");		
 	}	
 }

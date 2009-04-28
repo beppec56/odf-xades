@@ -26,14 +26,14 @@ import it.plio.ext.oxsit.dispatchers.IDispatchBaseObject;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.signature.dispatchers.ImplOnHelpDispatch;
-import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
-import it.plio.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
 import com.sun.star.awt.XToolkit;
+import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
@@ -44,6 +44,7 @@ import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.CloseVetoException;
+import com.sun.star.util.URL;
 import com.sun.star.util.XCloseListener;
 import com.sun.star.util.XCloseable;
 
@@ -57,6 +58,7 @@ public class SignatureHandler extends ComponentBase
 			implements XServiceInfo, // general
 						XInitialization, // to implement the ProtocolHandler service
 						XDispatchProvider, // to implement the ProtocolHandler service
+						XDispatch,
 						XCloseable
 						{
 
@@ -87,9 +89,6 @@ public class SignatureHandler extends ComponentBase
 	public static int					m_nOnSaveCount					= 0;
 	public static int					m_nOnSaveAsCount				= 0;
 
-	private XDispatch					m_aImplSelSignatureDispatch		= null;
-	private XDispatch					m_aImplBeforeSaveDispatch		= null;
-	private XDispatch					m_aImplBeforeSaveAsDispatch		= null;
 	private IDispatchBaseObject			m_aImplXAdESSignatureDispatchTB	= null;
 	private XDispatch					m_aImplOnHelpDispatch			= null;
 	private IDispatchBaseObject			m_aImplXAdESSignatureDispatch	= null;
@@ -189,40 +188,11 @@ public class SignatureHandler extends ComponentBase
 		m_logger.info("queryDispatch",aURL.Complete);
 		try {
 			if (aURL.Protocol.compareTo( GlobConstant.m_sSIGN_PROTOCOL_BASE_URL ) == 0) {
-				/*if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH ) == 0) {
-					if (m_aImplXAdESSignatureDispatch == null)
-						m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(
-								m_xFrame, m_xComponentContext, m_xMultiComponentFactory,
-								null );
-					return m_aImplXAdESSignatureDispatch;
-				}*/
-/*				if (aURL.Path.compareTo( GlobConstant.m_sSIGN_DIALOG_PATH_TB ) == 0) {
-					if (m_aImplXAdESSignatureDispatchTB == null)
-						m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
-								m_xFrame, m_xComponentContext, m_xMultiComponentFactory,
-								null );
-					return m_aImplXAdESSignatureDispatchTB;
-				}*/
-				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSavePath) == 0 ) {
-				// if(m_aImplBeforeSaveDispatch == null)
-				// m_aImplBeforeSaveDispatch = new
-				// ImplInterceptSaveDispatch(m_xFrame,
-				// m_xComponentContext, m_xMultiComponentFactory, null);
-				// return m_aImplBeforeSaveDispatch;
-				// }
-				// if( aURL.Path.compareTo(GlobConstant.m_sBeforeSaveAsPath) == 0 ) {
-				// if(m_aImplBeforeSaveAsDispatch == null)
-				// m_aImplBeforeSaveAsDispatch = new
-				// ImplInterceptSaveAsDispatch(m_xFrame,
-				// m_xComponentContext, m_xMultiComponentFactory,
-				// null);
-				// return m_aImplBeforeSaveAsDispatch;
-				// }
 				if (aURL.Path.compareTo( GlobConstant.m_sON_HELP_ABOUT_PATH ) == 0) {
 					if (m_aImplOnHelpDispatch == null)
 						m_aImplOnHelpDispatch = new ImplOnHelpDispatch( m_xFrame,
 								m_xComponentContext, m_xMultiComponentFactory, null );
-					return m_aImplOnHelpDispatch;
+					return this;
 				}
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
@@ -232,6 +202,39 @@ public class SignatureHandler extends ComponentBase
 		}
 		m_logger.info("queryDispatch","return null: "+aURL.Complete);
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#addStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
+	 */
+	@Override
+	public void addStatusListener(XStatusListener arg0, URL arg1) {
+		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+			if (m_aImplOnHelpDispatch != null)
+				m_aImplOnHelpDispatch.addStatusListener(arg0, arg1);
+		}				
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
+	 */
+	@Override
+	public void dispatch(URL arg0, PropertyValue[] arg1) {
+		if (arg0.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+			if (m_aImplOnHelpDispatch != null)
+				m_aImplOnHelpDispatch.dispatch(arg0, arg1);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.frame.XDispatch#removeStatusListener(com.sun.star.frame.XStatusListener, com.sun.star.util.URL)
+	 */
+	@Override
+	public void removeStatusListener(XStatusListener arg0, URL arg1) {
+		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+			if (m_aImplOnHelpDispatch != null)
+				m_aImplOnHelpDispatch.removeStatusListener(arg0, arg1);
+		}						
 	}
 
 	/*
@@ -256,7 +259,6 @@ public class SignatureHandler extends ComponentBase
 	 */
 	private XMultiComponentFactory getRemoteServiceManager() throws java.lang.Exception {
 		if (m_xMultiComponentFactory == null && m_xRemoteServiceManager == null) {
-
 			m_xRemoteServiceManager = m_xComponentContext.getServiceManager();
 		}
 		return m_xRemoteServiceManager;
@@ -270,7 +272,7 @@ public class SignatureHandler extends ComponentBase
 	 * 
 	 */
 	public void updateCurrentComponent() {
-
+		m_logger.entering("updateCurrentComponent");
 		XComponent ret = null;
 		Object desktop;
 		try {
@@ -359,4 +361,5 @@ public class SignatureHandler extends ComponentBase
 		m_logger.entering("removeEventListener (XComponent)");
 		super.removeEventListener(arg0);
 	}
+
 }
