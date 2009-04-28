@@ -208,10 +208,6 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			return m_nDocumentSignatureState;			
 		}
 	}
-	
-	public void imp_DeliverChangesOccurred() {
-		
-	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentSignatureState(int)

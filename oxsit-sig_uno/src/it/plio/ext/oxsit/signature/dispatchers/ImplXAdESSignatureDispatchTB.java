@@ -756,7 +756,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 * @see com.sun.star.util.XChangesListener#changesOccurred(com.sun.star.util.ChangesEvent)
 	 */
 	// oneway function: implemented as separate task, comes from changesOccurred above
-	public void impl_changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
+/*	public void impl_changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
 		m_aLogger.log(" impl_changesOccurred()" );
 		// refresh status of the document model/component
 			grabModel();
@@ -764,7 +764,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			synchronized(m_aFrameConfMutex) {
 				changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
 			}
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
