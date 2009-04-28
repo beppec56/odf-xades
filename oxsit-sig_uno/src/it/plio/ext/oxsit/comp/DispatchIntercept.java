@@ -281,6 +281,7 @@ public class DispatchIntercept extends ComponentBase
 //					return m_ImplIntSaveDispatch;
 				}
 			}
+/*			disabled it locks the office 
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				XDispatch aUnoSaveSlaveDispatch = null;
@@ -296,7 +297,7 @@ public class DispatchIntercept extends ComponentBase
 					return this;
 //					return m_ImplIntSaveAsDispatch;
 				}
-			}
+			}*/
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
 				if (m_aImplXAdESSignatureDispatchTB == null)
 					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
