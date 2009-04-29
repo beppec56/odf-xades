@@ -80,9 +80,12 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	protected XStorage		m_xDocumentStorage;
 	// this document signature state
 	protected int			m_nDocumentSignatureState;
+
+	protected Boolean		m_aMtx_setDocumentSignatureState;
+	protected boolean		m_bRunThreadNotifyChanges;
+	
 	protected String		m_sDocumentId;
 
-	protected Boolean		m_aMtx_setDocumentSignatureState = new Boolean(false);
 	/**
 	 * 
 	 * 
@@ -92,6 +95,40 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();
+    	m_aMtx_setDocumentSignatureState = new Boolean(false);
+    	
+    	//prepare and start the thread to notify changes
+    	m_bRunThreadNotifyChanges = true;
+		//call all the listeners, start a new thread for this
+		(new Thread(new Runnable() {
+			public void run() {
+				m_logger.log("inter thread created");
+				while(m_bRunThreadNotifyChanges) {
+					synchronized (m_aMtx_setDocumentSignatureState) {
+						try {
+							m_aMtx_setDocumentSignatureState.wait();
+						} catch (InterruptedException e) { }
+	
+						if(m_bRunThreadNotifyChanges) {
+							m_logger.log("inter thread started");
+							Collection<XChangesListener> aColl = m_aListeners.values();
+							if(!aColl.isEmpty()) {
+								Iterator<XChangesListener> aIter = aColl.iterator();
+								// scan the array and for every one send the status
+								while (aIter.hasNext()) {
+									XChangesListener aThisOne =aIter.next();
+									aThisOne.changesOccurred(null);
+								}
+							}
+							m_logger.log("inter thread wraps, there were ", ((aColl.isEmpty()) ? "no" : aColl.size())+" listener");
+						}
+					}
+				}
+				m_logger.log("inter thread removed");
+			}
+		}
+		)).start();
+      	
 	}
 
 	@Override
@@ -204,7 +241,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public int getDocumentSignatureState() {
 		// TODO Auto-generated method stub
 		m_logger.log("getDocumentSignatureState");
-		synchronized (this) {
+		synchronized (m_aMtx_setDocumentSignatureState) {
 			return m_nDocumentSignatureState;			
 		}
 	}
@@ -218,29 +255,11 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public void setDocumentSignatureState(int _nState) {
 		// TODO Auto-generated method stub
 		m_logger.entering("setDocumentSignatureState","_nState is: "+_nState);
-		synchronized (this) {
+		synchronized (m_aMtx_setDocumentSignatureState) {			
 			m_nDocumentSignatureState = _nState;
+			m_aMtx_setDocumentSignatureState.notify();
 		}
-		//call all the listeners, start a new thread for this
-		(new Thread(new Runnable() {
-			public void run() {
-				synchronized (m_aMtx_setDocumentSignatureState) {
-					m_logger.log("inter thread started");
-					Collection<XChangesListener> aColl = m_aListeners.values();
-					if(!aColl.isEmpty()) {
-						Iterator<XChangesListener> aIter = aColl.iterator();
-						// scan the array and for every one send the status
-						while (aIter.hasNext()) {
-							XChangesListener aThisOne =aIter.next();
-							aThisOne.changesOccurred(null);
-						}
-					}
-					m_logger.log("inter thread exits, there were", ((aColl.isEmpty()) ? " none " : " some ")+"listener");				
-				}
-			}
-		}
-		)).start();
-		m_logger.exiting("setDocumentSignatureState","");
+//		m_logger.exiting("setDocumentSignatureState","");
 	}
 
 	/* (non-Javadoc)
@@ -280,6 +299,10 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public void dispose() {
 		// TODO Auto-generated method stub
 		m_logger.log("dispose");
+		m_bRunThreadNotifyChanges = false;
+		synchronized (m_aMtx_setDocumentSignatureState) {
+			m_aMtx_setDocumentSignatureState.notify();
+		}
 		super.dispose();
 	}
 

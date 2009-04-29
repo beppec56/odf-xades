@@ -29,6 +29,7 @@ import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;
 
+import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
@@ -181,9 +182,8 @@ public class SingletonGlobalVariables extends ComponentBase
 						aDoc.setDocumentId(_aDocumentId);
 					m_logger.exiting("initDocumentAndListener", _aDocumentId);
 					return aDoc;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				}
+				catch (Exception e) {
 					m_logger.severe("initDocumentAndListener", "error instantionting a new DocumentSignatures service", e);
 					return null;
 				}
@@ -222,7 +222,12 @@ public class SingletonGlobalVariables extends ComponentBase
 			m_logger.log("removeDocumentSignatures","doc id: "+_aDocumentId);		
 			if(theDocumentList.containsKey(_aDocumentId)) {
 				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
-				DocumentDescriptor docuDescrip = theDocumentList.remove(_aDocumentId);
+				theDocumentList.remove(_aDocumentId);
+				XComponent aComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, aObj);
+				if(aComp != null)
+					aComp.dispose(); //clean up the UNO object
+				else
+					m_logger.severe("removeDocumentSignatures", "XComponent missing.");
 			}		
 		}
 	}
