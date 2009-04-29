@@ -39,6 +39,13 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.util.DateTime;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.beans.PropertyValue;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 /** Helper class composed of static methods.
@@ -125,7 +132,11 @@ public class Helpers {
 		}
 	}
 	
-	
+	/**
+	 * returns the string URL of the path where the extension is installed
+	 * @param context
+	 * @return
+	 */
 	public static String getExtensionInstallationPath(XComponentContext context) {
 		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( context );
 		if(xPkgInfo != null)
@@ -133,6 +144,23 @@ public class Helpers {
 		return null;
 	}
 	
+	/**
+	 * returns the string URL of the path where the extension is installed
+	 * @param context
+	 * @return
+	 * @throws URISyntaxException 
+	 * @throws IOException 
+	 */
+	public static String getExtensionInstallationSystemPath(XComponentContext context) throws URISyntaxException, IOException {
+		String aPath = getExtensionInstallationPath(context);
+		if(aPath != null) {
+			URL aURL = new URL(aPath);
+			URI aUri = new URI(aURL.toString());
+			File aFile = new File(aUri);
+			return aFile.getCanonicalPath();
+		}
+		return null;
+	}
 	/**
 	 * converts a list of Integer values included in an Integer vector to a list
 	 * of int values

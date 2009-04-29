@@ -27,6 +27,9 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import com.sun.star.embed.XStorage;
@@ -68,7 +71,7 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
 	
-	protected String 					m_sExtensionPath;
+	protected String 					m_sExtensionSystemPath;
 
 	protected DynamicLogger m_aLogger;
 	/**
@@ -79,8 +82,14 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	public AvailableSSCDs(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_aLogger.enableLogging();
-		m_sExtensionPath = Helpers.getExtensionInstallationPath(_ctx);
-		m_aLogger.ctor("extension installed in: "+m_sExtensionPath);
+		try {
+			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_ctx);
+			m_aLogger.ctor("extension installed in: "+m_sExtensionSystemPath);
+		} catch (URISyntaxException e) {
+			m_aLogger.severe("ctor", "", e);
+		} catch (IOException e) {
+			m_aLogger.severe("ctor", "", e);
+		}
 	}
 
 	@Override
