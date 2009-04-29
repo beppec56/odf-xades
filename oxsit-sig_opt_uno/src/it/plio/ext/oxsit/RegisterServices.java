@@ -24,6 +24,7 @@ package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.comp.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
+import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
 
@@ -61,6 +62,10 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( QualifiedCertificate.class, QualifiedCertificate.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
 		}
+		else if ( sImplementationName.equals( AvailableSSCDs.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( AvailableSSCDs.class, AvailableSSCDs.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+		}
 		return xFactory;
 	}
 	/** Writes the service information into the given registry key.
@@ -85,6 +90,9 @@ public class RegisterServices {
 		boolean retQualCertif = 
 			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
 
+		boolean retAvailSSCDs = 
+			Factory.writeRegistryServiceInfo( AvailableSSCDs.m_sImplementationName, AvailableSSCDs.m_sServiceNames, xRegistryKey );
+
 		if (!retGeneral)
 			System.out.println("__writeRegistryServiceInfo: "+ManageGeneralOptions.m_sImplementationName + "failed");		
 
@@ -97,6 +105,9 @@ public class RegisterServices {
 		if (!retQualCertif)
 			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
 
-		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif);
+		if (!retAvailSSCDs)
+			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs.m_sImplementationName + "failed");		
+
+		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retAvailSSCDs);
 	}
 }

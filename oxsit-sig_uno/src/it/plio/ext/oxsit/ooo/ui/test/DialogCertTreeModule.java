@@ -38,6 +38,7 @@ import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOSignature2;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentOK;
+import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;
@@ -66,6 +67,7 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
@@ -124,6 +126,8 @@ public class DialogCertTreeModule extends BasicDialog implements
 	private String 				sCertificateElementBroken;
 
 	private String sSignatureInvalid2;
+	
+	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
 
 	private static final String sEmptyText = "notextcontrol";		//the control without text
 	private static final String sEmptyTextLine = "notextcontrolL";		//the 1st line superimposed to the empty text contro
@@ -183,6 +187,19 @@ public class DialogCertTreeModule extends BasicDialog implements
 		// the next value should be read from configuration
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
 		CertifTreeDlgDims.setDialogSize(300, 100, 0);
+		
+//instantiate the SSCDs service
+		
+		try {
+			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
+			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
+			if(m_axoxAvailableSSCDs != null)
+				m_axoxAvailableSSCDs.scanDevices();
+		} catch (Exception e) {
+			m_logger.severe("ctor", "", e);
+		}
+		
+		
 	}
 
 	/**

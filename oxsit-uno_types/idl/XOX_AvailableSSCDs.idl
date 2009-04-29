@@ -1,0 +1,57 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_AvailableSSSCDs_idl__
+
+//#include <com/sun/star/embed/XStorage.idl>
+//#include "XOX_QualifiedCertificate.idl"
+
+  module it { module plio { module ext { module oxsit { module security {
+
+	/** this interface represents the main interface to describe
+	  the available SSCD devices on system.
+	  <p>It needs to be expanded</p>
+	 */
+  interface XOX_AvailableSSCDs
+  {
+		/** This document storage
+		*/
+//		[attribute] com::sun::star::embed::XStorage DocumentStorage;
+
+		/** this document signature state
+		*/
+//		[attribute] long DocumentSignatureState;
+
+		/** this document id
+		*/
+//		[attribute] string DocumentId;
+
+		/** The certificates contained in the document.
+		*/
+//		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;
+		void scanDevices();
+  };
+ 
+  }; }; }; }; };
+ 
+#endif
