@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.ooo.ui.test;
 
 import java.util.LinkedList;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
@@ -155,34 +156,29 @@ public class DialogCertTreeModule extends BasicDialog implements
 		m_logger.enableLogging();
 		m_logger.ctor();
 //fill string for graphics
-		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( context );
-		if(xPkgInfo != null) {
-			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
-			if(sLoc != null){
-				String aSize = "_26.png"; //for large icons toolbar
+		String sLoc = Helpers.getExtensionInstallationPath(context);
+		if(sLoc != null){
+			String aSize = "_26.png"; //for large icons toolbar
 //				String aSize = "_16.png"; //for small icons toolbar
-				String m_imagesUrl = sLoc + "/images";
+			String m_imagesUrl = sLoc + "/images";
 //main, depends from application, for now. To be changed
-				//TODO change to a name not depending from the application
-				sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
-				sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
-				sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
-				sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
-				sSignatureInvalid2 = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //
-				sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
-				sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
+			//TODO change to a name not depending from the application
+			sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
+			sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
+			sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
+			sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
+			sSignatureInvalid2 = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //
+			sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
+			sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
 
-				sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
-				sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
-				sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
-				sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
-				sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
-			}
-			else
-				printlnName("no package location !");
+			sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
+			sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
+			sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
+			sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
+			sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
 		}
 		else
-			printlnName("No pkginfo!");
+			printlnName("no package location !");
 		fillLocalizedString();
 		// the next value should be read from configuration
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
@@ -971,7 +967,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 				enableSingleButton(sAdd,bEnableButton);
 				aCurrentNode.EnableDisplay(true);
 			}
-		}		
+		}
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
@@ -984,5 +980,11 @@ public class DialogCertTreeModule extends BasicDialog implements
 			if(xaWNode != null )
 				xaWNode.setEnable(bEnable);
 		}
+	}
+
+	public void disposeElements() {
+		XComponent xC = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
+		if(xC != null)
+			xC.dispose();
 	}
 }

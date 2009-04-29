@@ -67,6 +67,8 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	public static final String			m_sImplementationName	= AvailableSSCDs.class.getName();
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
+	
+	protected String 					m_sExtensionPath;
 
 	protected DynamicLogger m_aLogger;
 	/**
@@ -77,7 +79,8 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	public AvailableSSCDs(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_aLogger.enableLogging();
-		m_aLogger.ctor();
+		m_sExtensionPath = Helpers.getExtensionInstallationPath(_ctx);
+		m_aLogger.ctor("extension installed in: "+m_sExtensionPath);
 	}
 
 	@Override

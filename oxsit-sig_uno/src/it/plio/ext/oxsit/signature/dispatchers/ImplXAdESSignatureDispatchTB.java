@@ -138,16 +138,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		m_aLogger.ctor(" frame hash: "+Helpers.getHashHex(m_xFrame));
 
 		m_imagesUrl = null;
-		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( m_xCC );
-		if(xPkgInfo != null) {
-			String sLoc = xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
-			if(sLoc != null) 
-				m_imagesUrl = sLoc + "/images";
-			else //FIXME, TODO devise a better method, if the call fails
-				m_aLogger.severe("ctor","no package location !");
-		}
-		else
-			m_aLogger.info("ctor: No pkginfo!");
+		String sLoc = Helpers.getExtensionInstallationPath(m_xCC);
+		if(sLoc != null) 
+			m_imagesUrl = sLoc + "/images";
+		else //FIXME, TODO devise a better method, if the call fails
+			m_aLogger.severe("ctor","no package location !");
 		try {
 			m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
 			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			

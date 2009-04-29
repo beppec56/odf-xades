@@ -27,6 +27,8 @@ import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import com.sun.star.beans.*;
 import com.sun.star.container.*;
+import com.sun.star.deployment.PackageInformationProvider;
+import com.sun.star.deployment.XPackageInformationProvider;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.*;
 import com.sun.star.lang.NoSuchMethodException;
@@ -121,6 +123,14 @@ public class Helpers {
 
 			return m_xDocumentSignatures;
 		}
+	}
+	
+	
+	public static String getExtensionInstallationPath(XComponentContext context) {
+		XPackageInformationProvider xPkgInfo = PackageInformationProvider.get( context );
+		if(xPkgInfo != null)
+			return xPkgInfo.getPackageLocation( GlobConstant.m_sEXTENSION_IDENTIFIER );
+		return null;
 	}
 	
 	/**
