@@ -30,7 +30,6 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
-import it.plio.ext.oxsit.ooo.ui.test.DialogCertTreeModule;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
@@ -76,7 +75,7 @@ import com.sun.star.view.XSelectionChangeListener;
 public class DialogCertificateTree extends BasicDialog implements
 		XActionListener, XMouseListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
 
-	private static final String DLG_CERT_TREE = "DialogCertTreeModule";
+	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
 
 	private static final String sTree = "certtree";
 	private static final String sVerify = "verifyb";
@@ -388,7 +387,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			// we make sure we refer to the right one
 			System.out.println("action: "+sName);
 			if (sName.equals(sAdd)) {
-					DialogCertTreeModule aDialog1 = new DialogCertTreeModule( m_xParentFrame, m_xContext, m_xMCF );
+					DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs( m_xParentFrame, m_xContext, m_xMCF );
 					try {
 						int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
 						int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*4;//to see the underlying certificates already in the document

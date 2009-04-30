@@ -250,6 +250,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">Certificati disponibili</value>
 			</prop>
 		</node>
+		<node oor:name="id_title_mod_cert_treew" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The following certificates are available:</value>
+				<value xml:lang="it">Sono disponibili I seguenti certificati:</value>
+			</prop>
+		</node>
 		<node oor:name="id_pb_sel_device" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Select...</value>

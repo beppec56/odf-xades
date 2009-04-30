@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.ui.test;
+package it.plio.ext.oxsit.ooo.ui;
 
 import java.util.LinkedList;
 
@@ -28,12 +28,9 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
-import it.plio.ext.oxsit.ooo.ui.CertifTreeDlgDims;
-import it.plio.ext.oxsit.ooo.ui.CertificateDataCA;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
-import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
 import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
+import it.plio.ext.oxsit.ooo.ui.test.FakeCertificateInModuleOK;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
 import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
@@ -77,17 +74,14 @@ import com.sun.star.view.XSelectionChangeListener;
  * @author beppe
  *
  */
-public class DialogCertTreeModule extends BasicDialog implements
+public class DialogCertTreeSSCDs extends BasicDialog implements
 		XActionListener, XMouseListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
 
-	private static final String DLG_CERT_TREE = "DialogCertTreeModule";
+	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
 
 	private static final String sTree = "certmodtree";
 	private static final String sSelect = "selectb";
 	private static final String sAdd = "addcertb";
-	private static final String sRemove = "remob";
-	private static final String sCountSig = "countsigb";
-
 	//graphic indications
 	private String sSignatureOK; //signature ok
 	private String sSignatureNotValidated; //signature ok, but certificate not valid
@@ -95,7 +89,6 @@ public class DialogCertTreeModule extends BasicDialog implements
 	private String sSignatureInvalid; //signature cannot be validated
 	private String sSignatureAdding;
 	private String sSignatureRemoving;
-
 
 	private String sCertificateValid = null; //
 	private String sCertificateNotValidated = null; //
@@ -149,7 +142,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 	 * @param context
 	 * @param _xmcf
 	 */
-	public DialogCertTreeModule(XFrame frame, XComponentContext context,
+	public DialogCertTreeSSCDs(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
 		// TODO Auto-generated constructor stub
@@ -185,7 +178,6 @@ public class DialogCertTreeModule extends BasicDialog implements
 		CertifTreeDlgDims.setDialogSize(300, 100, 0);
 		
 //instantiate the SSCDs service
-		
 		try {
 			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
 			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
@@ -208,10 +200,8 @@ public class DialogCertTreeModule extends BasicDialog implements
 			m_sBtn_CancelLabel = m_aRegAcc.getStringFromRegistry( "id_cancel" );
 			m_sBtn_SelDevice = m_aRegAcc.getStringFromRegistry( "id_pb_sel_device" );
 			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_add_cert" );
-//			m_sBtn_RemoveCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_rem_cert" );
-//			m_sBtn_AddCountCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_count_sign" );
 			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_tree" );
-			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_cert_treew" );
+			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_treew" );
 			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( "id_pb_cert_report" );
 		} catch (com.sun.star.uno.Exception e) {
 			e.printStackTrace();
@@ -466,12 +456,12 @@ public class DialogCertTreeModule extends BasicDialog implements
 
 //insert dummy certificates
 			// TEST:
-			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
+//			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
 //construct a certificate
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
+//			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
 
-			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
-			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
+//			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
+//			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
 
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
@@ -812,7 +802,7 @@ public class DialogCertTreeModule extends BasicDialog implements
 			addMultiLineTextDisplayElement(aDesc);
 			xaENode.setDataValue(aDesc);			
 			xaDNode.appendChild(xaENode);
-			
+
 //now create our child nodes			
 			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
 					"X509v3 Certificate Policies",TreeNodeType.X509V3_CERTIFICATE_POLICIES,
