@@ -53,8 +53,8 @@ To create an Eclipse workspace:
    						for the Linux platform the value is:
    						<OOo3 installation dir>/basis-link/program/classes
 
-   	A third variable points to the <OOo installation dir>; it is not nedded for
-   	successfully building the projects, but may be it will be needed in the future, and
+   	A third variable points to the <OOo installation dir>; it is not needed for
+   	successfully building the subprojects, but may be it will be needed in the future, and
    	we add it also for reference purpose:
 
    - OOO_HOME :			for the Windows platform the value is (usually):
@@ -96,9 +96,9 @@ The build.xml properties are the following:
 4)  After that you can continue to checkout the needed subprojects in the order given below, the subprojects
 	contain the files Eclipse needs for correct project initialization, so use the default provided.
 
-	The Eclipse projects are:
+	The Eclipse projects are (the order is the order you need to check them out):
 
-	oxsit-ext_conf, oxsit-sig_opt_uno, oxsit-sing_var_uno, oxsit-sig_uno, oxsit-sjob_uno,
+	oxsit-ext_conf, oxsit-uno_types, oxsit-sig_opt_uno, oxsit-sing_var_uno, oxsit-sig_uno, oxsit-sjob_uno,
 	
 	After that, if all is ok and 'Build Automatically' is checked, Eclipse will compile the Java projects
 	as soon as they are checked-out.
@@ -150,7 +150,7 @@ The build.xml properties are the following:
 	oxsit-scratch				contains stuff used to carry on the developing job. 						   								
 
 5) To build from the operating system command line (if you checked out as explained in a
-   unique workspace), go to project extension_conf_files, it contains the main ant
+   unique workspace), go to subproject oxsit-ext_conf, it contains the main ant
    build.xml file and issue the command:
 
    ant build-extension
@@ -158,7 +158,7 @@ The build.xml properties are the following:
    the full extension will be built in the same directory.
    This build can be started from inside Eclipse by using:
    
-   a) open the main build.xml (cnipa_signature_extension/build.xml)
+   a) open the main build.xml (oxsit-ext_conf/build.xml)
    b) menu: Run > External Tools > Run As > Ant Build...
    
 6) step 5) is required in order to work with Eclipse, since the jar file needed is build with ant only
