@@ -321,5 +321,6 @@ public abstract class TreeElement {
 		return m_sNodeGraphic;
 	}
 	
+	abstract void EnableDisplay(boolean bWhat);
 
 }
