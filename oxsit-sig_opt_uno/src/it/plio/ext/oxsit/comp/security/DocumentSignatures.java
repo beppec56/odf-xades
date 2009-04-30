@@ -82,7 +82,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	protected int			m_nDocumentSignatureState;
 
 	protected Boolean		m_aMtx_setDocumentSignatureState;
-	protected boolean		m_bRunThreadNotifyChanges;
+	protected boolean		m_bThreadNotifyChangesCanRun;
 	
 	protected String		m_sDocumentId;
 
@@ -98,18 +98,19 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
     	m_aMtx_setDocumentSignatureState = new Boolean(false);
     	
     	//prepare and start the thread to notify changes
-    	m_bRunThreadNotifyChanges = true;
+    	m_bThreadNotifyChangesCanRun = true;
 		//call all the listeners, start a new thread for this
 		(new Thread(new Runnable() {
 			public void run() {
 				m_logger.log("inter thread created");
-				while(m_bRunThreadNotifyChanges) {
+				while(m_bThreadNotifyChangesCanRun) {
 					synchronized (m_aMtx_setDocumentSignatureState) {
 						try {
 							m_aMtx_setDocumentSignatureState.wait();
-						} catch (InterruptedException e) { }
-	
-						if(m_bRunThreadNotifyChanges) {
+						}
+						catch (InterruptedException e) {
+						}
+						if(m_bThreadNotifyChangesCanRun) {
 							m_logger.log("inter thread started");
 							Collection<XChangesListener> aColl = m_aListeners.values();
 							if(!aColl.isEmpty()) {
@@ -128,7 +129,6 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			}
 		}
 		)).start();
-      	
 	}
 
 	@Override
@@ -143,7 +143,6 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
 		m_logger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
@@ -299,7 +298,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public void dispose() {
 		// TODO Auto-generated method stub
 		m_logger.log("dispose");
-		m_bRunThreadNotifyChanges = false;
+		m_bThreadNotifyChangesCanRun = false;
 		synchronized (m_aMtx_setDocumentSignatureState) {
 			m_aMtx_setDocumentSignatureState.notify();
 		}

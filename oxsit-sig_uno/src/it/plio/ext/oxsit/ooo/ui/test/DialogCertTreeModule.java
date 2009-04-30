@@ -194,8 +194,6 @@ public class DialogCertTreeModule extends BasicDialog implements
 		} catch (Exception e) {
 			m_logger.severe("ctor", "", e);
 		}
-		
-		
 	}
 
 	/**
@@ -982,9 +980,14 @@ public class DialogCertTreeModule extends BasicDialog implements
 		}
 	}
 
+	/** called when the dialog is closing, to dispose of available certificate list
+	 * 
+	 */
 	public void disposeElements() {
-		XComponent xC = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
-		if(xC != null)
-			xC.dispose();
+		if(m_axoxAvailableSSCDs != null) {
+			XComponent xC = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
+			if(xC != null)
+				xC.dispose();
+		}
 	}
 }
