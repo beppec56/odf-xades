@@ -26,7 +26,7 @@ ATTENTION:
 the default target must be removed
 
 -->
-<project name="oxsit-uno_types" default="" basedir=".">
+<project name="oxsit-uno_types" default="build-jar" basedir=".">
 	<property name="project_friendly_name" value="oxsit" />	
 	<property name="project_name" value="${project_friendly_name}-uno_types" />
 	<property name="extension_jar_file" value="${project_name}.uno.jar" />
