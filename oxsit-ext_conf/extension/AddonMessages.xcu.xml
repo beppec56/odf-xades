@@ -473,12 +473,12 @@ Confermate Salva ?
 		<node oor:name="id_question_saveasdoc" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">The document is signed.
-Saving it with another name will remove the signatures in the new file.
+Saving it with another name will remove the signatures in the new document.
 
 Confirm save with a new name?
 </value>
 				<value xml:lang="it">Il documento è firmato.
-Salvando con un nuovo nome, le firme saranno rimosse dal nuovo  file.
+Salvando con un nuovo nome, le firme saranno rimosse dal documento.
 
 Confermate Salva  con nuovo nome?
 
