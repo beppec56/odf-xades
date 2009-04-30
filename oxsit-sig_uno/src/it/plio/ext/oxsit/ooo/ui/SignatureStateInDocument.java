@@ -38,6 +38,9 @@ import com.sun.star.uno.XComponentContext;
  * In this implementation we have only some fake strings, not the
  * actual certificate data.
  * 
+ * FIXME
+ * WARNING: THIS CLASS IS TO BE REMOVED IN THE END.
+ * 
  * @author beppe
  *
  */

@@ -171,12 +171,12 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
 		}
 		else
-			printlnName("no package location !");
+			m_logger.severe("ctor","no package location !");
 		fillLocalizedString();
-		// the next value should be read from configuration
+// the next value should be read from configuration, when configuration is written...
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
 		CertifTreeDlgDims.setDialogSize(300, 100, 0);
-		
+
 //instantiate the SSCDs service
 		try {
 			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
@@ -184,7 +184,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			if(m_axoxAvailableSSCDs != null)
 				m_axoxAvailableSSCDs.scanDevices();
 		} catch (Exception e) {
-			m_logger.severe("ctor", "", e);
+			m_logger.severe("ctor", e);
 		}
 	}
 
@@ -204,7 +204,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_treew" );
 			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( "id_pb_cert_report" );
 		} catch (com.sun.star.uno.Exception e) {
-			e.printStackTrace();
+			m_logger.severe("fillLocalizedString", e);
 		}
 		m_aRegAcc.dispose();	
 	}
@@ -254,7 +254,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			//insert the fixed text lines over the above mentioned element
 			insertDisplayLinesOfText();
 
-	//multiline text control for details
+	//multiline text control for details of tree node element under selection
 			m_xDisplElementModel = insertEditFieldModel(this, this,
 					CertifTreeDlgDims.dsTextFieldColumn(),
 					CertifTreeDlgDims.DS_ROW_1(),
@@ -275,23 +275,20 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					CertifTreeDlgDims.dsTreeControlWith(), //CertifTreeDlgDims.DS_COL_4() - CertifTreeDlgDims.DS_COL_0(),
 					sTree,
 					m_sFt_Hint_Doc, 20);
-			
-			// ora recupera il textcomponent
-			XControl xTFControl = m_xDlgContainer.getControl(m_sDispElemsName);
+
+//			XControl xTFControl = m_xDlgContainer.getControl(m_sDispElemsName);
 			// add a textlistener that is notified on each change of the
 			// controlvalue...
-			m_xDisplElement = (XTextComponent) UnoRuntime.queryInterface(
-					XTextComponent.class, xTFControl);
-	
+//			m_xDisplElement = (XTextComponent) UnoRuntime.queryInterface(XTextComponent.class, xTFControl);
+
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB3(),
-//					CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					sSelect,
 					m_sBtn_SelDevice,
 					(short) PushButtonType.STANDARD_value);
-	
+
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
@@ -299,37 +296,20 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					sAdd,
 					m_sBtn_AddCertLabel,
 					(short) PushButtonType.STANDARD_value);
-	
-/*			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB4(),
-					CertifTreeDlgDims.DS_ROW_4(),
-					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					sRemove,
-					m_sBtn_RemoveCertLabel,
-					(short) PushButtonType.STANDARD_value);*/
-			
-/*			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB4(),
-					CertifTreeDlgDims.DS_ROW_4(),
-					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					sCountSig,
-					m_sBtn_AddCountCertLabel,
-					(short) PushButtonType.STANDARD_value);*/
-			
+
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB5(),
 					CertifTreeDlgDims.DS_ROW_4(),
-//					CertifTreeDlgDims.DS_COL_8()-CertifTreeDlgDims.DS_COL_7(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					"sprint",
 					m_sBtn_CreateReport,
 					(short) PushButtonType.STANDARD_value);
-	
+
 			insertHorizontalFixedLine(
 					0, 
 					CertifTreeDlgDims.DLGS_BOTTOM_FL_Y(CertifTreeDlgDims.dsHeigh()), 
 					CertifTreeDlgDims.dsWidth(), "");		
-	
+
 	//cancel button
 			insertButton(this,
 					CertifTreeDlgDims.DLGS_BOTTOM_HELP_X(CertifTreeDlgDims.dsWidth()),
@@ -349,25 +329,21 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	
 			xDialog = (XDialog) UnoRuntime.queryInterface(XDialog.class, super.m_xDialogControl);		
 			createWindowPeer();
-//		center();
 		} catch (UnknownPropertyException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			m_logger.severe("initialize", e);
 		} catch (PropertyVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_logger.severe("initialize", e);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_logger.severe("initialize", e);
 		} catch (WrappedTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_logger.severe("initialize", e);
 		}
 	}
 
 	private void insertDisplayLinesOfText() {
 		//now inserts the fixed text lines over the above mentioned element
-		for(int i = 0; i < SignatureStateInDocument.m_nMAXIMUM_FIELDS; i++) {
+		for(int i = 0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++) {
 			insertFixedText(this,
 					CertifTreeDlgDims.TEXT_0X(),
 					CertifTreeDlgDims.TEXT_L0Y()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT*i,
@@ -394,12 +370,20 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			System.out.println("action: "+sName);
 			if (sName.equals(sAdd)) {
 				m_logger.info("Aggiunto certificato");
+				
+				//for test only:
+				CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
+				aCert.initialize();
+				
+				SignatureTreeElement aSign = new SignatureTreeElement(m_xContext, m_xMCF);
+				aSign.initialize();
+
 			} else if (sName.equals(sSelect)) {
 					// close dialog and will exit				
 				m_logger.info("Seleziona dispositivo");
 			}
 			else {
-				System.out.println("Activated: " + sName);
+				m_logger.info("Activated: " + sName);
 			}
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
@@ -408,10 +392,8 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			 * com.sun.star.beans.UnknownPropertyException,
 			 * com.sun.star.uno.Exception
 			 */
-			ex.printStackTrace(System.out);
+			m_logger.severe("initialize", ex);
 		}
-
-		
 	}
 
 	@Override
@@ -434,22 +416,21 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		// create a controlmodel at the multiservicefactory of the dialog
 		// model...
 		try {
-//			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.MutableTreeDataModel" );
 			Object oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
 			if(oTreeDataModel == null) {
-				printlnName("the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
+				m_logger.severe("insertTreeControl", "the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
 				return null;
 			}
 
 			XMutableTreeDataModel xTreeDataModel = (XMutableTreeDataModel)UnoRuntime.queryInterface( XMutableTreeDataModel.class, oTreeDataModel );
 			if(xTreeDataModel == null) {
-				printlnName("the XMutableTreeDataModel not available!");
+				m_logger.severe("insertTreeControl", "the XMutableTreeDataModel not available!");
 				return null;
 			}
 
 			XMutableTreeNode xaNode = xTreeDataModel.createNode(_sLabel, true);
 			if(xaNode == null) {
-				printlnName("the Node not available!");
+				m_logger.severe("insertTreeControl", "the Node not available!");
 				return null;
 			}
 			xTreeDataModel.setRoot(xaNode);
@@ -466,13 +447,13 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(oTreeModel == null) {
-				printlnName("the oTreeModel not available!");
+				m_logger.severe("insertTreeControl", "the oTreeModel not available!");
 				return null;
 			}
 			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime
 								.queryInterface( XMultiPropertySet.class, oTreeModel );
 			if(xTreeMPSet == null ) {
-				printlnName("no XMultiPropertySet");
+				m_logger.severe("insertTreeControl", "no XMultiPropertySet");
 				return null;
 			}
 
@@ -519,8 +500,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			xTree.addSelectionChangeListener(_xActionListener);
 
 		} catch (com.sun.star.uno.Exception ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace( System.out );
+			m_logger.severe("insertTreeControl", ex);
 		}
 		return xTree;
 	}
@@ -547,7 +527,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 /**
  * adds a dummy certificate starting from the provided node
  */
-	public XMutableTreeNode addDummySignatureState(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
+	private XMutableTreeNode addDummySignatureState(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
 			SignatureStateInDocument aCert, String sGraphic) {
 		XMutableTreeNode aretValue = null;
 		try {

@@ -169,6 +169,10 @@ public class DynamicLogger {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, _message, ex);
 	}
 
+	public void severe(String _theMethod, Exception ex) {
+		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, "", ex);
+	}
+
 	private void log_exception(int n_TheLevel, String _theMethod, String _message, Exception ex) {
 		String stack = "\n"+ex.toString();
 

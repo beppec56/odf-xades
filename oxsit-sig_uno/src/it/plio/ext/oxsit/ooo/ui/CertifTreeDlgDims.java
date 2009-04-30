@@ -35,6 +35,12 @@ public class CertifTreeDlgDims {
 	public static final int TD_SP_INNERBORDER_BOTTOM = 3;
 	public static final int SEP_FL_SPACE_Y = 6;
 
+	/**
+	 * the maximum numbers of lines in the text field on right pane
+	 * (the one with coloro and bold, italic, etc)
+	 */
+	public static final int m_nMAXIMUM_FIELDS 				= 14;
+	
 	public static void setDialogSize(int nDs_Width, int nDs_Heigh, int nDs_TreeWidth) {
 //check for correct values
 		/*

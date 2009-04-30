@@ -375,19 +375,29 @@ Roberto Resoli, developer
 		<!--
 		    The intermediate titles
 		-->
-		<node oor:name="err_txt_title1" oor:op="replace">
+		<node oor:name="cert_title_issuer" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">iRilasciato da:</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_title2" oor:op="replace">
+		<node oor:name="sign_title_date" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">iData e ora della firma:</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_title0" oor:op="replace">
+		<node oor:name="sign_title_signed_by" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">iFirmato da:</value>
+			</prop>
+		</node>
+		<node oor:name="cert_title_valid_from" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">iValido da:</value>
+			</prop>
+		</node>
+		<node oor:name="cert_title_valid_to" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">iValido fino a:</value>
 			</prop>
 		</node>
 		<!--
@@ -459,6 +469,11 @@ Roberto Resoli, developer
 		<node oor:name="err_txt_ca_ko_exp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">eCA non accreditata, certificato CA scaduto</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_ca_unkn" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">eCA non controllata (opzioni)</value>
 			</prop>
 		</node>
 		<node oor:name="id_question_savedoc" oor:op="replace">
