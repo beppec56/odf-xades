@@ -23,7 +23,6 @@
 package it.plio.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
@@ -35,7 +34,6 @@ import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XController;
-import com.sun.star.frame.XDispatchProviderInterception;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.io.IOException;
@@ -49,7 +47,6 @@ import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.presentation.XPresentation;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.task.XJob;
-import com.sun.star.task.XStatusIndicator;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
@@ -123,7 +120,7 @@ public class SyncJob extends ComponentBase
 
 		try {
 			m_axoxSingletonDataAccess = Helpers.getSingletonDataAccess(m_xComponentContext);
-			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_axoxSingletonDataAccess));
+//			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_axoxSingletonDataAccess));
 		} catch (ClassCastException e) {
 			m_aLogger.severe("", "",e);
 		} catch (ServiceNotFoundException e) {
@@ -142,10 +139,6 @@ public class SyncJob extends ComponentBase
 			m_aLogger.severe("ctor", "No service manager!", ex);
 		}
 	}
-
-	/*
-	 * public static XToolkit getToolkit() { return m_xToolkit; }
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -218,66 +211,12 @@ public class SyncJob extends ComponentBase
 	 * initialize the stuff (change the elements)
 	 */
 	public Object execute(NamedValue[] lArgs) throws IllegalArgumentException, Exception {
-
-		// TODO Auto-generated method stub
-//		println( "execute() called !" );
-		m_aLogger.info("execute", "");
 		// detect the reason of calling this job
 		com.sun.star.beans.NamedValue[] lGenericConfig = null;
 		com.sun.star.beans.NamedValue[] lJobConfig = null;
 		com.sun.star.beans.NamedValue[] lEnvironment = null;
 		com.sun.star.beans.NamedValue[] lDynamicData = null;
 
-/*		try {
-			///////// try to get a Document Signatures object
-			Object oObj = null;			
-			
-            Object args[]=new Object[2];
-            args[0] = "arg1"; //here the first arg the URl, may be)
-            args[1] = "arg2"; // the second one, top XStorage?, need to test it
-
-			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, args, m_xComponentContext);
-
-			if(oObj != null) {
-//				Utilities.showInterfaces(oObj, oObj);
-				m_aLogger.info("execute"," document signatures service exists"+String.format( "%8H", oObj.hashCode() ) );
-				XNameContainer xName = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, oObj);
-
-				if(xName != null)
-					xName.hasElements();
-				else
-					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XNameContainer" );
-				
-				XOX_DocumentSignatures xoxD = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, oObj);
-				if(xoxD != null)
-					xoxD.getDocumentURL();
-				else
-					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOXDocumentSignatures" );
-
-			}
-			else
-				m_aLogger.info("execute","No document signatures service (UNO)");
-			
-			//create a Qualified certificate Object, test only
-            args[0] = "arg1"; //here the first arg the URl, may be)
-            args[1] = "arg2"; // the second one, top XStorage?, need to test it
-							
-			oObj = m_xServiceManager.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE, args, m_xComponentContext);
-			if(oObj != null) {
-				XOX_QualifiedCertificate xoxQC = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oObj);
-				if(xoxQC != null)
-					xoxQC.getVersion();
-				else
-					m_aLogger.info("execute"," document signatures service "+String.format( "%8H", oObj.hashCode() )+ " no XOX_QualifiedCertificate" );				
-			}
-			else
-				m_aLogger.info("execute","No qualified certificate service (UNO)");				
-			
-		}
-		catch (ClassCastException e) {
-			e.printStackTrace();
-		}
-*/
 		int c = lArgs.length;
 		for (int i = 0; i < c; ++i) {
 			if (lArgs[i].Name.equals( "Config" )) {
@@ -307,14 +246,12 @@ public class SyncJob extends ComponentBase
 		// Analyze the environment info. This sub list is the only guaranteed
 		// one!
 		if (lEnvironment == null)
-			m_aLogger.info( "lEnvironment is empty" );
+			m_aLogger.log( "lEnvironment is empty" );
 		else {
 			java.lang.String sEnvType = null;
 			java.lang.String sEventName = null;
 			c = lEnvironment.length;
-			//////////////////////
-			//DEBUG	for (int i=0; i<c; ++i) {m_aLogger.log(lEnvironment[i].Name); }
-			//////////////////////
+
 			for (int i = 0; i < c; ++i) {
 				if (lEnvironment[i].Name.equals( "EnvType" )) {
 					sEnvType = com.sun.star.uno.AnyConverter.toString( lEnvironment[i].Value );
@@ -345,7 +282,7 @@ public class SyncJob extends ComponentBase
 			 * 
 			 */
 			if (sEventName != null) {
-				m_aLogger.info("execute", "event received: " + sEventName );				
+				m_aLogger.log("execute", "event received: " + sEventName );
 				if (sEventName.equalsIgnoreCase( "OnStartApp" ) ) {
 					executeOnStartApp();
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
@@ -362,6 +299,8 @@ public class SyncJob extends ComponentBase
 				else if (sEventName.equalsIgnoreCase( "OnCloseApp" ))
 					executeOnCloseApp();
 			}
+			else
+				m_aLogger.log("execute", "called with no event ???");
 		}
 		return null;
 	}
@@ -450,10 +389,6 @@ public class SyncJob extends ComponentBase
 						(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, m_axModel );
 
 			xStorage = xDocStorage.getDocumentStorage();
-/*						if(xStorage != null) {
-				m_aLogger.info("execute"+" We have storage available!");
-				Utilities.showInterfaces(xModel, xStorage);
-			}*/
 			/**
 			 * we can read the file and check if a CNIPA signature
 			 * TODO start a thread to do the job? may be creating a
@@ -468,18 +403,17 @@ public class SyncJob extends ComponentBase
 			// toolbar dispatcher.
 			// if the dispatcher is dead, then no longer needs them,
 			// then the data will be cleared at the next app start
-			m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));						
+			m_aLogger.log("executeOnLoad"," model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));						
 			if(m_axoxSingletonDataAccess != null) {
 				m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 				m_aDocSign.setDocumentStorage(xStorage);
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
-//verify signatures, if the case							
+//verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 			}
 			else
-				m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
-		}
-		
+				m_aLogger.severe("executeOnLoad","Missing XOX_SingletonDataAccess interface"); 
+		}		
 	}
 
 	///////////////////// OnViewCreated //////////////////////////7
@@ -503,13 +437,12 @@ public class SyncJob extends ComponentBase
 					xD.startListening(m_axFrame);
 				}
 				catch (RuntimeException ex) {
-					m_aLogger.severe("", "cannot create DispatchInterceptor", ex);
+					m_aLogger.severe("executeOnViewCreated", "cannot create DispatchInterceptor", ex);
 				}
 			}
 		}
-		
 	}
-	
+
 	/**
 	 * executed when application is closed, stops the logger
 	 * close all the log files
@@ -601,7 +534,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void close(boolean arg0) throws CloseVetoException {
 		// TODO Auto-generated method stub
-		m_aLogger.info( "close called" );
+		m_aLogger.entering( "close called" );
 	}
 
 	/*
@@ -611,7 +544,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void addCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
-		m_aLogger.info( "addCloseListener called" );
+		m_aLogger.entering( "addCloseListener called" );
 	}
 
 	/*
@@ -621,7 +554,7 @@ public class SyncJob extends ComponentBase
 	 */
 	public void removeCloseListener(XCloseListener arg0) {
 		// TODO Auto-generated method stub
-		m_aLogger.info( "removeCloseListener called" );
+		m_aLogger.entering( "removeCloseListener called" );
 	}
 
 	/** check if the document type can be signed
@@ -632,35 +565,34 @@ public class SyncJob extends ComponentBase
 	protected boolean canBeSigned(XModel _theModel) {
 		// detect if the document we are linked to is a Writer,
 		// an Impress or a Draw one
-		// if false the CNIPA signature is not supported
-		// get the component
-		// we query the interface XSpreadsheetDocument from the
-		// model
-		XSpreadsheetDocument xSpreadsheetDocument = (XSpreadsheetDocument) UnoRuntime
-				.queryInterface( XSpreadsheetDocument.class, _theModel );
+		// if false the XAdES CNIPA signature is not supported
+		// get the component, we then query the interface XSpreadsheetDocument
+		// from the model
+		XSpreadsheetDocument xSpreadsheetDocument = 
+			(XSpreadsheetDocument)UnoRuntime.queryInterface( XSpreadsheetDocument.class, _theModel );
 		// we query the interface XTextDocument from the model
-		XTextDocument xTextDocument = (XTextDocument) UnoRuntime
-				.queryInterface( XTextDocument.class, _theModel );
+		XTextDocument xTextDocument =
+			(XTextDocument)UnoRuntime.queryInterface( XTextDocument.class, _theModel );
 		// we query the interface XDrawPagesSupplier from the
 		// model
-		XDrawPagesSupplier xDrawDocument = (XDrawPagesSupplier) UnoRuntime
-				.queryInterface( XDrawPagesSupplier.class, _theModel );
-		
-		XPresentation xPresentation = (XPresentation) UnoRuntime
-		.queryInterface( XPresentation.class, _theModel );
+		XDrawPagesSupplier xDrawDocument =
+			(XDrawPagesSupplier) UnoRuntime.queryInterface( XDrawPagesSupplier.class, _theModel );
+		// and last, the XPresentation interface, again from the model.
+		XPresentation xPresentation =
+			(XPresentation) UnoRuntime.queryInterface( XPresentation.class, _theModel );
 
 		// test if it's a XAdES (CNIPA) signable type of document, then start the
 		// interceptor
-		//DOCUMENTTYPE    <<--= don't remove that text key, is needed if document
-		//type is changed
+		//DOCUMENTTYPE    <<--= don't remove that text key,
+		//i's a developer bookmark, t's needed if document type is changed
 		if (xSpreadsheetDocument != null || xTextDocument != null
 				|| xDrawDocument != null || xPresentation != null)
 			return true;
 		return false;
 	}
 
+	//overloaded version of same method above
 	protected boolean canBeSigned(XFrame _theFrame) {
-		
 		return canBeSigned(_theFrame.getController().getModel());
 	}
 }
