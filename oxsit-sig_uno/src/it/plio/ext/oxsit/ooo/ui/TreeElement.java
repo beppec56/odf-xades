@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
@@ -36,7 +37,7 @@ import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
  * @author beppec56
  *
  */
-public abstract class TreeElement {
+public abstract class TreeElement implements XComponent {
 
 	/** enum to mark the type of the node.
 	 * The node type is used in rendering the node on the right side
@@ -160,6 +161,7 @@ public abstract class TreeElement {
 	 * the node type for this node
 	 */
 	private TreeNodeType m_nType;
+	private String	m_nNodeDescriptiveName;
 	
 	private DynamicLogger	m_aLogger;
 	
@@ -322,5 +324,19 @@ public abstract class TreeElement {
 	}
 	
 	abstract void EnableDisplay(boolean bWhat);
+
+	/**
+	 * @param m_nNodeDescriptiveName the m_nNodeDescriptiveName to set
+	 */
+	public void setNodeName(String m_nNodeDescriptiveName) {
+		this.m_nNodeDescriptiveName = m_nNodeDescriptiveName;
+	}
+
+	/**
+	 * @return the m_nNodeDescriptiveName
+	 */
+	public String getNodeName() {
+		return m_nNodeDescriptiveName;
+	}
 
 }

@@ -33,6 +33,7 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
@@ -67,12 +68,12 @@ public class CertificateTreeElementBase extends TreeElement {
 	/**
 	 * 
 	 */
-	protected XControl m_xBackgroundControl;
+	private XControl m_xBackgroundControl;
 
 	/**
 	 * 
 	 */
-	protected Object[] m_xControlLines;
+	private Object[] m_xControlLines;
 
 	protected MessageConfigurationAccess m_aRegAcc = null; 
 
@@ -103,7 +104,7 @@ public class CertificateTreeElementBase extends TreeElement {
 		// certificate
 		try {
 			//just for test, should be added by subclass
-			m_sStringList[m_nFIELD_OWNER_NAME] = "the owner: Goofy";  // will got it from the certificate raw data
+			m_sStringList[m_nFIELD_OWNER_NAME] = getNodeName();  // will got it from the certificate raw data
 
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_ISSUER] = m_aRegAcc.getStringFromRegistry("cert_title_issuer" );
@@ -132,13 +133,13 @@ public class CertificateTreeElementBase extends TreeElement {
 	void EnableDisplay(boolean bWhat) {
 		// TODO Auto-generated method stub
 		
-		XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, m_xBackgroundControl );
+		XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, getBackgroundControl() );
 		if(xaWNode != null )					
 			xaWNode.setVisible(bWhat);
 
 		if(bWhat == false) {	
 			for(int i = 0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++) {
-				XControl xTFControl = (XControl)m_xControlLines[i];
+				XControl xTFControl = (XControl)getControlLine()[i];
 				xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, xTFControl );
 				if(xaWNode != null )					
 					xaWNode.setVisible(bWhat);
@@ -160,7 +161,7 @@ public class CertificateTreeElementBase extends TreeElement {
 			 *   e  text background will be in ControlDims.DLG_CERT_TREE_STATE_ERROR_COLOR;
 			 */
 			for(int i = 0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++) {
-				XControl xTFControl = (XControl)m_xControlLines[i];
+				XControl xTFControl = (XControl)getControlLine()[i];
 				xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, xTFControl );
 				if(xaWNode != null ) {
 					//check the interface, should be the one for fixed text
@@ -232,5 +233,57 @@ public class CertificateTreeElementBase extends TreeElement {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param m_xControlLines the m_xControlLines to set
+	 */
+	public void setAControlLine(Object _xControlLine, int _nIndex) {
+		this.m_xControlLines[_nIndex] = _xControlLine;
+	}
+
+	/**
+	 * @return the m_xControlLines
+	 */
+	public Object[] getControlLine() {
+		return m_xControlLines;
+	}
+
+	/**
+	 * @param m_xBackgroundControl the m_xBackgroundControl to set
+	 */
+	public void setBackgroundControl(XControl m_xBackgroundControl) {
+		this.m_xBackgroundControl = m_xBackgroundControl;
+	}
+
+	/**
+	 * @return the m_xBackgroundControl
+	 */
+	public XControl getBackgroundControl() {
+		return m_xBackgroundControl;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
 	}
 }

@@ -72,9 +72,9 @@ public class CertificateTreeElement extends CertificateTreeElementBase {
 
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_VALID_FROM] = m_aRegAcc.getStringFromRegistry("cert_title_valid_from" );  
-			m_sStringList[m_nFIELD_DATE_VALID_FROM] = "a date from";
+			m_sStringList[m_nFIELD_DATE_VALID_FROM] = "ba date from";
 			m_sStringList[m_nFIELD_TITLE_VALID_TO] = m_aRegAcc.getStringFromRegistry("cert_title_valid_to" );
-			m_sStringList[m_nFIELD_DATE_VALID_TO] = "a date to";
+			m_sStringList[m_nFIELD_DATE_VALID_TO] = "ba date to";
 
 //grab other string specific to only the certificate
 
@@ -87,6 +87,7 @@ public class CertificateTreeElement extends CertificateTreeElementBase {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
+		setNodeName("bgivenName + surname");
 		super.initialize();
 	}
 }

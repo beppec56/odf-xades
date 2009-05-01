@@ -25,6 +25,7 @@ package it.plio.ext.oxsit.ooo.ui;
 import java.util.LinkedList;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
@@ -57,9 +58,12 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.container.ElementExistException;
+import com.sun.star.container.NoSuchElementException;
 import com.sun.star.deployment.PackageInformationProvider;
 import com.sun.star.deployment.XPackageInformationProvider;
 import com.sun.star.frame.XFrame;
+import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -95,7 +99,8 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	
 	private String	sCertificateElementWarning = null;
 
-	private XTreeControl m_xTreeControl = null;
+	private XTreeControl 	m_xTreeControl = null;
+	private Object 			m_oTreeControlModel;	
 
 	private static final String	m_sDispElemsName	= "dispelems";  // the control general, with descriptive text in it
 	// the following two fields are needed to be able to change
@@ -104,7 +109,10 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	@SuppressWarnings("unused")
 	private XTextComponent		m_xDisplElement;					// the XTextComponent interface of the control
 																	// of the above model
-	private XMutableTreeNode m_aTheOldNode = null;
+	private XMutableTreeNode 		m_aTheOldNode = null;
+	private	Object 					m_oTreeDataModel;
+	private XMutableTreeDataModel	m_xTreeDataModel;
+	private XMutableTreeNode 		m_aTreeRootNode;
 
 	private String				m_sBtnOKLabel;
 	private String				m_sBtn_CancelLabel;
@@ -219,6 +227,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
+		m_logger.entering("initialize");
 		try {
 			super.initialize(DLG_CERT_TREE, m_sDlgListCertTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
 
@@ -267,7 +276,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 						.queryInterface( XPropertySet.class, m_xDisplElementModel );
 			xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));	
 
-	//Insert the tree control		
+	//Insert the tree control
 			m_xTreeControl = insertTreeControl(this,
 					CertifTreeDlgDims.DS_COL_0(), 
 					CertifTreeDlgDims.DS_ROW_1(), 
@@ -354,6 +363,10 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent rEvent) {
 		// TODO Auto-generated method stub
@@ -369,18 +382,12 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			// we make sure we refer to the right one
 			System.out.println("action: "+sName);
 			if (sName.equals(sAdd)) {
-				m_logger.info("Aggiunto certificato");
-				
-				//for test only:
-				CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
-				aCert.initialize();
-				
-				SignatureTreeElement aSign = new SignatureTreeElement(m_xContext, m_xMCF);
-				aSign.initialize();
-
+				m_logger.info("Aggiunto certificato");				
+				addOneSignature();
 			} else if (sName.equals(sSelect)) {
 					// close dialog and will exit				
 				m_logger.info("Seleziona dispositivo");
+				addOneCertificate();
 			}
 			else {
 				m_logger.info("Activated: " + sName);
@@ -402,7 +409,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		return super.executeDialog();
 	}
 
-	public XTreeControl insertTreeControl(XSelectionChangeListener _xActionListener,
+	private XTreeControl insertTreeControl(XSelectionChangeListener _xActionListener,
 			int _nPosX,
 			int _nPosY,
 			int _nHeight,
@@ -416,48 +423,29 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		// create a controlmodel at the multiservicefactory of the dialog
 		// model...
 		try {
-			Object oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
-			if(oTreeDataModel == null) {
+			m_oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
+			if(m_oTreeDataModel == null) {
 				m_logger.severe("insertTreeControl", "the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
 				return null;
 			}
 
-			XMutableTreeDataModel xTreeDataModel = (XMutableTreeDataModel)UnoRuntime.queryInterface( XMutableTreeDataModel.class, oTreeDataModel );
-			if(xTreeDataModel == null) {
+			m_xTreeDataModel = (XMutableTreeDataModel)UnoRuntime.queryInterface( XMutableTreeDataModel.class, m_oTreeDataModel );
+			if(m_xTreeDataModel == null) {
 				m_logger.severe("insertTreeControl", "the XMutableTreeDataModel not available!");
 				return null;
 			}
 
-			XMutableTreeNode xaNode = xTreeDataModel.createNode(_sLabel, true);
-			if(xaNode == null) {
-				m_logger.severe("insertTreeControl", "the Node not available!");
-				return null;
-			}
-			xTreeDataModel.setRoot(xaNode);
-
-//insert dummy certificates
-			// TEST:
-//			SignatureStateInDocument aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
-//construct a certificate
-//			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);
-
-//			aSignState = new FakeCertificateInModuleOK("Giacomo", "Rosso", m_xContext, m_xMCF);
-//			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
-
-//now create the TreeControlModel and add it to the dialog
-			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
-			if(oTreeModel == null) {
+			m_oTreeControlModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
+			if(m_oTreeControlModel == null) {
 				m_logger.severe("insertTreeControl", "the oTreeModel not available!");
 				return null;
 			}
-			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime
-								.queryInterface( XMultiPropertySet.class, oTreeModel );
+			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime.queryInterface( XMultiPropertySet.class, m_oTreeControlModel );
 			if(xTreeMPSet == null ) {
 				m_logger.severe("insertTreeControl", "no XMultiPropertySet");
 				return null;
 			}
-
-//			Utilities.showProperties(this, xTreeMPSet);
+			
 			// Set the properties at the model - keep in mind to pass the
 			// property names in alphabetical order!
 			xTreeMPSet.setPropertyValues( new String[] {
@@ -470,51 +458,122 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					"PositionX", 
 					"PositionY", 
 					"RootDisplayed",
-//					"Step",
 					"SelectionType",
+//					"ShowsRootHandles",
 					"Width"
 					},
 					new Object[] {
 					new Integer( ControlDims.DLG_CERT_TREE_BACKG_COLOR ),
-					oTreeDataModel,
+					m_oTreeDataModel, //where the DataModel is attached, need to reattach again?
 					new Boolean( true ),
 					new Integer( _nHeight ),
 //			_sLabel,
 					_sName,
 					new Integer( _nPosX ),
 					new Integer( _nPosY ),
-					new Boolean( false ),
-	//				new Integer( _nStep ),
+					new Boolean( true /*false*/ ), //RootDisplayed
 					new Integer(com.sun.star.view.SelectionType.SINGLE_value),
+	//				new Boolean( false ),
 					new Integer( _nWidth )					
 					} );
 			
 			// add the model to the NameContainer of the dialog model
-			m_xDlgModelNameContainer.insertByName( _sName, oTreeModel );
+			m_xDlgModelNameContainer.insertByName( _sName, m_oTreeControlModel );
 			XControl xTreeControl = m_xDlgContainer.getControl( _sName );
-			
+
+//			Utilities.showProperties(this, xTreeMPSet);
+
 			xTree = (XTreeControl) UnoRuntime.queryInterface( XTreeControl.class, xTreeControl );
+			m_aTreeRootNode = m_xTreeDataModel.createNode(_sLabel, true);
+			if(m_aTreeRootNode == null) {
+				m_logger.severe("insertTreeControl", "the Node not available!");
+				return null;
+			}
+			m_xTreeDataModel.setRoot(m_aTreeRootNode);
+
+//			Utilities.showProperties(this, xTreeMPSet);
+
 			// An ActionListener will be notified on the activation of the
 			// button...
 //			xTree.addActionListener( _xActionListener );
 			xTree.addSelectionChangeListener(_xActionListener);
-
+			
+			
 		} catch (com.sun.star.uno.Exception ex) {
 			m_logger.severe("insertTreeControl", ex);
 		}
 		return xTree;
 	}
 
-	private void addLinesDisplayElement(TreeNodeDescriptor aDesc) {
-		//get the list for visual elements needed for this node
-		LinkedList<XControl> aList = aDesc.getList();
-		XControl xTFControl = m_xDlgContainer.getControl( sEmptyText );
-		aList.add(xTFControl);
-		//...and the descriptive text controls
-		for(int i=0; i < SignatureStateInDocument.m_nMAXIMUM_FIELDS; i++ ) {
-			xTFControl = m_xDlgContainer.getControl( sEmptyTextLine+i );
-			aList.add(xTFControl);		
+	private void disableTreeRootNode() {
+//grab the master tree control model
+		try {
+			Object oTreeControlModel = m_xDlgModelNameContainer.getByName( sTree );
+			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime.queryInterface( XMultiPropertySet.class, oTreeControlModel );
+			if(xTreeMPSet == null ) {
+				m_logger.severe("disableTreeRootNode", "no XMultiPropertySet");
+				return;
+			}
+			Utilities.showProperties(this, xTreeMPSet);
+
+//reattach the same tree model
+			// Set the properties at the model - keep in mind to pass the
+			// property names in alphabetical order!
+			xTreeMPSet.setPropertyValues( new String[] {
+					"DataModel",
+					"RootDisplayed"
+					},
+					new Object[] {
+					m_oTreeDataModel, //where the DataModel is attached, need to reattach again?
+					new Boolean( false )
+					} );
+		} catch (NoSuchElementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrappedTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		catch (PropertyVetoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * FIXME: this method MUST be changed to the one needed to add a certificate to the tree
+	 */
+	public void addOneCertificate() {
+//create a fake certificate description
+		CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
+		aCert.initialize();
+//connect it to the right dialog pane
+		aCert.setBackgroundControl(m_xDlgContainer.getControl( sEmptyText ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
+		}
+//add it to the tree root node
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aCert.getNodeName(), true);
+		if(aCert.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aCert.getNodeGraphic());
+
+		xaCNode.setDataValue(aCert);
+
+		try {
+//remove the tree control
+			m_aTreeRootNode.appendChild(xaCNode);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("addOneCertificate", e);
+		}
+	}
+
+	public void addOneSignature() {
+
 	}
 
 	private void addMultiLineTextDisplayElement(TreeNodeDescriptor aDesc) {		
@@ -522,363 +581,6 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		XControl xTFControl = m_xDlgContainer.getControl( m_sDispElemsName );
 		LinkedList<XControl> aList = aDesc.getList();			
 		aList.add(xTFControl);
-	}
-
-/**
- * adds a dummy certificate starting from the provided node
- */
-	private XMutableTreeNode addDummySignatureState(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
-			SignatureStateInDocument aCert, String sGraphic) {
-		XMutableTreeNode aretValue = null;
-		try {
-			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
-			if(sGraphic != null)
-				xaCNode.setNodeGraphicURL(sGraphic);
-
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.SIGNATURE,aCert);
-			addLinesDisplayElement(aDesc);
-			xaCNode.setDataValue(aDesc);
-
-			aStartNode.appendChild(xaCNode);
-			aretValue = xaCNode;
-			if(sCertificateValid != null)
-				addDummyCertificateFields(xTreeDataModel, xaCNode, aCert,
-						(aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
-
-// add the certification path			
-			XMutableTreeNode xaDNode;
-			xaDNode = xTreeDataModel.createNode("Percorso di certificazione", true);
-			aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATION_PATH,aCert);
-			xaDNode.setDataValue(aDesc);			
-			xaCNode.appendChild(xaDNode);
-
-			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
-			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return aretValue;
-	}
-
-	//FIXME: just to simulate the error, shoul be removed after the fact
-	private XMutableTreeNode addDummySignatureStateKOCertPath(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
-			SignatureStateInDocument aCert, String sGraphic) {
-		XMutableTreeNode aretValue = null;
-		try {
-			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
-			if(sGraphic != null)
-				xaCNode.setNodeGraphicURL(sGraphic);
-
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.SIGNATURE,aCert);
-			addLinesDisplayElement(aDesc);
-			xaCNode.setDataValue(aDesc);
-
-			aStartNode.appendChild(xaCNode);
-			aretValue = xaCNode;
-			if(sCertificateValid != null)
-				addDummyCertificateFields(xTreeDataModel, xaCNode, aCert,
-						(aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
-
-// add the certification path			
-			XMutableTreeNode xaDNode;
-			xaDNode = xTreeDataModel.createNode("Percorso di certificazione", true);
-			aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATION_PATH,aCert);
-// add the string displaying the graphic for warning signal			sCertificateElementWarning
-			if(sCertificateElementWarning != null)
-				xaDNode.setNodeGraphicURL(sCertificateElementWarning);
-
-			xaDNode.setDataValue(aDesc);			
-			xaCNode.appendChild(xaDNode);
-
-			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
-			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return aretValue;
-	}
-	
-	//FIXME: just to simulate the error, should be removed after the fact
-	private XMutableTreeNode addDummySignatureStateKOExtenCrit(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
-			SignatureStateInDocument aCert, String sGraphic) {
-		XMutableTreeNode aretValue = null;
-		try {
-			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
-			if(sGraphic != null)
-				xaCNode.setNodeGraphicURL(sGraphic);
-
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.SIGNATURE,aCert);
-			addLinesDisplayElement(aDesc);
-			xaCNode.setDataValue(aDesc);
-
-			aStartNode.appendChild(xaCNode);
-			aretValue = xaCNode;
-			if(sCertificateValid != null)
-				addDummyCertificateFieldsKOExtCrit(xTreeDataModel, xaCNode, aCert,
-						(aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
-
-// add the certification path			
-			XMutableTreeNode xaDNode;
-			xaDNode = xTreeDataModel.createNode("Percorso di certificazione", true);
-			aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATION_PATH,aCert);
-
-			xaDNode.setDataValue(aDesc);			
-			xaCNode.appendChild(xaDNode);
-
-			//add fake certificate to the certification path
-			SignatureStateInDocument aCert2 = new CertificateDataCA(m_xContext, m_xMCF);
-			addDummyPathCertificates(xTreeDataModel, xaDNode, aCert2);
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return aretValue;
-	}
-	
-	public XMutableTreeNode addDummyPathCertificates(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode,
-				SignatureStateInDocument aCert ) {
-		XMutableTreeNode aretValue = null;
-		try {
-			XMutableTreeNode xaCNode = xTreeDataModel.createNode(aCert.getUser(), true);
-			if(sCertificateValid != null)
-				xaCNode.setNodeGraphicURL((aCert.isCertificateValid())?sCertificateValid : sCertificateNotValidated);
-			aStartNode.appendChild(xaCNode);
-			aretValue = xaCNode;
-
-			addDummyCertificateFields(xTreeDataModel, xaCNode, aCert, null);
-/*			XMutableTreeNode xaDNode;
-			xaDNode = xTreeDataModel.createNode("{ nome e cognome firmatario}", false);			
-			aretValue.appendChild(xaDNode);
-*/
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return aretValue;
-	}
-
-	/**
-	 * 
-	 * @param xTreeDataModel the node factory
-	 * @param aStartNode the parent done
-	 * @param aCert the certificate dato to add
-	 * @param sGraphic
-	 */
-	public void addDummyCertificateFields(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode, SignatureStateInDocument aCert, String sGraphic) {
-		/*try {*/
-			XMutableTreeNode xaDNode;
-
-			
-			xaDNode = aStartNode;//xTreeDataModel.createNode("Dettagli del certificato", true);
-/*			if(sGraphic != null)
-				xaDNode.setNodeGraphicURL(sGraphic);
-
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATE,aCert);
-			addLinesDisplayElement(aDesc);			
-			xaDNode.setDataValue(aDesc);
-
-			aStartNode.appendChild(xaDNode);*/
-/**
- * to get information from a certificate:
- * openssl x509 -inform DER -in CNIPA1.cer -noout -text
- * 
- */
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Versione", TreeNodeDescriptor.TreeNodeType.VERSION, aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Numero di serie", TreeNodeDescriptor.TreeNodeType.SERIAL_NUMBER,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Emittente", TreeNodeDescriptor.TreeNodeType.ISSUER,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido da", TreeNodeDescriptor.TreeNodeType.VALID_FROM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido fino a", TreeNodeDescriptor.TreeNodeType.VALID_TO,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo del soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT_ALGORITHM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Chiave pubblica", TreeNodeDescriptor.TreeNodeType.PUBLIC_KEY,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo di firma", TreeNodeDescriptor.TreeNodeType.SIGNATURE_ALGORITHM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta SHA1", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_SHA1,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta MD5", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_MD5,aCert);
-//insert critical extension
-			appendMultilineNodeCriticalExtensions(xTreeDataModel, xaDNode, aCert);
-			//insert non critical extensions
-			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
-/*		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-	}
-
-	/**
-	 * 
-	 * @param xTreeDataModel the node factory
-	 * @param aStartNode the parent done
-	 * @param aCert the certificate dato to add
-	 * @param sGraphic
-	 */
-	public void addDummyCertificateFieldsKOExtCrit(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode aStartNode, SignatureStateInDocument aCert, String sGraphic) {
-		/*try {*/
-			XMutableTreeNode xaDNode;
-
-			
-			xaDNode = aStartNode;//xTreeDataModel.createNode("Dettagli del certificato", true);
-/*			if(sGraphic != null)
-				xaDNode.setNodeGraphicURL(sGraphic);
-
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeDescriptor.TreeNodeType.CERTIFICATE,aCert);
-			addLinesDisplayElement(aDesc);			
-			xaDNode.setDataValue(aDesc);
-
-			aStartNode.appendChild(xaDNode);*/
-/**
- * to get information from a certificate:
- * openssl x509 -inform DER -in CNIPA1.cer -noout -text
- * 
- */
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Versione", TreeNodeDescriptor.TreeNodeType.VERSION, aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Numero di serie", TreeNodeDescriptor.TreeNodeType.SERIAL_NUMBER,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Emittente", TreeNodeDescriptor.TreeNodeType.ISSUER,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido da", TreeNodeDescriptor.TreeNodeType.VALID_FROM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Valido fino a", TreeNodeDescriptor.TreeNodeType.VALID_TO,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo del soggetto", TreeNodeDescriptor.TreeNodeType.SUBJECT_ALGORITHM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Chiave pubblica", TreeNodeDescriptor.TreeNodeType.PUBLIC_KEY,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Algoritmo di firma", TreeNodeDescriptor.TreeNodeType.SIGNATURE_ALGORITHM,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta SHA1", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_SHA1,aCert);
-			appendMultilineNodeDescription(xTreeDataModel, xaDNode, "Impronta MD5", TreeNodeDescriptor.TreeNodeType.THUMBPRINT_MD5,aCert);
-			//insert critical extension
-			appendMultilineNodeCriticalExtensionsKO(xTreeDataModel, xaDNode, aCert);
-			//insert non critical extensions
-			appendMultilineNodeNonCriticalExtensions(xTreeDataModel, xaDNode, aCert);
-/*		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-	}
-
-	private void appendMultilineNodeDescription(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode, String sNodeTitle,
-			TreeNodeType treeNodeType, SignatureStateInDocument certxTreeDataModel) {
-		try {
-			// add version display field
-			XMutableTreeNode xaENode = xTreeDataModel.createNode(sNodeTitle, false);
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(treeNodeType,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			xaENode.setDataValue(aDesc);			
-			xaDNode.appendChild(xaENode);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void appendMultilineNodeNonCriticalExtensions(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode,
-			SignatureStateInDocument certxTreeDataModel) {
-		try {
-			// add version display field
-			XMutableTreeNode xaENode = xTreeDataModel.createNode("Estensioni non critiche", false);
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeType.EXTENSIONS_NON_CRITICAL,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			xaENode.setDataValue(aDesc);			
-			xaDNode.appendChild(xaENode);
-
-//now create our child nodes			
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
-					"X509v3 Certificate Policies",TreeNodeType.X509V3_CERTIFICATE_POLICIES,
-						certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 CRL Distribution Points", TreeNodeType.X509V3_CRL_DISTRIBUTION_POINTS ,
-					certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 Authority Key Identifier", TreeNodeType.X509V3_AUTHORITY_KEY_IDENTIFIER ,
-					certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 Subject Key Identifier", TreeNodeType.X509V3_SUBJECT_KEY_IDENTIFIER ,
-					certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"qcStatements", TreeNodeType.QC_STATEMENTS, 
-					certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
-					"X509v3 Subject Directory Attributes", TreeNodeType.X509V3_SUBJECT_DIRECTORY_ATTRIBUTES,
-						certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode,
-					"Authority Information Access", TreeNodeType.AUTHORITY_INFORMATION_ACCESS,
-						certxTreeDataModel);
-			appendMultilineNodeNonCriticalExtensionsHelper(xTreeDataModel, xaENode, 
-					"X509v3 Issuer Alternative Name", TreeNodeType.X509V3_ISSUER_ALTERNATIVE_NAME ,
-					certxTreeDataModel);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void appendMultilineNodeNonCriticalExtensionsHelper(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaParentNode,
-			String sTitle, TreeNodeType eTreeNodeType, SignatureStateInDocument certxTreeDataModel) {
-		
-		try {
-			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode(sTitle, false);
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(eTreeNodeType, certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			xaENodeChild.setDataValue(aDesc);			
-			xaParentNode.appendChild(xaENodeChild);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	
-	private void appendMultilineNodeCriticalExtensions(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode, 
-					SignatureStateInDocument certxTreeDataModel) {
-		try {
-			// add version display field
-			XMutableTreeNode xaENode = xTreeDataModel.createNode("Estensioni critiche", false);
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeType.EXTENSIONS_CRITICAL,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			xaENode.setDataValue(aDesc);			
-			xaDNode.appendChild(xaENode);
-
-			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode("X509v3 Key Usage", false);
-			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);		
-			xaENodeChild.setDataValue(aDesc);			
-			xaENode.appendChild(xaENodeChild);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	//fake function added to be able to write specifications...
-	//simulates error on certificate critical extensions
-	private void appendMultilineNodeCriticalExtensionsKO(XMutableTreeDataModel xTreeDataModel, XMutableTreeNode xaDNode, 
-			SignatureStateInDocument certxTreeDataModel) {
-		try {
-			// add version display field
-			XMutableTreeNode xaENode = xTreeDataModel.createNode("Estensioni critiche", false);
-			TreeNodeDescriptor aDesc = new TreeNodeDescriptor(TreeNodeType.EXTENSIONS_CRITICAL,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			// add the string displaying the graphic for broken signal			sCertificateElementWarning
-			if(sCertificateElementBroken != null)
-				xaENode.setNodeGraphicURL(sCertificateElementBroken);
-			xaENode.setDataValue(aDesc);			
-			xaDNode.appendChild(xaENode);
-			
-			XMutableTreeNode xaENodeChild = xTreeDataModel.createNode("X509v3 Key Usage", false);
-			aDesc = new TreeNodeDescriptor(TreeNodeType.X509V3_KEY_USAGE_KO,certxTreeDataModel);
-			addMultiLineTextDisplayElement(aDesc);
-			// add the string displaying the graphic for broken signal			sCertificateElementWarning
-			if(sCertificateElementBroken != null)
-				xaENodeChild.setNodeGraphicURL(sCertificateElementBroken);
-		
-			xaENodeChild.setDataValue(aDesc);			
-			xaENode.appendChild(xaENodeChild);
-			
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private void disableNamedControl(String sTheName) {
@@ -897,13 +599,18 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			disableNamedControl(sEmptyTextLine+i);
 	}	
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.view.XSelectionChangeListener#selectionChanged(com.sun.star.lang.EventObject)
+	 */
+	@Override
 	public void selectionChanged( com.sun.star.lang.EventObject arg0 ) {
+		m_logger.entering("selectionChanged");
 		Object oObject = m_xTreeControl.getSelection();
 // check if it's a node		
 		XMutableTreeNode xaENode = (XMutableTreeNode)UnoRuntime.queryInterface( XMutableTreeNode.class, 
 				oObject );
 		Object oTreeNodeObject = null;
-		TreeNodeDescriptor aCurrentNode = null;
+		TreeElement aCurrentNode = null;
 		XComponent xTheCurrentComp = null;
 		//disable the previous Node
 		if(m_aTheOldNode != null) {
@@ -911,7 +618,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			oTreeNodeObject  = m_aTheOldNode.getDataValue();
 			xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
 			if(xTheCurrentComp != null) {
-				aCurrentNode = (TreeNodeDescriptor)oTreeNodeObject;
+				aCurrentNode = (TreeElement)oTreeNodeObject;
 				aCurrentNode.EnableDisplay(false);
 			}
 		}
@@ -927,18 +634,21 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
 			if(xTheCurrentComp != null) {
 // get node type and enable/disable	the pushbutton
-				aCurrentNode = (TreeNodeDescriptor)oTreeNodeObject;
+				aCurrentNode = (TreeElement)oTreeNodeObject;
 				boolean bEnableButton = false;
-				if(aCurrentNode.getType() == TreeNodeType.SIGNATURE) {
+				if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
 					bEnableButton = true;
 				}
 				enableSingleButton(sAdd,bEnableButton);
 				aCurrentNode.EnableDisplay(true);
 			}
+			else
+				enableSingleButton(sAdd,false);				
 		}
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
+		m_logger.entering("enableSingleButton");
 		//grab the button...
 		XControl xTFControl = m_xDlgContainer.getControl( sButtonName );
 		if(xTFControl != null){

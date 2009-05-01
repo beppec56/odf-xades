@@ -62,6 +62,7 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 	public void initialize() {
 
 //init common elements
+		setNodeName("the signee name (GN+SN)");
 		super.initialize();
 //adds specif elements
 		m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());

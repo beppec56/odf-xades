@@ -132,9 +132,9 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 				// + m_rectParentWindow.Width + " X: " + m_rectParentWindow.X
 				// + " Y: " + m_rectParentWindow.Y);
 			} else
-				println( "no parent Window!" );
+				m_logger.severe("BasicDialog", "no parent Window!" );
 		} else
-			println( "no parent Frame!" );
+			m_logger.severe( "BasicDialog","no parent Frame!" );
 		createDialog( m_xMCF );
 	}
 
@@ -793,109 +793,115 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
+	 */
+	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void focusGained(FocusEvent arg0) {
 		// TODO Auto-generated method stub
+		m_logger.entering("actionPerformed, implement on subclass!");
 
 	}
 
 	public void focusLost(FocusEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		// TODO Auto-generated method stub
-
+		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyPressed(com.sun.star.awt.KeyEvent)
+	 */
+	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
+		m_logger.entering("keyPressed, implement on subclass!");		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyReleased(com.sun.star.awt.KeyEvent)
+	 */
+	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
+		m_logger.entering("keyReleased, implement on subclass!");
 	}
 
-	// debug methods
-	// ////////////////debug methods
-	public String getHashHex() {
-		return String.format( "%8H", hashCode() );
-	}
-
-	public void printlnName(String _sMex) {
-		System.out
-				.println( getHashHex() + " " + this.getClass().getName() + ": " + _sMex );
-	}
-
-	public void printName(String _sMex) {
-		System.out.print( getHashHex() + " " + this.getClass().getName() + ": " + _sMex );
-	}
-
-	public void print(String _sMex) {
-		System.out.print( " " + _sMex );
-	}
-
-	public void println(String _sMex) {
-		System.out.println( getHashHex() + " " + _sMex );
-	}
-
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.tree.XTreeExpansionListener#requestChildNodes(com.sun.star.awt.tree.TreeExpansionEvent)
+	 */
+	@Override
 	public void requestChildNodes(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		m_logger.entering("requestChildNodes, implement on subclass!");		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.tree.XTreeExpansionListener#treeCollapsed(com.sun.star.awt.tree.TreeExpansionEvent)
+	 */
+	@Override
 	public void treeCollapsed(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		m_logger.entering("treeCollapsed, implement on subclass!");		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.tree.XTreeExpansionListener#treeCollapsing(com.sun.star.awt.tree.TreeExpansionEvent)
+	 */
+	@Override
 	public void treeCollapsing(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		
+		m_logger.entering("treeCollapsing, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.tree.XTreeExpansionListener#treeExpanded(com.sun.star.awt.tree.TreeExpansionEvent)
+	 */
+	@Override
 	public void treeExpanded(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		m_logger.entering("treeExpanded, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.tree.XTreeExpansionListener#treeExpanding(com.sun.star.awt.tree.TreeExpansionEvent)
+	 */
+	@Override
 	public void treeExpanding(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		
+		m_logger.entering("treeExpanding, implement on subclass!");
 	}
-
 }

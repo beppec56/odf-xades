@@ -173,7 +173,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
 		}
 		else
-			printlnName("no package location !");
+			m_logger.log("no package location !");
 		fillLocalizedString();
 		// the next value should be read from configuration
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
@@ -446,19 +446,19 @@ public class DialogCertificateTree extends BasicDialog implements
 //			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.MutableTreeDataModel" );
 			Object oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
 			if(oTreeDataModel == null) {
-				printlnName("the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
+				m_logger.severe("insertTreeControl","the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
 				return null;
 			}
 
 			XMutableTreeDataModel xTreeDataModel = (XMutableTreeDataModel)UnoRuntime.queryInterface( XMutableTreeDataModel.class, oTreeDataModel );
 			if(xTreeDataModel == null) {
-				printlnName("the XMutableTreeDataModel not available!");
+				m_logger.severe("insertTreeControl","the XMutableTreeDataModel not available!");
 				return null;
 			}
 
 			XMutableTreeNode xaNode = xTreeDataModel.createNode(_sLabel, true);
 			if(xaNode == null) {
-				printlnName("the Node not available!");
+				m_logger.severe("insertTreeControl","the Node not available!");
 				return null;
 			}
 			xTreeDataModel.setRoot(xaNode);
@@ -488,13 +488,13 @@ public class DialogCertificateTree extends BasicDialog implements
 			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
 */
 //now create the TreeControlModel and add it to the dialog
-			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
-			if(oTreeModel == null) {
+			Object oTreeControlModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
+			if(oTreeControlModel == null) {
 				m_logger.info("the oTreeModel not available!");
 				return null;
 			}
 			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime
-								.queryInterface( XMultiPropertySet.class, oTreeModel );
+								.queryInterface( XMultiPropertySet.class, oTreeControlModel );
 			if(xTreeMPSet == null ) {
 				m_logger.info("no XMultiPropertySet");
 				return null;
@@ -519,7 +519,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					},
 					new Object[] {
 					new Integer( ControlDims.DLG_CERT_TREE_BACKG_COLOR ),
-					oTreeDataModel,
+					oTreeDataModel, //where the DataModel is attached, need to reattach again?
 					new Boolean( true ),
 					new Integer( _nHeight ),
 //			_sLabel,
@@ -533,7 +533,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					} );
 			
 			// add the model to the NameContainer of the dialog model
-			m_xDlgModelNameContainer.insertByName( _sName, oTreeModel );
+			m_xDlgModelNameContainer.insertByName( _sName, oTreeControlModel );
 			XControl xTreeControl = m_xDlgContainer.getControl( _sName );
 			
 			xTree = (XTreeControl) UnoRuntime.queryInterface( XTreeControl.class, xTreeControl );
