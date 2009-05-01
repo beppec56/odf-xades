@@ -220,7 +220,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase implements
 					super.m_xDialogControl );
 			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
-			Utilities.showNames(m_xDlgModelNameContainer);
+//			Utilities.showNames(m_xDlgModelNameContainer);
 
 	}
 

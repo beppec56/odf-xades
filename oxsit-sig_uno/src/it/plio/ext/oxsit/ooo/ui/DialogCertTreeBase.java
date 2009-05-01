@@ -401,12 +401,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void selectionChanged( com.sun.star.lang.EventObject _eventObject ) {
-		m_logger.entering("selectionChanged");
+//		m_logger.entering("selectionChanged");
 		Object oObject = m_xTreeControl.getSelection();
 // check if it's a node		
 		XMutableTreeNode xaENode = (XMutableTreeNode)UnoRuntime.queryInterface( XMutableTreeNode.class, 
 				oObject );
-		m_logger.log(" xaENode "+(xaENode != null));
 		Object oTreeNodeObject = null;
 		TreeElement aCurrentNode = null;
 		XComponent xTheCurrentComp = null;
@@ -462,24 +461,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-/*		m_logger.entering("keyPressed on subclass"+arg0.KeyCode);
-
-		XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
-				arg0.Source);
-		XControlModel xControlModel = xControl.getModel();
-		XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(
-				XPropertySet.class, xControlModel);
-		try {
-			String sName = (String) xPSet.getPropertyValue("Name");
-			m_logger.exiting("keyReleased: ",sName);		
-			
-		} catch (UnknownPropertyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (WrappedTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+/*		m_logger.entering("keyPressed on subclass"+arg0.KeyCode);*/
 	}
 
 	/* (non-Javadoc)
@@ -493,28 +475,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 		
 		//if arg0.KeyCode = 773 (key F6), set focus to certificate tree element
 		if(arg0.KeyCode == com.sun.star.awt.Key.F6) {
-//			m_xTreeControl.
 			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
 					m_xTreeControl );
 			xTFWindow.setFocus();
 		}
 
-/*		XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
-				arg0.Source);
-		XControlModel xControlModel = xControl.getModel();
-		XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(
-				XPropertySet.class, xControlModel);
-		try {
-			String sName = (String) xPSet.getPropertyValue("Name");
-			m_logger.exiting("keyReleased: ",sName);		
-			
-		} catch (UnknownPropertyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (WrappedTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)

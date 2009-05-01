@@ -443,7 +443,6 @@ public class DialogCertificateTree extends BasicDialog implements
 		// create a controlmodel at the multiservicefactory of the dialog
 		// model...
 		try {
-//			Object oTreeModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.MutableTreeDataModel" );
 			Object oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
 			if(oTreeDataModel == null) {
 				m_logger.severe("insertTreeControl","the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
