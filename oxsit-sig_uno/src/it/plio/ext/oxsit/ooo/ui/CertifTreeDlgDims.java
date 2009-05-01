@@ -212,7 +212,7 @@ public class CertifTreeDlgDims {
 	}
 
 	public static int TEXT_L0Y(){
-		return DS_ROW_1()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT;
+		return DS_ROW_0()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT;
 	}
 
 	public static int TEXT_L1Y(){

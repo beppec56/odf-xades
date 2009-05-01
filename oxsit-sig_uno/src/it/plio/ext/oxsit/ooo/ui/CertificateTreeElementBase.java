@@ -64,16 +64,16 @@ public class CertificateTreeElementBase extends TreeElement {
 	 * the string list showed on the left, allocated, according to global constants.
 	 */
 	protected String[]	m_sStringList;
+	/** the control to print
+	 *  the above strings
+	 */
+	private Object[] m_xControlLines;
 
 	/**
 	 * 
 	 */
 	private XControl m_xBackgroundControl;
 
-	/**
-	 * 
-	 */
-	private Object[] m_xControlLines;
 
 	protected MessageConfigurationAccess m_aRegAcc = null; 
 
@@ -115,7 +115,7 @@ public class CertificateTreeElementBase extends TreeElement {
 			m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
 				m_aRegAcc.getStringFromRegistry( m_sCERTIFICATE_STATE_CONDT[getCertificateStateConditions()] );
 	
-			m_sStringList[m_nFIELD_ISSUER] = "The Issuer Name";
+			m_sStringList[m_nFIELD_ISSUER] = "rThe Issuer Name (e.g. the certification authority)";
 			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
 				m_aRegAcc.getStringFromRegistry( m_sISSUER_STATE[getIssuerState()] );			
 
@@ -131,8 +131,6 @@ public class CertificateTreeElementBase extends TreeElement {
 	 */
 	@Override
 	void EnableDisplay(boolean bWhat) {
-		// TODO Auto-generated method stub
-		
 		XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, getBackgroundControl() );
 		if(xaWNode != null )					
 			xaWNode.setVisible(bWhat);

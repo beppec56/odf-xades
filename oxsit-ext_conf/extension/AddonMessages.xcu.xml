@@ -507,6 +507,27 @@ Confermate Salva  con nuovo nome?
 			</prop>
 		</node>
 		<!--
+		    Labels for certificate elements
+		-->
+		<node oor:name="id_cert_version" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Version</value>
+				<value xml:lang="it">Versione</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_ser_numb" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Serial Number</value>
+				<value xml:lang="it">Numero di serie</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_sbj_pub_key" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Subject Public Key</value>
+				<value xml:lang="it">Firma digitale (hex)</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">

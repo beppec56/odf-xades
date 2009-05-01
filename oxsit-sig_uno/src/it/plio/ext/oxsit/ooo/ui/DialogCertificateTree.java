@@ -48,6 +48,7 @@ import com.sun.star.awt.XMouseListener;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
+import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.XMutableTreeDataModel;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeControl;
@@ -98,7 +99,8 @@ public class DialogCertificateTree extends BasicDialog implements
 	private String	sCertificateElementWarning = null;
 
 	private XTreeControl m_xTreeControl = null;
-
+	private XMutableTreeNode m_aTheRootNode; 
+	
 	private static final String	m_sDispElemsName	= "dispelems";  // the control general, with descriptive text in it
 	// the following two fields are needed to be able to change
 	// the font at run-time
@@ -223,13 +225,13 @@ public class DialogCertificateTree extends BasicDialog implements
 	        	xProp.setPropertyValue(new String("BackgroundColor"),
 	        			new Integer(ControlDims.DLG_ABOUT_BACKG_COLOR));*/
 
-			insertFixedText(this,
+/*			insertFixedText(this,
 					CertifTreeDlgDims.DS_COL_1(),
 					CertifTreeDlgDims.DS_ROW_0(), 
 					CertifTreeDlgDims.dsWidth(), 
 					0,
 					m_sFt_Hint_Doc
-					);
+					);*/
 	//inserts the control elements needed to display properties
 	//multiline text control used as a light yellow background
 			//multiline text control for details
@@ -343,7 +345,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	
 			xDialog = (XDialog) UnoRuntime.queryInterface(XDialog.class, super.m_xDialogControl);		
 			createWindowPeer();
-		center();
+			center();
 		} catch (UnknownPropertyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -364,7 +366,7 @@ public class DialogCertificateTree extends BasicDialog implements
 		for(int i = 0; i < SignatureStateInDocument.m_nMAXIMUM_FIELDS; i++) {
 			insertFixedText(this,
 					CertifTreeDlgDims.TEXT_0X(),
-					CertifTreeDlgDims.TEXT_L0Y()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT*i,
+					CertifTreeDlgDims.TEXT_L1Y()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT*i,
 					CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.TEXT_0X()-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,
 					0,
 					"checkit"+i, // a dummy text
@@ -419,8 +421,6 @@ public class DialogCertificateTree extends BasicDialog implements
 			 */
 			ex.printStackTrace(System.out);
 		}
-
-		
 	}
 
 	@Override
@@ -456,37 +456,37 @@ public class DialogCertificateTree extends BasicDialog implements
 				return null;
 			}
 
-			XMutableTreeNode xaNode = xTreeDataModel.createNode(_sLabel, true);
-			if(xaNode == null) {
+			m_aTheRootNode = xTreeDataModel.createNode(_sLabel, true);
+			if(m_aTheRootNode == null) {
 				m_logger.severe("insertTreeControl","the Node not available!");
 				return null;
 			}
-			xTreeDataModel.setRoot(xaNode);
+			xTreeDataModel.setRoot(m_aTheRootNode);
 
 //insert dummy certificates
 			// TEST:
 			SignatureStateInDocument aSignState = new SignatureStateInDocumentOK("Giacomo", "Verdi", m_xContext, m_xMCF);
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureOK);//contruct a certificate
+			addDummySignatureState(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureOK);//contruct a certificate
 
 			aSignState = new SignatureStateInDocumentKOCertSignature("John","Doe", m_xContext, m_xMCF);// add a warning on certification path
-			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureNotValidated);
+			addDummySignatureStateKOCertPath(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureNotValidated);
 
 			aSignState = new SignatureStateInDocumentKOSignature2(m_xContext, m_xMCF);
-			addDummySignatureStateKOCertPath(xTreeDataModel, xaNode, aSignState,sSignatureInvalid);
+			addDummySignatureStateKOCertPath(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureInvalid);
 
 			aSignState = new SignatureStateInDocumentKOSignature3(m_xContext, m_xMCF);
-			addDummySignatureStateKOExtenCrit(xTreeDataModel, xaNode, aSignState,sSignatureInvalid2); // add an error on date
+			addDummySignatureStateKOExtenCrit(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureInvalid2); // add an error on date
 
 			aSignState = new SignatureStateInDocumentKODocumentAndSignature( m_xContext, m_xMCF);
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureBroken);//add an error on Extension 
+			addDummySignatureState(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureBroken);//add an error on Extension 
 
 			//next two elements simulate the setting of 2 cert ready to be used to sign the docu
-/*			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi", m_xContext, m_xMCF);
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureAdding);
+			aSignState = new SignatureStateInDocumentOK("Vittorio", "Manzi", m_xContext, m_xMCF);
+			addDummySignatureState(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureAdding);
 
 			aSignState = new SignatureStateInDocumentOK("Loredana", "Bianchi", m_xContext, m_xMCF);
-			addDummySignatureState(xTreeDataModel, xaNode, aSignState,sSignatureRemoving);
-*/
+			addDummySignatureState(xTreeDataModel, m_aTheRootNode, aSignState,sSignatureRemoving);
+
 //now create the TreeControlModel and add it to the dialog
 			Object oTreeControlModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(oTreeControlModel == null) {
@@ -512,21 +512,21 @@ public class DialogCertificateTree extends BasicDialog implements
 					"Name",
 					"PositionX", 
 					"PositionY", 
-					"RootDisplayed",
+//					"RootDisplayed",
 //					"Step",
 					"SelectionType",
 					"Width"
 					},
 					new Object[] {
 					new Integer( ControlDims.DLG_CERT_TREE_BACKG_COLOR ),
-					oTreeDataModel, //where the DataModel is attached, need to reattach again?
+					oTreeDataModel, //where the DataModel is attached
 					new Boolean( true ),
 					new Integer( _nHeight ),
 //			_sLabel,
 					_sName,
 					new Integer( _nPosX ),
 					new Integer( _nPosY ),
-					new Boolean( false ),
+	//				new Boolean( false ),
 	//				new Integer( _nStep ),
 					new Integer(com.sun.star.view.SelectionType.SINGLE_value),
 					new Integer( _nWidth )					
@@ -541,7 +541,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			// button...
 //			xTree.addActionListener( _xActionListener );
 			xTree.addSelectionChangeListener(_xActionListener);
-
+			
 		} catch (com.sun.star.uno.Exception ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace( System.out );

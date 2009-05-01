@@ -801,45 +801,66 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 		m_logger.entering("actionPerformed, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
+	 */
+	@Override
 	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
-
+//		m_logger.entering("focusGained, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
+	 */
+	@Override
 	public void focusLost(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+//		m_logger.entering("focusLost, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
+	 */
+	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("mouseEntered, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
+	 */
+	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("mouseExited, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
+	 */
+	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("mousePressed, implement on subclass!");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
+	 */
+	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("mouseReleased, implement on subclass!");
 	}
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("itemStateChanged, implement on subclass!");
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("adjustmentValueChanged, implement on subclass!");
 	}
 
 	/* (non-Javadoc)

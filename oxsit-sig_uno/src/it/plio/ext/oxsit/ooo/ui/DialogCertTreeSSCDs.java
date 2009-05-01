@@ -22,24 +22,16 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import java.util.LinkedList;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.ui.BasicDialog;
-import it.plio.ext.oxsit.ooo.ui.ControlDims;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
-import it.plio.ext.oxsit.ooo.ui.test.FakeCertificateInModuleOK;
-import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOCertSignature;
-import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocument;
-import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKODocumentAndSignature;
-import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentKOSignature2;
-import it.plio.ext.oxsit.ooo.ui.test.SignatureStateInDocumentOK;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 
+import java.util.LinkedList;
+
 import com.sun.star.awt.ActionEvent;
+import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XControl;
@@ -50,6 +42,7 @@ import com.sun.star.awt.XMouseListener;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
+import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.XMutableTreeDataModel;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeControl;
@@ -58,12 +51,8 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.container.ElementExistException;
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.deployment.PackageInformationProvider;
-import com.sun.star.deployment.XPackageInformationProvider;
 import com.sun.star.frame.XFrame;
-import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -114,15 +103,13 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	private XMutableTreeDataModel	m_xTreeDataModel;
 	private XMutableTreeNode 		m_aTreeRootNode;
 
-	private String				m_sBtnOKLabel;
-	private String				m_sBtn_CancelLabel;
-	private String 				m_sBtn_SelDevice;
-	private String 				m_sBtn_AddCertLabel;
-	private String 				m_sDlgListCertTitle;	
-	private String 				m_sFt_Hint_Doc;
-	private String 				m_sBtn_RemoveCertLabel;
-	private String				m_sBtn_AddCountCertLabel;
-	private String				m_sBtn_CreateReport;
+	private String				m_sBtnOKLabel = "id_ok";
+	private String				m_sBtn_CancelLabel = "id_cancel";
+	private String 				m_sBtn_SelDevice = "id_pb_sel_device";
+	private String 				m_sBtn_AddCertLabel = "id_pb_add_cert";
+	private String 				m_sDlgListCertTitle = "id_title_mod_cert_tree";
+	private String 				m_sFt_Hint_Doc = "id_title_mod_cert_treew";
+	private String				m_sBtn_CreateReport = "id_pb_cert_report";
 	
 	private String 				sCertificateElementError;
 	private String 				sCertificateElementBroken;
@@ -134,6 +121,13 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	private static final String sEmptyText = "notextcontrol";		//the control without text
 	private static final String sEmptyTextLine = "notextcontrolL";		//the 1st line superimposed to the empty text contro
 //	public static final int	NUMBER_OF_DISPLAYED_TEST_LINES = 14;
+	
+	//Strings used for certificate elements
+	protected String			m_sLabelVersion = "id_cert_version";
+	protected String			m_sLabelSerialNumer = "id_cert_ser_numb";
+
+	private String 				m_sLabelSubjectPublicKey = "id_cert_sbj_pub_key";
+	
 	
 	/**
 	 * Note on the display:
@@ -204,13 +198,19 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 
 		try {
-			m_sBtnOKLabel = m_aRegAcc.getStringFromRegistry( "id_ok" );			
-			m_sBtn_CancelLabel = m_aRegAcc.getStringFromRegistry( "id_cancel" );
-			m_sBtn_SelDevice = m_aRegAcc.getStringFromRegistry( "id_pb_sel_device" );
-			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( "id_pb_add_cert" );
-			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_tree" );
-			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( "id_title_mod_cert_treew" );
-			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( "id_pb_cert_report" );
+			m_sBtnOKLabel = m_aRegAcc.getStringFromRegistry( m_sBtnOKLabel );			
+			m_sBtn_CancelLabel = m_aRegAcc.getStringFromRegistry( m_sBtn_CancelLabel );
+			m_sBtn_SelDevice = m_aRegAcc.getStringFromRegistry( m_sBtn_SelDevice );
+			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( m_sBtn_AddCertLabel );
+			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( m_sDlgListCertTitle );
+			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( m_sFt_Hint_Doc );
+			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( m_sBtn_CreateReport );
+//strings for certificate display			
+			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );
+			m_sLabelSerialNumer = m_aRegAcc.getStringFromRegistry( m_sLabelSerialNumer );
+
+			m_sLabelSubjectPublicKey = m_aRegAcc.getStringFromRegistry( m_sLabelSubjectPublicKey );
+			
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
@@ -231,27 +231,21 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		try {
 			super.initialize(DLG_CERT_TREE, m_sDlgListCertTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
 
-/*	        XPropertySet xProp = (XPropertySet) UnoRuntime.queryInterface(
-	                XPropertySet.class, m_xDialogControl.getModel());
-
-	        if (xProp != null)
-	        	xProp.setPropertyValue(new String("BackgroundColor"),
-	        			new Integer(ControlDims.DLG_ABOUT_BACKG_COLOR));*/
-
-			insertFixedText(this,
+/*			uset the tree root for this 
+ * 			insertFixedText(this,
 					CertifTreeDlgDims.DS_COL_1(),
 					CertifTreeDlgDims.DS_ROW_0(), 
 					CertifTreeDlgDims.dsWidth(), 
 					0,
 					m_sFt_Hint_Doc
-					);
+					);*/
 	//inserts the control elements needed to display properties
 	//multiline text control used as a light yellow background
 			//multiline text control for details
 			Object oEdit = insertEditFieldModel(this, this,
 					CertifTreeDlgDims.dsTextFieldColumn(),
-					CertifTreeDlgDims.DS_ROW_1(),
-					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
+					CertifTreeDlgDims.DS_ROW_0(),
+					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 					CertifTreeDlgDims.dsTextFieldWith(),
 					2,
 					"", sEmptyText, true, true, false, false);
@@ -266,8 +260,8 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	//multiline text control for details of tree node element under selection
 			m_xDisplElementModel = insertEditFieldModel(this, this,
 					CertifTreeDlgDims.dsTextFieldColumn(),
-					CertifTreeDlgDims.DS_ROW_1(),
-					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
+					CertifTreeDlgDims.DS_ROW_0(),
+					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 					CertifTreeDlgDims.dsTextFieldWith(),
 					2,
 					"", m_sDispElemsName, true, true, true, true);
@@ -279,8 +273,8 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	//Insert the tree control
 			m_xTreeControl = insertTreeControl(this,
 					CertifTreeDlgDims.DS_COL_0(), 
-					CertifTreeDlgDims.DS_ROW_1(), 
-					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
+					CertifTreeDlgDims.DS_ROW_0(), 
+					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 					CertifTreeDlgDims.dsTreeControlWith(), //CertifTreeDlgDims.DS_COL_4() - CertifTreeDlgDims.DS_COL_0(),
 					sTree,
 					m_sFt_Hint_Doc, 20);
@@ -338,6 +332,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	
 			xDialog = (XDialog) UnoRuntime.queryInterface(XDialog.class, super.m_xDialogControl);		
 			createWindowPeer();
+
 		} catch (UnknownPropertyException e) {
 			e.printStackTrace();
 			m_logger.severe("initialize", e);
@@ -363,7 +358,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					);
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
 	 */
@@ -405,7 +400,6 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 
 	@Override
 	public short executeDialog() throws BasicErrorException {
-		// TODO Auto-generated method stub
 		return super.executeDialog();
 	}
 
@@ -434,18 +428,25 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 				m_logger.severe("insertTreeControl", "the XMutableTreeDataModel not available!");
 				return null;
 			}
+			m_aTreeRootNode = m_xTreeDataModel.createNode(_sLabel, true);
+			if(m_aTreeRootNode == null) {
+				m_logger.severe("insertTreeControl", "the Node not available!");
+				return null;
+			}
+			m_xTreeDataModel.setRoot(m_aTreeRootNode);
 
 			m_oTreeControlModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(m_oTreeControlModel == null) {
 				m_logger.severe("insertTreeControl", "the oTreeModel not available!");
 				return null;
 			}
+
 			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime.queryInterface( XMultiPropertySet.class, m_oTreeControlModel );
 			if(xTreeMPSet == null ) {
 				m_logger.severe("insertTreeControl", "no XMultiPropertySet");
 				return null;
 			}
-			
+
 			// Set the properties at the model - keep in mind to pass the
 			// property names in alphabetical order!
 			xTreeMPSet.setPropertyValues( new String[] {
@@ -457,47 +458,35 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 					"Name",
 					"PositionX", 
 					"PositionY", 
-					"RootDisplayed",
+//					"RootDisplayed",
 					"SelectionType",
 //					"ShowsRootHandles",
 					"Width"
 					},
 					new Object[] {
 					new Integer( ControlDims.DLG_CERT_TREE_BACKG_COLOR ),
-					m_oTreeDataModel, //where the DataModel is attached, need to reattach again?
+					m_oTreeDataModel, //where the DataModel is attached
 					new Boolean( true ),
 					new Integer( _nHeight ),
 //			_sLabel,
 					_sName,
 					new Integer( _nPosX ),
 					new Integer( _nPosY ),
-					new Boolean( true /*false*/ ), //RootDisplayed
+//					new Boolean( false ), //RootDisplayed, but does not function...
 					new Integer(com.sun.star.view.SelectionType.SINGLE_value),
 	//				new Boolean( false ),
 					new Integer( _nWidth )					
 					} );
-			
-			// add the model to the NameContainer of the dialog model
+
+			// add the control model to the NameContainer of the dialog model
 			m_xDlgModelNameContainer.insertByName( _sName, m_oTreeControlModel );
 			XControl xTreeControl = m_xDlgContainer.getControl( _sName );
-
-//			Utilities.showProperties(this, xTreeMPSet);
-
-			xTree = (XTreeControl) UnoRuntime.queryInterface( XTreeControl.class, xTreeControl );
-			m_aTreeRootNode = m_xTreeDataModel.createNode(_sLabel, true);
-			if(m_aTreeRootNode == null) {
-				m_logger.severe("insertTreeControl", "the Node not available!");
-				return null;
-			}
-			m_xTreeDataModel.setRoot(m_aTreeRootNode);
-
-//			Utilities.showProperties(this, xTreeMPSet);
-
-			// An ActionListener will be notified on the activation of the
-			// button...
-//			xTree.addActionListener( _xActionListener );
-			xTree.addSelectionChangeListener(_xActionListener);
 			
+			xTree = (XTreeControl) UnoRuntime.queryInterface( XTreeControl.class, xTreeControl );
+			xTree.addSelectionChangeListener(_xActionListener);
+	
+/*			m_aTreeRootNode.setHasChildrenOnDemand(true);
+			xTree.expandNode(m_aTreeRootNode);*/
 			
 		} catch (com.sun.star.uno.Exception ex) {
 			m_logger.severe("insertTreeControl", ex);
@@ -505,45 +494,31 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		return xTree;
 	}
 
-	private void disableTreeRootNode() {
-//grab the master tree control model
-		try {
-			Object oTreeControlModel = m_xDlgModelNameContainer.getByName( sTree );
-			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime.queryInterface( XMultiPropertySet.class, oTreeControlModel );
-			if(xTreeMPSet == null ) {
-				m_logger.severe("disableTreeRootNode", "no XMultiPropertySet");
-				return;
-			}
-			Utilities.showProperties(this, xTreeMPSet);
-
-//reattach the same tree model
-			// Set the properties at the model - keep in mind to pass the
-			// property names in alphabetical order!
-			xTreeMPSet.setPropertyValues( new String[] {
-					"DataModel",
-					"RootDisplayed"
-					},
-					new Object[] {
-					m_oTreeDataModel, //where the DataModel is attached, need to reattach again?
-					new Boolean( false )
-					} );
-		} catch (NoSuchElementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (WrappedTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private XMutableTreeNode addOneCertificateHelper(CertificateTreeElementBase aCert) {		
+		//connect it to the right dialog pane
+		aCert.setBackgroundControl(m_xDlgContainer.getControl( sEmptyText ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
 		}
-		catch (PropertyVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//add it to the tree root node
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aCert.getNodeName(), true);
+		if(aCert.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aCert.getNodeGraphic());
+
+		xaCNode.setDataValue(aCert);
+		try {
+			m_aTreeRootNode.appendChild(xaCNode);			
+			m_xTreeControl.expandNode(m_aTreeRootNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
+			m_logger.severe("addOneCertificate", e);
+		} catch (ExpandVetoException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return xaCNode;
 	}
-	
+
 	/**
 	 * FIXME: this method MUST be changed to the one needed to add a certificate to the tree
 	 */
@@ -551,38 +526,48 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 //create a fake certificate description
 		CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
-//connect it to the right dialog pane
-		aCert.setBackgroundControl(m_xDlgContainer.getControl( sEmptyText ));
-		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
-			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
-		}
-//add it to the tree root node
-		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aCert.getNodeName(), true);
-		if(aCert.getNodeGraphic() != null)
-			xaCNode.setNodeGraphicURL(aCert.getNodeGraphic());
+		XMutableTreeNode xNode = addOneCertificateHelper(aCert);
+		
+		addVariablePitchTreeElement(xNode, m_sLabelVersion,"V3");
+		addFixedPitchTreeElement(xNode, m_sLabelSubjectPublicKey,"30 82 01 0A 02 82 01 01 00 C4 1C 77 1D AD 89 18\nB1 6E 88 20 49 61 E9 AD 1E 3F 7B 9B 2B 39 A3 D8\nBF F1 42 E0 81 F0 03 E8 16 26 33 1A B1 DC 99 97\n4C 5D E2 A6 9A B8 D4 9A 68 DF 87 79 0A 98 75 F8\n33 54 61 71 40 9E 49 00 00 06 51 42 13 33 5C 6C\n34 AA FD 6C FA C2 7C 93 43 DD 8D 6F 75 0D 51 99\n83 F2 8F 4E 86 3A 42 22 05 36 3F 3C B6 D5 4A 8E\nDE A5 DC 2E CA 7B 90 F0 2B E9 3B 1E 02 94 7C 00\n8C 11 A9 B6 92 21 99 B6 3A 0B E6 82 71 E1 7E C2\nF5 1C BD D9 06 65 0E 69 42 C5 00 5E 3F 34 3D 33\n2F 20 DD FF 3C 51 48 6B F6 74 F3 A5 62 48 C9 A8\nC9 73 1C 8D 40 85 D4 78 AF 5F 87 49 4B CD 42 08\n5B C7 A4 D1 80 03 83 01 A9 AD C2 E3 63 87 62 09\nFE 98 CC D9 82 1A CB AD 41 72 48 02 D5 8A 76 C0\nD5 59 A9 FF CA 3C B5 0C 1E 04 F9 16 DB AB DE 01\nF7 A0 BE CF 94 2A 53 A4 DD C8 67 0C A9 AF 60 5F\n53 3A E1 F0 71 7C D7 36 AB 02 03 01 00 01");
+		
+	}
 
-		xaCNode.setDataValue(aCert);
+	public void addOneSignature() {
+		//create a fake certificate description
+		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
+		aCert.initialize();
+		addOneCertificateHelper(aCert);
+	}
 
+	private XMutableTreeNode addMultilineTreeElementHelper(XMutableTreeNode _Node, MultilineTreeElementBase _aElm, String _sLabel) {
+		//connect it to the right dialog pane
+		//add it to the tree root node
+		
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
+		if(_aElm.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(_aElm.getNodeGraphic());
+
+		xaCNode.setDataValue(_aElm);
 		try {
-//remove the tree control
-			m_aTreeRootNode.appendChild(xaCNode);
+			_Node.appendChild(xaCNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			m_logger.severe("addOneCertificate", e);
 		}
+		return xaCNode;		
 	}
 
-	public void addOneSignature() {
-
+	private XMutableTreeNode addFixedPitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
+		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sDispElemsName ));
+		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
-
-	private void addMultiLineTextDisplayElement(TreeNodeDescriptor aDesc) {		
-		// a signature type, add the fillable text control
-		XControl xTFControl = m_xDlgContainer.getControl( m_sDispElemsName );
-		LinkedList<XControl> aList = aDesc.getList();			
-		aList.add(xTFControl);
+	
+	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
+		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sDispElemsName ));
+		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
-
+	
 	private void disableNamedControl(String sTheName) {
 		XControl xTFControl = m_xDlgContainer.getControl( sTheName );
 		if(xTFControl != null){
@@ -603,7 +588,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 	 * @see com.sun.star.view.XSelectionChangeListener#selectionChanged(com.sun.star.lang.EventObject)
 	 */
 	@Override
-	public void selectionChanged( com.sun.star.lang.EventObject arg0 ) {
+	public void selectionChanged( com.sun.star.lang.EventObject _eventObject ) {
 		m_logger.entering("selectionChanged");
 		Object oObject = m_xTreeControl.getSelection();
 // check if it's a node		
@@ -624,7 +609,6 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		}
 		else {// old node null, disable all all the display elements
 			disableAllNamedControls();
-//disable some of the pushbutton as well			
 		}
 		//...and set the new old node
 		m_aTheOldNode = xaENode;

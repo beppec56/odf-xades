@@ -60,9 +60,8 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 	}
 
 	public void initialize() {
-
 //init common elements
-		setNodeName("the signee name (GN+SN)");
+		setNodeName("rthe signee name (GN+SN)");
 		super.initialize();
 //adds specif elements
 		m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
@@ -70,10 +69,8 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 		// these are the string common to both the signature and the 
 		// certificate
 		try {
-
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_SIGNED_BY] = m_aRegAcc.getStringFromRegistry("sign_title_signed_by");
-
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);
 		}
