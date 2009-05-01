@@ -6,10 +6,16 @@ package it.plio.ext.oxsit.ooo.ui;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
+import com.sun.star.awt.FocusEvent;
+import com.sun.star.awt.KeyEvent;
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XControl;
+import com.sun.star.awt.XControlModel;
+import com.sun.star.awt.XFixedText;
 import com.sun.star.awt.XItemListener;
+import com.sun.star.awt.XKeyHandler;
+import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.XMutableTreeDataModel;
@@ -34,26 +40,29 @@ import com.sun.star.view.XSelectionChangeListener;
  * @author beppe
  *
  */
-public class DialogCertTreeBase extends BasicDialog  implements
-XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
+public class DialogCertTreeBase extends BasicDialog implements
+		XItemListener,
+		XKeyListener,
+		XTreeExpansionListener, 
+		XSelectionChangeListener {
 
-	protected static final String sAdd = "addcertb"; //this can be add certificate, or add signature
-	protected String sTree = "certmodtreezz";
+	protected String 				sAdd = "addcertb"; //this can be add certificate, or add signature
+	protected String 				sTree = "certmodtree";
 
 	private	Object 					m_oTreeDataModel;
 	private XMutableTreeDataModel	m_xTreeDataModel;
 	private XMutableTreeNode 		m_aTreeRootNode;
 	private Object 					m_oTreeControlModel;	
-	private XTreeControl 	m_xTreeControl = null;
+	private XTreeControl 			m_xTreeControl = null;
 	private XMutableTreeNode 		m_aTheOldNode = null;
 	// the following two fields are needed to be able to change
 	// the font at run-time
-	private Object				m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
+	private Object					m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
 
-	private static final String sEmptyText = "notextcontrol";		//the control without text
-	private static final String sEmptyTextLine = "notextcontrolL";		//the 1st line superimposed to the empty text control
+	private static final String 	m_sTextLinesBackground = "text_back";	//the control without text
+	private static final String 	sEmptyTextLine = "text_L";		//the 1st line superimposed to the empty text control
 
-	private static final String	m_sDispElemsName	= "dispelems";  // the control general, with descriptive text in it
+	private static final String		m_sMultilineText	= "multi_l";  // the control general, with descriptive text in it
 	
 	private String				m_sBtnOKLabel = "id_ok";
 	private String				m_sBtn_CancelLabel = "id_cancel";
@@ -110,43 +119,45 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 			//inserts the control elements needed to display properties
 			//multiline text control used as a light yellow background
 					//multiline text control for details
-					Object oEdit = insertEditFieldModel(this, this,
+			Object oEdit = insertEditFieldModel(this, this,
 							CertifTreeDlgDims.dsTextFieldColumn(),
 							CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.dsTextFieldWith(),
 							-1,
-							"", sEmptyText, true, true, false, false);
-
+							"", m_sTextLinesBackground, true, true, false, false);
 			//now change its background color
-					XPropertySet xPSet = (XPropertySet) UnoRuntime
+			XPropertySet xPSet = (XPropertySet) UnoRuntime
 								.queryInterface( XPropertySet.class, oEdit );
-					xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));	
+			xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));
+			
+			
+
 					//insert the fixed text lines over the above mentioned element
-					insertDisplayLinesOfText();
+			insertDisplayLinesOfText();
 
 			//multiline text control for details of tree node element under selection
-					m_xDisplElementModel = insertEditFieldModel(this, this,
+			m_xDisplElementModel = insertEditFieldModel(this, this,
 							CertifTreeDlgDims.dsTextFieldColumn(),
 							CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.dsTextFieldWith(),
 							-1,
-							"", m_sDispElemsName, true, true, true, true);
+							"", m_sMultilineText, true, true, true, true);
 
-					xPSet = (XPropertySet) UnoRuntime
+			xPSet = (XPropertySet) UnoRuntime
 								.queryInterface( XPropertySet.class, m_xDisplElementModel );
-					xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));	
+			xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));	
 
 			//Insert the tree control
-					m_xTreeControl = insertTreeControl(this,
+			m_xTreeControl = insertTreeControl(this,
 							CertifTreeDlgDims.DS_COL_0(), 
 							CertifTreeDlgDims.DS_ROW_0(), 
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.dsTreeControlWith(), //CertifTreeDlgDims.DS_COL_4() - CertifTreeDlgDims.DS_COL_0(),
 							sTree,
-							m_sFt_Hint_Doc, -1);
-					insertButton(this,
+							m_sFt_Hint_Doc, 10);
+			insertButton(this,
 							CertifTreeDlgDims.DS_COL_PB5(),
 							CertifTreeDlgDims.DS_ROW_4(),
 							CertifTreeDlgDims.dsBtnWidthCertTree(),
@@ -154,7 +165,7 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 							m_sBtn_CreateReport,
 							(short) PushButtonType.STANDARD_value, 3);
 					//cancel button
-					insertButton(this,
+			insertButton(this,
 							CertifTreeDlgDims.DLGS_BOTTOM_HELP_X(CertifTreeDlgDims.dsWidth()),
 							CertifTreeDlgDims.DLGS_BOTTOM_BTN_Y(CertifTreeDlgDims.dsHeigh()),
 							ControlDims.RSC_CD_PUSHBUTTON_WIDTH,
@@ -162,7 +173,7 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 							m_sBtn_CancelLabel,
 							(short) PushButtonType.CANCEL_value, 1);
 			// ok button
-					insertButton(this,
+			insertButton(this,
 							CertifTreeDlgDims.DLGS_BOTTOM_CANCEL_X(CertifTreeDlgDims.dsWidth()),
 							CertifTreeDlgDims.DLGS_BOTTOM_BTN_Y(CertifTreeDlgDims.dsHeigh()),
 							ControlDims.RSC_CD_PUSHBUTTON_WIDTH,
@@ -181,7 +192,6 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 			m_logger.severe("initialize", e);
 		}
 	}
-
 
 	protected XTreeControl insertTreeControl(XSelectionChangeListener _xActionListener,
 			int _nPosX,
@@ -262,16 +272,19 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 					new Integer( _nWidth )					
 					} );
 
-			Utilities.showProperties(m_oTreeControlModel, xTreeMPSet);
+//			Utilities.showProperties(m_oTreeControlModel, xTreeMPSet);
 			// add the control model to the NameContainer of the dialog model
 			m_xDlgModelNameContainer.insertByName( _sName, m_oTreeControlModel );
 			XControl xTreeControl = m_xDlgContainer.getControl( _sName );
-			
+
 			xTree = (XTreeControl) UnoRuntime.queryInterface( XTreeControl.class, xTreeControl );
 			xTree.addSelectionChangeListener(_xActionListener);
-	
-/*			m_aTreeRootNode.setHasChildrenOnDemand(true);
-			xTree.expandNode(m_aTreeRootNode);*/
+
+			//////////////////////////
+/*			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+					xTreeControl );
+			xTFWindow.addFocusListener( this );
+			xTFWindow.addKeyListener( this );*/
 			
 		} catch (com.sun.star.uno.Exception ex) {
 			m_logger.severe("insertTreeControl", ex);
@@ -286,8 +299,8 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 					CertifTreeDlgDims.TEXT_0X(),
 					CertifTreeDlgDims.TEXT_L0Y()+ControlDims.RSC_CD_FIXEDTEXT_HEIGHT*i,
 					CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.TEXT_0X()-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,
-					0,
-					"checkit"+i, // a dummy text
+					-1,
+					"l "+i, // a dummy text
 					sEmptyTextLine+i
 					);
 		}
@@ -295,7 +308,7 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 	
 	private XMutableTreeNode addOneCertificateHelper(CertificateTreeElementBase aCert) {		
 		//connect it to the right dialog pane
-		aCert.setBackgroundControl(m_xDlgContainer.getControl( sEmptyText ));
+		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
 			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
 		}
@@ -357,16 +370,16 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 	}
 
 	private XMutableTreeNode addFixedPitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
-		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sDispElemsName ));
+		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 	
 	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
-		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sDispElemsName ));
+		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
-	/////////////////////////////////777
+	////////////////////////////////////
 	private void disableNamedControl(String sTheName) {
 		XControl xTFControl = m_xDlgContainer.getControl( sTheName );
 		if(xTFControl != null){
@@ -377,8 +390,8 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 	}
 
 	protected void disableAllNamedControls() {
-		disableNamedControl(m_sDispElemsName);
-		disableNamedControl(sEmptyText);
+		disableNamedControl(m_sMultilineText);
+		disableNamedControl(m_sTextLinesBackground);
 		for(int i = 0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++)
 			disableNamedControl(sEmptyTextLine+i);
 	}
@@ -423,25 +436,100 @@ XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 				if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
 					bEnableButton = true;
 				}
-//				enableSingleButton(sAdd,bEnableButton);
+				enableSingleButton(sAdd,bEnableButton);
 				aCurrentNode.EnableDisplay(true);
 			}
-/*			else
-				enableSingleButton(sAdd,false);	*/			
+			else
+				enableSingleButton(sAdd,false);				
 		}
 	}	
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
-		m_logger.entering("enableSingleButton");
+//		m_logger.entering("enableSingleButton");
 		//grab the button...
 		XControl xTFControl = m_xDlgContainer.getControl( sButtonName );
 		if(xTFControl != null){
-//			Utilities.showInterfaces(xTFControl);
 			//...and set state accordingly
 			XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, xTFControl );
 			if(xaWNode != null )
 				xaWNode.setEnable(bEnable);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyPressed(com.sun.star.awt.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+/*		m_logger.entering("keyPressed on subclass"+arg0.KeyCode);
+
+		XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
+				arg0.Source);
+		XControlModel xControlModel = xControl.getModel();
+		XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(
+				XPropertySet.class, xControlModel);
+		try {
+			String sName = (String) xPSet.getPropertyValue("Name");
+			m_logger.exiting("keyReleased: ",sName);		
+			
+		} catch (UnknownPropertyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrappedTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyReleased(com.sun.star.awt.KeyEvent)
+	 * 
+	 */
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+//		m_logger.entering("keyReleased, on subclass! "+arg0.KeyCode);
+		
+		//if arg0.KeyCode = 773 (key F6), set focus to certificate tree element
+		if(arg0.KeyCode == com.sun.star.awt.Key.F6) {
+//			m_xTreeControl.
+			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+					m_xTreeControl );
+			xTFWindow.setFocus();
+		}
+
+/*		XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
+				arg0.Source);
+		XControlModel xControlModel = xControl.getModel();
+		XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(
+				XPropertySet.class, xControlModel);
+		try {
+			String sName = (String) xPSet.getPropertyValue("Name");
+			m_logger.exiting("keyReleased: ",sName);		
+			
+		} catch (UnknownPropertyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrappedTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
+	 */
+	@Override
+	public void focusGained(FocusEvent arg0) {
+//		m_logger.entering("focusGained, on subclass!");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
+	 */
+	@Override
+	public void focusLost(FocusEvent arg0) {
+//		m_logger.entering("focusLost, on subclass!");
 	}
 
 }

@@ -30,7 +30,6 @@ import com.sun.star.awt.AdjustmentEvent;
 import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.ItemEvent;
 import com.sun.star.awt.KeyEvent;
-import com.sun.star.awt.MouseEvent;
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.SpinEvent;
 import com.sun.star.awt.TextEvent;
@@ -46,9 +45,7 @@ import com.sun.star.awt.XFocusListener;
 import com.sun.star.awt.XItemEventBroadcaster;
 import com.sun.star.awt.XItemListener;
 import com.sun.star.awt.XKeyListener;
-import com.sun.star.awt.XListBox; // import
-// com.sun.star.awt.XMessageBoxFactory;
-import com.sun.star.awt.XMouseListener;
+import com.sun.star.awt.XListBox;
 import com.sun.star.awt.XSpinListener;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XTextListener;
@@ -59,6 +56,7 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.TreeExpansionEvent;
 import com.sun.star.awt.tree.XTreeExpansionListener;
+import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XIndexContainer;
@@ -68,6 +66,7 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFramesSupplier;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
@@ -83,7 +82,7 @@ import com.sun.star.uno.XComponentContext;
  */
 
 public class BasicDialog implements XTextListener, XSpinListener, XActionListener,
-		XFocusListener, XItemListener, XAdjustmentListener, XTreeExpansionListener {
+		XFocusListener, XItemListener, XAdjustmentListener, XTreeExpansionListener, XKeyListener {
 
 	protected XComponentContext							m_xContext			= null;
 	protected com.sun.star.lang.XMultiComponentFactory	m_xMCF;
@@ -205,6 +204,11 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			// An ActionListener will be notified on the activation of the
 			// button...
 			xButton.addActionListener( _xActionListener );
+			
+			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+							xButtonControl );
+//			xTFWindow.addFocusListener( this );
+			xTFWindow.addKeyListener( this );			
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -367,7 +371,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					xTFControl );
 			xTFWindow.addFocusListener( _xFocusListener );
 			xTextComponent.addTextListener( _xTextListener );
-//			xTFWindow.addKeyListener( this );
+			xTFWindow.addKeyListener( this );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -403,11 +407,11 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			// property names in alphabetical order!
 
 			xFTModelMPSet.setPropertyValues( new String[] { "FontPitch", "FontWeight",
-					"Height", "Name", "PositionX", "PositionY", "Step", "Width" },
+					"Height", "Name", "PositionX", "PositionY", "TabIndex", "Width" },
 					new Object[] { new Short( (short) com.sun.star.awt.FontPitch.FIXED ),
 							_fWeight, new Integer( ControlDims.RSC_BS_CHARHEIGHT ),
 							_sName, new Integer( _nPosX ), new Integer( _nPosY ),
-							new Integer( _nStep ), new Integer( _nWidth ) } );
+							new Short( (short)_nStep ), new Integer( _nWidth ) } );
 			// add the model to the NameContainer of the dialog model
 			m_xDlgModelNameContainer.insertByName( _sName, oFTModel );
 
@@ -907,5 +911,23 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
 		m_logger.entering("treeExpanding, implement on subclass!");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyPressed(com.sun.star.awt.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		m_logger.entering("keyPressed, implement on subclass! "+arg0.KeyCode);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.awt.XKeyListener#keyReleased(com.sun.star.awt.KeyEvent)
+	 */
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		m_logger.entering("keyReleased, implement on subclass! "+arg0.KeyCode);		
 	}
 }

@@ -24,6 +24,8 @@ package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
 
+import com.sun.star.awt.XControl;
+import com.sun.star.awt.XControlContainer;
 import com.sun.star.beans.*;
 import com.sun.star.container.*;
 import com.sun.star.lang.*;
@@ -283,6 +285,28 @@ public class Utilities {
 		} catch (java.lang.Exception e) {
 			System.out.println("caught exception in showInfo : " + e);
 		}
+	}
+
+	public static void showControlNames(XControlContainer _xC) {
+		
+		XControl[] xctrs = _xC.getControls();
+		
+		for(int i = 0; i < xctrs.length; i++) {
+			XControl xcs = xctrs[i];
+//			System.out.println(xcs.toString());
+			
+			showInterfaces(xcs, xcs);
+		}
+		
+	}
+
+	public static void showNames(XNameContainer _xC) {
+		
+		String[] xctrs = _xC.getElementNames();
+		
+		for(int i = 0; i < xctrs.length; i++) {
+			System.out.println(xctrs[i]);
+		}		
 	}
 
 	/**

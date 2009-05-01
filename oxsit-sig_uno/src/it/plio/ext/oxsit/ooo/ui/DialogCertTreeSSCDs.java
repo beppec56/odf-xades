@@ -38,6 +38,8 @@ import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
 import com.sun.star.awt.XDialog;
 import com.sun.star.awt.XItemListener;
+import com.sun.star.awt.XKeyHandler;
+import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XMouseListener;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XWindow;
@@ -212,6 +214,14 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase implements
 			
 			xDialog = (XDialog) UnoRuntime.queryInterface(XDialog.class, super.m_xDialogControl);		
 			createWindowPeer();
+			disableAllNamedControls();
+			
+			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+					super.m_xDialogControl );
+			xTFWindow.addKeyListener( this );
+//			Utilities.showControlNames(m_xDlgContainer);
+			Utilities.showNames(m_xDlgModelNameContainer);
+
 	}
 
 	/* (non-Javadoc)
