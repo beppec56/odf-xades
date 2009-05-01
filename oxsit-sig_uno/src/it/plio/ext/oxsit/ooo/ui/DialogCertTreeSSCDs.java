@@ -85,7 +85,7 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 
 	private String sCertificateValid = null; //
 	private String sCertificateNotValidated = null; //
-	
+
 	private String	sCertificateElementWarning = null;
 
 	private XTreeControl 	m_xTreeControl = null;
@@ -205,12 +205,12 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 			m_sDlgListCertTitle = m_aRegAcc.getStringFromRegistry( m_sDlgListCertTitle );
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( m_sFt_Hint_Doc );
 			m_sBtn_CreateReport = m_aRegAcc.getStringFromRegistry( m_sBtn_CreateReport );
-//strings for certificate display			
+//strings for certificate display
 			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );
 			m_sLabelSerialNumer = m_aRegAcc.getStringFromRegistry( m_sLabelSerialNumer );
 
 			m_sLabelSubjectPublicKey = m_aRegAcc.getStringFromRegistry( m_sLabelSubjectPublicKey );
-			
+
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
@@ -231,14 +231,6 @@ public class DialogCertTreeSSCDs extends BasicDialog implements
 		try {
 			super.initialize(DLG_CERT_TREE, m_sDlgListCertTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
 
-/*			uset the tree root for this 
- * 			insertFixedText(this,
-					CertifTreeDlgDims.DS_COL_1(),
-					CertifTreeDlgDims.DS_ROW_0(), 
-					CertifTreeDlgDims.dsWidth(), 
-					0,
-					m_sFt_Hint_Doc
-					);*/
 	//inserts the control elements needed to display properties
 	//multiline text control used as a light yellow background
 			//multiline text control for details
