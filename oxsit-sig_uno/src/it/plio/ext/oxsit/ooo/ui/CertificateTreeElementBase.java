@@ -131,6 +131,7 @@ public class CertificateTreeElementBase extends TreeElement {
 	 */
 	@Override
 	void EnableDisplay(boolean bWhat) {
+//		getLogger().log("EnableDisplay "+bWhat);
 		XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, getBackgroundControl() );
 		if(xaWNode != null )					
 			xaWNode.setVisible(bWhat);
@@ -217,7 +218,7 @@ public class CertificateTreeElementBase extends TreeElement {
 							aFText.setText(sStr.substring(1));
 						}
 						else
-							aFText.setText("<found null string>");//debug, remove after test
+							aFText.setText("<found null string> "+i);//debug, remove after test
 						xaWNode.setVisible(bWhat);
 					}
 				}

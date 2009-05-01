@@ -83,7 +83,7 @@ import com.sun.star.uno.XComponentContext;
  */
 
 public class BasicDialog implements XTextListener, XSpinListener, XActionListener,
-		XFocusListener, XMouseListener, XItemListener, XAdjustmentListener, XKeyListener, XTreeExpansionListener {
+		XFocusListener, XItemListener, XAdjustmentListener, XTreeExpansionListener {
 
 	protected XComponentContext							m_xContext			= null;
 	protected com.sun.star.lang.XMultiComponentFactory	m_xMCF;
@@ -192,10 +192,10 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			// Set the properties at the model - keep in mind to pass the
 			// property names in alphabetical order!
 			xButtonMPSet.setPropertyValues( new String[] { "Height", "Label", "Name",
-					"PositionX", "PositionY", "PushButtonType", "Step", "Width" },
+					"PositionX", "PositionY", "PushButtonType", "TabIndex", "Width" },
 					new Object[] { new Integer( _nHeight ), _sLabel, _sName,
 							new Integer( _nPosX ), new Integer( _nPosY ),
-							new Short( _nPushButtonType ), new Integer( _nStep ),
+							new Short( _nPushButtonType ), new Short( (short)_nStep ),
 							new Integer( _nWidth ) } );
 
 			// add the model to the NameContainer of the dialog model
@@ -317,7 +317,6 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					xTFControl );
 			xTFWindow.addFocusListener( _xFocusListener );
 			xTextComponent.addTextListener( _xTextListener );
-			xTFWindow.addKeyListener( this );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -348,12 +347,12 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			// Set the properties at the model - keep in mind to pass the
 			// property names in alphabetical order!
 			xTFModelMPSet.setPropertyValues( new String[] { "Height", "HScroll",
-					"MultiLine", "Name", "PositionX", "PositionY", "ReadOnly", "Step",
+					"MultiLine", "Name", "PositionX", "PositionY", "ReadOnly", "TabIndex",
 					"Text", "VScroll", "Width" }, new Object[] { 
 					new Integer( _nHeight ),
 					new Boolean( _bHScroll ), new Boolean( _bMultiLine ), _sName,
 					new Integer( _nPosX ), new Integer( _nPosY ),
-					new Boolean( _bReadOnly ), new Integer( _nStep ), _sText,
+					new Boolean( _bReadOnly ), new Short( (short)_nStep ), _sText,
 					new Boolean( _bVScroll ), new Integer( _nWidth ) } );
 
 			// The controlmodel is not really available until inserted to the
@@ -368,7 +367,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					xTFControl );
 			xTFWindow.addFocusListener( _xFocusListener );
 			xTextComponent.addTextListener( _xTextListener );
-			xTFWindow.addKeyListener( this );
+//			xTFWindow.addKeyListener( this );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -385,7 +384,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	}
 
 	// / overloading: testo con nome aggiunto e grassetto
-	public XFixedText insertFixedText(XMouseListener _xMouseListener, int _nPosX,
+	public XFixedText insertFixedText(XActionListener _xMouseListener, int _nPosX,
 			int _nPosY, int _nWidth, int _nStep, String _sLabel, String _sName,
 			float _fWeight) {
 		XFixedText xFixedText = null;
@@ -426,7 +425,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					xFTControl );
 			XWindow xWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
 					xFTControl );
-			xWindow.addMouseListener( _xMouseListener );
+//			xWindow.addMouseListener( _xMouseListener );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -443,13 +442,13 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	}
 
 	// / overloading: testo con nome aggiunto
-	public XFixedText insertFixedText(XMouseListener _xMouseListener, int _nPosX,
+	public XFixedText insertFixedText(XActionListener _xMouseListener, int _nPosX,
 			int _nPosY, int _nWidth, int _nStep, String _sLabel, String _sName) {
 		return insertFixedText( _xMouseListener, _nPosX, _nPosY, _nWidth, _nStep,
 				_sLabel, _sName, (float) 100 );
 	}
 
-	public XFixedText insertFixedText(XMouseListener _xMouseListener, int _nPosX,
+	public XFixedText insertFixedText(XActionListener _xMouseListener, int _nPosX,
 			int _nPosY, int _nWidth, int _nStep, String _sLabel) {
 		// create a unique name by means of an own implementation...
 		String sName = createUniqueName( m_xDlgModelNameContainer, "Label" );
@@ -820,38 +819,38 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
 	 */
-	@Override
+/*	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("mouseEntered, implement on subclass!");
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
 	 */
-	@Override
+/*	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("mouseExited, implement on subclass!");
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
 	 */
-	@Override
+/*	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("mousePressed, implement on subclass!");
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
 	 */
-	@Override
+/*	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("mouseReleased, implement on subclass!");
-	}
+	}*/
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
@@ -861,22 +860,6 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("adjustmentValueChanged, implement on subclass!");
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XKeyListener#keyPressed(com.sun.star.awt.KeyEvent)
-	 */
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		m_logger.entering("keyPressed, implement on subclass!");		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XKeyListener#keyReleased(com.sun.star.awt.KeyEvent)
-	 */
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		m_logger.entering("keyReleased, implement on subclass!");
 	}
 
 	/* (non-Javadoc)

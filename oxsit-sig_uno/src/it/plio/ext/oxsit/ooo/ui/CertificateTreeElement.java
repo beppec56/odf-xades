@@ -79,9 +79,10 @@ public class CertificateTreeElement extends CertificateTreeElementBase {
 //grab other string specific to only the certificate
 
 //fill emtpy fields
-			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "";
-			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "";
-			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "";
+			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
+			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";
+			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "r";
+			
 
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);

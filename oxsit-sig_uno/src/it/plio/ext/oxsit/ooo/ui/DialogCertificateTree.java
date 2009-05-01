@@ -74,7 +74,7 @@ import com.sun.star.view.XSelectionChangeListener;
  *
  */
 public class DialogCertificateTree extends BasicDialog implements
-		XActionListener, XMouseListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
+		XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener {
 
 	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
 
@@ -240,7 +240,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.dsTextFieldWith(),
-					2,
+					-1,
 					"", sEmptyText, true, true, false, false);
 
 	//now change its background color
@@ -256,7 +256,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.dsTextFieldWith(),
-					2,
+					-1,
 					"", m_sDispElemsName, true, true, true, true);
 
 			xPSet = (XPropertySet) UnoRuntime
@@ -270,7 +270,7 @@ public class DialogCertificateTree extends BasicDialog implements
 					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.dsTreeControlWith(), //CertifTreeDlgDims.DS_COL_4() - CertifTreeDlgDims.DS_COL_0(),
 					sTree,
-					m_sFt_Hint_Doc, 20);
+					m_sFt_Hint_Doc, -1);
 			
 			// ora recupera il textcomponent
 			XControl xTFControl = m_xDlgContainer.getControl(m_sDispElemsName);

@@ -38,7 +38,9 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 	protected final int m_nFIELD_DOCUMENT_VERF_STATE = 1;
 	protected final int m_nFIELD_TITLE_SIGNED_BY = 2;
 
-	
+	public final int m_nFIELD_TEXT_FIELD_10 				= 10;
+	public final int m_nFIELD_TEXT_FIELD_11					= 11;
+	public final int m_nFIELD_TEXT_FIELD_12 				= 12;	
 	
 	/**
 	 * @param context
@@ -71,6 +73,12 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 		try {
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_SIGNED_BY] = m_aRegAcc.getStringFromRegistry("sign_title_signed_by");
+			
+			m_sStringList[9] = "r";
+			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
+			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";
+			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "r";
+			
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);
 		}
