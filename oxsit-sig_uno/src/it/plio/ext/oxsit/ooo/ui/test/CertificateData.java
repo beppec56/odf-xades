@@ -23,6 +23,8 @@
 package it.plio.ext.oxsit.ooo.ui.test;
 
 
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
+
 import java.util.HashMap;
 
 import com.sun.star.lang.XEventListener;

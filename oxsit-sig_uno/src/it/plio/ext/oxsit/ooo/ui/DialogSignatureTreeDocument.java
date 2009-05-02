@@ -53,21 +53,9 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 
 	private static final String DLG_SIGN_TREE = "DialogSignTree";
 
-
 	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
 
-//	public static final int	NUMBER_OF_DISPLAYED_TEST_LINES = 14;
-	
 	/**
-	 * Note on the display:
-	 * two ways on right pane:
-	 * - a six line text on a white background for generals
-	 * - a multiline text for internal elements.
-	 * 
-	 * tree structure:
-	 *  tree ()
-	 *      node ()
-	 *      	
 	 * 
 	 * @param frame
 	 * @param context

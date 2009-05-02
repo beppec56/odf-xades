@@ -22,6 +22,8 @@
 
 package it.plio.ext.oxsit.ooo.ui.test;
 
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
+
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 

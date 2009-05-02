@@ -110,6 +110,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 	
 	
 	/**
+	 * Note on the display:
+	 * two ways on right pane:
+	 * - a six line text on a white background for generals
+	 * - a multiline text for internal elements.
+	 * 
+	 * tree structure:
+	 *  tree ()
+	 *      node ()
+	 *      	
 	 * @param frame
 	 * @param context
 	 * @param _xmcf

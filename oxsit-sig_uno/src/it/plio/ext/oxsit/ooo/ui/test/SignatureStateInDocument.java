@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.ooo.ui.test;
 
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
 
 import java.util.HashMap;
 

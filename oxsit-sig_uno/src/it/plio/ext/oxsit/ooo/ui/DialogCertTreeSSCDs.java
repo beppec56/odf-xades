@@ -43,7 +43,7 @@ import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
 
 /**
- * @author beppe
+ * @author beppec56
  *
  */
 public class DialogCertTreeSSCDs extends DialogCertTreeBase 

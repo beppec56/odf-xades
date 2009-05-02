@@ -42,10 +42,12 @@ public class ImplOnHelpDispatch extends ImplDispatchAsynch {
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
 
 		super( xFrame, xContext, xMCF, unoSaveSlaveDispatch);
+/*		m_aLogger.enableLogging();
+		m_aLogger.ctor();*/
 	}
 
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {
-		m_aLogger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);
+//		m_aLogger.info("impl_dispatch (ImplDispatchAsynch)  "+aURL.Complete);
 		DialogAbout.showDialog(m_xFrame, m_xCC, m_axMCF);
 	}
 }

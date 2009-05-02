@@ -768,12 +768,10 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	public void textChanged(TextEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void disposing(EventObject arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void down(SpinEvent arg0) {
@@ -783,17 +781,14 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	public void first(SpinEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void last(SpinEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void up(SpinEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -801,7 +796,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		m_logger.entering("actionPerformed, implement on subclass!");
+		m_logger.entering("actionPerformed, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -809,7 +804,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void focusGained(FocusEvent arg0) {
-//		m_logger.entering("focusGained, implement on subclass!");
+//		m_logger.entering("focusGained, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -817,53 +812,17 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void focusLost(FocusEvent arg0) {
-//		m_logger.entering("focusLost, implement on subclass!");
+//		m_logger.entering("focusLost, please implement on subclass!");
 	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
-	 */
-/*	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("mouseEntered, implement on subclass!");
-	}*/
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
-	 */
-/*	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("mouseExited, implement on subclass!");
-	}*/
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
-	 */
-/*	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("mousePressed, implement on subclass!");
-	}*/
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XMouseListener#mousePressed(com.sun.star.awt.MouseEvent)
-	 */
-/*	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		m_logger.entering("mouseReleased, implement on subclass!");
-	}*/
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("itemStateChanged, implement on subclass!");
+		m_logger.entering("itemStateChanged, please implement on subclass!");
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("adjustmentValueChanged, implement on subclass!");
+		m_logger.entering("adjustmentValueChanged, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -872,7 +831,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void requestChildNodes(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("requestChildNodes, implement on subclass!");		
+		m_logger.entering("requestChildNodes, please implement on subclass!");		
 	}
 
 	/* (non-Javadoc)
@@ -881,7 +840,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void treeCollapsed(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeCollapsed, implement on subclass!");		
+		m_logger.entering("treeCollapsed, please implement on subclass!");		
 	}
 
 	/* (non-Javadoc)
@@ -891,7 +850,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	public void treeCollapsing(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeCollapsing, implement on subclass!");
+		m_logger.entering("treeCollapsing, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -900,7 +859,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void treeExpanded(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeExpanded, implement on subclass!");
+		m_logger.entering("treeExpanded, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -910,7 +869,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	public void treeExpanding(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeExpanding, implement on subclass!");
+		m_logger.entering("treeExpanding, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -919,7 +878,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("keyPressed, implement on subclass! "+arg0.KeyCode);
+		m_logger.entering("keyPressed, please implement on subclass! "+arg0.KeyCode);
 	}
 
 	/* (non-Javadoc)
@@ -928,6 +887,6 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("keyReleased, implement on subclass! "+arg0.KeyCode);		
+		m_logger.entering("keyReleased, please implement on subclass! "+arg0.KeyCode);		
 	}
 }

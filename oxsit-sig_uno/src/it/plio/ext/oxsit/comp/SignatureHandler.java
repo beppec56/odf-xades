@@ -102,7 +102,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public SignatureHandler(XComponentContext context) {
 		m_logger = new DynamicLogger(this,context);
-//FIXME DEBUG	m_aLogger.enableLogging();
+//FIXME DEBUG	m_logger.enableLogging();
 		m_logger.ctor();
 		m_xComponentContext = context;
 		// passert("m_xComponentContext",m_xComponentContext);
@@ -209,7 +209,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	@Override
 	public void addStatusListener(XStatusListener arg0, URL arg1) {
-		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH_COMPLETE )) {
 			if (m_aImplOnHelpDispatch != null)
 				m_aImplOnHelpDispatch.addStatusListener(arg0, arg1);
 		}				
@@ -220,7 +220,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	@Override
 	public void dispatch(URL arg0, PropertyValue[] arg1) {
-		if (arg0.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+		if (arg0.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH_COMPLETE )) {
 			if (m_aImplOnHelpDispatch != null)
 				m_aImplOnHelpDispatch.dispatch(arg0, arg1);
 		}		
@@ -231,7 +231,7 @@ public class SignatureHandler extends ComponentBase
 	 */
 	@Override
 	public void removeStatusListener(XStatusListener arg0, URL arg1) {
-		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH )) {
+		if (arg1.Complete.equalsIgnoreCase( GlobConstant.m_sON_HELP_ABOUT_PATH_COMPLETE )) {
 			if (m_aImplOnHelpDispatch != null)
 				m_aImplOnHelpDispatch.removeStatusListener(arg0, arg1);
 		}						

@@ -65,6 +65,7 @@ public class GlobConstant {
 	public static final String	m_sSIGN_DIALOG_PATH_TB					= "SignDialogTB";
 	public static final String	m_sSIGN_DIALOG_PATH_TB_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sSIGN_DIALOG_PATH_TB;
 	public static final String	m_sON_HELP_ABOUT_PATH					= "HelpAbout";
+	public static final String	m_sON_HELP_ABOUT_PATH_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sON_HELP_ABOUT_PATH;
 
 	/*
 	 * public static final String m_sAfterLoadPath = "AfterLoad"; called when
