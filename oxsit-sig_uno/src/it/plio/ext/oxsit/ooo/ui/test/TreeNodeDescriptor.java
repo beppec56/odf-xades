@@ -20,9 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui.test;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.ooo.ui.ControlDims;
 
 import java.util.HashMap;
 import java.util.LinkedList;

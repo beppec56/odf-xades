@@ -22,12 +22,11 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.logging.DynamicLogger;
+
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
-
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
 /** The base class of the data element to be shown in the tree control.
  * 
@@ -37,7 +36,10 @@ import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
  * @author beppec56
  *
  */
-public abstract class TreeElement implements XComponent {
+public abstract class TreeElement
+		implements XComponent // XComponent implement for convenience, to be able to examine the interface
+							// using UNO functions
+		{
 
 	/** enum to mark the type of the node.
 	 * The node type is used in rendering the node on the right side

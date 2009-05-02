@@ -22,9 +22,7 @@
 
 package it.plio.ext.oxsit.ooo.ui.test;
 
-import it.plio.ext.oxsit.ooo.ui.CertificateData;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
 
 public class CertificateDataKONoCRL extends CertificateData {
 

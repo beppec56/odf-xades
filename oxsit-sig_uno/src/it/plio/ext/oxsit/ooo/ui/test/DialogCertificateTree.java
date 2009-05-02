@@ -29,12 +29,9 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.BasicDialog;
 import it.plio.ext.oxsit.ooo.ui.CertifTreeDlgDims;
-import it.plio.ext.oxsit.ooo.ui.CertificateDataCA;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
 import it.plio.ext.oxsit.ooo.ui.DialogCertTreeSSCDs;
-import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;

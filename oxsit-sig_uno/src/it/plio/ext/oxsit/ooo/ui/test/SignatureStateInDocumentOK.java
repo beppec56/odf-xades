@@ -27,8 +27,7 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
 
 /**
  * dummy class to add a fake certificate state ok

@@ -25,9 +25,7 @@ package it.plio.ext.oxsit.ooo.ui.test;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
-import it.plio.ext.oxsit.ooo.ui.SignatureStateInDocument;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
+import it.plio.ext.oxsit.ooo.ui.test.TreeNodeDescriptor.TreeNodeType;
 
 public class SignatureStateInDocumentKODocument extends SignatureStateInDocument {
 

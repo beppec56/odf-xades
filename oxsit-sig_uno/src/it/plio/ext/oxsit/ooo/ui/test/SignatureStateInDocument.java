@@ -20,10 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui.test;
 
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
 import java.util.HashMap;
 

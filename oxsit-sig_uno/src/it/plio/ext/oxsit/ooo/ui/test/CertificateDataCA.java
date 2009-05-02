@@ -20,12 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.ooo.ui;
+package it.plio.ext.oxsit.ooo.ui.test;
 
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
-import it.plio.ext.oxsit.ooo.ui.TreeNodeDescriptor.TreeNodeType;
 
 /**
  * @author beppe
