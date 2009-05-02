@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
+import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.Collection;
@@ -306,7 +307,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	}
 
 	public short signatureDialog() {
-		DialogCertificateTree aDialog1 = new DialogCertificateTree( m_xFrame, m_xCC,
+		DialogSignatureTreeDocument aDialog1 = new DialogSignatureTreeDocument( m_xFrame, m_xCC,
 				m_axMCF );
 		try {
 			aDialog1.initialize( 10, 10 );

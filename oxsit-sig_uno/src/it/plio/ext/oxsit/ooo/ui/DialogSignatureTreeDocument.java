@@ -46,12 +46,13 @@ import com.sun.star.view.XSelectionChangeListener;
  * @author beppe
  *
  */
-public class DialogCertTreeSSCDs extends DialogCertTreeBase 
+public class DialogSignatureTreeDocument extends DialogCertTreeBase 
 		implements	IDialogCertTreeBase,
 		XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 		{
 
-	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
+	private static final String DLG_SIGN_TREE = "DialogSignTree";
+
 
 	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
 
@@ -72,10 +73,12 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 * @param context
 	 * @param _xmcf
 	 */
-	public DialogCertTreeSSCDs(XFrame frame, XComponentContext context,
+	public DialogSignatureTreeDocument(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
 		// TODO Auto-generated constructor stub
+		m_sDlgListCertTitle = "id_title_cert_tree"; // local value, different !
+		m_sFt_Hint_Doc = "id_title_cert_treew"; // local vale, different !
 		fillLocalizedString();
 // the next value should be read from configuration, when configuration is written...
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
@@ -103,28 +106,42 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
 		m_logger.entering("initialize");
+		insertButton(this,
+				CertifTreeDlgDims.DS_COL_PB2(),
+//				CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
+				CertifTreeDlgDims.DS_ROW_4(),
+				CertifTreeDlgDims.dsBtnWidthCertTree(),
+				m_sVerifyBtn,
+				m_sBtn_Verify,
+				(short) PushButtonType.STANDARD_value);
+
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB3(),
-					CertifTreeDlgDims.DS_ROW_4(),
-					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					m_sSelectBtn,
-					m_sBtn_SelDevice,
-					(short) PushButtonType.STANDARD_value, 6);
-			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					m_sAddBtn,
 					m_sBtn_AddCertLabel,
 					(short) PushButtonType.STANDARD_value, 7);
+
+			insertButton(this,
+					CertifTreeDlgDims.DS_COL_PB4(),
+					CertifTreeDlgDims.DS_ROW_4(),
+					CertifTreeDlgDims.dsBtnWidthCertTree(),
+					m_sRemoveBtn,
+					m_sBtn_RemoveCertLabel,
+					(short) PushButtonType.STANDARD_value);
+			
 			insertHorizontalFixedLine(
 					0, 
 					CertifTreeDlgDims.DLGS_BOTTOM_FL_Y(CertifTreeDlgDims.dsHeigh()), 
 					CertifTreeDlgDims.dsWidth(), "");
 
 			//must be called AFTER the local init
-			super.initializeLocal(DLG_CERT_TREE, m_sDlgListCertTitle, posX, posY);
+			m_sTreeCtl = "certsigntree"; // the tree element for this dialog, new name
+			super.initializeLocal(DLG_SIGN_TREE, m_sDlgListCertTitle, posX, posY);
 
+			center();
+			
 //			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
 //					super.m_xDialogControl );
 //			xTFWindow.addKeyListener( this );
@@ -155,8 +172,26 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
-		m_logger.info("Aggiunto certificato");				
-		addOneSignature();		
+		DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs( m_xParentFrame, m_xContext, m_xMCF );
+		try {
+			int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
+			int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*4;//to see the underlying certificates already in the document
+			aDialog1.initialize( BiasX, BiasY);
+			aDialog1.executeDialog();
+			aDialog1.disposeElements();
+		} catch (BasicErrorException e) {
+			m_logger.severe("actionPerformed", "", e);
+		}
+		try {
+			aDialog1.executeDialog();
+			return;
+		} catch (BasicErrorException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("actionPerformed", "", e);
+			return;
+		}
+	// Helper.setUnoPropertyValue(m_xMSFDialogModel, "Step", new
+	// Integer(1));
 	}
 
 	/* (non-Javadoc)
@@ -165,6 +200,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void removeButtonPressed() {
 		//not implemented here
+		//fake implementation!
 	}
 
 	/* (non-Javadoc)
@@ -173,6 +209,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
+		m_logger.info("reportButtonPressed","FAKE IMPLEMENTATION!");
+		addOneSignature();		
 	}
 
 	/* (non-Javadoc)
@@ -181,8 +219,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
-		m_logger.info("Seleziona dispositivo");
-		addOneCertificate();
 	}
 
 	/* (non-Javadoc)
@@ -192,7 +228,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void verifyButtonPressed() {
 		//not implemented here
 	}	
-
 	/**
 	 * 
 	 * @param oTreeNodeObject this is the TreeElement present in the tree element data field
@@ -206,14 +241,17 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 //get node type and enable/disable	the pushbutton
 			TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
 			boolean bEnableButton = false;
-			if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
+			if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.SIGNATURE) {
 				bEnableButton = true;
 			}
-			enableSingleButton(m_sAddBtn,bEnableButton);
+			enableSingleButton(m_sVerifyBtn,bEnableButton);
+			enableSingleButton(m_sRemoveBtn,bEnableButton);
 			aCurrentNode.EnableDisplay(true);
 		}
-		else
-			enableSingleButton(m_sAddBtn,false);		
+		else {
+			enableSingleButton(m_sVerifyBtn,false);
+			enableSingleButton(m_sRemoveBtn,false);
+		}
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
@@ -226,5 +264,5 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			if(xaWNode != null )
 				xaWNode.setEnable(bEnable);
 		}
-	}		
+	}
 }
