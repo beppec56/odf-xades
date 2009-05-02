@@ -29,8 +29,8 @@ import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
+import it.plio.ext.oxsit.ooo.ui.test.DialogCertificateTree;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.Collection;

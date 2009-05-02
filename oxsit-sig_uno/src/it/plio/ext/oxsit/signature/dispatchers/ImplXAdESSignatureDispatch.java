@@ -27,7 +27,7 @@ import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
+import it.plio.ext.oxsit.ooo.ui.test.DialogCertificateTree;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;

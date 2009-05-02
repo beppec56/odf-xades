@@ -23,7 +23,7 @@
 package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.ui.DialogCertificateTree;
+import it.plio.ext.oxsit.ooo.ui.test.DialogCertificateTree;
 import it.plio.ext.oxsit.utilities.OOoServerInfo;
 
 import com.sun.star.lang.XMultiComponentFactory;
