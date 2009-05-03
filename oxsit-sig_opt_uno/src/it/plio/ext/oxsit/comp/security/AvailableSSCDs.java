@@ -25,6 +25,7 @@ package it.plio.ext.oxsit.comp.security;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 
 import java.io.IOException;
@@ -72,6 +73,8 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
 	
 	protected String 					m_sExtensionSystemPath;
+	
+	protected String[]					m_sSSCDLibraryPaths;	
 
 	protected DynamicLogger m_aLogger;
 	/**
@@ -90,6 +93,15 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 		} catch (IOException e) {
 			m_aLogger.severe("ctor", "", e);
 		}
+
+		m_sSSCDLibraryPaths = new String[4];
+//grab the paths from the configuration
+		OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(_ctx);
+		m_sSSCDLibraryPaths[0] = xOptionsConfigAccess.getText("SSCDFilePath1");
+		m_sSSCDLibraryPaths[1] = xOptionsConfigAccess.getText("SSCDFilePath2");
+		m_sSSCDLibraryPaths[2] = xOptionsConfigAccess.getText("SSCDFilePath3");
+		m_sSSCDLibraryPaths[3] = xOptionsConfigAccess.getText("SSCDFilePath4");
+		xOptionsConfigAccess.dispose();
 	}
 
 	@Override

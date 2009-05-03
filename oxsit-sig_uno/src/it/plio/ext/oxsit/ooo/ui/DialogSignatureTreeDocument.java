@@ -71,16 +71,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 // the next value should be read from configuration, when configuration is written...
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
 		CertifTreeDlgDims.setDialogSize(300, 100, 0);
-
-//instantiate the SSCDs service
-		try {
-			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
-			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
-			if(m_axoxAvailableSSCDs != null)
-				m_axoxAvailableSSCDs.scanDevices();
-		} catch (Exception e) {
-			m_logger.severe("ctor", e);
-		}
 	}
 
 	public void initialize(int _nPosX, int _nPosY ) throws BasicErrorException {

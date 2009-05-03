@@ -162,6 +162,7 @@ public class ManageSSCDOptions extends ManageOptions  {
                 //...
             	//... implement the function...
 // we need to get the frame, the component context and from it the multiservice factory
+// then instantiate a file dialog to search for a path            	
             	
             	//
             }
