@@ -82,7 +82,7 @@
 				</info>
 				<value>http://www.cnipa.gov.it/site/_files/lista%20dei%20certificati.html</value>
 			</prop>
-			<!-- logging properties -->
+			<!-- start of logging properties -->
 			<prop oor:name="EnableInfoLevel" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
@@ -157,6 +157,36 @@
 				<value>50000</value>
 			</prop>
 			<!-- end of logging properties -->
+			<!-- start of SSCD properties -->
+			<prop oor:name="SSCDFilePath1" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>Path on system where the binary PKCS#11 library is installed for SSCD n. 1</desc>
+				</info>
+				<value></value>
+			</prop>
+			<prop oor:name="SSCDFilePath2" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>Path on system where the binary PKCS#11 library is installed for SSCD n. 2</desc>
+				</info>
+				<value></value>
+			</prop>
+			<prop oor:name="SSCDFilePath3" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>Path on system where the binary PKCS#11 library is installed for SSCD n. 3</desc>
+				</info>
+				<value></value>
+			</prop>
+			<prop oor:name="SSCDFilePath4" oor:type="xs:string">
+				<info>
+					<author>beppec56</author>
+					<desc>Path on system where the binary PKCS#11 library is installed for SSCD n. 4</desc>
+				</info>
+				<value></value>
+			</prop>
+			<!-- end of SSCD properties -->
 		</group>
 		<!-- set oor:name="SignatureOptionsParameters" oor:node-type="SignatureOptionsParameter">
 			<info>

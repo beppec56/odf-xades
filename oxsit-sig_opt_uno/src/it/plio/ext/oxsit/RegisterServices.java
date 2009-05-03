@@ -24,6 +24,7 @@ package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.comp.options.ManageGeneralOptions;
 import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
+import it.plio.ext.oxsit.comp.options.ManageSSCDOptions;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
@@ -52,6 +53,10 @@ public class RegisterServices {
 		}
 		else if ( sImplementationName.equals( ManageLoggingOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageLoggingOptions.class, ManageLoggingOptions.m_sServiceNames );
+//DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( ManageSSCDOptions.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( ManageSSCDOptions.class, ManageSSCDOptions.m_sServiceNames );
 //DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
@@ -83,6 +88,9 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( ManageGeneralOptions.m_sImplementationName, ManageGeneralOptions.m_sServiceNames, xRegistryKey );
 		boolean retLogging = 
 			Factory.writeRegistryServiceInfo( ManageLoggingOptions.m_sImplementationName, ManageLoggingOptions.m_sServiceNames, xRegistryKey );
+		
+		boolean retSSCDOpts = 
+			Factory.writeRegistryServiceInfo( ManageSSCDOptions.m_sImplementationName, ManageSSCDOptions.m_sServiceNames, xRegistryKey );
 
 		boolean retDigitalSignatures = 
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
@@ -99,6 +107,9 @@ public class RegisterServices {
 		if (!retLogging)
 			System.out.println("__writeRegistryServiceInfo: "+ManageLoggingOptions.m_sImplementationName + "failed");		
 		
+		if (!retSSCDOpts)
+			System.out.println("__writeRegistryServiceInfo: "+ManageSSCDOptions.m_sImplementationName + "failed");		
+		
 		if (!retDigitalSignatures)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
@@ -108,6 +119,6 @@ public class RegisterServices {
 		if (!retAvailSSCDs)
 			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs.m_sImplementationName + "failed");		
 
-		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retAvailSSCDs);
+		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retAvailSSCDs && retSSCDOpts);
 	}
 }

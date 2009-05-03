@@ -68,9 +68,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	public ManageLoggingOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_logging");//leaf refers to OOo documentation about
 															// extension options
-		m_logger.enableLogging();// disabled in base class
-/*		m_logger.disableInfo();
-		m_logger.disableWarning();*/
+//DEBUG		m_logger.enableLogging();// disabled in base class
 		m_logger.ctor();
 		//prepare the list of controls on the page
 

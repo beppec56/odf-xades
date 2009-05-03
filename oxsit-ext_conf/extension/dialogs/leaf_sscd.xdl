@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="leaf_sscd" dlg:left="157" dlg:top="93" dlg:width="260" dlg:height="185" dlg:help-text="&amp;152..HelpText" dlg:closeable="true" dlg:moveable="true" dlg:title="&amp;153..Title" dlg:withtitlebar="false">
+ <dlg:styles>
+  <dlg:style dlg:style-id="0" dlg:font-height="12" dlg:font-weight="150"/>
+ </dlg:styles>
+ <dlg:bulletinboard>
+  <dlg:text dlg:style-id="0" dlg:id="Label1" dlg:tab-index="0" dlg:left="15" dlg:top="4" dlg:width="209" dlg:height="10" dlg:help-text="&amp;154..Label1.HelpText" dlg:value="&amp;155..Label1.Label"/>
+  <dlg:text dlg:id="Label2" dlg:tab-index="2" dlg:left="6" dlg:top="30" dlg:width="58" dlg:height="8" dlg:help-text="&amp;156..Label2.HelpText" dlg:value="&amp;157..Label2.Label" dlg:align="right"/>
+  <dlg:text dlg:id="Label3" dlg:tab-index="5" dlg:left="6" dlg:top="49" dlg:width="58" dlg:height="8" dlg:help-text="&amp;180.leaf_sscd.Label3.HelpText" dlg:value="&amp;181.leaf_sscd.Label3.Label" dlg:align="right"/>
+  <dlg:text dlg:id="Label4" dlg:tab-index="8" dlg:left="6" dlg:top="69" dlg:width="58" dlg:height="8" dlg:help-text="&amp;186.leaf_sscd.Label4.HelpText" dlg:value="&amp;187.leaf_sscd.Label4.Label" dlg:align="right"/>
+  <dlg:text dlg:id="Label5" dlg:tab-index="11" dlg:left="6" dlg:top="90" dlg:width="58" dlg:height="8" dlg:help-text="&amp;192.leaf_sscd.Label5.HelpText" dlg:value="&amp;193.leaf_sscd.Label5.Label" dlg:align="right"/>
+  <dlg:textfield dlg:id="SSCDFilePath1" dlg:tab-index="1" dlg:left="67" dlg:top="29" dlg:width="169" dlg:height="12" dlg:help-text="&amp;196.leaf_sscd.SSCDFilePath1.HelpText" dlg:value="&amp;197.leaf_sscd.SSCDFilePath1.Text"/>
+  <dlg:textfield dlg:id="SSCDFilePath2" dlg:tab-index="4" dlg:left="67" dlg:top="48" dlg:width="169" dlg:height="12" dlg:help-text="&amp;198.leaf_sscd.SSCDFilePath2.HelpText" dlg:value="&amp;199.leaf_sscd.SSCDFilePath2.Text"/>
+  <dlg:textfield dlg:id="SSCDFilePath3" dlg:tab-index="7" dlg:left="67" dlg:top="68" dlg:width="169" dlg:height="12" dlg:help-text="&amp;200.leaf_sscd.SSCDFilePath3.HelpText" dlg:value="&amp;201.leaf_sscd.SSCDFilePath3.Text"/>
+  <dlg:textfield dlg:id="SSCDFilePath4" dlg:tab-index="10" dlg:left="67" dlg:top="89" dlg:width="169" dlg:height="12" dlg:help-text="&amp;202.leaf_sscd.SSCDFilePath4.HelpText" dlg:value="&amp;203.leaf_sscd.SSCDFilePath4.Text"/>
+  <dlg:button dlg:id="BrowseSystemPath1" dlg:tab-index="3" dlg:left="237" dlg:top="29" dlg:width="15" dlg:height="12" dlg:help-text="&amp;204.leaf_sscd.BrowseSystemPath1.HelpText" dlg:value="&amp;205.leaf_sscd.BrowseSystemPath1.Label"/>
+  <dlg:button dlg:id="BrowseSystemPath2" dlg:tab-index="6" dlg:left="237" dlg:top="48" dlg:width="15" dlg:height="12" dlg:help-text="&amp;208.leaf_sscd.BrowseSystemPath2.HelpText" dlg:value="&amp;209.leaf_sscd.BrowseSystemPath2.Label"/>
+  <dlg:button dlg:id="BrowseSystemPath3" dlg:tab-index="9" dlg:left="237" dlg:top="68" dlg:width="15" dlg:height="12" dlg:help-text="&amp;210.leaf_sscd.BrowseSystemPath3.HelpText" dlg:value="&amp;211.leaf_sscd.BrowseSystemPath3.Label"/>
+  <dlg:button dlg:id="BrowseSystemPath4" dlg:tab-index="12" dlg:left="237" dlg:top="89" dlg:width="15" dlg:height="12" dlg:help-text="&amp;212.leaf_sscd.BrowseSystemPath4.HelpText" dlg:value="&amp;213.leaf_sscd.BrowseSystemPath4.Label"/>
+ </dlg:bulletinboard>
+</dlg:window>

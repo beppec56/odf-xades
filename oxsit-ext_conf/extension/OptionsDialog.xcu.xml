@@ -56,7 +56,7 @@
           </prop>
           <prop oor:name="Label">
             <value xml:lang="en-US">General</value>
-            <value xml:lang="it">Generali</value>1
+            <value xml:lang="it">Generali</value>
           </prop>
           <prop oor:name="OptionsPage">
             <value>%origin%/dialogs/leaf_general.xdl</value>
@@ -81,7 +81,7 @@
           </prop>
           <prop oor:name="Label">
             <value xml:lang="en-US">Logging</value>
-            <value xml:lang="it">Logging</value>1
+            <value xml:lang="it">Logging</value>
           </prop>
           <prop oor:name="OptionsPage">
             <value>%origin%/dialogs/leaf_logging.xdl</value>
@@ -98,6 +98,31 @@
           </prop>
         </node>
         <!-- end leaf for logging options -->      
+        <!-- leaf for SSCD options -->
+        <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.SSCD" oor:op="fuse">
+        <!-- the following id is used by the extension manager to retrieve the option leaf -->
+          <prop oor:name="Id">
+            <value>@WEBIDENTBASE@.@NAME@</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">Secure Signature Creation Device Options</value>
+            <value xml:lang="it">Opzioni per Secure Signature Creation Device (SSCD)</value>
+          </prop>
+          <prop oor:name="OptionsPage">
+            <value>%origin%/dialogs/leaf_sscd.xdl</value>
+          </prop>
+          <prop oor:name="EventHandlerService">
+	        <!-- Service name implementing the handler -->
+            <value>it.plio.ext.oxsit.options.ManageSSCDOptions</value>
+          </prop>
+          <prop oor:name="GroupId">
+            <value>@WEBIDENTBASE@.@NAME@.options.node</value>
+          </prop>
+          <prop oor:name="GroupIndex">
+            <value>2</value>
+          </prop>
+        </node>
+        <!-- end leaf for SSCD options -->      
       </node>
     </node>
   </node>
