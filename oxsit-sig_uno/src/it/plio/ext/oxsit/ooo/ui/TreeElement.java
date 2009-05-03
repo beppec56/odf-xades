@@ -87,6 +87,58 @@ public abstract class TreeElement
 	public TreeElement m_sParentElement; 
 
 	/**
+	 * constants for signature state
+	 * 
+	 */
+	public static final int m_nSIGNATURE_STATE_VALID = 0;
+	public static final int m_nSIGNATURE_STATE_NOT_VALID = 1;
+	public static final int m_nSIGNATURE_STATE_TO_BE_VERIFIED = 2;
+	/**
+	 * the corresponding strings identifier, to retrieve the string from resources.
+	 */
+	public static final String[]  m_sSIGNATURE_STATE =  { 
+							"err_txt_sign_ok",
+							"err_txt_sign_not_val",
+							"err_txt_sign_to_ver"
+						};
+
+	/**
+	 * constants for document verification state
+	 * 
+	 */
+	public static final int m_nDOCUMENT_VERIF_STATE_VALID = 0;
+	public static final int m_nDOCUMENT_VERIF_MOD = 1;
+	public static final int m_nDOCUMENT_VERIF_TO_BE_VERIFIED = 2;
+	/**
+	 * the corresponding strings identifier, to retrieve the string from resources.
+	 */
+	public static final String[]  m_sDOCUMENT_VERIF_STATE =  { 
+							"err_txt_docum_ok",
+							"err_txt_docum_mod",
+							"err_txt_docum_to_ver"
+						};
+
+	/**
+	 * constants for signature and document verification state conditions
+	 * 
+	 */
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_ENABLED = 0;
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_SIG_OPT = 1;
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_DOC_OPT = 2;
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_DISAB = 3;
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_INET = 4;
+	/**
+	 * the corresponding strings identifier, to retrieve the string from resources.
+	 */
+	public static final String[]  m_sDOCUMENT_VERIF_STATE_CONDT =  { 
+							"err_txt_docum_verf_condt_ok",
+							"err_txt_docum_verf_condt_nosig",
+							"err_txt_docum_verf_condt_nodocu",
+							"err_txt_docum_verf_condt_disb",
+							"err_txt_verf_condt_no_inet"
+						};
+
+	/**
 	 * some constant for certificate validation state
 	 */
 	public static final int m_nCERTIFICATE_STATE_VALID = 0;
@@ -160,6 +212,28 @@ public abstract class TreeElement
 						};
 
 	/**
+	 * constants for document signature date mode 
+	 * 
+	 */
+	public static final int m_nDOCUMENT_SIGN_DATE_TEMP_CERT = 0;
+	public static final int m_nDOCUMENT_SIGN_DATE_PC = 1;
+	public static final int m_nDOCUMENT_SIGN_DATE_MANUAL = 2;
+	/**
+	 * the corresponding strings identifier, to retrieve the string from resources.
+	 */
+	public static final String[]  m_sDOCUMENT_SIGN_DATE_L1 =  { 
+							"sign_txt_l1_temp_cert",
+							"sign_txt_l1_date_pc",
+							"sign_txt_l1_date_manual"
+						};
+	public static final String[]  m_sDOCUMENT_SIGN_DATE_L2 =  { 
+							"sign_txt_l2_temp_cert",
+							"sign_txt_l2_date_pc",
+							"sign_txt_l2_date_manual"
+	};
+
+	
+	/**
 	 * the node type for this node
 	 */
 	private TreeNodeType m_nType;
@@ -173,7 +247,11 @@ public abstract class TreeElement
 	private int				m_nIssuerState;
 
 	private int				m_nSignatureState;
-	private int				m_nSignatureStateConditions;
+	private int				m_nSignatureAndDocumentStateConditions;
+	
+	private int				m_nDocumentVerificationState;
+	
+	private int				m_nSignatureDateMode;
 	
 	private String			m_sNodeGraphic;
 	
@@ -298,17 +376,17 @@ public abstract class TreeElement
 	}
 
 	/**
-	 * @param m_nSignatureStateConditions the m_nSignatureStateConditions to set
+	 * @param m_nSignatureAndDocumentStateConditions the m_nSignatureAndDocumentStateConditions to set
 	 */
-	public void setSignatureStateConditions(int m_nSignatureStateConditions) {
-		this.m_nSignatureStateConditions = m_nSignatureStateConditions;
+	public void setSignatureAndDocumentStateConditions(int m_nSignatureStateConditions) {
+		this.m_nSignatureAndDocumentStateConditions = m_nSignatureStateConditions;
 	}
 
 	/**
-	 * @return the m_nSignatureStateConditions
+	 * @return the m_nSignatureAndDocumentStateConditions
 	 */
-	public int getSignatureStateConditions() {
-		return m_nSignatureStateConditions;
+	public int getSignatureAndDocumentStateConditions() {
+		return m_nSignatureAndDocumentStateConditions;
 	}
 
 	/**
@@ -339,6 +417,34 @@ public abstract class TreeElement
 	 */
 	public String getNodeName() {
 		return m_nNodeDescriptiveName;
+	}
+
+	/**
+	 * @param m_nDocumentVerificationState the m_nDocumentVerificationState to set
+	 */
+	public void setDocumentVerificationState(int m_nDocumentVerificationState) {
+		this.m_nDocumentVerificationState = m_nDocumentVerificationState;
+	}
+
+	/**
+	 * @return the m_nDocumentVerificationState
+	 */
+	public int getDocumentVerificationState() {
+		return m_nDocumentVerificationState;
+	}
+
+	/**
+	 * @param m_nSignatureDateMode the m_nSignatureDateMode to set
+	 */
+	public void setSignatureDateMode(int m_nSignatureDateMode) {
+		this.m_nSignatureDateMode = m_nSignatureDateMode;
+	}
+
+	/**
+	 * @return the m_nSignatureDateMode
+	 */
+	public int getSignatureDateMode() {
+		return m_nSignatureDateMode;
 	}
 
 }

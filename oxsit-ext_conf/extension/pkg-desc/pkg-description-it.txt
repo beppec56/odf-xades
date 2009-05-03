@@ -4,6 +4,3 @@ modalità XAdES (IT).
 Concesso in licenza a norma della EUPL V.1.1.
 Copyright (c) 2009 Giuseppe Castagno
 Copyright (c) 2009 Roberto Resoli
-
-Proof of concept per l'interfaccia dell'estensione
-della firma digitale tipo XAdES (IT).

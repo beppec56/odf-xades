@@ -83,18 +83,12 @@
 Licensed under EUPL version 1.1.
 Copyright 2009 Giuseppe Castagno
 Copyright 2009 Roberto Resoli
-
-Proof of concept for XAdES (IT) digital signature extension
-user interface.
 </value>
 				<value xml:lang="it">Estensione per firma digitale modalità XAdES (IT).
 (@WEBIDENTBASE@.@NAME@)
 Concesso in licenza a norma dell'EUPL versione 1.1.
 Copyright 2009 Giuseppe Castagno
 Copyright 2009 Roberto Resoli
-
-'Proof of concept' per l'interfaccia dell'estensione  della firma
-digitale tipo XAdES, implementazione italiana.
 </value>
 			</prop>
 		</node>
@@ -336,6 +330,7 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="err_txt_docu_nover" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">wDocument not controlled</value>
 				<value xml:lang="it">wDocumento non controllato (opzioni, usate 'Verifica')</value>
 			</prop>
 		</node>
@@ -377,6 +372,7 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="cert_title_issuer" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iIssued by:</value>
 				<value xml:lang="it">iRilasciato da:</value>
 			</prop>
 		</node>
@@ -387,40 +383,53 @@ Roberto Resoli, developer
 		</node>
 		<node oor:name="sign_title_signed_by" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iSigned by:</value>
 				<value xml:lang="it">iFirmato da:</value>
 			</prop>
 		</node>
 		<node oor:name="cert_title_valid_from" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iValid not before:</value>
 				<value xml:lang="it">iValido da:</value>
 			</prop>
 		</node>
 		<node oor:name="cert_title_valid_to" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iValid not after:</value>
 				<value xml:lang="it">iValido fino a:</value>
 			</prop>
 		</node>
 		<!--
 		    Time stamping types
 		-->
-		<node oor:name="txt_times_serv1" oor:op="replace">
+		<node oor:name="sign_txt_l1_temp_cert" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">rL'ora è stata acquisita da un server di</value>
 			</prop>
 		</node>
-		<node oor:name="txt_times_serv2" oor:op="replace">
+		<node oor:name="sign_txt_l2_temp_cert" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">rmarca temporale il </value>
 			</prop>
 		</node>
-		<node oor:name="txt_time_pc1" oor:op="replace">
+		<node oor:name="sign_txt_l1_date_pc" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">rData e ora della firma dal PC</value>
 			</prop>
 		</node>
-		<node oor:name="txt_time_pc2" oor:op="replace">
+		<node oor:name="sign_txt_l2_date_pc" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">rdel firmatario.</value>
+			</prop>
+		</node>
+		<node oor:name="sign_txt_l1_date_manual" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rData e ora della firma impostate</value>
+			</prop>
+		</node>
+		<node oor:name="sign_txt_l2_date_manual" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rdal firmatario.</value>
 			</prop>
 		</node>
 		<!--
@@ -474,6 +483,61 @@ Roberto Resoli, developer
 		<node oor:name="err_txt_ca_unkn" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">eCA non controllata (opzioni)</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_sign_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rFirma valida</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_sign_not_val" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">eFirma NON valida</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_sign_to_ver" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wFirma da verificare (usate 'Verifica')</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rIl documento non è modificato</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_mod" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">eIl documento è modificato (usate 'Rapporto')</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_to_ver" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wDocumento non controllato</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_verf_condt_ok" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">rVerifica firma e documento abilitate</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_verf_condt_nosig" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wOpzione verifica firma non attiva</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_verf_condt_nodocu" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wOpzione verifica documento non attiva</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_docum_verf_condt_disb" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wOpzioni di verifica non attive</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_verf_condt_no_inet" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">wAccesso a Internet non attivo</value>
 			</prop>
 		</node>
 		<node oor:name="id_question_savedoc" oor:op="replace">

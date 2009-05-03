@@ -104,6 +104,7 @@ public class CertificateTreeElementBase extends TreeElement {
 		// certificate
 		try {
 			//just for test, should be added by subclass
+			//FIXME the subject name can come from another location!
 			m_sStringList[m_nFIELD_OWNER_NAME] = getNodeName();  // will got it from the certificate raw data
 
 			//initializes fixed string (titles)

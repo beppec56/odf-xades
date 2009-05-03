@@ -49,6 +49,7 @@ public class CertificateTreeElement extends CertificateTreeElementBase {
 	public final int m_nFIELD_TEXT_FIELD_10 				= 10;
 	public final int m_nFIELD_TEXT_FIELD_11					= 11;
 	public final int m_nFIELD_TEXT_FIELD_12 				= 12;
+	public final int m_nFIELD_TEXT_FIELD_13 				= 13;
 
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
@@ -82,7 +83,7 @@ public class CertificateTreeElement extends CertificateTreeElementBase {
 			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
 			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";
 			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "r";
-			
+			m_sStringList[m_nFIELD_TEXT_FIELD_13] = "r";
 
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);

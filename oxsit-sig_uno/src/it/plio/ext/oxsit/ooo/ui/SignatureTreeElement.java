@@ -36,11 +36,14 @@ import com.sun.star.uno.XComponentContext;
 public class SignatureTreeElement extends CertificateTreeElementBase {
 	protected final int m_nFIELD_SIGNATURE_STATE = 0;
 	protected final int m_nFIELD_DOCUMENT_VERF_STATE = 1;
-	protected final int m_nFIELD_TITLE_SIGNED_BY = 2;
+	protected final int m_nFIELD_DOCUMENT_VERF_CONDT = 2;
+	protected final int m_nFIELD_TITLE_SIGNED_BY = 3;
 
-	public final int m_nFIELD_TEXT_FIELD_10 				= 10;
-	public final int m_nFIELD_TEXT_FIELD_11					= 11;
-	public final int m_nFIELD_TEXT_FIELD_12 				= 12;	
+	public final int m_nFIELD_TITLE_DATE_SIGN				= 10;
+	public final int m_nFIELD_DATE_SIGN						= 11;
+	public final int m_nFIELD_DATE_SIGN_CONDT_L1			= 12;
+	public final int m_nFIELD_DATE_SIGN_CONDT_L2			= 13;
+
 	
 	/**
 	 * @param context
@@ -51,14 +54,18 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 		super(context, _xmcf);
 		// TODO Auto-generated constructor stub
 		setNodeType(TreeNodeType.SIGNATURE);
-		setSignatureState(0);
+		setSignatureState(m_nSIGNATURE_STATE_TO_BE_VERIFIED);
+		setDocumentVerificationState(m_nDOCUMENT_VERIF_TO_BE_VERIFIED);
+		setSignatureAndDocumentStateConditions(m_nDOCUMENT_VERIF_STATE_CONDT_DISAB);
+		setSignatureDateMode(m_nDOCUMENT_SIGN_DATE_MANUAL);
+
 //set the position of common nodes, different in signature display
-		m_nFIELD_OWNER_NAME 					= 3;
-		m_nFIELD_CERTIFICATE_STATE				= 4;
-		m_nFIELD_CERTIFICATE_VERF_CONDITIONS	= 5;
-		m_nFIELD_TITLE_ISSUER	 				= 6;
-		m_nFIELD_ISSUER 						= 7;
-		m_nFIELD_ISSUER_VERF_CONDITIONS			= 8;
+		m_nFIELD_OWNER_NAME 					= 4;
+		m_nFIELD_CERTIFICATE_STATE				= 5;
+		m_nFIELD_CERTIFICATE_VERF_CONDITIONS	= 6;
+		m_nFIELD_TITLE_ISSUER	 				= 7;
+		m_nFIELD_ISSUER 						= 8;
+		m_nFIELD_ISSUER_VERF_CONDITIONS			= 9;
 	}
 
 	public void initialize() {
@@ -73,12 +80,27 @@ public class SignatureTreeElement extends CertificateTreeElementBase {
 		try {
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_SIGNED_BY] = m_aRegAcc.getStringFromRegistry("sign_title_signed_by");
-			
-			m_sStringList[9] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "r";
-			
+			m_sStringList[m_nFIELD_TITLE_DATE_SIGN] = m_aRegAcc.getStringFromRegistry("sign_title_date");
+
+			//initializes string for signature and document state
+			m_sStringList[m_nFIELD_SIGNATURE_STATE] = 
+				m_aRegAcc.getStringFromRegistry( m_sSIGNATURE_STATE[getSignatureState()]);
+
+			m_sStringList[m_nFIELD_DOCUMENT_VERF_STATE] =
+				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_VERIF_STATE[getDocumentVerificationState()]);
+			//set the string for document and signature verification condt
+			m_sStringList[m_nFIELD_DOCUMENT_VERF_CONDT] =
+				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_VERIF_STATE_CONDT[getSignatureAndDocumentStateConditions()]);
+
+			// set the strings for the signature date conditions 
+			m_sStringList[m_nFIELD_DATE_SIGN] = "r<una data di firma>";
+			int sigMode = getSignatureDateMode();
+			m_sStringList[m_nFIELD_DATE_SIGN_CONDT_L1] =
+				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_SIGN_DATE_L1[sigMode]);
+				
+			m_sStringList[m_nFIELD_DATE_SIGN_CONDT_L2] =
+				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_SIGN_DATE_L2[sigMode]);
+
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);
 		}

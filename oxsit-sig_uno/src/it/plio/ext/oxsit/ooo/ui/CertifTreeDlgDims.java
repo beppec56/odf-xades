@@ -40,7 +40,7 @@ public class CertifTreeDlgDims {
 	 * (the one with coloro and bold, italic, etc)
 	 */
 	public static final int m_nMAXIMUM_FIELDS 				= 14;
-	
+
 	public static void setDialogSize(int nDs_Width, int nDs_Heigh, int nDs_TreeWidth) {
 //check for correct values
 		/*
