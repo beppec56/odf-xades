@@ -67,19 +67,14 @@ public class GlobConstant {
 	public static final String	m_sON_HELP_ABOUT_PATH					= "HelpAbout";
 	public static final String	m_sON_HELP_ABOUT_PATH_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sON_HELP_ABOUT_PATH;
 
-	/*
-	 * public static final String m_sAfterLoadPath = "AfterLoad"; called when
-	 * loaded terminated, to check signature and display error if signature is
-	 * not valid May be better implemnt it in synch job, on the OnLoad command
-	 */
-	public static final String	m_sBEFORE_SAVE_PATH						= "BeforeSave";								// 
-	public static final String	m_sBEFORE_SAVE_AS_PATH					= "BeforeSaveAs";
-	public static final String	m_sSELECT_SIGN_PATH						= "SelectSignature";
-
 	/** end of ProtocolHandler.xcu(.xml) Addon.xcu(.xml) constants */
-	// / constant for uno dispatch URL
-	public static final String	m_sUNO_SAVE_URL_COMPLETE					= ".uno:Save";
-	public static final String	m_sUNO_SAVE_AS_URL_COMPLETE					= ".uno:SaveAs";
+	// constant for UNO dispatch URL (intercepted url)
+	public static final String	m_sUNO_PROTOCOL								= ".uno:";
+	public static final String m_sUNO_SAVE_URL_COMPLETE 					= ".uno:Save";
+	public static final String m_sUNO_SSAVE_AS_URL_COMPLETE 				= ".uno:SaveAs";
+	public static final String	m_sUNO_SIGNATURE_URL_COMPLETE				= ".uno:Signature";
+	public static final String	m_sUNO_MACRO_SIGNATURE_URL_COMPLETE			= ".uno:MacroSignature";
+
 	// these come from sfx2/inc/sfx2/signaturestate.hxx
 	public static final int		m_nSIGNATURESTATE_UNKNOWN					= -1;
 	public static final int		m_nSIGNATURESTATE_NOSIGNATURES				= 0;
@@ -151,12 +146,4 @@ public class GlobConstant {
 	
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
-	//intercepted url
-	public static final String m_sUnoSignatureURLComplete = ".uno:Signature";
-	public static final String m_sUnoSaveURLComplete = ".uno:Save";
-	public static final String m_sUnoSaveAsURLComplete = ".uno:SaveAs";
-	public static final String	m_sUnoSignatureURLProtocol	= ".uno:";
-	public static final String	m_sUnoSignatureURLPath	= "Signature";
-
-	
 }

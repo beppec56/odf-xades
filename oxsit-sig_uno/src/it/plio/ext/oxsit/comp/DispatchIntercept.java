@@ -115,8 +115,8 @@ public class DispatchIntercept extends ComponentBase
 	// are registered as frame action m_aListeners
 
 	private static final String[]					m_InterceptedURLs			= {
-			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstant.m_sUnoSaveURLComplete,
-			GlobConstant.m_sUnoSaveAsURLComplete,
+			/*GlobConstant.m_sUnoSignatureURLComplete, */ GlobConstant.m_sUNO_SAVE_URL_COMPLETE,
+			GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE,
 			GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+GlobConstant.m_sSIGN_DIALOG_PATH_TB
 			};
 
@@ -253,10 +253,26 @@ public class DispatchIntercept extends ComponentBase
 				if (m_bDead)
 					return null;
 			}
+			// intercept .uno:Signature, simply disable it
+			//this DOES NOT COMPLETELY disable the digital signature mode of OOo
+			// The button in the File > Properties > General tab is still available
+			// so you can still sign a document with the standard OOo digital signature 
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SIGNATURE_URL_COMPLETE ) == true) {
+				synchronized (this) {
+					return null;
+				}
+			}
+
+			// intercept .uno:MacroSignature, simply disable it
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_MACRO_SIGNATURE_URL_COMPLETE ) == true) {
+				synchronized (this) {
+					return null;
+				}
+			}
 
 			// intercept .uno:Save
-			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
-				m_logger.info("queryDispatch", aURL.Complete);
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
+//				m_logger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					/*
 					 * http://www.mail-archive.com/dev@api.openoffice.org/msg03786.html ()
@@ -281,7 +297,7 @@ public class DispatchIntercept extends ComponentBase
 				}
 			}
 /*			disabled 'cause it locks the office 
-			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE ) == true) {
 				m_logger.info("queryDispatch", aURL.Complete);
 				XDispatch aUnoSaveSlaveDispatch = null;
 				synchronized (this) {
@@ -307,12 +323,11 @@ public class DispatchIntercept extends ComponentBase
 				if (m_aImplXAdESSignatureDispatch == null)
 					m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(
 							m_xFrame, m_xCC, m_axMCF, null );
-				return m_aImplXAdESSignatureDispatch;
+				return this;//m_aImplXAdESSignatureDispatch;
 			}
-			
+
 			synchronized (this) {
 				if (m_xSlave != null)// if a slave exist pass the request
-					// down the chain of responsibility
 					return m_xSlave.queryDispatch( aURL, sTarget, nSearchFlags );
 			}
 		} catch (com.sun.star.uno.RuntimeException e) {
@@ -329,11 +344,11 @@ public class DispatchIntercept extends ComponentBase
 	public void dispatch(URL _aURL, PropertyValue[] _lArguments) {
 		//check the URL, then run the real dispatcher
 		m_logger.log("main dispatch", _aURL.Complete);
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.dispatch(_aURL, _lArguments);				
 		}
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveAsDispatch != null)
 					m_ImplIntSaveAsDispatch.dispatch(_aURL, _lArguments);
 		}
@@ -354,11 +369,11 @@ public class DispatchIntercept extends ComponentBase
 	public void addStatusListener(XStatusListener _aListener, URL _aURL) {
 		//check the URL then run the real method
 		m_logger.log("main addStatusListener", _aURL.Complete);
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.addStatusListener(_aListener, _aURL);				
 		}
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveAsDispatch != null)
 					m_ImplIntSaveAsDispatch.addStatusListener(_aListener, _aURL);
 		}
@@ -379,11 +394,11 @@ public class DispatchIntercept extends ComponentBase
 	public void removeStatusListener(XStatusListener _aListener, URL _aURL) {
 		//check the URL then run the real method
 		m_logger.log("main removeStatusListener", _aURL.Complete);
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.removeStatusListener(_aListener, _aURL);				
 		}
-		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUnoSaveAsURLComplete ) == true) {
+		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveAsDispatch != null)
 					m_ImplIntSaveAsDispatch.removeStatusListener(_aListener, _aURL);
 		}
