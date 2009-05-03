@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.options;
 
 import com.sun.star.awt.XActionListener;
+import com.sun.star.awt.XControl;
 import com.sun.star.awt.XItemListener;
 
 /**
@@ -39,6 +40,7 @@ public class SingleControlDescription {
 		PUSH_BUTTON // a push button
 	}
 	
+	public XControl			m_xTheControl;		//the control interface of this control
 	public XActionListener m_xAnActionListener; // this is a general action listener
 												// that cound be used to implement actions on controls, when needed
 	public XItemListener m_xAnItemListener;

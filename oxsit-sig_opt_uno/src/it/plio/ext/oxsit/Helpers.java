@@ -144,6 +144,17 @@ public class Helpers {
 		return null;
 	}
 	
+	public static String fromURLtoSystemPath(String _aUrl) throws URISyntaxException, IOException {
+		if(_aUrl != null) {
+			URL aURL = new URL(_aUrl);
+			URI aUri = new URI(aURL.toString());
+			File aFile = new File(aUri);
+			return aFile.getCanonicalPath();
+		}
+		else
+			return "";
+	}
+	
 	/**
 	 * returns the string URL of the path where the extension is installed
 	 * @param context
@@ -153,13 +164,7 @@ public class Helpers {
 	 */
 	public static String getExtensionInstallationSystemPath(XComponentContext context) throws URISyntaxException, IOException {
 		String aPath = getExtensionInstallationPath(context);
-		if(aPath != null) {
-			URL aURL = new URL(aPath);
-			URI aUri = new URI(aURL.toString());
-			File aFile = new File(aUri);
-			return aFile.getCanonicalPath();
-		}
-		return null;
+		return fromURLtoSystemPath(aPath);
 	}
 	/**
 	 * converts a list of Integer values included in an Integer vector to a list

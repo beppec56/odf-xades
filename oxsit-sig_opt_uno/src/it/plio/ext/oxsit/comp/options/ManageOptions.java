@@ -275,6 +275,8 @@ public abstract class ManageOptions extends ComponentBase  implements
 	      continue;
 	    }
 	    
+// set the control object	    
+	    ArrayOfControls[i].m_xTheControl = xControl;
     //	printlnName("control: "+ArrayOfControls[i].m_sControlName+" found in window page.");
 	 
 	    //From the control we get the model, which in turn supports the

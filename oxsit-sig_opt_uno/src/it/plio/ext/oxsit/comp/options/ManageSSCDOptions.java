@@ -22,6 +22,15 @@
 
 package it.plio.ext.oxsit.comp.options;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.ooo.ui.DialogFileOrFolderPicker;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
 
@@ -52,6 +61,7 @@ public class ManageSSCDOptions extends ManageOptions  {
 	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageSSCDOptions" };
 
     private int m_nBrowseSystemPath1PB = 0;
+    private int m_nBrowseSystemPath1ET = 0;
     private int m_nBrowseSystemPath2PB = 0;
     private int m_nBrowseSystemPath3PB = 0;
     private int m_nBrowseSystemPath4PB = 0;
@@ -77,6 +87,7 @@ public class ManageSSCDOptions extends ManageOptions  {
 		//checkbox
 		SingleControlDescription aControl = 
 				new	SingleControlDescription("SSCDFilePath1", ControlTypeCode.EDIT_TEXT, -1, "SSCDFilePath1", 0, 0, true);
+		m_nBrowseSystemPath1ET = iter;
 		ArrayOfControls[iter++] = aControl;
 //the actionPerformed pushbutton		
 		aControl = 
@@ -163,8 +174,55 @@ public class ManageSSCDOptions extends ManageOptions  {
             	//... implement the function...
 // we need to get the frame, the component context and from it the multiservice factory
 // then instantiate a file dialog to search for a path            	
+            	DialogFileOrFolderPicker aDlg = new DialogFileOrFolderPicker(m_xMultiComponentFactory,m_xComponentContext);
             	
-            	//
+// the parameter is stored in configuration as the system native path, so change into URL...
+//get the data from the control
+            	String sStartFolder = "";
+            	String sStartFile = "";
+            	{
+	    		    xControl = ArrayOfControls[m_nBrowseSystemPath1ET].m_xTheControl;
+	    	    	XPropertySet xProp = (XPropertySet) UnoRuntime.queryInterface(
+	    	    			XPropertySet.class, xControl.getModel());
+	    	    	if (xProp == null)
+	    	    		throw new com.sun.star.uno.Exception(
+	    	    				"Could not get XPropertySet from control.", this);
+		    		String sTheText = 
+		    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
+
+		    		if(sTheText.length() > 0)
+		    		{
+		    			File aFile = new File(sTheText);
+		    			sStartFile = aFile.getName();
+		    			//create a new file only with the parent of the full path, that is the directory
+		    			//with this dirty trick we separate the two part, file and folder
+		    			File aFileFolder = new File(aFile.getParent());
+		    			URI aUri = aFileFolder.toURI();
+						sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
+		    			m_logger.log(sStartFolder+" "+sStartFile);
+		    		}
+            	}
+//and grab the path only
+            	String aPath = aDlg.runOpenReadOnlyFileDialog("choose a library file...", sStartFolder, sStartFile);
+//the returned path is a URL, change into the system path
+            	if(aPath.length() > 0) {
+					String aFile = "";
+					try {
+						aFile = Helpers.fromURLtoSystemPath(aPath);
+					} catch (URISyntaxException e) {
+						m_logger.severe("actionPerformed", e);
+					} catch (IOException e) {
+						m_logger.severe("actionPerformed", e);
+					}
+	    			//grab the current control
+	    		    xControl = ArrayOfControls[m_nBrowseSystemPath1ET].m_xTheControl;
+	    	    	XPropertySet xProp = (XPropertySet) UnoRuntime.queryInterface(
+	    	    			XPropertySet.class, xControl.getModel());
+	    	    	if (xProp == null)
+	    	    		throw new com.sun.star.uno.Exception(
+	    	    				"Could not get XPropertySet from control.", this);
+	    			xProp.setPropertyValue("Text", aFile);
+            	}
             }
             else {
             	m_logger.info("Activated: "+sName);            	
