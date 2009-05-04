@@ -27,18 +27,15 @@ import it.plio.ext.oxsit.logging.XOX_Logger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.logging.XLogHandler;
-import com.sun.star.logging.XLogger;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -152,8 +149,6 @@ public class GlobalLogger extends ComponentBase
 		m_bEnableConsoleOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_CONSOLE_OUTPUT);
 		m_bEnableFileOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_FILE_OUTPUT);
 		m_sLogFilePath = m_aLoggerConfigAccess.getText(GlobConstant.m_sLOG_FILE_PATH);
-//FIXME: the file path need to be converted according to the platform
-// e.g.: get the path separator, then scan the file path and change from whatever value to '/'
 		m_nFileRotationCount = m_aLoggerConfigAccess.getNumber(GlobConstant.m_sFILE_ROTATION_COUNT);
 		m_nMaxFileSize = m_aLoggerConfigAccess.getNumber(GlobConstant.m_sMAX_FILE_SIZE);
 	}
@@ -171,9 +166,19 @@ public class GlobalLogger extends ComponentBase
 		if(m_bEnableFileOutput) {
 			String sFileName = GlobConstant.m_sEXTENSION_IDENTIFIER+".log";
 			try {
-// TODO document the default position of log file: $HOME/<extension id>.log, maximum
-				if(m_sLogFilePath.length() > 0)
-					sFileName = m_sLogFilePath+"/"+sFileName;
+				if(m_sLogFilePath.length() > 0) {
+// e.g.: get the path separator, then scan the file path and change from whatever value to '/'
+					String	aFileSeparator = System.getProperty("file.separator");
+					//now, copy in a new string the sored path, changing the file separator char to '/'
+					String aNewPath = "";							
+					for(int i = 0; i < m_sLogFilePath.length(); i++)
+						if(m_sLogFilePath.charAt(i)	== aFileSeparator.charAt(0))
+							aNewPath = aNewPath +"/";
+						else
+							aNewPath = aNewPath + m_sLogFilePath.charAt(i);
+
+					sFileName = aNewPath+"/"+sFileName;
+				}
 				else
 					sFileName = "%h/"+sFileName;
 				m_aLogFileHandl = new FileHandler( sFileName,m_nMaxFileSize,m_nFileRotationCount);
@@ -183,17 +188,10 @@ public class GlobalLogger extends ComponentBase
 //FIXME DEBUG				System.out.println("files logging enabled, path "+" "+sFileName+" size: "+m_nMaxFileSize+" count: "+m_nFileRotationCount);
 			} catch (SecurityException e) {
 				//FIXME it seems the formatter does act accordingly
-/*				if(m_bEnableConsoleOutput)
-					m_aLogger.log(Level.SEVERE, "exception: ", e);
-				else*/
-					e.printStackTrace();
+				e.printStackTrace();
 				System.out.println("file logging NOT enabled ");
 			} catch (IOException e) {
-				//FIXME it seems the formatter does act accordingly
-/*				if(m_bEnableConsoleOutput)
-					m_aLogger.log(Level.SEVERE, "exception: ", e);
-				else*/
-					e.printStackTrace();
+				e.printStackTrace();
 				System.out.println("file logging NOT enabled: problem with formatter or file access ");
 			}
 		}

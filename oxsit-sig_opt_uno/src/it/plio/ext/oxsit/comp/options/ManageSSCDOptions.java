@@ -172,19 +172,19 @@ public class ManageSSCDOptions extends ManageOptions  {
 		    		String sTheText = 
 		    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
 
-		    		if(sTheText.length() > 0)
-		    		{
-		    			File aFile = new File(sTheText);
-		    			sStartFile = aFile.getName();
-		    			//create a new file only with the parent of the full path, that is the directory
-		    			//with this dirty trick we separate the two part, file and folder
-		    			//to grab the path only
-		    			File aFileFolder = new File(aFile.getParent());
-		    			URI aUri = aFileFolder.toURI();
-		    			//then form the URL for the dialog
-						sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
-		    			m_logger.log(sStartFolder+" "+sStartFile);
+		    		if(sTheText.length() == 0) {
+		    			//init to user home directory
+		    			sTheText = System.getProperty("user.home");
 		    		}
+	    			File aFile = new File(sTheText);
+	    			sStartFile = aFile.getName();
+	    			//create a new file only with the parent of the full path, that is the directory
+	    			//with this dirty trick we separate the two part, file and folder
+	    			//to grab the path only
+	    			File aFileFolder = new File(aFile.getParent());
+	    			URI aUri = aFileFolder.toURI();
+	    			//then form the URL for the dialog
+					sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
             	}
             	String aPath = aDlg.runOpenReadOnlyFileDialog(m_sDialogTitle, sStartFolder, sStartFile);
 //the returned path is a URL, change into the system path

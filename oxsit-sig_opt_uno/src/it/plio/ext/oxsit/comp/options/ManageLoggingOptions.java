@@ -207,17 +207,18 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		    		String sTheText = 
 		    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
 
-		    		if(sTheText.length() > 0)
-		    		{
-		    			//create a new file only with the parent of the full path, that is the directory
-		    			//with this dirty trick we separate the two part, file and folder
-		    			//to grab the path only
-		    			File aFileFolder = new File(sTheText);
-		    			URI aUri = aFileFolder.toURI();
-		    			//then form the URL for the dialog
-						sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
-		    			m_logger.log(sStartFolder);
+		    		if(sTheText.length() == 0) {
+		    			//init to user home directory
+		    			sTheText = System.getProperty("user.home");
 		    		}
+	    			//create a new file only with the parent of the full path, that is the directory
+	    			//with this dirty trick we separate the two part, file and folder
+	    			//to grab the path only
+	    			File aFileFolder = new File(sTheText);
+	    			URI aUri = aFileFolder.toURI();
+	    			//then form the URL for the dialog
+					sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
+	    			m_logger.log(sStartFolder);
             	}
             	//call the dialog
             	String aPath = aDlg.runFolderPicker(m_sDialogTitle, sStartFolder);
@@ -273,17 +274,11 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nEnableFileCtl].m_sControlName)) {
 //            	m_logger.info("check box of file changed state");
-                //...
-            	//... implement the function: enable/disable the rest of the controls
             	// retrieve the status of the control
                 int nState = AnyConverter.toInt(xPSet.getPropertyValue("State"));
-
 //FIXME DEBUg                m_logger.info("itemStateChanged","State is "+nState);
-
-                enableTheFileControls(( nState == 0 ) ? false : true); 
-
             	// if the control is active, enables the relevant controls else disable them            	
-            	            	
+                enableTheFileControls(( nState == 0 ) ? false : true); 
             }
             else {
             	m_logger.info("Activated: "+sName);            	
