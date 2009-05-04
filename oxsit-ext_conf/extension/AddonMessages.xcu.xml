@@ -256,6 +256,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">Seleziona...</value>
 			</prop>
 		</node>
+		<node oor:name="id_opt_dlg_log_dir" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Please select the location of the logging files</value>
+				<value xml:lang="it">Selezionate la cartella per I file di logging</value>
+			</prop>
+		</node>
 		<node oor:name="id_opt_dlg_getsscd_lib" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Please select the SSCD native binary library</value>
