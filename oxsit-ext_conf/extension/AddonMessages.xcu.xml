@@ -256,6 +256,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">Seleziona...</value>
 			</prop>
 		</node>
+		<node oor:name="id_opt_dlg_getsscd_lib" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Please select the SSCD native binary library</value>
+				<value xml:lang="it">Selezionate la libreria binaria nativa per SSCD</value>
+			</prop>
+		</node>
 		<!--
 		    start from here, state of the signature on doc. Descriptive string
 		-->

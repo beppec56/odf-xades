@@ -32,6 +32,7 @@ import com.sun.star.ui.dialogs.XExecutableDialog;
 import com.sun.star.ui.dialogs.XFilePicker;
 import com.sun.star.ui.dialogs.XFilePickerControlAccess;
 import com.sun.star.ui.dialogs.XFilterManager;
+import com.sun.star.ui.dialogs.XFolderPicker;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -51,6 +52,47 @@ public class DialogFileOrFolderPicker {
 		m_xContext = _Ctx;
 	}
 
+	/** raises a folderpicker in which the user can browse and select a path
+	   * @param _sDisplayDirectory the path to the directory that is initially displayed
+	   * @param _sTitle the title of the folderpicker
+	   * @return the path to the folder that the user has selected. if the user has closed 
+	   * the folderpicker by clicking the "Cancel" button
+	   * an empty string is returned
+	   * @see com.sun.star.ui.dialogs.FolderPicker
+	   */
+	  public String raiseFolderPicker(String _sDisplayDirectory, String _sTitle) {
+	  String sReturnFolder = "";
+	  XComponent xComponent = null;
+	  try {
+	      // instantiate the folder picker and retrieve the necessary interfaces...
+	      Object oFolderPicker = m_xMCF.createInstanceWithContext("com.sun.star.ui.dialogs.FolderPicker", m_xContext);
+	      XFolderPicker xFolderPicker = (XFolderPicker) UnoRuntime.queryInterface(XFolderPicker.class, oFolderPicker);
+	      XExecutableDialog xExecutable = (XExecutableDialog) UnoRuntime.queryInterface(XExecutableDialog.class, oFolderPicker);
+	      xComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, oFolderPicker);
+	      xFolderPicker.setDisplayDirectory(_sDisplayDirectory);
+	      // set the dialog title...
+	      xFolderPicker.setTitle(_sTitle);
+	      // show the dialog...
+	      short nResult = xExecutable.execute();
+	 
+	      // User has clicked "Select" button...
+	      if (nResult == com.sun.star.ui.dialogs.ExecutableDialogResults.OK){
+	          sReturnFolder = xFolderPicker.getDirectory();
+	      }
+	 
+	  }catch( Exception exception ) {
+	      exception.printStackTrace(System.out);
+	  } 
+	  finally{
+	      //make sure always to dispose the component and free the memory!
+	      if (xComponent != null){
+	          xComponent.dispose();
+	      }
+	  }
+	      // return the selected path. If the user has clicked cancel an empty string is 
+	      return sReturnFolder;
+	  }
+	
 	public String runSaveAsDialog() {
 		String sStorePath = ""; 
 		XComponent xComponent = null;
@@ -142,6 +184,7 @@ public class DialogFileOrFolderPicker {
 			else
 				sTemplateUrl = _folderURL;
 			xFilePicker.setDisplayDirectory(sTemplateUrl);
+			xFilePicker.setTitle(_sTitle);
 
 			// set the filters of the dialog. The filternames may be retrieved from
 			// http://wiki.services.openoffice.org/wiki/Framework/Article/Filter

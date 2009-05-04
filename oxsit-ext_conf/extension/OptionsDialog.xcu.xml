@@ -105,8 +105,8 @@
             <value>@WEBIDENTBASE@.@NAME@</value>
           </prop>
           <prop oor:name="Label">
-            <value xml:lang="en-US">Secure Signature Creation Device Options</value>
-            <value xml:lang="it">Opzioni per Secure Signature Creation Device (SSCD)</value>
+            <value xml:lang="en-US">Secure Signature Creation Device</value>
+            <value xml:lang="it">Secure Signature Creation Device (SSCD)</value>
           </prop>
           <prop oor:name="OptionsPage">
             <value>%origin%/dialogs/leaf_sscd.xdl</value>

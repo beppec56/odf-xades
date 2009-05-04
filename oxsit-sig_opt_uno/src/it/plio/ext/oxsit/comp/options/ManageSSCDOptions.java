@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogFileOrFolderPicker;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
@@ -45,6 +46,7 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.uno.AnyConverter;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -66,7 +68,9 @@ public class ManageSSCDOptions extends ManageOptions  {
     private int m_nBrowseSystemPath3PB = 0;
     private int m_nBrowseSystemPath4PB = 0;
 
-    private static final int m_nNumberOfControls = 8;
+    private static final int m_nNumberOfControls = 3;
+    
+    private	String	m_sDialogTitle = "id_opt_dlg_getsscd_lib";
 
     /**
      * 
@@ -84,8 +88,12 @@ public class ManageSSCDOptions extends ManageOptions  {
 		//the parameter sName comes from basic dialog
 		//the parameter sProperty comes from file AddonConfiguration.xcs.xml
 		int iter = 0;
-		//checkbox
+		//checkbox, auto detection
 		SingleControlDescription aControl = 
+			new SingleControlDescription("AutoSelect", ControlTypeCode.CHECK_BOX, -1, "SSCDAutomaticDetection", 0, 0, true);
+		ArrayOfControls[iter++] = aControl;
+
+		aControl = 
 				new	SingleControlDescription("SSCDFilePath1", ControlTypeCode.EDIT_TEXT, -1, "SSCDFilePath1", 0, 0, true);
 		m_nBrowseSystemPath1ET = iter;
 		ArrayOfControls[iter++] = aControl;
@@ -95,39 +103,16 @@ public class ManageSSCDOptions extends ManageOptions  {
 		m_nBrowseSystemPath1PB = iter;
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
-		
-		 aControl = 
-				new	SingleControlDescription("SSCDFilePath2", ControlTypeCode.EDIT_TEXT, -1, "SSCDFilePath2", 0, 0, true);
-		ArrayOfControls[iter++] = aControl;
-//the actionPerformed pushbutton		
-		aControl = 
-			new SingleControlDescription("BrowseSystemPath2", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
-		m_nBrowseSystemPath2PB = iter;
-		aControl.m_xAnActionListener = this;
-		ArrayOfControls[iter++] = aControl;		
 
-		 aControl = 
-				new	SingleControlDescription("SSCDFilePath3", ControlTypeCode.EDIT_TEXT, -1, "SSCDFilePath3", 0, 0, true);
-		ArrayOfControls[iter++] = aControl;
-//the actionPerformed pushbutton		
-		aControl = 
-			new SingleControlDescription("BrowseSystemPath3", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
-		m_nBrowseSystemPath3PB = iter;
-		aControl.m_xAnActionListener = this;
-		ArrayOfControls[iter++] = aControl;		
-
-		aControl = 
-				new	SingleControlDescription("SSCDFilePath4", ControlTypeCode.EDIT_TEXT, -1, "SSCDFilePath4", 0, 0, true);
-		ArrayOfControls[iter++] = aControl;
-//the actionPerformed pushbutton		
-		aControl = 
-			new SingleControlDescription("BrowseSystemPath4", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
-		m_nBrowseSystemPath4PB = iter;
-		aControl.m_xAnActionListener = this;
-		ArrayOfControls[iter++] = aControl;		
-
-		m_logger.ctor("2");
-
+//grab the title string for configuration dialog
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xComponentContext, m_xMultiComponentFactory);
+		try {
+			m_sDialogTitle = m_aRegAcc.getStringFromRegistry( m_sDialogTitle );
+		} catch (Exception e) {
+			m_logger.severe("ctor",e);
+		}			
+		m_aRegAcc.dispose();
 	}
 
 	public String getImplementationName() {
@@ -203,7 +188,7 @@ public class ManageSSCDOptions extends ManageOptions  {
 		    		}
             	}
 //and grab the path only
-            	String aPath = aDlg.runOpenReadOnlyFileDialog("choose a library file...", sStartFolder, sStartFile);
+            	String aPath = aDlg.runOpenReadOnlyFileDialog(m_sDialogTitle, sStartFolder, sStartFile);
 //the returned path is a URL, change into the system path
             	if(aPath.length() > 0) {
 					String aFile = "";
