@@ -115,6 +115,9 @@ build-extension
 	<property name="sig_options_comp" value="${project_friendly_name}-sig_opt_uno"/>
 	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
 	<property name="sig_options_comp_jar" value="${sig_options_comp}.uno.jar"/>
+	<!-- ROB set BC libs names -->
+	<property name="sig_options_comp_bcmail_jar" value="bcmail-jdk14-125.jar"/>
+	<property name="sig_options_comp_bcprov_jar" value="bcprov-jdk14-125.jar"/>
 
 	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
@@ -179,6 +182,12 @@ build-extension
 		<copy file="${basedir}/../${uno_types_dir}/lib/${uno_types_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${uno_types_rdb_dir}/${uno_types_rdb}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_jar}" todir="${extension_dest_dir}" />
+		
+		<!-- ROB copy BC libs -->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcmail_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcprov_jar}" todir="${extension_dest_dir}" />
+		
+		
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${job_comp_dir}/lib/${job_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sing_comp_dir}/lib/${sing_comp_jar}" todir="${extension_dest_dir}" />
