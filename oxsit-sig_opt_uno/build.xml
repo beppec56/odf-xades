@@ -47,6 +47,15 @@ the default target must be removed
 	<property name="build" location="build" />
 	<property name="build-eclipse" location="bin"/>
 	<property name="dist" location="dist" />
+	
+	<!-- ROB BC libs and j4sign locations -->
+	<property name="lib" location="lib" />
+	<property name="j4sign" location="j4sign" />
+	
+	<!-- ROB BC libs names -->
+	<property name="bcmail_jar" value="bcmail-jdk14-125.jar"/>
+	<property name="bcprov_jar" value="bcprov-jdk14-125.jar"/>
+	
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
@@ -134,7 +143,10 @@ the default target must be removed
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
 				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />
+				<pathelement path="${lib}/${bcmail_jar}" />
+				<pathelement path="${lib}/${bcprov_jar}" />
 			</classpath>
+			<src path="${j4sign}" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
 
@@ -163,6 +175,9 @@ the default target must be removed
 	<target name="build-jar" depends="compile" description="generate the distribution">
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}/lib" />
+		<!-- ROB Copy BC libs in the distribution directory -->
+		<copy file="lib/bcmail-jdk14-125.jar" todir="${dist}/lib" />
+		<copy file="lib/bcprov-jdk14-125.jar" todir="${dist}/lib" />
 		<!-- Put everything in ${build} into the .jar file -->
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
 			<!-- build the manifest file on-line -->
@@ -177,7 +192,8 @@ the default target must be removed
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
-				<attribute name="Class-Path" value=""/> <!-- no need for class, this jar is the lowest one in use -->
+				<!-- ROB: BC libs -->
+				<attribute name="Class-Path" value="${bcmail_jar} ${bcprov_jar}"/> 
 			</manifest>
 		</jar>
 	</target>

@@ -27,6 +27,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -203,5 +204,13 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 	public void scanDevices() {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("scanDevices");
+		
+        PCSCHelper pcsc = new PCSCHelper(true);
+
+        m_aLogger.log("After 'new PCSCHelper'");
+
+        java.util.List infos = pcsc.findCardsAndReaders();
+
+        m_aLogger.log(infos.toString());
 	}
 }
