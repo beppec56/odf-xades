@@ -22,6 +22,14 @@
 
 package it.plio.ext.oxsit.comp.options;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.DialogFileOrFolderPicker;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
 
@@ -36,6 +44,7 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.uno.AnyConverter;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -55,11 +64,13 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	private int m_nEnableFileCtl; // the file enable/disable check box
 	//the following are the index inside ArrayOfControls of the controls that need to be
 	//enabled/disabled according to the status of the file selection
-	private int m_nLogFilePathIdxTF;
+	private int m_nLogFilePathIdxTF = 0;
 	private int m_nLogFileSizeTF;
 	private int m_nLogFileCountTF;
 
     private static final int m_nNumberOfControls = 8;
+    
+    private String	m_sDialogTitle = "id_opt_dlg_log_dir";
 
     /**
      * 
@@ -68,7 +79,8 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	public ManageLoggingOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_logging");//leaf refers to OOo documentation about
 															// extension options
-//DEBUG		m_logger.enableLogging();// disabled in base class
+//DEBUG	
+		m_logger.enableLogging();// disabled in base class
 		m_logger.ctor();
 		//prepare the list of controls on the page
 
@@ -114,6 +126,16 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 //set the actionPerformed, for enable/disable
 		m_nLogFileCountTF = iter;
 		ArrayOfControls[iter++] = aControl;
+		
+//grab the title string for configuration dialog
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xComponentContext, m_xMultiComponentFactory);
+		try {
+			m_sDialogTitle = m_aRegAcc.getStringFromRegistry( m_sDialogTitle );
+		} catch (Exception e) {
+			m_logger.severe("ctor",e);
+		}			
+		m_aRegAcc.dispose();
 	}
 
 	public String getImplementationName() {
@@ -170,11 +192,54 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nBrowseSystemPathPB].m_sControlName)) {
             	m_logger.info("browse the system for a path");
-                //...
-            	//... implement the function...
+//standard dialog for file/folder access
+            	DialogFileOrFolderPicker aDlg = new DialogFileOrFolderPicker(m_xMultiComponentFactory,m_xComponentContext);
 // we need to get the frame, the component context and from it the multiservice factory
-            	
-            	//
+            	//grab the current text value, expressed in system path
+            	String sStartFolder = "";
+            	{
+	    		    xControl = ArrayOfControls[m_nLogFilePathIdxTF].m_xTheControl;
+	    	    	XPropertySet xProp = (XPropertySet) UnoRuntime.queryInterface(
+	    	    			XPropertySet.class, xControl.getModel());
+	    	    	if (xProp == null)
+	    	    		throw new com.sun.star.uno.Exception(
+	    	    				"Could not get XPropertySet from control.", this);
+		    		String sTheText = 
+		    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
+
+		    		if(sTheText.length() > 0)
+		    		{
+		    			//create a new file only with the parent of the full path, that is the directory
+		    			//with this dirty trick we separate the two part, file and folder
+		    			//to grab the path only
+		    			File aFileFolder = new File(sTheText);
+		    			URI aUri = aFileFolder.toURI();
+		    			//then form the URL for the dialog
+						sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
+		    			m_logger.log(sStartFolder);
+		    		}
+            	}
+            	//call the dialog
+            	String aPath = aDlg.runFolderPicker(m_sDialogTitle, sStartFolder);
+            	//the returned path is a URL, change into the system path
+            	if(aPath.length() > 0) {
+					String aFile = "";
+					try {
+						aFile = Helpers.fromURLtoSystemPath(aPath);
+					} catch (URISyntaxException e) {
+						m_logger.severe("actionPerformed", e);
+					} catch (IOException e) {
+						m_logger.severe("actionPerformed", e);
+					}
+	    			//grab the current control
+	    		    xControl = ArrayOfControls[m_nLogFilePathIdxTF].m_xTheControl;
+	    	    	XPropertySet xProp = (XPropertySet) UnoRuntime.queryInterface(
+	    	    			XPropertySet.class, xControl.getModel());
+	    	    	if (xProp == null)
+	    	    		throw new com.sun.star.uno.Exception(
+	    	    				"Could not get XPropertySet from control.", this);
+	    			xProp.setPropertyValue("Text", aFile);
+            	}
             }
             else {
             	m_logger.info("Activated: "+sName);            	

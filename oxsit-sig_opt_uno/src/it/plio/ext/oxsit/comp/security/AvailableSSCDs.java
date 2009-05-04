@@ -211,6 +211,9 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 
         java.util.List infos = pcsc.findCardsAndReaders();
 
+        m_aLogger.log(" infos"+(infos != null));
         m_aLogger.log(infos.toString());
+        
+        
 	}
 }

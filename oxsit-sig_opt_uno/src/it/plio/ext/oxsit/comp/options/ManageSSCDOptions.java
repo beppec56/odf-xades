@@ -64,9 +64,6 @@ public class ManageSSCDOptions extends ManageOptions  {
 
     private int m_nBrowseSystemPath1PB = 0;
     private int m_nBrowseSystemPath1ET = 0;
-    private int m_nBrowseSystemPath2PB = 0;
-    private int m_nBrowseSystemPath3PB = 0;
-    private int m_nBrowseSystemPath4PB = 0;
 
     private static final int m_nNumberOfControls = 3;
     
@@ -79,7 +76,7 @@ public class ManageSSCDOptions extends ManageOptions  {
 	public ManageSSCDOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_sscd");//leaf refers to OOo documentation about
 															// extension options
-		m_logger.enableLogging();// disabled in base class
+//DEBUG		m_logger.enableLogging();// disabled in base class
 /*		m_logger.disableInfo();
 		m_logger.disableWarning();*/
 		m_logger.ctor();
@@ -181,13 +178,14 @@ public class ManageSSCDOptions extends ManageOptions  {
 		    			sStartFile = aFile.getName();
 		    			//create a new file only with the parent of the full path, that is the directory
 		    			//with this dirty trick we separate the two part, file and folder
+		    			//to grab the path only
 		    			File aFileFolder = new File(aFile.getParent());
 		    			URI aUri = aFileFolder.toURI();
+		    			//then form the URL for the dialog
 						sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
 		    			m_logger.log(sStartFolder+" "+sStartFile);
 		    		}
             	}
-//and grab the path only
             	String aPath = aDlg.runOpenReadOnlyFileDialog(m_sDialogTitle, sStartFolder, sStartFile);
 //the returned path is a URL, change into the system path
             	if(aPath.length() > 0) {

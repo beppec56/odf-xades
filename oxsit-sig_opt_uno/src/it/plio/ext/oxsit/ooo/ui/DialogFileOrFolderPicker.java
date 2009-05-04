@@ -60,7 +60,7 @@ public class DialogFileOrFolderPicker {
 	   * an empty string is returned
 	   * @see com.sun.star.ui.dialogs.FolderPicker
 	   */
-	  public String raiseFolderPicker(String _sDisplayDirectory, String _sTitle) {
+	  public String runFolderPicker( String _sTitle, String _sDisplayDirectory) {
 	  String sReturnFolder = "";
 	  XComponent xComponent = null;
 	  try {
