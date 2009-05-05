@@ -149,6 +149,14 @@ the default target must be removed
 			<src path="${j4sign}" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
+		
+		<!-- ROB: copy the properties file into the build destination -->
+		<copy todir="${build}" failonerror="false">
+			<fileset dir="${j4sign}">
+				  <include name="**/*.properties"/>
+				  <exclude name="**/*.html"/>
+			</fileset>
+		</copy>
 
 		<!--
 			copy helper classes from OOo SDK
