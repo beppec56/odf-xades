@@ -27,12 +27,15 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
+import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.sun.star.embed.XStorage;
 import com.sun.star.lang.XComponent;
@@ -210,10 +213,39 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
         m_aLogger.log("After 'new PCSCHelper'");
 
         java.util.List infos = pcsc.findCardsAndReaders();
+        
+        CardInfo ci = null;
+        Iterator<CardInReaderInfo> it = infos.iterator();
+        int indexToken = 0;
 
-        m_aLogger.log(" infos"+(infos != null));
-        m_aLogger.log(infos.toString());
-        
-        
+        while (it.hasNext()) {
+            m_aLogger.log("Token "+indexToken+")");
+            
+            CardInReaderInfo cIr = it.next();
+            String currReader = cIr.getReader();
+
+            ci = cIr.getCard();
+
+            if (ci != null) {
+
+            	m_aLogger.log("Informations found for this card:");
+            	m_aLogger.log("\tDescription:\t"
+                            + ci.getProperty("description"));
+            	m_aLogger.log("\tManufacturer:\t"
+                            + ci.getProperty("manufacturer"));
+            	m_aLogger.log("\tATR:\t\t" + ci.getProperty("atr"));
+            	m_aLogger.log("\tCriptoki:\t" + ci.getProperty("lib"));
+
+                
+
+            } else {
+            	m_aLogger.log("No card in reader '" + currReader + "'!");
+
+            }
+            
+            indexToken++;
+        }
+
+
 	}
 }
