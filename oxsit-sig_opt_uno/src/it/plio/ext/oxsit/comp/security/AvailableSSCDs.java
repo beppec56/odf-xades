@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security;
 
+import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -34,6 +35,8 @@ import it.trento.comune.j4sign.pcsc.PCSCHelper;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -49,59 +52,61 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
- * This is a specification, it may change!
- * This service implements a service to access the SSCDs available on system.
- * receives the doc information from the task  
- *  
+ * This is a specification, it may change! This service implements a service to
+ * access the SSCDs available on system. receives the doc information from the
+ * task
+ * 
  * This objects has properties, they are set by the calling UNO objects.
  * 
  * The service is initialized with URL and XStorage of the document under test
- * Information about the certificates, number of certificates, status of every signature
- * can be retrieved through properties 
+ * Information about the certificates, number of certificates, status of every
+ * signature can be retrieved through properties
  * 
  * @author beppec56
- *
+ * 
  */
-public class AvailableSSCDs extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
-			implements 
-			XServiceInfo,
-			XChangesNotifier,
-			XComponent,
-			XInitialization,
-			XOX_AvailableSSCDs
-			 {
+public class AvailableSSCDs extends ComponentBase
+		// help class, implements XTypeProvider, XInterface, XWeak
+		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
+		XOX_AvailableSSCDs {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= AvailableSSCDs.class.getName();
+	public static final String m_sImplementationName = AvailableSSCDs.class
+			.getName();
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
+	public static final String[] m_sServiceNames = { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
 
-	protected String 					m_sExtensionSystemPath;
+	protected String m_sExtensionSystemPath;
 
-	protected String					m_sSSCDLibraryPath;
-	protected boolean					m_bSSCDAutomaticDetection;
+	protected String m_sSSCDLibraryPath;
+	protected boolean m_bSSCDAutomaticDetection;
 
 	protected DynamicLogger m_aLogger;
+
 	/**
 	 * 
 	 * 
-	 * @param _ctx the UNO context
+	 * @param _ctx
+	 *            the UNO context
 	 */
 	public AvailableSSCDs(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_aLogger.enableLogging();
 		try {
-			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_ctx);
-			m_aLogger.ctor("extension installed in: "+m_sExtensionSystemPath);
+			m_sExtensionSystemPath = Helpers
+					.getExtensionInstallationSystemPath(_ctx);
+			m_aLogger.ctor("extension installed in: " + m_sExtensionSystemPath);
 		} catch (URISyntaxException e) {
 			m_aLogger.severe("ctor", "", e);
 		} catch (IOException e) {
 			m_aLogger.severe("ctor", "", e);
 		}
 
-//grab the configuration information
-		OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(_ctx);
-		m_bSSCDAutomaticDetection = xOptionsConfigAccess.getBoolean("SSCDAutomaticDetection");
+		// grab the configuration information
+		OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(
+				_ctx);
+		m_bSSCDAutomaticDetection = xOptionsConfigAccess
+				.getBoolean("SSCDAutomaticDetection");
 		m_sSSCDLibraryPath = xOptionsConfigAccess.getText("SSCDFilePath1");
 		xOptionsConfigAccess.dispose();
 	}
@@ -113,7 +118,9 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 		return m_sImplementationName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
 	@Override
@@ -123,52 +130,66 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 		return m_sServiceNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
 	 */
 	@Override
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService",_sService);
+		m_aLogger.info("supportsService", _sService);
 		for (int i = 0; i < len; i++) {
-			if (_sService.equals( m_sServiceNames[i] ))
+			if (_sService.equals(m_sServiceNames[i]))
 				return true;
 		}
 		return false;
 	}
 
 	// XChangesNotifier
-	/* (non-Javadoc)
-	 * @see com.sun.star.util.XChangesNotifier#addChangesListener(com.sun.star.util.XChangesListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sun.star.util.XChangesNotifier#addChangesListener(com.sun.star.util
+	 * .XChangesListener)
 	 */
 	@Override
 	public void addChangesListener(XChangesListener _ChangesListener) {
 		// TODO Auto-generated method stub
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.util.XChangesNotifier#removeChangesListener(com.sun.star.util.XChangesListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sun.star.util.XChangesNotifier#removeChangesListener(com.sun.star
+	 * .util.XChangesListener)
 	 */
 	@Override
 	public void removeChangesListener(XChangesListener _ChangesListener) {
 		// TODO Auto-generated method stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * when instantiated, 
-	 * 	_oObj[0] first argument document URL
-	 *  _oObj[1] corresponding XStorage object
+	 * when instantiated, _oObj[0] first argument document URL _oObj[1]
+	 * corresponding XStorage object
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
 		// TODO Auto-generated method stub
-		m_aLogger.entering("initialize");		
+		m_aLogger.entering("initialize");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seecom.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.
+	 * XEventListener)
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {
@@ -177,9 +198,11 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 		super.addEventListener(arg0);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#dispose()
-	 * called to clean up the class before closing
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.sun.star.lang.XComponent#dispose() called to clean up the class
+	 * before closing
 	 */
 	@Override
 	public void dispose() {
@@ -188,64 +211,151 @@ public class AvailableSSCDs extends ComponentBase //help class, implements XType
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seecom.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.
+	 * XEventListener)
 	 */
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
-		m_aLogger.log("removeEventListener");		
+		m_aLogger.log("removeEventListener");
 		super.removeEventListener(arg0);
 	}
 
-	/* (non-Javadoc)
+	private class CertInfo {
+		public String certName;
+
+		public X509Certificate c;
+
+		/**
+		 * Constructor (null)
+		 * 
+		 */
+
+		public CertInfo() {
+			certName = null;
+			c = null;
+		}
+
+		/**
+		 * Constructor
+		 * 
+		 * @param x
+		 *            X509Certificate
+		 */
+		public CertInfo(X509Certificate x) {
+			certName = toCNNames("" + x.getSubjectDN());
+			c = x;
+		}
+
+		public String toString() {
+			return certName;
+		}
+
+		public X509Certificate getCertificate() {
+			return c;
+		}
+
+		public void setCertificate(X509Certificate x) {
+			c = x;
+		}
+
+		public void setName(String s) {
+			certName = s;
+		}
+
+	}
+
+	private String toCNNames(String DN) {
+
+		int offset = DN.indexOf("CN=");
+		int end = DN.indexOf(",", offset);
+		String CN;
+		if (end != -1) {
+			CN = DN.substring(offset + 3, end);
+		} else {
+			CN = DN.substring(offset + 3, DN.length());
+		}
+		CN = CN.substring(0, CN.length());
+		return CN;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.plio.ext.oxsit.security.XOX_AvailableSscdDevices#scanDevices()
 	 * called to initiated a scan of the devices available on system.
-	 * 
 	 */
 	@Override
 	public void scanDevices() {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("scanDevices");
-		
-        PCSCHelper pcsc = new PCSCHelper(true);
 
-        m_aLogger.log("After 'new PCSCHelper'");
+		PCSCHelper pcsc = new PCSCHelper(true);
 
-        java.util.List infos = pcsc.findCardsAndReaders();
-        
-        CardInfo ci = null;
-        Iterator<CardInReaderInfo> it = infos.iterator();
-        int indexToken = 0;
+		m_aLogger.log("After 'new PCSCHelper'");
 
-        while (it.hasNext()) {
-            m_aLogger.log("Token "+indexToken+")");
-            
-            CardInReaderInfo cIr = it.next();
-            String currReader = cIr.getReader();
+		java.util.List infos = pcsc.findCardsAndReaders();
 
-            ci = cIr.getCard();
+		CardInfo ci = null;
+		Iterator<CardInReaderInfo> it = infos.iterator();
+		int indexToken = 0;
+		int indexReader = 0;
 
-            if (ci != null) {
+		while (it.hasNext()) {
+			m_aLogger.log("Reader " + indexReader + ")");
 
-            	m_aLogger.log("Informations found for this card:");
-            	m_aLogger.log("\tDescription:\t"
-                            + ci.getProperty("description"));
-            	m_aLogger.log("\tManufacturer:\t"
-                            + ci.getProperty("manufacturer"));
-            	m_aLogger.log("\tATR:\t\t" + ci.getProperty("atr"));
-            	m_aLogger.log("\tCriptoki:\t" + ci.getProperty("lib"));
+			CardInReaderInfo cIr = it.next();
+			String currReader = cIr.getReader();
 
-                
+			ci = cIr.getCard();
+			
+			if (ci != null) {
+				
+				m_aLogger.log("Informations found for this card:");
+				m_aLogger.log("\tDescription:\t"
+						+ ci.getProperty("description"));
+				m_aLogger.log("\tManufacturer:\t"
+						+ ci.getProperty("manufacturer"));
+				m_aLogger.log("\tATR:\t\t" + ci.getProperty("atr"));
+				m_aLogger.log("\tCriptoki:\t" + ci.getProperty("lib"));
+				
+				m_aLogger.log("\n\tLettura certificati");
+				
+				ReadCertsTask rt = new ReadCertsTask(cIr);
+				Collection certsOnToken = rt.getCertsOnToken();
+				if (certsOnToken != null) {
+					Iterator certIt = certsOnToken.iterator();
+					if (certsOnToken.isEmpty()) {
+						m_aLogger.log("\tcertsOnToken vuoto");
+						CertInfo c = new CertInfo();
+						c.setName("Carta presente ma vuota");
 
-            } else {
-            	m_aLogger.log("No card in reader '" + currReader + "'!");
+					}
+					while (certIt.hasNext()) {
 
-            }
-            
-            indexToken++;
-        }
+						X509Certificate cert = (X509Certificate) certIt.next();
+						CertInfo c = new CertInfo(cert);
+						m_aLogger.log(cert.toString());
+						m_aLogger.log("\n");
 
+					}
+
+					rt.closeSession();
+					rt.libFinalize();
+					indexToken++;
+				}
+
+			} else {
+				m_aLogger.log("No card in reader '" + currReader + "'!");
+
+			}
+
+			indexReader++;
+		}
 
 	}
 }
