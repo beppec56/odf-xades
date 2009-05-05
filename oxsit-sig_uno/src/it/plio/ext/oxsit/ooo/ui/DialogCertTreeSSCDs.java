@@ -22,6 +22,9 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import java.net.URISyntaxException;
+
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
@@ -34,6 +37,7 @@ import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
@@ -173,6 +177,21 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
+		String m_sExtensionSystemPath;
+		//not implemented here, next code is for text only:
+		try {
+			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xContext);
+			m_logger.ctor("extension installed in: "+m_sExtensionSystemPath);
+			String libPath=System.getProperty("java.library.path");
+			//first the current extension path into the library path
+			libPath = m_sExtensionSystemPath + System.getProperty("path.separator") + libPath;
+			System.setProperty("java.library.path", libPath);
+			m_logger.log("library path is: "+ System.getProperty("java.library.path"));		
+		} catch (URISyntaxException e) {
+			m_logger.severe("ctor", "", e);
+		} catch (java.io.IOException e) {
+			m_logger.severe("ctor", "", e);
+		}		
 	}
 
 	/* (non-Javadoc)
