@@ -34,8 +34,11 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -44,8 +47,13 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERInputStream;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
+
+import sun.security.x509.AlgorithmId;
 
 import com.sun.star.uno.XComponentContext;
 
@@ -136,12 +144,61 @@ public class TestOnCertificates {
 			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString()/*+" hex: "+hex*/);
 			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
 			
-			Date notBefore = xc509.getStartDate().getDate();
+			Date notBefore = xc509.getStartDate().getDate();						
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(notBefore);	
+	//string with time only
+			String time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
+			m_aLogger.info("Valid not before: "+time);
+
 			Date notAfter = xc509.getEndDate().getDate();
-			m_aLogger.info("Valid not before: "+notBefore.toString() );
-			m_aLogger.info("Valid not after: "+notAfter.toString());
+			calendar.setTime(notAfter);	
+			//string with time only
+			time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
+			m_aLogger.info("Valid not after:  "+time);
 
 			m_aLogger.info("Subject: "+xc509.getSubject().toString());
+			
+			SubjectPublicKeyInfo spki = xc509.getSubjectPublicKeyInfo();
+			
+			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();//spki.getAlgorithmId();
+			DERObjectIdentifier oi = aid.getObjectId();
+
+			m_aLogger.info("Subject Public Signature Algorithm: "+((
+					xc509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().getId().compareTo("1.2.840.113549.1.1.1") == 0) ? 
+							"pkcs-1 rsaEncryption" : oi.getId()));
+			
+			byte[] sbjkd = xc509.getSubjectPublicKeyInfo().getPublicKeyData().getBytes();
+			
+			String keydatas = "";
+			for(int i = 0; i < sbjkd.length;i++) {
+				try {
+					keydatas = keydatas + String.format(" %02X", (sbjkd[i] & 0xff) );
+				} catch(IllegalFormatException e) {
+					m_aLogger.severe("", e);
+				}
+				if(i !=  0 && (i+1) % 16 == 0)
+					keydatas = keydatas + "\n";
+			}
+			m_aLogger.info("Subject Public Key Data:\n"+keydatas);
+
+			m_aLogger.info("Signature Algorithm: "+((
+					xc509.getSignatureAlgorithm().getObjectId().getId().compareTo("1.2.840.113549.1.1.5") == 0) ? 
+							"pkcs-1 sha1WithRSAEncryption" : oi.getId()));
+
+			sbjkd = xc509.getSignature().getBytes();
+			keydatas = "";
+			for(int i = 0; i < sbjkd.length;i++) {
+				try {
+					keydatas = keydatas + String.format(" %02X", (sbjkd[i] & 0xff) );
+				} catch(IllegalFormatException e) {
+					m_aLogger.severe("", e);
+				}
+				if(i !=  0 && (i+1) % 16 == 0)
+					keydatas = keydatas + "\n";
+			}
+			m_aLogger.info("Signature Data:\n"+keydatas);			
+			
 			return "";
 		}
 
