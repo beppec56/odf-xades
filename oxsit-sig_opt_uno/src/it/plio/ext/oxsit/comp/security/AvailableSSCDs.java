@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security;
 
 import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
@@ -70,6 +71,8 @@ public class AvailableSSCDs extends ComponentBase
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
 		XOX_AvailableSSCDs {
 
+	protected XComponentContext m_xCC;
+	
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = AvailableSSCDs.class
 			.getName();
@@ -91,6 +94,7 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	public AvailableSSCDs(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
+		m_xCC = _ctx;
 		m_aLogger.enableLogging();
 		try {
 			m_sExtensionSystemPath = Helpers
@@ -357,5 +361,10 @@ public class AvailableSSCDs extends ComponentBase
 			indexReader++;
 		}
 
+	}
+
+	public void testCertificateDisplay() {
+		TestOnCertificates xtest = new TestOnCertificates(m_xCC);
+		xtest.testMethod();
 	}
 }

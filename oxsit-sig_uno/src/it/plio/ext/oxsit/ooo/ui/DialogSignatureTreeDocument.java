@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
@@ -188,7 +189,12 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
 		m_logger.info("reportButtonPressed","FAKE IMPLEMENTATION!");
-		addOneSignature();		
+//		addOneSignature();
+		
+//dirty trick, do not instantiate the UNO component this way !
+		// this is just for test !
+		AvailableSSCDs aSSCDS = new AvailableSSCDs(m_xContext);
+		aSSCDS.testCertificateDisplay();
 	}
 
 	/* (non-Javadoc)
