@@ -28,9 +28,24 @@ import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Vector;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERInputStream;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import com.sun.star.uno.XComponentContext;
 
@@ -56,6 +71,12 @@ public class TestOnCertificates {
 		public String certName;
 
 		public X509Certificate c;
+		public X500Principal subject;
+		public X500Principal issuer;
+
+		private String m_sCert ="";
+		private X509CertificateStructure xc509;
+
 
 		/**
 		 * Constructor (null)
@@ -76,10 +97,52 @@ public class TestOnCertificates {
 		public CertInfo(X509Certificate x) {
 			certName = toCNNames("" + x.getSubjectDN());
 			c = x;
+//			org.bouncycastle.asn1.ASN1Encodable ab;
+//			ASN1Sequence aSeq =  ASN1Object.fromByteArray();
+			try {
+				byte[] derdata = c.getEncoded();//c.getTBSCertificate();
+//
+				ByteArrayInputStream as = new ByteArrayInputStream(derdata); 
+
+				DERInputStream aderin = new DERInputStream(as);
+
+				DERObject ado = aderin.readObject();
+				
+				
+				xc509 = new X509CertificateStructure((ASN1Sequence) ado);
+				
+			} catch (CertificateEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			subject = c.getSubjectX500Principal();
+			issuer = c.getIssuerX500Principal();
 		}
 
-		public String toString() {
-			return certName;
+		public String printCert() {
+			m_aLogger.info("Version: V"+c.getVersion());
+			
+/*			BigInteger bi = xc509.getSerialNumber().getValue();
+			
+			byte[] ba = bi.toByteArray();
+			
+			String hex = "";
+			for(int i = 0; i<ba.length; i++)
+				hex = " " + hex + Integer.toHexString(ba[i]);
+*/
+			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString()/*+" hex: "+hex*/);
+			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
+			
+			Date notBefore = xc509.getStartDate().getDate();
+			Date notAfter = xc509.getEndDate().getDate();
+			m_aLogger.info("Valid not before: "+notBefore.toString() );
+			m_aLogger.info("Valid not after: "+notAfter.toString());
+
+			m_aLogger.info("Subject: "+xc509.getSubject().toString());
+			return "";
 		}
 
 		public X509Certificate getCertificate() {
@@ -158,11 +221,12 @@ public class TestOnCertificates {
 					}
 					while (certIt.hasNext()) {
 
-						m_aLogger.log("\n******************************************  &&  ****************  &&  *********************************************************");
+						m_aLogger.log("******************************************  &&  ****************  &&  *********************************************************");
 						X509Certificate cert = (X509Certificate) certIt.next();
+						
 						CertInfo c = new CertInfo(cert);
-						m_aLogger.log(cert.toString());
-						m_aLogger.log("\n*******************************************************************************************************************");
+						m_aLogger.log(c.printCert());
+						m_aLogger.log("*******************************************************************************************************************");
 
 					}
 
