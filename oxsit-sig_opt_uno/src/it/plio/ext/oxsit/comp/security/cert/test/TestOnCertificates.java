@@ -30,8 +30,6 @@ import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
@@ -45,16 +43,14 @@ import java.util.Vector;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERInputStream;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
-
-import sun.security.x509.AlgorithmId;
 
 import com.sun.star.uno.XComponentContext;
 
@@ -83,7 +79,6 @@ public class TestOnCertificates {
 		public X500Principal subject;
 		public X500Principal issuer;
 
-		private String m_sCert ="";
 		private X509CertificateStructure xc509;
 
 
@@ -112,14 +107,10 @@ public class TestOnCertificates {
 				byte[] derdata = c.getEncoded();//c.getTBSCertificate();
 //
 				ByteArrayInputStream as = new ByteArrayInputStream(derdata); 
-
-				DERInputStream aderin = new DERInputStream(as);
-
+				ASN1InputStream aderin = new ASN1InputStream(as);
 				DERObject ado = aderin.readObject();
-				
-				
 				xc509 = new X509CertificateStructure((ASN1Sequence) ado);
-				
+
 			} catch (CertificateEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -131,7 +122,52 @@ public class TestOnCertificates {
 			issuer = c.getIssuerX500Principal();
 		}
 
+		protected void printSubjectNameForNode() {
+			X509Name aSubject = xc509.getSubject();
+			//extract data from subject name following CNIPA recommendation
+			/*
+			 * first lookup for givenname and surname, if not existent
+			 * lookup for commonName (cn), if not existent
+			 * lookup for pseudonym ()
+			 */
+
+			//first, grab the OID in the subject name
+			Vector<DERObjectIdentifier> oidv = aSubject.getOIDs();
+			Vector values = aSubject.getValues();
+			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
+			for(int i=0; i< oidv.size(); i++) {
+//				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+X509Name.DefaultSymbols.get(oidv.elementAt(i)));
+				hm.put(oidv.elementAt(i), values.elementAt(i).toString());
+			}
+			//look for givename (=nome di battesimo)
+			{
+				//see BC source code for details about DefaultLookUp behaviour
+				DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
+				if(hm.containsKey(oix)) {
+					String nome = hm.get(oix).toString();
+					oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
+					if(hm.containsKey(oix))
+						m_aLogger.info(nome+" "+hm.get(oix).toString());				
+				}
+				else {
+					//check for CN				
+					//if still not, check for pseudodym
+
+				}
+			}			
+		}
+		
+		protected void printSubject() {			
+//print the subject
+			//order of printing is as got in the
+			m_aLogger.info("Subject: "+xc509.getSubject().toString());
+
+		}
+		
 		public String printCert() {
+			
+			printSubjectNameForNode();
+			
 			m_aLogger.info("Version: V"+c.getVersion());
 			
 /*			BigInteger bi = xc509.getSerialNumber().getValue();
@@ -142,44 +178,6 @@ public class TestOnCertificates {
 			for(int i = 0; i<ba.length; i++)
 				hex = " " + hex + Integer.toHexString(ba[i]);
 */
-			X509Name aSubject = xc509.getSubject();
-//extract data from subject name following CNIPA recommendation
-			/*
-			 * first lookup for givenname and surname, if not existent
-			 * lookup for commonName (cn), if not existent
-			 * lookup for pseudonym ()
-			 */
-			
-			//first, grab the OID in the subject name
-			Vector<DERObjectIdentifier> oidv = aSubject.getOIDs();
-			Vector values = aSubject.getValues();
-			HashMap<String, String> hm = new HashMap<String, String>(20);
-			for(int i=0; i< oidv.size(); i++) {
-				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+aSubject.DefaultSymbols.get(oidv.elementAt(i)));
-				hm.put(oidv.elementAt(i).getId(), values.elementAt(i).toString());
-			}
-			//look for givename (=nome di battesimo)
-			{
-				m_aLogger.info(aSubject.DefaultLookUp.get("givenname").toString());
-				DERObjectIdentifier oix = (DERObjectIdentifier)(aSubject.DefaultLookUp.get("givenname")); 
-				if(hm.containsKey(oix.getId())) {
-					m_aLogger.info("Nome di battesimo: "+hm.get(oix.getId()).toString());
-					oix = (DERObjectIdentifier)(aSubject.DefaultLookUp.get("surname"));
-					if(hm.containsKey(oix.getId()))
-						m_aLogger.info("Cognome: "+hm.get(oix.getId()).toString());				
-				}
-				else {
-	//check for CN				
-					//if still not, check for pseudodym
-					
-				}
-				Iterator<DERObjectIdentifier> iter = oidv.iterator();
-				
-				while(iter.hasNext()) {
-					DERObjectIdentifier oidx = iter.next();
-					m_aLogger.info("OID: "+oidx.getId());
-				}			
-			}
 			
 			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString()/*+" hex: "+hex*/);
 			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
@@ -197,16 +195,15 @@ public class TestOnCertificates {
 			time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
 			m_aLogger.info("Valid not after:  "+time);
 
-			m_aLogger.info("Subject: "+xc509.getSubject().toString());
-			
-			SubjectPublicKeyInfo spki = xc509.getSubjectPublicKeyInfo();
-			
+			printSubject();
+
 			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();//spki.getAlgorithmId();
 			DERObjectIdentifier oi = aid.getObjectId();
 
 			m_aLogger.info("Subject Public Signature Algorithm: "+((
-					xc509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().getId().compareTo("1.2.840.113549.1.1.1") == 0) ? 
-							"pkcs-1 rsaEncryption" : oi.getId()));
+					xc509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().equals(X509CertificateStructure.rsaEncryption)) ?
+							"pkcs-1 rsaEncryption" : oi.getId()
+							));
 			
 			byte[] sbjkd = xc509.getSubjectPublicKeyInfo().getPublicKeyData().getBytes();
 			

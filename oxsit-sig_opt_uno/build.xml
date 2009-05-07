@@ -53,8 +53,8 @@ the default target must be removed
 	<property name="j4sign" location="j4sign" />
 	
 	<!-- ROB BC libs names -->
-	<property name="bcmail_jar" value="bcmail-jdk14-125.jar"/>
-	<property name="bcprov_jar" value="bcprov-jdk14-125.jar"/>
+	<property name="bcmail_jar" value="bcmail-jdk16-143.jar"/>
+	<property name="bcprov_jar" value="bcprov-jdk16-143.jar"/>
 	
 	<!--
 		the OOo SDK root path, used for the custom loader
@@ -184,8 +184,8 @@ the default target must be removed
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}/lib" />
 		<!-- ROB Copy BC libs in the distribution directory -->
-		<copy file="lib/bcmail-jdk14-125.jar" todir="${dist}/lib" />
-		<copy file="lib/bcprov-jdk14-125.jar" todir="${dist}/lib" />
+		<copy file="lib/${bcmail_jar}" todir="${dist}/lib" />
+		<copy file="lib/${bcprov_jar}" todir="${dist}/lib" />
 		<!-- Put everything in ${build} into the .jar file -->
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
 			<!-- build the manifest file on-line -->

@@ -116,8 +116,8 @@ build-extension
 	<property name="sig_options_comp_dir" value="${sig_options_comp}/dist"/>
 	<property name="sig_options_comp_jar" value="${sig_options_comp}.uno.jar"/>
 	<!-- ROB set BC libs names -->
-	<property name="sig_options_comp_bcmail_jar" value="bcmail-jdk14-125.jar"/>
-	<property name="sig_options_comp_bcprov_jar" value="bcprov-jdk14-125.jar"/>
+	<property name="sig_options_comp_bcmail_jar" value="bcmail-jdk16-143.jar"/>
+	<property name="sig_options_comp_bcprov_jar" value="bcprov-jdk16-143.jar"/>
 
 	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>

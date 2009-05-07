@@ -27,22 +27,17 @@ package it.trento.comune.j4sign.examples;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import it.trento.comune.j4sign.cms.ExternalSignatureCMSSignedDataGenerator;
 import it.trento.comune.j4sign.cms.ExternalSignatureSignerInfoGenerator;
-
 import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
@@ -51,7 +46,6 @@ import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.CertStore;
-import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -66,23 +60,17 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-
-import org.bouncycastle.asn1.cms.ContentInfo;
-
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DigestInfo;
-
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.test.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 //Alternative (NOT pure java) solution for password hiding
@@ -320,7 +308,10 @@ public class CLITest {
      *  
      */
     public void initSW() {
-        try {
+
+ /* FIXME, TODO
+ * beppec56: it seems that the class CMSTestUtil is no longer available in BC 1.43 
+          try {
             System.out.println("Init test with SW keys an certs ...");
             signDN = "O=Bouncy Castle, C=AU";
             signKP = CMSTestUtil.makeKeyPair();
@@ -333,7 +324,7 @@ public class CLITest {
                     signDN);
         } catch (Exception ex) {
             System.out.println(ex);
-        }
+        }*/
     }
 
     /*
