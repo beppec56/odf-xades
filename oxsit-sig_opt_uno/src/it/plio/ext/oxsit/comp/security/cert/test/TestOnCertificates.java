@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.Vector;
@@ -141,6 +142,45 @@ public class TestOnCertificates {
 			for(int i = 0; i<ba.length; i++)
 				hex = " " + hex + Integer.toHexString(ba[i]);
 */
+			X509Name aSubject = xc509.getSubject();
+//extract data from subject name following CNIPA recommendation
+			/*
+			 * first lookup for givenname and surname, if not existent
+			 * lookup for commonName (cn), if not existent
+			 * lookup for pseudonym ()
+			 */
+			
+			//first, grab the OID in the subject name
+			Vector<DERObjectIdentifier> oidv = aSubject.getOIDs();
+			Vector values = aSubject.getValues();
+			HashMap<String, String> hm = new HashMap<String, String>(20);
+			for(int i=0; i< oidv.size(); i++) {
+				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+aSubject.DefaultSymbols.get(oidv.elementAt(i)));
+				hm.put(oidv.elementAt(i).getId(), values.elementAt(i).toString());
+			}
+			//look for givename (=nome di battesimo)
+			{
+				m_aLogger.info(aSubject.DefaultLookUp.get("givenname").toString());
+				DERObjectIdentifier oix = (DERObjectIdentifier)(aSubject.DefaultLookUp.get("givenname")); 
+				if(hm.containsKey(oix.getId())) {
+					m_aLogger.info("Nome di battesimo: "+hm.get(oix.getId()).toString());
+					oix = (DERObjectIdentifier)(aSubject.DefaultLookUp.get("surname"));
+					if(hm.containsKey(oix.getId()))
+						m_aLogger.info("Cognome: "+hm.get(oix.getId()).toString());				
+				}
+				else {
+	//check for CN				
+					//if still not, check for pseudodym
+					
+				}
+				Iterator<DERObjectIdentifier> iter = oidv.iterator();
+				
+				while(iter.hasNext()) {
+					DERObjectIdentifier oidx = iter.next();
+					m_aLogger.info("OID: "+oidx.getId());
+				}			
+			}
+			
 			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString()/*+" hex: "+hex*/);
 			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
 			
@@ -239,7 +279,7 @@ public class TestOnCertificates {
 
 		m_aLogger.log("After 'new PCSCHelper'");
 
-		java.util.List infos = pcsc.findCardsAndReaders();
+		java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
 
 		CardInfo ci = null;
 		Iterator<CardInReaderInfo> it = infos.iterator();
