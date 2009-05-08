@@ -68,8 +68,10 @@ public class DigitalSignatureHelper {
     }
 
     public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
-    	
 		String[] aElements = xThePackage.getElementNames();
+/*		m_logger.info(_rootElement+" elements:");
+		for(int i = 0; i < aElements.length; i++)
+			m_logger.info("'"+aElements[i]+"'");*/
 		for(int i = 0; i < aElements.length; i++) {
 			if( aElements[i] != "META-INF" ) {
 				try {
@@ -77,8 +79,7 @@ public class DigitalSignatureHelper {
 // try to open the element, read a few bytes, close it
 						try {
 							Object oObjXStreamSto = xThePackage.cloneStreamElement(aElements[i]);
-//							Object oObjXStreamSto = xThePackage.openStreamElement(aElements[i], ElementModes.READ);
-							String sMediaType = "unknown media type";
+							String sMediaType = "";
 							int nSize = 0;
 							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
 							if(xPset != null) { 
@@ -92,29 +93,37 @@ public class DigitalSignatureHelper {
 							}
 							else
 								m_logger.log("properties don't exist!");
-								
 							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
-							
 							XInputStream xI = xSt.getInputStream();
 							nSize = xI.available(); 
-
-//							m_logger.info(aElements[i]+" "+xI.available()+ " bytes, media type is: '"+sMediaType+"'");
-							
 							xI.closeInput();
-							
-//							XPropertySet xp = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
-							
-							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,nSize) );							
-							
+							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,nSize) );
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
 							m_logger.warning("fillElementList", aElements[i]+" wrong password", e);
 						}
 					}
 					else if(_bRecurse && xThePackage.isStorageElement(aElements[i])) {
-						XStorage xSubStore = xThePackage.openStorageElement(aElements[i], ElementModes.READ);
-						fillElementList(xSubStore, _List, _rootElement+aElements[i]+"/", _bRecurse);
-						xSubStore.dispose();
+						try
+						{
+							XStorage xSubStore = xThePackage.openStorageElement(aElements[i], ElementModes.READ);
+							fillElementList(xSubStore, _List, _rootElement+aElements[i]+"/", _bRecurse);
+							xSubStore.dispose();
+						} 
+						catch (IOException e) {
+								m_logger.info("fillElementList", "the substorage "+aElements[i]+" might be locked, get the last committed version of it");
+								   try {
+									   Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
+									   XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
+									   Object oMyStorage =xStorageFactory.createInstance();
+									   XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
+									   xThePackage.copyStorageElementLastCommitTo( aElements[i], xAnotherSubStore );
+									   fillElementList(xAnotherSubStore, _List,_rootElement+aElements[i]+"/", true);
+									   xAnotherSubStore.dispose();						   
+								   } catch (Exception e1) {
+										m_logger.severe("fillElementList", "\""+aElements[i]+"\""+" missing", e1);
+								   } // should create an empty temporary storage
+						}
 					}
 				} catch (InvalidStorageException e) {
 					m_logger.warning("fillElementList", aElements[i]+" missing", e);
@@ -129,12 +138,14 @@ public class DigitalSignatureHelper {
 				}
 			}
 		}
-//			m_logger.log(aElements[i]);
     }
 
     /**
-     * closly resembles the function  DocumentSignatureHelper::CreateElementList
+     * closely resembles the function  DocumentSignatureHelper::CreateElementList
      * FIXME but need to be redesigned, because of concurrent access to streams/elements 
+     * this list list only the main components, but not all the substore
+     * We need instead to check for all the available Names and check them
+     * 
      * @param _thePackage
      * @return
      */
@@ -175,10 +186,48 @@ public class DigitalSignatureHelper {
 		//if version <1.2 then all excluding META-INF
 		// else only the ones indicated
     	//main contents
-		fillElementList(xThePackage, aElements,"", false);
+		fillElementList(xThePackage, aElements,"", true);
 
-    	//Pictures
+/*    	//Thumbnails
 		try {
+			XStorage xSubStore = xThePackage.openStorageElement("Thumbnails", ElementModes.READ);
+			fillElementList(xSubStore, aElements,"Thumbnails"+"/", true);
+			xSubStore.dispose();
+		}
+		catch (IOException e) {
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+		} catch (StorageWrappedTargetException e) {
+			// TODO Auto-generated catch block
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+		}*/
+
+    	//Basic
+/*		try {
+			XStorage xSubStore = xThePackage.openStorageElement("Basic", ElementModes.READ);
+			fillElementList(xSubStore, aElements,"Basic"+"/", true);
+			xSubStore.dispose();
+		}
+		catch (IOException e) {
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+		} catch (StorageWrappedTargetException e) {
+			// TODO Auto-generated catch block
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			//no problem if not existent
+			m_logger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+		}*/
+
+		//Pictures
+/*		try {
 			XStorage xSubStore = xThePackage.openStorageElement("Pictures", ElementModes.READ);
 			fillElementList(xSubStore, aElements,"Pictures"+"/", true);
 			xSubStore.dispose();
@@ -194,12 +243,12 @@ public class DigitalSignatureHelper {
 			// TODO Auto-generated catch block
 			//no problem if not existent
 			m_logger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
-		}
+		}*/
 
     	//OLE
 		String sElementName = "";
 		
-		try {
+/*		try {
 			try {
 				sElementName = "ObjectReplacements";
 				XStorage xSubStore = xThePackage.openStorageElement(sElementName, ElementModes.READ);
@@ -217,10 +266,10 @@ public class DigitalSignatureHelper {
 				// TODO Auto-generated catch block
 				//no problem if not existent
 				m_logger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
-			}
+			}*/
 			
 			//Object folders
-			String aObjectName = new String("Object ");
+/*			String aObjectName = new String("Object ");
 			String[] aObjName = xThePackage.getElementNames();
 			for(int i = 0; i < aObjName.length; i++) {
 				sElementName = aObjName[i];
@@ -249,9 +298,9 @@ public class DigitalSignatureHelper {
 					   } // should create an empty temporary storage
 					} 					
 				}
-			}			
-		}
-		catch (IOException e) {
+			}
+		} */
+/*		catch (IOException e) {
 			//no problem if not existent
 			m_logger.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 		} catch (StorageWrappedTargetException e) {
@@ -266,7 +315,7 @@ public class DigitalSignatureHelper {
 			// TODO Auto-generated catch block
 			//no problem if not existent
 			m_logger.warning("makeTheElementList", "", e);
-		}
+		}*/
     	return aElements;
     }
 
@@ -350,7 +399,7 @@ public class DigitalSignatureHelper {
     	}
     	
     	public String toString() {
-    		String ret = m_stheName+ " media type: '"+m_sMediaType+"' size: "+m_nSize+" bytes";
+    		String ret = "media type: '"+m_sMediaType+"' size: "+m_nSize+" bytes, position: '"+m_stheName+"'";
 			return ret;
     	}
     }
