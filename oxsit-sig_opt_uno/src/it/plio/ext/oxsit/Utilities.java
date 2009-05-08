@@ -221,7 +221,7 @@ public class Utilities {
 									allProp[i].Type + Utilities.showPropertyString(xPropSet, allProp[i].Name);
 				}
 			} else {
-				theMessage = theMessage + " No property set available!";
+				theMessage = theMessage + " No property set info available! You need to access the properties one by one.";
 			}
 		}
 		return theMessage;

@@ -34,6 +34,7 @@ import com.sun.star.io.XInputStream;
 import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.lang.*;
@@ -61,7 +62,8 @@ public class DigitalSignatureHelper {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
     	m_logger = new DynamicLogger(this, _context);
-//    	m_logger.enableLogging();
+//    	
+    	m_logger.enableLogging();
     	m_logger.info("ctor","");
     }
 
@@ -77,18 +79,32 @@ public class DigitalSignatureHelper {
 						try {
 							Object oObjXStreamSto = xThePackage.cloneStreamElement(aElements[i]);
 //							Object oObjXStreamSto = xThePackage.openStreamElement(aElements[i], ElementModes.READ);
+							String sMediaType = "unknown media type";
 							
-							
-//							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XStreamStorage.class, oObjXStreamSto);
-//							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
+							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
+							if(xPset != null) { 
+								try {
+									sMediaType = AnyConverter.toString(xPset.getPropertyValue("MediaType"));
+								} catch (UnknownPropertyException e) {
+									m_logger.severe("fillElementList", e);
+								} catch (WrappedTargetException e) {
+									m_logger.severe("fillElementList", e);
+								}
+							}
+							else
+								m_logger.log("properties don't exist!");
+								
 							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
+							
 							XInputStream xI = xSt.getInputStream();
 
-							m_logger.info(aElements[i]+" "+xI.available()+ " bytes");
+							m_logger.info(aElements[i]+" "+xI.available()+ " bytes, media type is: '"+sMediaType+"'");
 							
 							xI.closeInput();
-/*							Utilities.showInterfaces(this, oObjXStreamSto);
-							Utilities.showProperties(oObjXStreamSto, xPset);*/
+							
+//							XPropertySet xp = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
+							
+							
 							
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
@@ -268,13 +284,14 @@ public class DigitalSignatureHelper {
 			if(oObj != null) {
 				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)
 							UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
-	            Object args[]=new Object[2];
+/*	            Object args[]=new Object[2];
 	            args[0] = aTheDocURL;
 	            args[1] = ElementModes.READ;
-	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);
+	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);*/
 
 //	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
-	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
+	            Vector<String> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
 	            	m_logger.log(aElements.get(i));	            	
@@ -283,7 +300,7 @@ public class DigitalSignatureHelper {
 
 // just for testing, try to open the META-INF substorage for writing (test possibility to write the signature file)
 //grab the storage interface
-	           	XStorage xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
+	           	XStorage xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _xStorage );
 	           	if(xThePackage != null) {
 	           		//open the META-INF subpackage
 	           		try {
@@ -319,5 +336,16 @@ public class DigitalSignatureHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    private class APackageElement {
+    	
+    	public String m_stheName;
+    	public String m_sMediaType;
+    	public int	m_nSize;
+
+    	public APackageElement() {
+    		
+    	}    	
     }
 }

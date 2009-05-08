@@ -27,6 +27,7 @@ import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import com.sun.star.beans.NamedValue;
@@ -410,6 +411,10 @@ public class SyncJob extends ComponentBase
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
 //verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+				
+//just for test, analyze the document package structure
+				DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xServiceManager,m_xComponentContext);
+				dg.verifyDocumentSignature(xStorage,null);
 			}
 			else
 				m_aLogger.severe("executeOnLoad","Missing XOX_SingletonDataAccess interface"); 
