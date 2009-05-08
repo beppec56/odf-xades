@@ -67,20 +67,19 @@ public class DigitalSignatureHelper {
     	m_logger.info("ctor","");
     }
 
-    public void fillElementList(XStorage xThePackage, Vector<String> _List, String _rootElement, boolean _bRecurse) {
+    public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
     	
 		String[] aElements = xThePackage.getElementNames();
 		for(int i = 0; i < aElements.length; i++) {
 			if( aElements[i] != "META-INF" ) {
 				try {
 					if( xThePackage.isStreamElement(aElements[i]) ) {
-						_List.add(_rootElement+aElements[i]);
 // try to open the element, read a few bytes, close it
 						try {
 							Object oObjXStreamSto = xThePackage.cloneStreamElement(aElements[i]);
 //							Object oObjXStreamSto = xThePackage.openStreamElement(aElements[i], ElementModes.READ);
 							String sMediaType = "unknown media type";
-							
+							int nSize = 0;
 							XPropertySet xPset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
 							if(xPset != null) { 
 								try {
@@ -97,14 +96,15 @@ public class DigitalSignatureHelper {
 							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
 							
 							XInputStream xI = xSt.getInputStream();
+							nSize = xI.available(); 
 
-							m_logger.info(aElements[i]+" "+xI.available()+ " bytes, media type is: '"+sMediaType+"'");
+//							m_logger.info(aElements[i]+" "+xI.available()+ " bytes, media type is: '"+sMediaType+"'");
 							
 							xI.closeInput();
 							
 //							XPropertySet xp = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oObjXStreamSto);
 							
-							
+							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,nSize) );							
 							
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
@@ -138,9 +138,9 @@ public class DigitalSignatureHelper {
      * @param _thePackage
      * @return
      */
-    private Vector<String> makeTheElementList(Object _othePackage, XStorage _xStorage) {
+    private Vector<APackageElement> makeTheElementList(Object _othePackage, XStorage _xStorage) {
     	//TODO: check for ODF 1.0 structure, see what to do in that case.
-    	Vector<String> aElements = new Vector<String>(20);
+    	Vector<APackageElement> aElements = new Vector<APackageElement>(20);
 
     	//print the storage ODF version
     	
@@ -291,10 +291,10 @@ public class DigitalSignatureHelper {
 
 //	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
 //	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
-	            Vector<String> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
+	            Vector<APackageElement> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
 	            m_logger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
-	            	m_logger.log(aElements.get(i));	            	
+	            	m_logger.log(aElements.get(i).toString());	            	
 	            }
 // using the created element list, test the file signature	            
 
@@ -337,15 +337,21 @@ public class DigitalSignatureHelper {
 			e.printStackTrace();
 		}
     }
-    
+
     private class APackageElement {
-    	
     	public String m_stheName;
     	public String m_sMediaType;
     	public int	m_nSize;
 
-    	public APackageElement() {
-    		
-    	}    	
+    	public APackageElement(String s,String mt,int sz ) {
+        	m_stheName = s;
+        	m_sMediaType = mt;
+        	m_nSize = sz;
+    	}
+    	
+    	public String toString() {
+    		String ret = m_stheName+ " media type: '"+m_sMediaType+"' size: "+m_nSize+" bytes";
+			return ret;
+    	}
     }
 }
