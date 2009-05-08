@@ -159,7 +159,71 @@ public class TestOnCertificates {
 		
 		protected void printSubject() {			
 //print the subject
-			//order of printing is as got in the
+			//order of printing is as got in the CNIPA spec
+			//first, grab the OID in the subject name
+			Vector<DERObjectIdentifier> oidv =  xc509.getSubject().getOIDs();
+			Vector values = xc509.getSubject().getValues();
+			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
+			for(int i=0; i< oidv.size(); i++) {
+				m_aLogger.info(X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
+						" (OID: "+oidv.elementAt(i).toString()+")");
+				hm.put(oidv.elementAt(i), values.elementAt(i).toString());
+			}			
+//			givenName
+			
+			DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname"));
+			if(hm.containsKey(oix))
+				m_aLogger.info("givenName="+hm.get(oix).toString());
+//			surname (OID: 2.5.4.42 e 2.5.4.4)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("surname="+hm.get(oix).toString());			
+
+//			countryName (OID: 2.5.4.6)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("c"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("countryCode="+hm.get(oix).toString());			
+			
+	//		organizationName (OID: 2.5.4.10)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("o"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("organizationName="+hm.get(oix).toString());			
+			
+		//	serialNumber (OID: 2.5.4.5)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("sn"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("serialNumber="+hm.get(oix).toString());			
+			
+			//pseudonym (OID: 2.5.4.65)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("pseudonym="+hm.get(oix).toString());
+
+			//dnQualifier (OID: 2.5.4.46)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("dn"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("dnQualifier="+hm.get(oix).toString());
+
+			//title (OID: 2.5.4.12)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("t"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("title="+hm.get(oix).toString());
+
+			//localityName (OID: 2.5.4.7)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("l"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("localityName="+hm.get(oix).toString());
+
+			//commonName (OID: 2.5.4.3)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("commonName="+hm.get(oix).toString());
+
+			//organizationalUnitName (OID: 2.5.4.11)
+			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("ou"));
+			 if(hm.containsKey(oix))
+					m_aLogger.info("organizationalUnitName="+hm.get(oix).toString());			
+
 			m_aLogger.info("Subject: "+xc509.getSubject().toString());
 
 		}
@@ -169,20 +233,11 @@ public class TestOnCertificates {
 			printSubjectNameForNode();
 			
 			m_aLogger.info("Version: V"+c.getVersion());
-			
-/*			BigInteger bi = xc509.getSerialNumber().getValue();
-			
-			byte[] ba = bi.toByteArray();
-			
-			String hex = "";
-			for(int i = 0; i<ba.length; i++)
-				hex = " " + hex + Integer.toHexString(ba[i]);
-*/
-			
-			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString()/*+" hex: "+hex*/);
+
+			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString());
 			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
-			
-			Date notBefore = xc509.getStartDate().getDate();						
+
+			Date notBefore = xc509.getStartDate().getDate();				
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(notBefore);	
 	//string with time only
@@ -197,7 +252,7 @@ public class TestOnCertificates {
 
 			printSubject();
 
-			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();//spki.getAlgorithmId();
+			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();
 			DERObjectIdentifier oi = aid.getObjectId();
 
 			m_aLogger.info("Subject Public Signature Algorithm: "+((
@@ -220,7 +275,7 @@ public class TestOnCertificates {
 			m_aLogger.info("Subject Public Key Data:\n"+keydatas);
 
 			m_aLogger.info("Signature Algorithm: "+((
-					xc509.getSignatureAlgorithm().getObjectId().getId().compareTo("1.2.840.113549.1.1.5") == 0) ? 
+					xc509.getSignatureAlgorithm().getObjectId().equals(X509CertificateStructure.sha1WithRSAEncryption)) ? 
 							"pkcs-1 sha1WithRSAEncryption" : oi.getId()));
 
 			sbjkd = xc509.getSignature().getBytes();
