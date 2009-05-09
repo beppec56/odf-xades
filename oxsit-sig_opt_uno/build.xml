@@ -139,7 +139,6 @@ the default target must be removed
 			<classpath>
 				<pathelement path="${ooo_ure_classes_path}/juh.jar" />
 				<pathelement path="${ooo_ure_classes_path}/jurt.jar" />
-				<pathelement path="${ooo_classes_path}/jut.jar" />
 				<pathelement path="${ooo_ure_classes_path}/ridl.jar" />
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
 				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />

@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/juh.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/jurt.jar"/>
-	<classpathentry kind="var" path="OOO3_LIBS/jut.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/ridl.jar"/>
 	<classpathentry kind="var" path="OOO3_LIBS/unoil.jar"/>
 	<classpathentry kind="lib" path="/oxsit-uno_types/dist/lib/oxsit-uno_types.uno.jar"/>

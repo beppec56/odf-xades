@@ -29,7 +29,9 @@ import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
@@ -45,10 +47,13 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -122,8 +127,7 @@ public class TestOnCertificates {
 			issuer = c.getIssuerX500Principal();
 		}
 
-		protected void printSubjectNameForNode() {
-			X509Name aSubject = xc509.getSubject();
+		protected void printSubjectNameForNode(X509Name _aName) {
 			//extract data from subject name following CNIPA recommendation
 			/*
 			 * first lookup for givenname and surname, if not existent
@@ -132,8 +136,8 @@ public class TestOnCertificates {
 			 */
 
 			//first, grab the OID in the subject name
-			Vector<DERObjectIdentifier> oidv = aSubject.getOIDs();
-			Vector values = aSubject.getValues();
+			Vector<DERObjectIdentifier> oidv = _aName.getOIDs();
+			Vector values = _aName.getValues();
 			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 			for(int i=0; i< oidv.size(); i++) {
 //				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+X509Name.DefaultSymbols.get(oidv.elementAt(i)));
@@ -141,101 +145,59 @@ public class TestOnCertificates {
 			}
 			//look for givename (=nome di battesimo)
 			{
+				String nome = "<no name>";
 				//see BC source code for details about DefaultLookUp behaviour
 				DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
 				if(hm.containsKey(oix)) {
-					String nome = hm.get(oix).toString();
+					nome = hm.get(oix).toString();
 					oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
 					if(hm.containsKey(oix))
-						m_aLogger.info(nome+" "+hm.get(oix).toString());				
+						nome = nome +" "+hm.get(oix).toString();
 				}
 				else {
-					//check for CN				
-					//if still not, check for pseudodym
-
+					//check for CN
+					oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+					if(hm.containsKey(oix)) {
+						nome = hm.get(oix).toString();
+					}
+					else {
+						//if still not, check for pseudodym
+						oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
+						if(hm.containsKey(oix))
+							nome = hm.get(oix).toString();						
+					}
 				}
+				m_aLogger.info(nome);
 			}			
 		}
-		
-		protected void printSubject() {			
+
+		protected void printSubject(X509Name _aName) {			
 //print the subject
 			//order of printing is as got in the CNIPA spec
 			//first, grab the OID in the subject name
-			Vector<DERObjectIdentifier> oidv =  xc509.getSubject().getOIDs();
-			Vector values = xc509.getSubject().getValues();
+			Vector<DERObjectIdentifier> oidv =  _aName.getOIDs();
+			Vector values = _aName.getValues();
 			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
+			String sAname = "\r\n";
 			for(int i=0; i< oidv.size(); i++) {
-				m_aLogger.info(X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
-						" (OID: "+oidv.elementAt(i).toString()+")");
+				sAname = sAname + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
+						" (OID: "+oidv.elementAt(i).toString()+") \r\n";
 				hm.put(oidv.elementAt(i), values.elementAt(i).toString());
-			}			
-//			givenName
-			
-			DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname"));
-			if(hm.containsKey(oix))
-				m_aLogger.info("givenName="+hm.get(oix).toString());
-//			surname (OID: 2.5.4.42 e 2.5.4.4)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("surname="+hm.get(oix).toString());			
-
-//			countryName (OID: 2.5.4.6)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("c"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("countryCode="+hm.get(oix).toString());			
-			
-	//		organizationName (OID: 2.5.4.10)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("o"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("organizationName="+hm.get(oix).toString());			
-			
-		//	serialNumber (OID: 2.5.4.5)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("sn"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("serialNumber="+hm.get(oix).toString());			
-			
-			//pseudonym (OID: 2.5.4.65)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("pseudonym="+hm.get(oix).toString());
-
-			//dnQualifier (OID: 2.5.4.46)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("dn"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("dnQualifier="+hm.get(oix).toString());
-
-			//title (OID: 2.5.4.12)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("t"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("title="+hm.get(oix).toString());
-
-			//localityName (OID: 2.5.4.7)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("l"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("localityName="+hm.get(oix).toString());
-
-			//commonName (OID: 2.5.4.3)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("commonName="+hm.get(oix).toString());
-
-			//organizationalUnitName (OID: 2.5.4.11)
-			 oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("ou"));
-			 if(hm.containsKey(oix))
-					m_aLogger.info("organizationalUnitName="+hm.get(oix).toString());			
-
-			m_aLogger.info("Subject: "+xc509.getSubject().toString());
-
+			}
+			m_aLogger.info(sAname);
 		}
 		
 		public String printCert() {
 			
-			printSubjectNameForNode();
+			printSubjectNameForNode(xc509.getSubject());
 			
 			m_aLogger.info("Version: V"+c.getVersion());
-
-			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue().toString());
-			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
+			
+			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue());
+			
+			printSubject(xc509.getIssuer());
+			
+//			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
 
 			Date notBefore = xc509.getStartDate().getDate();				
 			Calendar calendar = new GregorianCalendar();
@@ -250,7 +212,7 @@ public class TestOnCertificates {
 			time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
 			m_aLogger.info("Valid not after:  "+time);
 
-			printSubject();
+			printSubject(xc509.getSubject());
 
 			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();
 			DERObjectIdentifier oi = aid.getObjectId();
@@ -274,6 +236,7 @@ public class TestOnCertificates {
 			}
 			m_aLogger.info("Subject Public Key Data:\n"+keydatas);
 
+			
 			m_aLogger.info("Signature Algorithm: "+((
 					xc509.getSignatureAlgorithm().getObjectId().equals(X509CertificateStructure.sha1WithRSAEncryption)) ? 
 							"pkcs-1 sha1WithRSAEncryption" : oi.getId()));
@@ -289,8 +252,72 @@ public class TestOnCertificates {
 				if(i !=  0 && (i+1) % 16 == 0)
 					keydatas = keydatas + "\n";
 			}
-			m_aLogger.info("Signature Data:\n"+keydatas);			
+			m_aLogger.info("Signature Data:\n"+keydatas);
 			
+			//obtain a byte block of the certificate data
+			TBSCertificateStructure tbsCert = xc509.getTBSCertificate();
+			ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
+			DEROutputStream         dOut = new DEROutputStream(bOut);
+			try {
+				dOut.writeObject(tbsCert);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			byte[] certBlock = bOut.toByteArray();
+
+			//now compute the SHA1 & MD5
+
+			
+			// print thumbprint SHA1 & MD5 of certificate data
+			/*
+		logger.debug("Certificate structure generated, creating SHA1 digest");
+		// attention: hard coded to be SHA1+RSA!
+		SHA1Digest digester = new SHA1Digest();
+		AsymmetricBlockCipher rsa = new PKCS1Encoding(new RSAEngine());
+		TBSCertificateStructure tbsCert = certGen.generateTBSCertificate();
+
+		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
+		DEROutputStream         dOut = new DEROutputStream(bOut);
+		dOut.writeObject(tbsCert);
+
+		// and now sign
+		byte[] signature;
+		if (useBCAPI) {
+			byte[] certBlock = bOut.toByteArray();
+			// first create digest
+			logger.debug("Block to sign is '" + new String(Hex.encodeHex(certBlock)) + "'");		
+			digester.update(certBlock, 0, certBlock.length);
+			byte[] hash = new byte[digester.getDigestSize()];
+			digester.doFinal(hash, 0);
+			// and sign that
+			rsa.init(true, caPrivateKey);
+			DigestInfo dInfo = new DigestInfo( new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1, null), hash);
+			byte[] digest = dInfo.getEncoded(ASN1Encodable.DER);
+			signature = rsa.processBlock(digest, 0, digest.length);
+		}
+		else {
+			// or the JCE way
+	        PrivateKey caPrivKey = KeyFactory.getInstance("RSA").generatePrivate(
+	        		new RSAPrivateCrtKeySpec(caPrivateKey.getModulus(), caPrivateKey.getPublicExponent(),
+	        				caPrivateKey.getExponent(), caPrivateKey.getP(), caPrivateKey.getQ(), 
+	        				caPrivateKey.getDP(), caPrivateKey.getDQ(), caPrivateKey.getQInv()));
+			
+	        Signature sig = Signature.getInstance(sigOID.getId());
+	        sig.initSign(caPrivKey, sr);
+	        sig.update(bOut.toByteArray());
+	        signature = sig.sign();
+		}
+		logger.debug("SHA1/RSA signature of digest is '" + new String(Hex.encodeHex(signature)) + "'");
+
+			 
+			 */
+			
+			//print extensions
+			
+			
+			//print the certificate path
+			printSubjectNameForNode(xc509.getIssuer());
 			return "";
 		}
 
