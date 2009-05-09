@@ -17,7 +17,10 @@ Eclipse is suggested as the development environment. We are currently using vers
 You will also need the SVN plugin for Eclipse, see http://subclipse.tigris.org
 for details. 
 
-You need an OpenOffice.org 3.0 installed, and an optional OpenOffice.org SDK.
+You need an OpenOffice.org 3.1 installed.
+The OpenOffice.org SDK is not needed usually, but you'll need it if you want to build
+the idl custom interface definition available in subproject oxsit-uno_types.
+See oxsit-uno_types README file for further information.
 
 The whole code is licensed according to EUPL V.1.1 or any later version.
 The documentation is licensed according to Creative Commons Attribution Share Alike 2.5. 
@@ -206,7 +209,7 @@ The build.xml properties are the following:
    
 Information on testing it
 =========================
-The extension requires OOo 3.0 to be installed.
+The extension requires OOo 3.1 to be installed.
 
 It would be a good idea install the extension on a 'no production' installation, that is an OOo
 installation not used for production jobs.
@@ -219,7 +222,7 @@ of the whole thing.
 The best way to install/update the extension is to use the following sequence in a console window
 (this one is referred to GNU/Linux):
 
-1) go to the OOo binary installation directory, under OOo 3.0 it should be <OOo root installation>/program
+1) go to the OOo binary installation directory, under OOo 3.1 it should be <OOo root installation>/program
 (e.g. /opt/openoffice.org3/program)
 
 2) verify that OOo is closed, as well as the quickstarter
@@ -253,14 +256,14 @@ Compiling the idl file of specialized interfaces
 These note explain how to compile the idl file given in.....
 to obtain the class file and prepare the rdb file for component
 registration when the extension is installed.
-Note taken under OOo 3.0 SDK
+Note taken under OOo 3.1 SDK
 
 The interface are written in Java, where needed.
 
 1) install the OOo SDK, 
 2) initialize it, accept default, not the autodeploy (e.g. = NO)
-3) now go to the default directory (sould be $HOME/openoffice.org_sdk under Linux)
-   cd  dsklnx
+3) now go to the default directory (sould be $HOME/openoffice.org3.1_sdk under Linux)
+   cd  <your linux host name>
    . ./setsdkenv_unix.sh
    
 Now you are ready to compile the idl and prepare the file rdb for inclusion
