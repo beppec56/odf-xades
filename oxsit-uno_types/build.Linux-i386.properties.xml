@@ -22,10 +22,10 @@
 ooosdk=/opt/openoffice.org3/basis-link/sdk
 <!--
 this is where the sdk environment is installed for you
-the value is the default in Linux after standard installation
-this is needed because
+the value is the default in Linux after standard installation of 3.0
+In case of a different installation, please update it
 -->
-oo_sdk_installed=${user.home}/openoffice.org_sdk
+oo_sdk_installed=${user.home}/openoffice.org3.1_sdk
 <!-- standard init script for OOo SDK, what should be launched for a correct init of the environment -->
 oo_sdk_init_script=${oo_sdk_installed}/dsklnx/setsdkenv_unix.sh
 <!-- command to build idl to urd -->
