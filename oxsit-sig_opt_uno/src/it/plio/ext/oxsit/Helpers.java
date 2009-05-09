@@ -166,6 +166,21 @@ public class Helpers {
 		String aPath = getExtensionInstallationPath(context);
 		return fromURLtoSystemPath(aPath);
 	}
+
+	public static String printHexBytes(byte[] _theBytes) {
+		String _sRet ="";
+		for(int i = 0; i < _theBytes.length;i++) {
+			if(i !=  0 && i % 16 == 0)
+				_sRet = _sRet + "\n";
+			try {
+				_sRet = _sRet + String.format(" %02X", ( _theBytes[i] & 0xff ) );
+			} catch(IllegalFormatException e) {
+				e.printStackTrace();
+			}
+		}
+		return _sRet;
+	}
+	
 	/**
 	 * converts a list of Integer values included in an Integer vector to a list
 	 * of int values

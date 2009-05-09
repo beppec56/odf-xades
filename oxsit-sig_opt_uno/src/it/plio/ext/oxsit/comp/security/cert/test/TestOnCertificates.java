@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.comp.security.cert.test;
 
 import it.infocamere.freesigner.gui.ReadCertsTask;
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
@@ -31,15 +32,14 @@ import it.trento.comune.j4sign.pcsc.PCSCHelper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -47,15 +47,18 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
+import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 
 import com.sun.star.uno.XComponentContext;
 
@@ -137,7 +140,7 @@ public class TestOnCertificates {
 
 			//first, grab the OID in the subject name
 			Vector<DERObjectIdentifier> oidv = _aName.getOIDs();
-			Vector values = _aName.getValues();
+			Vector<?> values = _aName.getValues();
 			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 			for(int i=0; i< oidv.size(); i++) {
 //				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+X509Name.DefaultSymbols.get(oidv.elementAt(i)));
@@ -171,12 +174,12 @@ public class TestOnCertificates {
 			}			
 		}
 
-		protected void printSubject(X509Name _aName) {			
+		protected void printX509Name(X509Name _aName) {			
 //print the subject
 			//order of printing is as got in the CNIPA spec
 			//first, grab the OID in the subject name
 			Vector<DERObjectIdentifier> oidv =  _aName.getOIDs();
-			Vector values = _aName.getValues();
+			Vector<?> values = _aName.getValues();
 			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 			String sAname = "\r\n";
 			for(int i=0; i< oidv.size(); i++) {
@@ -187,32 +190,23 @@ public class TestOnCertificates {
 			m_aLogger.info(sAname);
 		}
 		
+		protected String printCertDate(Date _aTime) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(_aTime);	
+	//string with time only
+			String time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
+			return time;
+		}
+
 		public String printCert() {
 			
 			printSubjectNameForNode(xc509.getSubject());
-			
 			m_aLogger.info("Version: V"+c.getVersion());
-			
 			m_aLogger.info("Serial number: "+xc509.getSerialNumber().getValue());
-			
-			printSubject(xc509.getIssuer());
-			
-//			m_aLogger.info("Issuer:  "+xc509.getIssuer().toString());
-
-			Date notBefore = xc509.getStartDate().getDate();				
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(notBefore);	
-	//string with time only
-			String time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
-			m_aLogger.info("Valid not before: "+time);
-
-			Date notAfter = xc509.getEndDate().getDate();
-			calendar.setTime(notAfter);	
-			//string with time only
-			time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
-			m_aLogger.info("Valid not after:  "+time);
-
-			printSubject(xc509.getSubject());
+			printX509Name(xc509.getIssuer());
+			m_aLogger.info("Valid not before: "+printCertDate(xc509.getStartDate().getDate()));
+			m_aLogger.info("Valid not after:  "+printCertDate(xc509.getEndDate().getDate()));
+			printX509Name(xc509.getSubject());
 
 			AlgorithmIdentifier aid = xc509.getSignatureAlgorithm();
 			DERObjectIdentifier oi = aid.getObjectId();
@@ -221,99 +215,65 @@ public class TestOnCertificates {
 					xc509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().equals(X509CertificateStructure.rsaEncryption)) ?
 							"pkcs-1 rsaEncryption" : oi.getId()
 							));
-			
-			byte[] sbjkd = xc509.getSubjectPublicKeyInfo().getPublicKeyData().getBytes();
-			
-			String keydatas = "";
-			for(int i = 0; i < sbjkd.length;i++) {
-				try {
-					keydatas = keydatas + String.format(" %02X", (sbjkd[i] & 0xff) );
-				} catch(IllegalFormatException e) {
-					m_aLogger.severe("", e);
-				}
-				if(i !=  0 && (i+1) % 16 == 0)
-					keydatas = keydatas + "\n";
-			}
-			m_aLogger.info("Subject Public Key Data:\n"+keydatas);
 
-			
+			byte[] sbjkd = xc509.getSubjectPublicKeyInfo().getPublicKeyData().getBytes();
+
+			m_aLogger.info("Subject Public Key Data:\n"+Helpers.printHexBytes(sbjkd));
+
 			m_aLogger.info("Signature Algorithm: "+((
 					xc509.getSignatureAlgorithm().getObjectId().equals(X509CertificateStructure.sha1WithRSAEncryption)) ? 
 							"pkcs-1 sha1WithRSAEncryption" : oi.getId()));
 
-			sbjkd = xc509.getSignature().getBytes();
-			keydatas = "";
-			for(int i = 0; i < sbjkd.length;i++) {
-				try {
-					keydatas = keydatas + String.format(" %02X", (sbjkd[i] & 0xff) );
-				} catch(IllegalFormatException e) {
-					m_aLogger.severe("", e);
-				}
-				if(i !=  0 && (i+1) % 16 == 0)
-					keydatas = keydatas + "\n";
-			}
-			m_aLogger.info("Signature Data:\n"+keydatas);
-			
-			//obtain a byte block of the certificate data
-			TBSCertificateStructure tbsCert = xc509.getTBSCertificate();
+/*			sbjkd = xc509.getSignature().getBytes();
+			m_aLogger.info("Signature Data:\n"+Helpers.printHexBytes(sbjkd));*/
+
+			//obtain a byte block of the entire certificate data
 			ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
 			DEROutputStream         dOut = new DEROutputStream(bOut);
 			try {
-				dOut.writeObject(tbsCert);
+				dOut.writeObject(xc509);
+				byte[] certBlock = bOut.toByteArray();
+
+				//now compute the certificate SHA1 & MD5 digest
+				SHA1Digest digsha1 = new SHA1Digest();
+				digsha1.update(certBlock, 0, certBlock.length);
+				byte[] hashsha1 = new byte[digsha1.getDigestSize()];
+				digsha1.doFinal(hashsha1, 0);
+				m_aLogger.info("Certificate SHA1 Thumbprint: "+Helpers.printHexBytes(hashsha1));
+				MD5Digest  digmd5 = new MD5Digest();
+				digmd5.update(certBlock, 0, certBlock.length);
+				byte[] hashmd5 = new byte[digmd5.getDigestSize()];
+				digmd5.doFinal(hashmd5, 0);
+				m_aLogger.info("Certificate MD5 Thumbprint: "+Helpers.printHexBytes(hashmd5));
+
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				m_aLogger.severe("certif data print!", e);
 			}
-			byte[] certBlock = bOut.toByteArray();
-
-			//now compute the SHA1 & MD5
-
-			
-			// print thumbprint SHA1 & MD5 of certificate data
-			/*
-		logger.debug("Certificate structure generated, creating SHA1 digest");
-		// attention: hard coded to be SHA1+RSA!
-		SHA1Digest digester = new SHA1Digest();
-		AsymmetricBlockCipher rsa = new PKCS1Encoding(new RSAEngine());
-		TBSCertificateStructure tbsCert = certGen.generateTBSCertificate();
-
-		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
-		DEROutputStream         dOut = new DEROutputStream(bOut);
-		dOut.writeObject(tbsCert);
-
-		// and now sign
-		byte[] signature;
-		if (useBCAPI) {
-			byte[] certBlock = bOut.toByteArray();
-			// first create digest
-			logger.debug("Block to sign is '" + new String(Hex.encodeHex(certBlock)) + "'");		
-			digester.update(certBlock, 0, certBlock.length);
-			byte[] hash = new byte[digester.getDigestSize()];
-			digester.doFinal(hash, 0);
-			// and sign that
-			rsa.init(true, caPrivateKey);
-			DigestInfo dInfo = new DigestInfo( new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1, null), hash);
-			byte[] digest = dInfo.getEncoded(ASN1Encodable.DER);
-			signature = rsa.processBlock(digest, 0, digest.length);
-		}
-		else {
-			// or the JCE way
-	        PrivateKey caPrivKey = KeyFactory.getInstance("RSA").generatePrivate(
-	        		new RSAPrivateCrtKeySpec(caPrivateKey.getModulus(), caPrivateKey.getPublicExponent(),
-	        				caPrivateKey.getExponent(), caPrivateKey.getP(), caPrivateKey.getQ(), 
-	        				caPrivateKey.getDP(), caPrivateKey.getDQ(), caPrivateKey.getQInv()));
-			
-	        Signature sig = Signature.getInstance(sigOID.getId());
-	        sig.initSign(caPrivKey, sr);
-	        sig.update(bOut.toByteArray());
-	        signature = sig.sign();
-		}
-		logger.debug("SHA1/RSA signature of digest is '" + new String(Hex.encodeHex(signature)) + "'");
-
-			 
-			 */
 			
 			//print extensions
+			X509Extensions xc509Ext = xc509.getTBSCertificate().getExtensions();
+			
+			Vector<DERObjectIdentifier> extoid = new Vector();
+			for(Enumeration<DERObjectIdentifier> enume = xc509Ext.oids(); enume.hasMoreElements();) {
+				extoid.add(enume.nextElement());
+			}			
+			
+			//first the critical one
+			m_aLogger.info("Critical Extensions:");
+			for(int i=0; i<extoid.size();i++) {
+				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
+				if(aext.isCritical())
+					m_aLogger.info(extoid.get(i).getId());
+			}
+			
+			m_aLogger.info("Non Critical Extensions:");
+			for(int i=0; i<extoid.size();i++) {
+				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
+				if(!aext.isCritical())
+					m_aLogger.info(extoid.get(i).getId());
+			}
+			//then the not critical
 			
 			
 			//print the certificate path
@@ -386,9 +346,9 @@ public class TestOnCertificates {
 				m_aLogger.log("\n\tLettura certificati");
 				
 				ReadCertsTask rt = new ReadCertsTask(cIr);
-				Collection certsOnToken = rt.getCertsOnToken();
+				Collection<?> certsOnToken = rt.getCertsOnToken();
 				if (certsOnToken != null) {
-					Iterator certIt = certsOnToken.iterator();
+					Iterator<?> certIt = certsOnToken.iterator();
 					if (certsOnToken.isEmpty()) {
 						m_aLogger.log("\tcertsOnToken vuoto");
 						CertInfo c = new CertInfo();
