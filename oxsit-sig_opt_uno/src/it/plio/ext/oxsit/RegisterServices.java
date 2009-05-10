@@ -27,6 +27,7 @@ import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
 import it.plio.ext.oxsit.comp.options.ManageSSCDOptions;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
+import it.plio.ext.oxsit.comp.security.SSCDevice;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -57,19 +58,23 @@ public class RegisterServices {
 		}
 		else if ( sImplementationName.equals( ManageSSCDOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageSSCDOptions.class, ManageSSCDOptions.m_sServiceNames );
-//DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
+//DEBUG			System.out.println("__getComponentFactory: "+ManageSSCDOptions.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( QualifiedCertificate.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( QualifiedCertificate.class, QualifiedCertificate.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
 		}
+		else if ( sImplementationName.equals( SSCDevice.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( SSCDevice.class, SSCDevice.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+SSCDevice.m_sImplementationName);
+		}
 		else if ( sImplementationName.equals( AvailableSSCDs.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( AvailableSSCDs.class, AvailableSSCDs.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+AvailableSSCDs.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -98,6 +103,9 @@ public class RegisterServices {
 		boolean retQualCertif = 
 			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
 
+		boolean retSSCDevice = 
+			Factory.writeRegistryServiceInfo( SSCDevice.m_sImplementationName, SSCDevice.m_sServiceNames, xRegistryKey );
+
 		boolean retAvailSSCDs = 
 			Factory.writeRegistryServiceInfo( AvailableSSCDs.m_sImplementationName, AvailableSSCDs.m_sServiceNames, xRegistryKey );
 
@@ -116,9 +124,12 @@ public class RegisterServices {
 		if (!retQualCertif)
 			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
 
+		if (!retSSCDevice)
+			System.out.println("__writeRegistryServiceInfo: "+SSCDevice.m_sImplementationName + "failed");		
+
 		if (!retAvailSSCDs)
 			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs.m_sImplementationName + "failed");		
 
-		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retAvailSSCDs && retSSCDOpts);
+		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retSSCDevice && retAvailSSCDs && retSSCDOpts);
 	}
 }

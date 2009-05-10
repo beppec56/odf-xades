@@ -273,10 +273,10 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // just in case the listener has been added to several controls,
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nEnableFileCtl].m_sControlName)) {
-//            	m_logger.info("check box of file changed state");
+//            	m_aLogger.info("check box of file changed state");
             	// retrieve the status of the control
                 int nState = AnyConverter.toInt(xPSet.getPropertyValue("State"));
-//FIXME DEBUg                m_logger.info("itemStateChanged","State is "+nState);
+//FIXME DEBUg                m_aLogger.info("itemStateChanged","State is "+nState);
             	// if the control is active, enables the relevant controls else disable them            	
                 enableTheFileControls(( nState == 0 ) ? false : true); 
             }

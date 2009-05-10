@@ -30,12 +30,21 @@ import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
@@ -94,19 +103,31 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
 
-	protected DynamicLogger m_logger;
+	protected DynamicLogger m_aLogger;
 	
 	protected CertificateAuthorityState m_CAState;
 	protected CertificateState			m_CState;
+
+	private String m_sSubjectDisplayName;
+	
+	//the certificate representation
+	private X509CertificateStructure m_aX509;
+
+	private String m_sSubjectName;
+
+	private String m_sVersion;
+
+	private String m_sSerialNumber; 
+	
 	/**
 	 * 
 	 * 
 	 * @param _ctx
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
-		m_logger = new DynamicLogger(this, _ctx);
-    	m_logger.enableLogging();
-    	m_logger.ctor();
+		m_aLogger = new DynamicLogger(this, _ctx);
+//    	m_aLogger.enableLogging();
+    	m_aLogger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
     	m_CState = CertificateState.NOT_VERIFIABLE;
     	
@@ -114,7 +135,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	public String getImplementationName() {
 		// TODO Auto-generated method stub
-		m_logger.entering("getImplementationName");
+		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 	
@@ -123,7 +144,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public String[] getSupportedServiceNames() {
 		// TODO Auto-generated method stub
-		m_logger.info("getSupportedServiceNames");
+		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -133,7 +154,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_logger.info("supportsService",_sService);
+		m_aLogger.info("supportsService",_sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -144,40 +165,34 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
 	 * 
-	 * arg0[0] = the DER stream of the certificate
+	 * arg0[0] = the DER stream of the certificate, e.g. a byte array that can be read as a
+	 * certificate.
+	 * It will initialize all the object contents
 	 */
 	@Override
-	public void initialize(Object[] arg0) throws Exception {
+	public void initialize(Object[] _DEREncoded) throws Exception {
 		// TODO Auto-generated method stub
 		
+		//Will simply call its
+		//setDEREncoded(byte[] ) method
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectDisplayName()
+	 */
+	@Override
+	public String getSubjectDisplayName() {
+		// TODO Auto-generated method stub
+		return m_sSubjectDisplayName;
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getVersion()
 	 */
 	@Override
-	public short getVersion() {
-		// TODO Auto-generated method stub
-		m_logger.info("getVersion");
-		return 3;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#findCertificateExtension(byte[])
-	 */
-	@Override
-	public XOX_CertificateExtension findCertificateExtension(byte[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getEncoded()
-	 */
-	@Override
-	public byte[] getEncoded() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getVersion() {
+		return m_sVersion;
 	}
 
 	/* (non-Javadoc)
@@ -202,7 +217,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerUniqueID()
 	 */
 	@Override
-	public byte[] getIssuerUniqueID() {
+	public String getIssuerUniqueID() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -211,7 +226,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getMD5Thumbprint()
 	 */
 	@Override
-	public byte[] getMD5Thumbprint() {
+	public String getMD5Thumbprint() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -238,7 +253,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSHA1Thumbprint()
 	 */
 	@Override
-	public byte[] getSHA1Thumbprint() {
+	public String getSHA1Thumbprint() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -247,9 +262,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSerialNumber()
 	 */
 	@Override
-	public byte[] getSerialNumber() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getSerialNumber() {
+		return m_sSerialNumber;
 	}
 
 	/* (non-Javadoc)
@@ -267,7 +281,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public String getSubjectName() {
 		// TODO Auto-generated method stub
-		return null;
+		return m_sSubjectName;
 	}
 
 	/* (non-Javadoc)
@@ -292,7 +306,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectUniqueID()
 	 */
 	@Override
-	public byte[] getSubjectUniqueID() {
+	public String getSubjectUniqueID() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -316,18 +330,142 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateAuthorityState()
-	 */
-	@Override
-	public CertificateAuthorityState getCertificateAuthorityState() {
-		return m_CAState;
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
-		return m_CState;
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityState()
+	 */
+	@Override
+	public CertificateAuthorityState getCertificationAuthorityState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationPath()
+	 */
+	@Override
+	public XOX_QualifiedCertificate getCertificationPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtension(java.lang.String)
+	 */
+	@Override
+	public XOX_CertificateExtension getCertificateExtension(String _aOID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getCriticalExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNonCriticalExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getNonCriticalExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getDEREncoded()
+	 */
+	@Override
+	public byte[] getDEREncoded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setDEREncoded(byte[])
+	 * 
+	 * When this method is called, the DER image passed will be used as the new certificate representation
+	 * and the certificate extensions will be evaluated again. 
+	 */
+	@Override
+	public void setDEREncoded(byte[] _DEREncoded) {
+		//
+		m_aX509 = null; //remove old certificate
+		ByteArrayInputStream as = new ByteArrayInputStream(_DEREncoded); 
+		ASN1InputStream aderin = new ASN1InputStream(as);
+		DERObject ado;
+		try {
+			ado = aderin.readObject();
+			m_aX509 = new X509CertificateStructure((ASN1Sequence) ado);
+//initializes the certificate display information
+			initSubjectName();
+			m_sVersion = String.format("V%d", m_aX509.getVersion());
+			m_sSerialNumber = new String(""+m_aX509.getSerialNumber().getValue());
+		} catch (IOException e) {
+			m_aLogger.severe("setDEREncoded", e);
+		}
+	}
+
+	////////////////// internal functions
+	protected void initSubjectName() {
+		m_sSubjectName = "";
+		//print the subject
+		//order of printing is as got in the CNIPA spec
+		//first, grab the OID in the subject name
+		X509Name aName = m_aX509.getSubject();
+		Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
+		Vector<?> values = aName.getValues();
+		HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
+		for(int i=0; i< oidv.size(); i++) {
+			m_sSubjectName = m_sSubjectName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
+					" (OID: "+oidv.elementAt(i).toString()+") \n";
+			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
+		}
+		//extract data from subject name following CNIPA recommendation
+		/*
+		 * first lookup for givenname and surname, if not existent
+		 * lookup for commonName (cn), if not existent
+		 * lookup for pseudonym ()
+		 */
+
+		//look for givename (=nome di battesimo)
+			m_sSubjectDisplayName = "";
+			//see BC source code for details about DefaultLookUp behaviour
+			DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
+			if(hm.containsKey(oix)) {
+				String tmpName = hm.get(oix).toString();
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
+				if(hm.containsKey(oix))
+					m_sSubjectDisplayName = tmpName +" "+hm.get(oix).toString();
+			}
+			if(m_sSubjectDisplayName.length() == 0) {
+				//check for CN
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+				if(hm.containsKey(oix)) {
+					m_sSubjectDisplayName = hm.get(oix).toString();
+				}
+			}
+			if(m_sSubjectDisplayName.length() == 0) {
+				//if still not, check for pseudodym
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
+				if(hm.containsKey(oix))
+					m_sSubjectDisplayName = hm.get(oix).toString();						
+			}
+			if(m_sSubjectDisplayName.length() == 0)
+				m_sSubjectDisplayName = m_sSubjectName;
+
+			m_aLogger.log(m_sSubjectDisplayName);
+			m_aLogger.log(m_sSubjectName);
 	}
 }

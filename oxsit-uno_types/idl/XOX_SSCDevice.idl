@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 
-#include "XOX_SSCDevice.idl"
+#include "XOX_QualifiedCertificate.idl"
 
   module it { module plio { module ext { module oxsit { module security {
 
@@ -31,16 +31,38 @@
 	  the available SSCD devices on system.
 	  <p>It needs to be expanded</p>
 	 */
-  interface XOX_AvailableSSCDs
+  interface XOX_SSCDevice
   {
-		/** The list of SSC Devices on this system.
+		/** a description of the device
 		*/
-		[attribute] sequence<it::plio::ext::oxsit::security::XOX_SSCDevice> AvailableSSCDevices;
+		[attribute] string Description;
 
-		/** This method will start the scan of the available SSCDs devices.
+		/**
 		*/
-		void scanDevices();
-		void addSSCDevice( [in] it::plio::ext::oxsit::security::XOX_SSCDevice SSCDevice );
+		[attribute] string Manufacturer;
+
+		/**
+		*/
+		[attribute] string ATRcode;
+
+		/**
+		*/
+		[attribute] string CryptoLibraryUsed;
+
+		/** The certificates this device holds.
+		*/
+		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> QualifiedCertificates;
+
+		/** this document id
+		*/
+//		[attribute] string DocumentId;
+
+		/** This method will return all the certificate available on this token.
+		*/
+//		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;
+//		sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> getQualifiedCertificates();
+
+		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate aCertificate);
   };
  
   }; }; }; }; };

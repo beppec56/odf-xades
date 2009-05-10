@@ -272,7 +272,7 @@ public class DispatchIntercept extends ComponentBase
 
 			// intercept .uno:Save
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
-//				m_logger.info("queryDispatch", aURL.Complete);
+//				m_aLogger.info("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					/*
 					 * http://www.mail-archive.com/dev@api.openoffice.org/msg03786.html ()
@@ -289,7 +289,7 @@ public class DispatchIntercept extends ComponentBase
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 /*					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
-					m_logger.info("XNotifyingDispatch: "+Xnf);*/
+					m_aLogger.info("XNotifyingDispatch: "+Xnf);*/
 					if (m_ImplIntSaveDispatch == null)
 						m_ImplIntSaveDispatch = new ImplInterceptSaveDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );
@@ -298,14 +298,14 @@ public class DispatchIntercept extends ComponentBase
 			}
 /*			disabled 'cause it locks the office 
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SSAVE_AS_URL_COMPLETE ) == true) {
-				m_logger.info("queryDispatch", aURL.Complete);
+				m_aLogger.info("queryDispatch", aURL.Complete);
 				XDispatch aUnoSaveSlaveDispatch = null;
 				synchronized (this) {
 					if (m_xSlave != null)
 						aUnoSaveSlaveDispatch = m_xSlave.queryDispatch( aURL, sTarget,
 								nSearchFlags );
 					XNotifyingDispatch Xnf = (XNotifyingDispatch)UnoRuntime.queryInterface(XNotifyingDispatch.class, aUnoSaveSlaveDispatch);
-					m_logger.info("XNotifyingDispatch: "+Xnf);
+					m_aLogger.info("XNotifyingDispatch: "+Xnf);
 					if (m_ImplIntSaveAsDispatch == null)
 						m_ImplIntSaveAsDispatch = new ImplInterceptSaveAsDispatch( m_xFrame, m_xCC,
 								m_axMCF, aUnoSaveSlaveDispatch );

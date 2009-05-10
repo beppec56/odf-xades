@@ -42,7 +42,11 @@
 		 */
 		[attribute, readonly] sequence< byte > ExtensionValue ;
 
-		/** The extension value, String representation
+		/** The extension value, String representation, containing the human readable extension name
+		*/
+		[attribute, readonly] string ExtensionStringName ;
+
+		/** The extension value, String representation, containing the human readable extension value
 		*/
 		[attribute, readonly] string ExtensionStringValue ;
 	}; 

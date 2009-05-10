@@ -141,8 +141,14 @@ public class GlobConstant {
 	// service to hold all the information available from SSCD devices available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.AvailableSSCDs";
 
+	// service to hold all the information available for a single SSCD device available on system.
+	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
+	
 	//service to hold a single certificate
 	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.QualifiedCertificate";
+	
+	//service to hold a single certificate extension
+	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 	
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";

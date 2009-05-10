@@ -76,9 +76,9 @@ public class ManageSSCDOptions extends ManageOptions  {
 	public ManageSSCDOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_sscd");//leaf refers to OOo documentation about
 															// extension options
-//DEBUG		m_logger.enableLogging();// disabled in base class
-/*		m_logger.disableInfo();
-		m_logger.disableWarning();*/
+//DEBUG		m_aLogger.enableLogging();// disabled in base class
+/*		m_aLogger.disableInfo();
+		m_aLogger.disableWarning();*/
 		m_logger.ctor();
 		//prepare the list of controls on the page
 

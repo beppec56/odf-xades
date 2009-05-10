@@ -32,7 +32,7 @@
  */
 	service QualifiedCertificate 
 	{
-		/** This interface gives access to the X509 qualified certificate
+		/** This interface gives access to the X509 qualified certificate this service represents.
 		*/
 		interface it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate;
 	} ;

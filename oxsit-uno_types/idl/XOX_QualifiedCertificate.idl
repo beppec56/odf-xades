@@ -31,6 +31,11 @@
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** Interface of a Qualified X509 Certificate
+<p>The certificate accessed through this interface can only be created in two ways:</p>
+<p>by instantiating an AvailableSSCDs service and callig the scanDevices() method of its
+XOX_AvailableSSCDs interface or</p>
+<p>by opening an ODF document that contains one it it in its XAdES signature.</p>
+<p>See service QualifiedCertificate for details.</p>
  */
 	interface XOX_QualifiedCertificate 
 	{
@@ -39,17 +44,26 @@
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState ;
 		/** the state of the CA (certificate Authority) control.
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificateAuthorityState;
-		/** the version number attribute of the certificate.
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificationAuthorityState;
+		/** the human readable rapresentation of the holder (subject) of this certificate.
+		<p>This string is formed from the SubjectDN certificate field in the following way:</p>
+		<p>If givenName and surname both exist, they are used togeter to form a string in the form of
+		givenName+" "+surname</p>
+		<p>if they both don't exist, then the commonName attribute is used</p>
+		<p>if common name doesn't exist, then pseudonym is used</p>
+		<p>If nothing of this exists, the entire subjectDN file is returned, same as for SubjectName below.</p>
 	 	*/
-		[attribute, readonly] short Version ;
-		/** the serial number attribute of the certificate.
+		[attribute, readonly] string SubjectDisplayName ;
+		/** the human readable representation of the version number attribute of the certificate.
+	 	*/
+		[attribute, readonly] string Version ;
+		/** the human readable rapresentation of the serial number attribute of the certificate.
 		 */
-		[attribute, readonly] sequence< byte > SerialNumber ;
-		/** the issuer name attribute of the certificate.
+		[attribute, readonly] string SerialNumber ;
+		/** the full issuer name attribute of the certificate.
 		 */
 		[attribute, readonly] string IssuerName ;
-		/** the subject name attribute of the certificate.
+		/** the full subject name attribute of the certificate.
 		*/
 		[attribute, readonly] string SubjectName ;
 		/** the validity NotBefore date attribute of the certificate.
@@ -58,41 +72,58 @@
 		/** the validity NotAfter date attribute of the certificate.
 		 */
 		[attribute, readonly] com::sun::star::util::DateTime NotValidAfter ;
-		/** the issuer unique ID attribute of the certificate.
+		/** the human readable rapresentation of the issuer unique ID attribute of the certificate.
 		 */
-		[attribute, readonly] sequence< byte > IssuerUniqueID ;
-		/** the subject unique ID attribute of the certificate.
+		[attribute, readonly] string IssuerUniqueID ;
+		/** the human readable rapresentation of the subject unique ID attribute of the certificate.
 		 */
-		[attribute, readonly] sequence< byte > SubjectUniqueID ;
+		[attribute, readonly] string SubjectUniqueID ;
 		/** all extensions of a certificate.
 		 */
 		[attribute, readonly] sequence< XOX_CertificateExtension > Extensions ;
-		/** the DER encoded form of the certificate
+		/** all critical extensions of a certificate.
 		 */
-		[attribute, readonly] sequence< byte > Encoded ;
-		/** the algorithm of the subject public key
+		[attribute, readonly] sequence< XOX_CertificateExtension > CriticalExtensions ;
+		/** all non critical extensions of a certificate.
+		 */
+		[attribute, readonly] sequence< XOX_CertificateExtension > NonCriticalExtensions ;
+		/** the DER encoded form of the certificate.
+		 */
+		[attribute] sequence< byte > DEREncoded ;
+		/** the human readable rapresentation of the algorithm of the subject public key
 		 */
 		[attribute, readonly] string SubjectPublicKeyAlgorithm;
-		/** the value of the subject public key
+		/** the human readable rapresentation of the value of the subject public key
 		 */
 		[attribute, readonly] sequence< byte > SubjectPublicKeyValue;
-		/** the signature algorithm
+		/** the human readable rapresentation of the signature algorithm
 		 */
 		[attribute, readonly] string SignatureAlgorithm;
-		/** the SHA1 thumbprint
+		/** the human readable rapresentation of the SHA1 thumbprint of the certificate.
+		<p>It's computed by calculating the SHA1 digest of the DER encoded form of the entire certificate.</p>
 		*/
-		[attribute, readonly] sequence< byte > SHA1Thumbprint;
-		/** the MD5 thumbprint
+		[attribute, readonly] string SHA1Thumbprint;
+		/** the human readable rapresentation of the MD5 thumbprint of the certificate.
+		<p>It's computed by calculating the MD5 digest of the DER encoded form of the entire certificate.</p>
 		*/
-		[attribute, readonly] sequence< byte > MD5Thumbprint;
+		[attribute, readonly] string MD5Thumbprint;
+
+		/** The first certificate in the certification path, this is the start of the certification path
+		tree.
+		*/
+		[attribute, readonly] XOX_QualifiedCertificate CertificationPath ;
+
 		/** Find an extension with a OID.
+		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		XOX_CertificateExtension findCertificateExtension( [in]sequence< byte > oid ) ;
+		XOX_CertificateExtension getCertificateExtension( [in]string oid ) ;
 		/** verify the Certificate Revocation List state of this 
-		 certificate
+		 certificate. Returns false if not OK, true if OK.
+		 <p>Either cases, the CertificateState field will have the result.</p>
 		*/
 		boolean verifyCRLForCertificate( );
-		/** verify the Certificate Authority of this certificate
+		/** verify the Certificate Authority of this certificate. Returns false if not OK, true if OK.
+		 <p>Either cases, the CertificationAuthorityState field will have the result.</p>
 		  */
 		boolean verifyCAForCertificate( );
 	} ;

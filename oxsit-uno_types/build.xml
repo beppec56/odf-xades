@@ -180,18 +180,24 @@ the default target must be removed
 			<param name="parm1" value="QualifiedCertificate"/>
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
+		
 		<antcall target="compile-idl">
-			<!--interface name -->
-			<param name="parm1" value="XOX_DocumentSignatures"/>
-			<!--interface path -->
-			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
+			<param name="parm1" value="XOX_SSCDevice"/>
+			<param name="parm2" value="it.plio.ext.oxsit.security"/>
 		</antcall>
-
+		
 		<antcall target="compile-idl">
 			<!--interface name -->
 			<param name="parm1" value="XOX_AvailableSSCDs"/>
 			<!--interface path -->
 			<param name="parm2" value="it.plio.ext.oxsit.security"/>
+		</antcall>
+
+		<antcall target="compile-idl">
+			<!--interface name -->
+			<param name="parm1" value="XOX_DocumentSignatures"/>
+			<!--interface path -->
+			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 
 		<antcall target="compile-idl">

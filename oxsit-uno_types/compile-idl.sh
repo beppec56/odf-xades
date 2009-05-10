@@ -37,9 +37,10 @@ if [ $? -ne 0 ] ;
 	exit
 fi
 
-echo "prepare the java classes ($OO_SDK_URE_HOME) ($OFFICE_BASE_HOME) ($OFFICE_HOME)"
-echo "using $OFFICE_BASE_HOME/ure-link/share/misc/types.rdb"
-echo "using $OFFICE_BASE_HOME/program/offapi.rdb"
+# the following three lines can be enable to debug
+#echo "prepare the java classes ($OO_SDK_URE_HOME) ($OFFICE_BASE_HOME) ($OFFICE_HOME)"
+#echo "using $OFFICE_BASE_HOME/ure-link/share/misc/types.rdb"
+#echo "using $OFFICE_BASE_HOME/program/offapi.rdb"
 javamaker -BUCR -O$5 -T"$6."$2 -nD $OFFICE_BASE_HOME/ure-link/share/misc/types.rdb $OFFICE_BASE_HOME/program/offapi.rdb "$4"/oxsit-uno_types.uno.rdb
 
 if [ $? -ne 0 ] ;

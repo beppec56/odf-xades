@@ -58,8 +58,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
 
 	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
-
-//	public static final int	NUMBER_OF_DISPLAYED_TEST_LINES = 14;
 	
 	/**
 	 * Note on the display:
@@ -84,16 +82,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 // the next value should be read from configuration, when configuration is written...
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
 		CertifTreeDlgDims.setDialogSize(300, 100, 0);
-
-//instantiate the SSCDs service
-		try {
-			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
-			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
-			if(m_axoxAvailableSSCDs != null)
-				m_axoxAvailableSSCDs.scanDevices();
-		} catch (Exception e) {
-			m_logger.severe("ctor", e);
-		}
 	}
 
 	public void initialize(int _nPosX, int _nPosY ) throws BasicErrorException {
@@ -178,7 +166,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
 		String m_sExtensionSystemPath;
-		//not implemented here, next code is for text only:
+		//not implemented here, next code is for test only:
 		try {
 			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xContext);
 			m_logger.ctor("extension installed in: "+m_sExtensionSystemPath);
@@ -201,7 +189,16 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
 		m_logger.info("Seleziona dispositivo");
-		addOneCertificate();
+//		addOneCertificate();
+		//instantiate the SSCDs service
+		try {
+			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
+			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
+			if(m_axoxAvailableSSCDs != null)
+				m_axoxAvailableSSCDs.scanDevices();
+		} catch (Exception e) {
+			m_logger.severe("ctor", e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -236,7 +233,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
-//		m_logger.entering("enableSingleButton");
+//		m_aLogger.entering("enableSingleButton");
 		//grab the button...
 		XControl xTFControl = m_xDlgContainer.getControl( sButtonName );
 		if(xTFControl != null){

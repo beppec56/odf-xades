@@ -22,35 +22,23 @@
 
 package it.plio.ext.oxsit.comp.security;
 
-import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
-import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
-import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
-import it.trento.comune.j4sign.pcsc.CardInfo;
-import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
@@ -69,41 +57,47 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppec56
  * 
  */
-public class AvailableSSCDs extends ComponentBase
+public class SSCDevice extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
-		XOX_AvailableSSCDs {
+		XOX_SSCDevice {
 
 	protected XComponentContext m_xCC;
-	protected XMultiComponentFactory m_MCF;
 	
 	// the name of the class implementing this object
-	public static final String m_sImplementationName = AvailableSSCDs.class
+	public static final String m_sImplementationName = SSCDevice.class
 			.getName();
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[] m_sServiceNames = { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
+	public static final String[] m_sServiceNames = { GlobConstant.m_sSSCD_SERVICE };
 
 	protected String m_sExtensionSystemPath;
 
 	protected String m_sSSCDLibraryPath;
 	protected boolean m_bSSCDAutomaticDetection;
-
-	//the list of available devices
-	protected Vector<XOX_SSCDevice>	m_aSSCDList; 
+	
+	protected Vector<XOX_QualifiedCertificate>	m_vQualifiedCertList;
 	
 	protected DynamicLogger m_aLogger;
 
+	private String m_sATRCode;
+
+	private String m_sCryptoLibraryUsed;
+
+	private String m_sDescription;
+
+	private String m_sManufacturer;
+
 	/**
-	 * 
+	 * This Class implements the SSCDevice service
 	 * 
 	 * @param _ctx
 	 *            the UNO context
 	 */
-	public AvailableSSCDs(XComponentContext _ctx) {
+	public SSCDevice(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_xCC = _ctx;
-		m_MCF = m_xCC.getServiceManager();
 		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 		try {
 			m_sExtensionSystemPath = Helpers
 					.getExtensionInstallationSystemPath(_ctx);
@@ -121,13 +115,12 @@ public class AvailableSSCDs extends ComponentBase
 				.getBoolean("SSCDAutomaticDetection");
 		m_sSSCDLibraryPath = xOptionsConfigAccess.getText("SSCDFilePath1");
 		xOptionsConfigAccess.dispose();
-		
-		m_aSSCDList = new Vector<XOX_SSCDevice>();
+
+		m_vQualifiedCertList = new Vector<XOX_QualifiedCertificate>();
 	}
 
 	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
@@ -139,7 +132,6 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
 		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
@@ -190,8 +182,8 @@ public class AvailableSSCDs extends ComponentBase
 	 * (non-Javadoc)
 	 * 
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * when instantiated, _oObj[0] first argument document URL _oObj[1]
-	 * corresponding XStorage object
+	 * Called when instantiating using the CreateInstanceWithArguments() method 
+	 * when instantiated, _oObj[0] first certificate object (service), _oObj[1] the second ... 
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
@@ -239,195 +231,95 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getAvailableSSCDevices()
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addAQualifiedCertificate(it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate)
+	 * 
+	 * To be called for every qualified certificate that will be added
+	 * 
 	 */
 	@Override
-	public XOX_SSCDevice[] getAvailableSSCDevices() {
+	public void addAQualifiedCertificate(XOX_QualifiedCertificate _aCertif) {
+		// TODO Auto-generated method stub
+		m_aLogger.severe("addAQualifiedCertificate", "method still to be written!");
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getQualifiedCertificates()
+	 */
+	@Override
+	public XOX_QualifiedCertificate[] getQualifiedCertificates() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#setAvailableSSCDevices(it.plio.ext.oxsit.security.XOX_SSCDevice[])
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getATRcode()
 	 */
 	@Override
-	public void setAvailableSSCDevices(XOX_SSCDevice[] arg0) {
+	public String getATRcode() {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	private class CertInfo {
-		public String certName;
-
-		public X509Certificate c;
-
-		/**
-		 * Constructor (null)
-		 * 
-		 */
-
-		public CertInfo() {
-			certName = null;
-			c = null;
-		}
-
-		/**
-		 * Constructor
-		 * 
-		 * @param x
-		 *            X509Certificate
-		 */
-		public CertInfo(X509Certificate x) {
-			certName = toCNNames("" + x.getSubjectDN());
-			c = x;
-		}
-
-		public String toString() {
-			return certName;
-		}
-
-		public X509Certificate getCertificate() {
-			return c;
-		}
-
-		public void setCertificate(X509Certificate x) {
-			c = x;
-		}
-
-		public void setName(String s) {
-			certName = s;
-		}
-
-	}
-
-	private String toCNNames(String DN) {
-
-		int offset = DN.indexOf("CN=");
-		int end = DN.indexOf(",", offset);
-		String CN;
-		if (end != -1) {
-			CN = DN.substring(offset + 3, end);
-		} else {
-			CN = DN.substring(offset + 3, DN.length());
-		}
-		CN = CN.substring(0, CN.length());
-		return CN;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSscdDevices#scanDevices()
-	 * called to initiated a scan of the devices available on system.
-	 */
-	@Override
-	public void scanDevices() {
-		// TODO Auto-generated method stub
-		m_aLogger.entering("scanDevices");
-
-		PCSCHelper pcsc = new PCSCHelper(true);
-
-		m_aLogger.log("After 'new PCSCHelper'");
-
-		java.util.List infos = pcsc.findCardsAndReaders();
-
-		CardInfo ci = null;
-		Iterator<CardInReaderInfo> it = infos.iterator();
-		int indexToken = 0;
-		int indexReader = 0;
-
-		while (it.hasNext()) {
-			m_aLogger.log("Reader " + indexReader + ")");
-
-			CardInReaderInfo cIr = it.next();
-			String currReader = cIr.getReader();
-
-			ci = cIr.getCard();
-			
-			if (ci != null) {				
-//instantiate a SSCDevice service object to hold the token device information and
-				//the detected certificates
-				
-				Object oAnSSCD = null;
-				XOX_SSCDevice xSSCDevice = null;
-				try {
-					oAnSSCD = m_MCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
-					xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
-					
-					xSSCDevice.setDescription(ci.getProperty("description"));
-					xSSCDevice.setManufacturer(ci.getProperty("manufacturer"));
-					xSSCDevice.setATRcode(ci.getProperty("atr"));
-					xSSCDevice.setCryptoLibraryUsed(ci.getProperty("lib"));
-
-					m_aLogger.log("\n\tLettura certificati");
-
-					ReadCertsTask rt = new ReadCertsTask(cIr);
-					Collection certsOnToken = rt.getCertsOnToken();
-					if (certsOnToken != null) {
-						Iterator certIt = certsOnToken.iterator();
-						if (certsOnToken.isEmpty()) {
-							m_aLogger.log("\tcertsOnToken vuoto");
-							CertInfo c = new CertInfo();
-							c.setName("Carta presente ma vuota");
-						}
-						while (certIt.hasNext()) {
-	//add this certificate to our structure
-							X509Certificate cert = (X509Certificate) certIt.next();
-							try {
-								//this try will only check for correctess, before
-								//instantiating the service
-								cert.getEncoded();
-//all seems right, instantiate the certificate service
-								Object oACertificate = m_MCF.createInstanceWithContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE, m_xCC);
-								//get the main interface
-								XOX_QualifiedCertificate xQualCert = 
-									(XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oACertificate);
-								//set the certificate raw value
-								xQualCert.setDEREncoded(cert.getEncoded());
-								m_aLogger.log(xQualCert.getSubjectDisplayName());
-								m_aLogger.log(xQualCert.getVersion());
-								m_aLogger.log(xQualCert.getSerialNumber());
-								m_aLogger.log(xQualCert.getSubjectName());
-								//add it to the token collection
-								xSSCDevice.addAQualifiedCertificate(xQualCert);
-							} catch (CertificateEncodingException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}	
-						}
-
-						rt.closeSession();
-						rt.libFinalize();
-						indexToken++;
-					}
-				} catch (Exception e) {
-					m_aLogger.severe("",e);
-				}
-			} else {
-				m_aLogger.log("No card in reader '" + currReader + "'!");
-
-			}
-
-			indexReader++;
-		}
-
-	}
-
-	public void testCertificateDisplay() {
-		TestOnCertificates xtest = new TestOnCertificates(m_xCC);
-		xtest.testMethod();
+		return m_sATRCode;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#addSSCDevice(it.plio.ext.oxsit.security.XOX_SSCDevice)
-	 * 
-	 * add the single parameter device
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setATRcode(java.lang.String)
 	 */
 	@Override
-	public void addSSCDevice(XOX_SSCDevice _aSSCD) {
+	public void setATRcode(String _sArg) {
+		m_aLogger.log("setATRcode", _sArg);
+		m_sATRCode = _sArg;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getCryptoLibraryUsed()
+	 */
+	@Override
+	public String getCryptoLibraryUsed() {
 		// TODO Auto-generated method stub
-		// the single device
-		
+		return m_sCryptoLibraryUsed;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setCryptoLibraryUsed(java.lang.String)
+	 */
+	@Override
+	public void setCryptoLibraryUsed(String _sArg) {
+		m_aLogger.log("setCryptoLibraryUsed", _sArg);
+		m_sCryptoLibraryUsed = _sArg;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return m_sDescription;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setDescription(java.lang.String)
+	 */
+	@Override
+	public void setDescription(String _sArg) {
+		m_aLogger.log("setDescription", _sArg);
+		m_sDescription = _sArg;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getManufacturer()
+	 */
+	@Override
+	public String getManufacturer() {
+		// TODO Auto-generated method stub
+		return m_sManufacturer;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setManufacturer(java.lang.String)
+	 */
+	@Override
+	public void setManufacturer(String _sArg) {
+		m_aLogger.log("setManufacturer", _sArg);
+		m_sManufacturer = _sArg;
 	}
 }
