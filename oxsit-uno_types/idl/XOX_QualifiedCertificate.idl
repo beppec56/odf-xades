@@ -68,10 +68,10 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute, readonly] string SubjectName ;
 		/** the validity NotBefore date attribute of the certificate.
 		 */
-		[attribute, readonly] com::sun::star::util::DateTime NotValidBefore ;
+		[attribute, readonly] string NotValidBefore ;
 		/** the validity NotAfter date attribute of the certificate.
 		 */
-		[attribute, readonly] com::sun::star::util::DateTime NotValidAfter ;
+		[attribute, readonly] string NotValidAfter ;
 		/** the human readable rapresentation of the issuer unique ID attribute of the certificate.
 		 */
 		[attribute, readonly] string IssuerUniqueID ;
@@ -95,7 +95,7 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute, readonly] string SubjectPublicKeyAlgorithm;
 		/** the human readable rapresentation of the value of the subject public key
 		 */
-		[attribute, readonly] sequence< byte > SubjectPublicKeyValue;
+		[attribute, readonly] string SubjectPublicKeyValue;
 		/** the human readable rapresentation of the signature algorithm
 		 */
 		[attribute, readonly] string SignatureAlgorithm;

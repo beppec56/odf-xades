@@ -32,7 +32,10 @@ import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -43,6 +46,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -113,11 +117,31 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	//the certificate representation
 	private X509CertificateStructure m_aX509;
 
-	private String m_sSubjectName;
+	private String m_sSubjectName = "";
 
-	private String m_sVersion;
+	private String m_sVersion = "";
 
-	private String m_sSerialNumber; 
+	private String m_sSerialNumber = "";
+
+	private String m_sIssuerName = "";
+
+	private String m_sNotValidAfter = "";
+
+	private String m_sNotValidBefore = "";
+
+	private String m_sSubjectPublicKeyAlgorithm = "";
+
+	private String m_sSubjectPublicKeyValue = "";
+
+	private String m_sSignatureAlgorithm = "";
+
+	private String m_sIssuerUniqueID;
+
+	private String m_sMD5Thumbprint;
+
+	private String m_sSHA1Thumbprint;
+
+	private String m_sSubjectUniqueID;
 	
 	/**
 	 * 
@@ -196,6 +220,22 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidAfter()
+	 */
+	@Override
+	public String getNotValidAfter() {
+		return m_sNotValidAfter;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidBefore()
+	 */
+	@Override
+	public String getNotValidBefore() {
+		return m_sNotValidBefore;
+	}
+	
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
 	 */
 	@Override
@@ -209,8 +249,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getIssuerName() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sIssuerName;
 	}
 
 	/* (non-Javadoc)
@@ -218,8 +257,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getIssuerUniqueID() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sIssuerUniqueID;
 	}
 
 	/* (non-Javadoc)
@@ -227,26 +265,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getMD5Thumbprint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidAfter()
-	 */
-	@Override
-	public DateTime getNotValidAfter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidBefore()
-	 */
-	@Override
-	public DateTime getNotValidBefore() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sMD5Thumbprint;
 	}
 
 	/* (non-Javadoc)
@@ -254,8 +273,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getSHA1Thumbprint() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sSHA1Thumbprint;
 	}
 
 	/* (non-Javadoc)
@@ -271,8 +289,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getSignatureAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sSignatureAlgorithm;
 	}
 
 	/* (non-Javadoc)
@@ -280,7 +297,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getSubjectName() {
-		// TODO Auto-generated method stub
 		return m_sSubjectName;
 	}
 
@@ -289,17 +305,15 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getSubjectPublicKeyAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sSubjectPublicKeyAlgorithm;
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectPublicKeyValue()
 	 */
 	@Override
-	public byte[] getSubjectPublicKeyValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getSubjectPublicKeyValue() {
+		return m_sSubjectPublicKeyValue;
 	}
 
 	/* (non-Javadoc)
@@ -307,8 +321,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getSubjectUniqueID() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_sSubjectUniqueID;
 	}
 
 	/* (non-Javadoc)
@@ -388,8 +401,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public byte[] getDEREncoded() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_aX509.getDEREncoded();
 	}
 
 	/* (non-Javadoc)
@@ -412,12 +424,35 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			initSubjectName();
 			m_sVersion = String.format("V%d", m_aX509.getVersion());
 			m_sSerialNumber = new String(""+m_aX509.getSerialNumber().getValue());
+			initIssuerName();
+			
+			m_sNotValidBefore = initCertDate(m_aX509.getStartDate().getDate());
+			m_sNotValidAfter =  initCertDate(m_aX509.getEndDate().getDate());
+			m_sSignatureAlgorithm = initSignatureAlgorithm();
+
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
 	}
 
 	////////////////// internal functions
+	protected String initSignatureAlgorithm() {
+		AlgorithmIdentifier aid = m_aX509.getSignatureAlgorithm();
+		DERObjectIdentifier oi = aid.getObjectId();
+		return new String(""+((
+				m_aX509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().equals(X509CertificateStructure.rsaEncryption)) ?
+						"pkcs-1 rsaEncryption" : oi.getId()
+						));
+	}
+	protected String initCertDate(Date _aTime) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(_aTime);	
+//string with time only
+//FIXME important: the locale should be the one of the extension not Java.
+		String time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
+		return time;
+	}	
+
 	protected void initSubjectName() {
 		m_sSubjectName = "";
 		//print the subject
@@ -440,7 +475,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		 */
 
 		//look for givename (=nome di battesimo)
-			m_sSubjectDisplayName = "";
+			m_sSubjectDisplayName = "";			
 			//see BC source code for details about DefaultLookUp behaviour
 			DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
 			if(hm.containsKey(oix)) {
@@ -467,5 +502,16 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 			m_aLogger.log(m_sSubjectDisplayName);
 			m_aLogger.log(m_sSubjectName);
+	}
+	
+	protected void initIssuerName() {
+		m_sIssuerName = "";
+		X509Name aName = m_aX509.getIssuer();
+		Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
+		Vector<?> values = aName.getValues();
+		for(int i=0; i< oidv.size(); i++) {
+			m_sIssuerName = m_sIssuerName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
+					" (OID: "+oidv.elementAt(i).toString()+") \n";
+		}		
 	}
 }

@@ -388,7 +388,11 @@ public class AvailableSSCDs extends ComponentBase
 								m_aLogger.log(xQualCert.getSubjectDisplayName());
 								m_aLogger.log(xQualCert.getVersion());
 								m_aLogger.log(xQualCert.getSerialNumber());
+								m_aLogger.log(xQualCert.getIssuerName());
+								m_aLogger.log(xQualCert.getNotValidBefore());
+								m_aLogger.log(xQualCert.getNotValidAfter());
 								m_aLogger.log(xQualCert.getSubjectName());
+								m_aLogger.log(xQualCert.getSignatureAlgorithm());
 								//add it to the token collection
 								xSSCDevice.addAQualifiedCertificate(xQualCert);
 							} catch (CertificateEncodingException e) {
