@@ -49,6 +49,10 @@
 		*/
 		[attribute] string CryptoLibraryUsed;
 
+		/** The number of available certificate on the token
+		*/
+		[attribute,readonly]  long HasQualifiedCertificates;
+
 		/** The certificates this device holds.
 		*/
 		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> QualifiedCertificates;

@@ -33,13 +33,19 @@
 	 */
   interface XOX_AvailableSSCDs
   {
+		/** The number of SSC Devices on this system.
+		*/
+		[attribute,readonly] long HasSSCDevices;
 		/** The list of SSC Devices on this system.
 		*/
-		[attribute] sequence<it::plio::ext::oxsit::security::XOX_SSCDevice> AvailableSSCDevices;
+		[attribute,readonly] sequence<it::plio::ext::oxsit::security::XOX_SSCDevice> AvailableSSCDevices;
+
 
 		/** This method will start the scan of the available SSCDs devices.
 		*/
 		void scanDevices();
+		/** Add a new device to the list of available devices.
+		*/
 		void addSSCDevice( [in] it::plio::ext::oxsit::security::XOX_SSCDevice SSCDevice );
   };
  

@@ -135,13 +135,13 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private String m_sSignatureAlgorithm = "";
 
-	private String m_sIssuerUniqueID;
+	private String m_sIssuerUniqueID = "";
 
-	private String m_sMD5Thumbprint;
+	private String m_sMD5Thumbprint = "";
 
-	private String m_sSHA1Thumbprint;
+	private String m_sSHA1Thumbprint = "";
 
-	private String m_sSubjectUniqueID;
+	private String m_sSubjectUniqueID = "";
 	
 	/**
 	 * 

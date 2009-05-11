@@ -75,7 +75,7 @@ public class SSCDevice extends ComponentBase
 	protected String m_sSSCDLibraryPath;
 	protected boolean m_bSSCDAutomaticDetection;
 	
-	protected Vector<XOX_QualifiedCertificate>	m_vQualifiedCertList;
+	protected Vector<XOX_QualifiedCertificate>	m_xQualCertList;
 	
 	protected DynamicLogger m_aLogger;
 
@@ -116,7 +116,7 @@ public class SSCDevice extends ComponentBase
 		m_sSSCDLibraryPath = xOptionsConfigAccess.getText("SSCDFilePath1");
 		xOptionsConfigAccess.dispose();
 
-		m_vQualifiedCertList = new Vector<XOX_QualifiedCertificate>();
+		m_xQualCertList = new Vector<XOX_QualifiedCertificate>(10,1);
 	}
 
 	@Override
@@ -238,8 +238,7 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void addAQualifiedCertificate(XOX_QualifiedCertificate _aCertif) {
-		// TODO Auto-generated method stub
-		m_aLogger.severe("addAQualifiedCertificate", "method still to be written!");
+		m_xQualCertList.add(_aCertif);
 	}
 
 	/* (non-Javadoc)
@@ -247,8 +246,29 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public XOX_QualifiedCertificate[] getQualifiedCertificates() {
-		// TODO Auto-generated method stub
-		return null;
+		XOX_QualifiedCertificate[] ret = null;
+		//detect the number of vector present
+		if(!m_xQualCertList.isEmpty()) {
+			ret = new XOX_QualifiedCertificate[m_xQualCertList.size()];
+			try {
+				m_xQualCertList.copyInto(ret);
+			} catch(NullPointerException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(IndexOutOfBoundsException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(ArrayStoreException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			}
+		}
+		return ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getHasQualifiedCertificates()
+	 */
+	@Override
+	public int getHasQualifiedCertificates() {
+		return m_xQualCertList.size();
 	}
 
 	/* (non-Javadoc)
@@ -256,7 +276,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public String getATRcode() {
-		// TODO Auto-generated method stub
 		return m_sATRCode;
 	}
 
@@ -265,7 +284,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void setATRcode(String _sArg) {
-		m_aLogger.log("setATRcode", _sArg);
 		m_sATRCode = _sArg;
 	}
 
@@ -274,7 +292,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public String getCryptoLibraryUsed() {
-		// TODO Auto-generated method stub
 		return m_sCryptoLibraryUsed;
 	}
 
@@ -283,7 +300,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void setCryptoLibraryUsed(String _sArg) {
-		m_aLogger.log("setCryptoLibraryUsed", _sArg);
 		m_sCryptoLibraryUsed = _sArg;
 	}
 
@@ -292,7 +308,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return m_sDescription;
 	}
 
@@ -301,7 +316,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void setDescription(String _sArg) {
-		m_aLogger.log("setDescription", _sArg);
 		m_sDescription = _sArg;
 	}
 
@@ -310,7 +324,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public String getManufacturer() {
-		// TODO Auto-generated method stub
 		return m_sManufacturer;
 	}
 
@@ -319,7 +332,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void setManufacturer(String _sArg) {
-		m_aLogger.log("setManufacturer", _sArg);
 		m_sManufacturer = _sArg;
 	}
 }

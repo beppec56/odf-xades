@@ -196,6 +196,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
 			if(m_axoxAvailableSSCDs != null)
 				m_axoxAvailableSSCDs.scanDevices();
+			
+			m_axoxAvailableSSCDs.getAvailableSSCDevices();
 		} catch (Exception e) {
 			m_logger.severe("ctor", e);
 		}

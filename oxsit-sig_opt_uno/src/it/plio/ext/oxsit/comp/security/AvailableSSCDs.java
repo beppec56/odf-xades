@@ -121,14 +121,12 @@ public class AvailableSSCDs extends ComponentBase
 				.getBoolean("SSCDAutomaticDetection");
 		m_sSSCDLibraryPath = xOptionsConfigAccess.getText("SSCDFilePath1");
 		xOptionsConfigAccess.dispose();
-		
-		m_aSSCDList = new Vector<XOX_SSCDevice>();
+		m_aSSCDList = new Vector<XOX_SSCDevice>(10,1);
 	}
 
 	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
-		m_aLogger.entering("getImplementationName");
+//		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 
@@ -139,8 +137,7 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
-		m_aLogger.info("getSupportedServiceNames");
+//		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -243,19 +240,31 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public XOX_SSCDevice[] getAvailableSSCDevices() {
-		// TODO Auto-generated method stub
-		return null;
+		XOX_SSCDevice[] ret = null;
+		//detect the number of vector present
+		if(!m_aSSCDList.isEmpty()) {
+			ret = new XOX_SSCDevice[m_aSSCDList.size()];
+			try {
+			m_aSSCDList.copyInto(ret);
+			} catch(NullPointerException ex) {
+				m_aLogger.severe("getAvailableSSCDevices",ex);
+			} catch(IndexOutOfBoundsException ex) {
+				m_aLogger.severe("getAvailableSSCDevices",ex);
+			} catch(ArrayStoreException ex) {
+				m_aLogger.severe("getAvailableSSCDevices",ex);
+			}
+		}
+		return ret;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#setAvailableSSCDevices(it.plio.ext.oxsit.security.XOX_SSCDevice[])
+	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getHasSSCDevices()
 	 */
 	@Override
-	public void setAvailableSSCDevices(XOX_SSCDevice[] arg0) {
-		// TODO Auto-generated method stub
-		
+	public int getHasSSCDevices() {
+		return m_aSSCDList.size();
 	}
-	
+
 	private class CertInfo {
 		public String certName;
 
@@ -345,7 +354,7 @@ public class AvailableSSCDs extends ComponentBase
 
 			ci = cIr.getCard();
 			
-			if (ci != null) {				
+			if (ci != null) {
 //instantiate a SSCDevice service object to hold the token device information and
 				//the detected certificates
 				
@@ -366,16 +375,11 @@ public class AvailableSSCDs extends ComponentBase
 					Collection certsOnToken = rt.getCertsOnToken();
 					if (certsOnToken != null) {
 						Iterator certIt = certsOnToken.iterator();
-						if (certsOnToken.isEmpty()) {
-							m_aLogger.log("\tcertsOnToken vuoto");
-							CertInfo c = new CertInfo();
-							c.setName("Carta presente ma vuota");
-						}
 						while (certIt.hasNext()) {
 	//add this certificate to our structure
 							X509Certificate cert = (X509Certificate) certIt.next();
 							try {
-								//this try will only check for correctess, before
+								//this try will only check for correctness, before
 								//instantiating the service
 								cert.getEncoded();
 //all seems right, instantiate the certificate service
@@ -396,8 +400,7 @@ public class AvailableSSCDs extends ComponentBase
 								//add it to the token collection
 								xSSCDevice.addAQualifiedCertificate(xQualCert);
 							} catch (CertificateEncodingException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								m_aLogger.severe("scanDevices",e);
 							}	
 						}
 
@@ -405,17 +408,17 @@ public class AvailableSSCDs extends ComponentBase
 						rt.libFinalize();
 						indexToken++;
 					}
+					//add the token to the list
+					addSSCDevice(xSSCDevice);
 				} catch (Exception e) {
-					m_aLogger.severe("",e);
+					m_aLogger.severe("scanDevices",e);
 				}
 			} else {
 				m_aLogger.log("No card in reader '" + currReader + "'!");
 
 			}
-
 			indexReader++;
 		}
-
 	}
 
 	public void testCertificateDisplay() {
@@ -432,6 +435,6 @@ public class AvailableSSCDs extends ComponentBase
 	public void addSSCDevice(XOX_SSCDevice _aSSCD) {
 		// TODO Auto-generated method stub
 		// the single device
-		
+		m_aSSCDList.add(_aSSCD);
 	}
 }

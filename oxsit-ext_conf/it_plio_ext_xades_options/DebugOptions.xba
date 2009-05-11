@@ -4,11 +4,49 @@
 
 Sub Main
 &apos;examine configuration, for test
-	GlobalScope.BasicLibraries.LoadLibrary(&quot;Tools&quot;)&apos;contiene LoadDialog, usata più sotto
+&apos;	GlobalScope.BasicLibraries.LoadLibrary(&quot;Tools&quot;)&apos;contiene LoadDialog, usata più sotto
 &apos; abilitare per debug con xray
- GlobalScope.BasicLibraries.LoadLibrary(&quot;XrayTool&quot;)&apos;
- displayParameters()
+	GlobalScope.BasicLibraries.LoadLibrary(&quot;XrayTool&quot;)&apos;
 
+	tryCertificateDiscovery()
 End Sub
+
+sub tryCertificateDiscovery()
+ &apos;try the new certificate discovery service
+	dim sscds as object
+ 	&apos;istanzia il servizio di ricerca cetificati
+	sscds = createUNOservice(&quot;it.plio.ext.oxsit.security.AvailableSSCDs&quot;)
+ 	&apos;presenta il servizio, senza certificati
+	xray sscds
+ 	&apos;esegue la ricerca dei dispositivi presenti
+	sscds.scanDevices()
+	if sscds.HasSSCDevices &gt; 0 then
+		&apos;presenta la ricerca eseguita
+		xray sscds
+	 
+		dim sscdList() as object
+	
+		&apos;carica la lista dei dispositivi trovati 
+		sscdList() = sscds.AvailableSSCDevices
+		&apos;presenta oggetto dispositivi trovati
+		dim ix as integer
+		for ix = 0 to (sscds.HasSSCDevices - 1)
+			xray sscdList(ix)
+
+			if sscdList(ix).HasQualifiedCertificates &gt; 0 then
+				dim certList() as object
+				certList() = sscdList(ix).QualifiedCertificates
+				&apos;print certificati
+				for i = 0 to (sscdList(ix).HasQualifiedCertificates-1)
+					xray certList(i)
+				next i
+			else
+				print &quot;non ci sono certificati&quot;
+			end if
+		next ix
+	else
+		print &quot;non ci sono token!&quot;
+	end if
+end sub
 
 </script:module>
