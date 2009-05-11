@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security.cert;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
@@ -32,6 +33,7 @@ import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -49,9 +51,12 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
@@ -152,6 +157,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private String m_sSubjectUniqueID = "";
 
+	private Locale m_lTheLocale;
+
 	/**
 	 * 
 	 * 
@@ -159,8 +166,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
     	m_CState = CertificateState.NOT_VERIFIABLE;
@@ -176,14 +182,15 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			m_sTimeLocaleString = m_aRegAcc.getStringFromRegistry( m_sTimeLocaleString );			
 			m_sLocaleLanguage = m_aRegAcc.getStringFromRegistry( m_sLocaleLanguage );
 		} catch (com.sun.star.uno.Exception e) {
-			m_aLogger.severe("fillLocalizedString", e);
+			m_aLogger.severe("ctor", e);
 		}
 		m_aRegAcc.dispose();
+		//locale of the extension
+		m_lTheLocale = new Locale(m_sLocaleLanguage);
 	}
 
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
-		m_aLogger.entering("getImplementationName");
+//		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 	
@@ -191,8 +198,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
-		m_aLogger.info("getSupportedServiceNames");
+//		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -259,15 +265,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return m_sNotValidBefore;
 	}
 	
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
-	 */
-	@Override
-	public XOX_CertificateExtension[] getExtensions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerName()
 	 */
@@ -401,6 +398,15 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalExtensions()
 	 */
 	@Override
@@ -450,36 +456,75 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			
 			m_sNotValidBefore = initCertDate(m_aX509.getStartDate().getDate());
 			m_sNotValidAfter =  initCertDate(m_aX509.getEndDate().getDate());
+			m_sSubjectPublicKeyAlgorithm = initPublicKeyAlgorithm();
+			m_sSubjectPublicKeyValue = initPublicKeyData();
 			m_sSignatureAlgorithm = initSignatureAlgorithm();
-
+			initThumbPrints();
+			//now initializes the Extension listing
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
 	}
 
 	////////////////// internal functions
+	
+	/**
+	 * 
+	 */
+	protected void initThumbPrints() {
+		//obtain a byte block of the entire certificate data
+		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
+		DEROutputStream         dOut = new DEROutputStream(bOut);
+		try {
+			dOut.writeObject(m_aX509);
+			byte[] certBlock = bOut.toByteArray();
+
+			//now compute the certificate SHA1 & MD5 digest
+			SHA1Digest digsha1 = new SHA1Digest();
+			digsha1.update(certBlock, 0, certBlock.length);
+			byte[] hashsha1 = new byte[digsha1.getDigestSize()];
+			digsha1.doFinal(hashsha1, 0);
+			m_sSHA1Thumbprint = Helpers.printHexBytes(hashsha1);
+			MD5Digest  digmd5 = new MD5Digest();
+			digmd5.update(certBlock, 0, certBlock.length);
+			byte[] hashmd5 = new byte[digmd5.getDigestSize()];
+			digmd5.doFinal(hashmd5, 0);
+			m_sMD5Thumbprint = Helpers.printHexBytes(hashmd5);
+		} catch (IOException e) {
+			m_aLogger.severe("initThumbPrints", e);
+		}		
+	}
+
 	protected String initSignatureAlgorithm() {
-		AlgorithmIdentifier aid = m_aX509.getSignatureAlgorithm();
-		DERObjectIdentifier oi = aid.getObjectId();
-		return new String(""+((
-				m_aX509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId().equals(X509CertificateStructure.rsaEncryption)) ?
-						"pkcs-1 rsaEncryption" : oi.getId()
-						));
+		DERObjectIdentifier oi = m_aX509.getSignatureAlgorithm().getObjectId();
+		return new String(""+(
+				(oi.equals(X509CertificateStructure.sha1WithRSAEncryption)) ? 
+				"pkcs-1 sha1WithRSAEncryption" : oi.toString())
+				);
+	}
+
+	protected String initPublicKeyData() {
+		byte[] sbjkd = m_aX509.getSubjectPublicKeyInfo().getPublicKeyData().getBytes();
+		return Helpers.printHexBytes(sbjkd);
+	}
+
+	protected String initPublicKeyAlgorithm() {
+//		AlgorithmIdentifier aid = m_aX509.getSignatureAlgorithm();
+		DERObjectIdentifier oi = m_aX509.getSubjectPublicKeyInfo().getAlgorithmId().getObjectId();
+		return new String(""+(
+				(oi.equals(X509CertificateStructure.rsaEncryption)) ?
+					"pkcs-1 rsaEncryption" : oi.getId())
+					);
 	}
 
 	protected String initCertDate(Date _aTime) {
-		Locale	theLanguage = new Locale(m_sLocaleLanguage);
-	
-		/*Locale[] ids = Locale.getAvailableLocales();
-		for(int i = 0; i <ids.length; i++)
-			m_aLogger.log(ids[i].getCountry());*/
-		
+		//force UTC time
 		TimeZone gmt = TimeZone.getTimeZone("UTC");
-		Calendar calendar = new GregorianCalendar(gmt,theLanguage);
+		Calendar calendar = new GregorianCalendar(gmt,m_lTheLocale);
 		calendar.setTime(_aTime);	
 //string with time only
-//FIXME important: the locale should be the one of the extension not the Java one.
-		String time = String.format(theLanguage,m_sTimeLocaleString, calendar);
+//the locale should be the one of the extension not the Java one.
+		String time = String.format(m_lTheLocale,m_sTimeLocaleString, calendar);
 		return time;
 	}	
 
@@ -530,8 +575,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			if(m_sSubjectDisplayName.length() == 0)
 				m_sSubjectDisplayName = m_sSubjectName;
 
-			m_aLogger.log(m_sSubjectDisplayName);
-			m_aLogger.log(m_sSubjectName);
+/*			m_aLogger.log(m_sSubjectDisplayName);
+			m_aLogger.log(m_sSubjectName);*/
 	}
 	
 	protected void initIssuerName() {

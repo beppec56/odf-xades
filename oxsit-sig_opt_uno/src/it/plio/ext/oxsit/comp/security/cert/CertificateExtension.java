@@ -91,8 +91,6 @@ public class CertificateExtension extends ComponentBase //help class, implements
 
 	protected DynamicLogger m_logger;
 	
-	protected CertificateAuthorityState m_CAState;
-	protected CertificateState			m_CState;
 	/**
 	 * 
 	 * 
@@ -101,10 +99,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	public CertificateExtension(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
-    	m_logger.ctor();
-    	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
-    	m_CState = CertificateState.NOT_VERIFIABLE;
-    	
+    	m_logger.ctor();    	
 	}
 
 	public String getImplementationName() {
