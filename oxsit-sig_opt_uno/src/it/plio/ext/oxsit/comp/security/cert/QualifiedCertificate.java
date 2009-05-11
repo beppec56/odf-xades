@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
@@ -39,7 +40,9 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -65,6 +68,7 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XTypeProvider;
 import com.sun.star.lib.uno.helper.ComponentBase;
@@ -106,6 +110,11 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
+	private XComponentContext m_xContext;
+	private XMultiComponentFactory m_xMCF;
+	
+	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
+	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
 
 	protected DynamicLogger m_aLogger;
 	
@@ -142,7 +151,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	private String m_sSHA1Thumbprint = "";
 
 	private String m_sSubjectUniqueID = "";
-	
+
 	/**
 	 * 
 	 * 
@@ -150,11 +159,26 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//    	m_aLogger.enableLogging();
+//
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
     	m_CState = CertificateState.NOT_VERIFIABLE;
+    	m_xContext = _ctx;
+    	m_xMCF = m_xContext.getServiceManager();
     	
+//grab the locale string, we'll use the interface language as a locale
+    	//e.g. if interface language is Italian, the locale will be Italy, Italian
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
+
+		try {
+			m_sTimeLocaleString = m_aRegAcc.getStringFromRegistry( m_sTimeLocaleString );			
+			m_sLocaleLanguage = m_aRegAcc.getStringFromRegistry( m_sLocaleLanguage );
+		} catch (com.sun.star.uno.Exception e) {
+			m_aLogger.severe("fillLocalizedString", e);
+		}
+		m_aRegAcc.dispose();
 	}
 
 	public String getImplementationName() {
@@ -442,12 +466,20 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 						"pkcs-1 rsaEncryption" : oi.getId()
 						));
 	}
+
 	protected String initCertDate(Date _aTime) {
-		Calendar calendar = new GregorianCalendar();
+		Locale	theLanguage = new Locale(m_sLocaleLanguage);
+	
+		/*Locale[] ids = Locale.getAvailableLocales();
+		for(int i = 0; i <ids.length; i++)
+			m_aLogger.log(ids[i].getCountry());*/
+		
+		TimeZone gmt = TimeZone.getTimeZone("UTC");
+		Calendar calendar = new GregorianCalendar(gmt,theLanguage);
 		calendar.setTime(_aTime);	
 //string with time only
-//FIXME important: the locale should be the one of the extension not Java.
-		String time = String.format("%1$tb %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)", calendar);
+//FIXME important: the locale should be the one of the extension not the Java one.
+		String time = String.format(theLanguage,m_sTimeLocaleString, calendar);
 		return time;
 	}	
 

@@ -32,6 +32,15 @@
 		    Please DO NOT EDIT MANUALLY!
 		-->
 		<!--
+		    ISO code, used internally
+		-->
+		<node oor:name="id_iso_lang_code" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">en</value>
+				<value xml:lang="it">it</value>
+			</prop>
+		</node>
+		<!--
 		    name of the extension, ignored when accessing the menu. To be put manually in description.xml file
 		-->
 		<node oor:name="id_descr" oor:op="replace">
@@ -580,6 +589,15 @@ Salvando con un nuovo nome, le firme saranno rimosse dal documento.
 Confermate Salva  con nuovo nome?
 
 </value>
+			</prop>
+		</node>
+		<!--
+		    String used to format time in certificate validity
+		-->
+		<node oor:name="id_validity_time_locale" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">%1$tb, %1$td %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)</value>
+				<value xml:lang="it">%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)</value>
 			</prop>
 		</node>
 		<!--
