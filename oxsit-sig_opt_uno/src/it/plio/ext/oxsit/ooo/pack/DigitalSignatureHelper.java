@@ -62,8 +62,7 @@ public class DigitalSignatureHelper {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
     	m_logger = new DynamicLogger(this, _context);
-//    	
-    	m_logger.enableLogging();
+//    	m_logger.enableLogging();
     	m_logger.info("ctor","");
     }
 

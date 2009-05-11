@@ -47,10 +47,15 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.CertificatePolicies;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
@@ -264,14 +269,14 @@ public class TestOnCertificates {
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(aext.isCritical())
-					m_aLogger.info(extoid.get(i).getId());
+					examineExtension(extoid.get(i));
 			}
 			
 			m_aLogger.info("Non Critical Extensions:");
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(!aext.isCritical())
-					m_aLogger.info(extoid.get(i).getId());
+					examineExtension(extoid.get(i));
 			}
 			//then the not critical
 			
@@ -292,7 +297,94 @@ public class TestOnCertificates {
 		public void setName(String s) {
 			certName = s;
 		}
-
+		
+		protected void examineExtension(DERObjectIdentifier _oid) {
+			X509Extension aext = xc509.getTBSCertificate().getExtensions().getExtension(_oid);
+			m_aLogger.log(""+_oid.toString());
+			if(_oid.equals(X509Extensions.KeyUsage)) {
+				KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
+				m_aLogger.log("Key usage:");
+				String st = "";
+				if((ku.intValue() & KeyUsage.digitalSignature) != 0)
+					st = st + " digitalSignature";
+				if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
+					st = st + " nonRepudiation";
+				if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
+					st = st + " keyEncipherment";
+				if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
+					st = st + " dataEncipherment";
+				if((ku.intValue() & KeyUsage.keyAgreement) != 0)
+					st = st + " keyAgreement";
+				if((ku.intValue() & KeyUsage.keyCertSign) != 0)
+					st = st + " keyCertSign";
+				if((ku.intValue() & KeyUsage.cRLSign) != 0)
+					st = st + " cRLSign";
+				if((ku.intValue() & KeyUsage.encipherOnly) != 0)
+					st = st + " encipherOnly";
+				if((ku.intValue() & KeyUsage.decipherOnly) != 0)
+					st = st + " decipherOnly";
+				m_aLogger.log(st);
+			}
+			else if(_oid.equals(X509Extensions.CertificatePolicies)) {
+				//CertificatePolicies cp = CertificatePolicies.getInstance(aext);
+				m_aLogger.log("CertificatePolicies");
+			}
+			else if(_oid.equals(X509Extensions.SubjectKeyIdentifier)) {
+				//SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
+				m_aLogger.log("SubjectKeyIdentifier");
+			}
+			else if(_oid.equals(X509Extensions.SubjectDirectoryAttributes)) {
+				m_aLogger.log("SubjectDirectoryAttributes");
+			}
+			else if(_oid.equals(X509Extensions.PrivateKeyUsagePeriod)) {
+				m_aLogger.log("PrivateKeyUsagePeriod");
+			}
+			else if(_oid.equals(X509Extensions.SubjectAlternativeName)) {
+				m_aLogger.log("SubjectAlternativeName");
+			}
+			else if(_oid.equals(X509Extensions.IssuerAlternativeName)) {
+				m_aLogger.log("IssuerAlternativeName");
+			}
+			else if(_oid.equals(X509Extensions.QCStatements)) {
+				m_aLogger.log("QCStatements");
+			}
+			else if(_oid.equals(X509Extensions.AuthorityInfoAccess)) {
+				m_aLogger.log("AuthorityInfoAccess");
+			}
+			else if(_oid.equals(X509Extensions.AuthorityKeyIdentifier)) {
+				m_aLogger.log("AuthorityKeyIdentifier");
+			}
+			else if(_oid.equals(X509Extensions.CRLDistributionPoints)) {
+				m_aLogger.log("CRLDistributionPoints");
+			}
+			else if(_oid.equals(X509Extensions.ExtendedKeyUsage)) {
+				m_aLogger.log("ExtendedKeyUsage");
+				ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
+				m_aLogger.log(">"+eku.toString());
+//				eku.getUsages();
+			}
+/*
+    public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
+    public static final DERObjectIdentifier CRLNumber = new DERObjectIdentifier("2.5.29.20");
+    public static final DERObjectIdentifier ReasonCode = new DERObjectIdentifier("2.5.29.21");
+    public static final DERObjectIdentifier InstructionCode = new DERObjectIdentifier("2.5.29.23");
+    public static final DERObjectIdentifier InvalidityDate = new DERObjectIdentifier("2.5.29.24");
+    public static final DERObjectIdentifier DeltaCRLIndicator = new DERObjectIdentifier("2.5.29.27");
+    public static final DERObjectIdentifier IssuingDistributionPoint = new DERObjectIdentifier("2.5.29.28");
+    public static final DERObjectIdentifier CertificateIssuer = new DERObjectIdentifier("2.5.29.29");
+    public static final DERObjectIdentifier NameConstraints = new DERObjectIdentifier("2.5.29.30");
+    public static final DERObjectIdentifier PolicyMappings = new DERObjectIdentifier("2.5.29.33");
+    public static final DERObjectIdentifier PolicyConstraints = new DERObjectIdentifier("2.5.29.36");
+    public static final DERObjectIdentifier FreshestCRL = new DERObjectIdentifier("2.5.29.46");
+    public static final DERObjectIdentifier InhibitAnyPolicy = new DERObjectIdentifier("2.5.29.54");
+    public static final DERObjectIdentifier SubjectInfoAccess = new DERObjectIdentifier("1.3.6.1.5.5.7.1.11");
+    public static final DERObjectIdentifier LogoType = new DERObjectIdentifier("1.3.6.1.5.5.7.1.12");
+    public static final DERObjectIdentifier BiometricInfo = new DERObjectIdentifier("1.3.6.1.5.5.7.1.2");
+    public static final DERObjectIdentifier AuditIdentity = new DERObjectIdentifier("1.3.6.1.5.5.7.1.4");
+    public static final DERObjectIdentifier NoRevAvail = new DERObjectIdentifier("2.5.29.56");
+    public static final DERObjectIdentifier TargetInformation = new DERObjectIdentifier("2.5.29.55");
+ */
+		}
 	}
 
 	private String toCNNames(String DN) {
