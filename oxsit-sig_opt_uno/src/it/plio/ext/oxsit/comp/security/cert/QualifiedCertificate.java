@@ -347,8 +347,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public CertificateState getCertificateState() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_CState;
 	}
 
 	/* (non-Javadoc)
@@ -356,8 +355,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public CertificateAuthorityState getCertificationAuthorityState() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_CAState;
 	}
 
 	/* (non-Javadoc)
