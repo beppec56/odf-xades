@@ -45,16 +45,26 @@ import java.util.Vector;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.CertificatePolicies;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.Time;
@@ -303,27 +313,7 @@ public class TestOnCertificates {
 			m_aLogger.log(""+_oid.toString());
 			if(_oid.equals(X509Extensions.KeyUsage)) {
 				KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
-				m_aLogger.log("Key usage:");
-				String st = "";
-				if((ku.intValue() & KeyUsage.digitalSignature) != 0)
-					st = st + " digitalSignature";
-				if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
-					st = st + " nonRepudiation";
-				if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
-					st = st + " keyEncipherment";
-				if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
-					st = st + " dataEncipherment";
-				if((ku.intValue() & KeyUsage.keyAgreement) != 0)
-					st = st + " keyAgreement";
-				if((ku.intValue() & KeyUsage.keyCertSign) != 0)
-					st = st + " keyCertSign";
-				if((ku.intValue() & KeyUsage.cRLSign) != 0)
-					st = st + " cRLSign";
-				if((ku.intValue() & KeyUsage.encipherOnly) != 0)
-					st = st + " encipherOnly";
-				if((ku.intValue() & KeyUsage.decipherOnly) != 0)
-					st = st + " decipherOnly";
-				m_aLogger.log(st);
+				examineKeyUsage(ku);
 			}
 			else if(_oid.equals(X509Extensions.CertificatePolicies)) {
 				//CertificatePolicies cp = CertificatePolicies.getInstance(aext);
@@ -355,13 +345,17 @@ public class TestOnCertificates {
 				m_aLogger.log("AuthorityKeyIdentifier");
 			}
 			else if(_oid.equals(X509Extensions.CRLDistributionPoints)) {
-				m_aLogger.log("CRLDistributionPoints");
+				try { 
+					DERObject dbj = X509Extension.convertValueToObject(aext);
+					CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
+					examineCRLDistributionPoints(crldp);
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe("CRLDistributionPoints",e);
+				}
 			}
 			else if(_oid.equals(X509Extensions.ExtendedKeyUsage)) {
-				m_aLogger.log("ExtendedKeyUsage");
 				ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
-				m_aLogger.log(">"+eku.toString());
-//				eku.getUsages();
+				examineExtendedKeyUsage(eku);
 			}
 /*
     public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
@@ -384,6 +378,181 @@ public class TestOnCertificates {
     public static final DERObjectIdentifier NoRevAvail = new DERObjectIdentifier("2.5.29.56");
     public static final DERObjectIdentifier TargetInformation = new DERObjectIdentifier("2.5.29.55");
  */
+		}
+		
+		/**
+		 * @param ku
+		 */
+		private void examineKeyUsage(KeyUsage ku) {
+			m_aLogger.log("Key Usage:");
+			String st = "";
+			if((ku.intValue() & KeyUsage.digitalSignature) != 0)
+				st = st + " digitalSignature";
+			if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
+				st = st + " nonRepudiation";
+			if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
+				st = st + " keyEncipherment";
+			if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
+				st = st + " dataEncipherment";
+			if((ku.intValue() & KeyUsage.keyAgreement) != 0)
+				st = st + " keyAgreement";
+			if((ku.intValue() & KeyUsage.keyCertSign) != 0)
+				st = st + " keyCertSign";
+			if((ku.intValue() & KeyUsage.cRLSign) != 0)
+				st = st + " cRLSign";
+			if((ku.intValue() & KeyUsage.encipherOnly) != 0)
+				st = st + " encipherOnly";
+			if((ku.intValue() & KeyUsage.decipherOnly) != 0)
+				st = st + " decipherOnly";
+			m_aLogger.log(st);			
+		}
+
+		/**
+		 * @param crldp 
+		 * 
+		 */
+		private void examineCRLDistributionPoints(CRLDistPoint crldp) {
+			// TODO Auto-generated method stub
+
+			String term = System.getProperty("line.separator");
+			String stx = "CRLDistributionPoints:"+term;
+			try {
+				DistributionPoint[] dp = crldp.getDistributionPoints();
+
+				for(int i = 0;i < dp.length;i++) {
+					DistributionPointName dpn = dp[i].getDistributionPoint();
+
+					//				m_aLogger.log(dpn.toString());
+					{
+						//custom toString
+						if(dpn.getType() == DistributionPointName.FULL_NAME) {
+							stx = stx+"fullName:" + term;
+						}
+						else {
+							stx = stx+"nameRelativeToCRLIssuer:" + term;						
+						}
+						GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
+						GeneralName[] gn = gnx.getNames();
+						for(int y=0; y <gn.length;y++) {
+//							stx = stx + gn[y].toString() + term;
+							//set type
+							switch(gn[y].getTagNo())
+							{
+							case GeneralName.otherName:
+								stx = stx +"otherName: ";
+								break;
+							case GeneralName.rfc822Name:
+								stx = stx +"rfc822Name: ";
+								break;
+							case GeneralName.dNSName:
+								stx = stx +"dNSName: ";
+								break;
+							case GeneralName.x400Address:
+								stx = stx +"x400Address: ";
+								break;
+							case GeneralName.directoryName:
+								stx = stx +"directoryName: ";
+								break;
+							case GeneralName.ediPartyName:
+								stx = stx +"ediPartyName: ";
+								break;
+							case GeneralName.uniformResourceIdentifier:
+								stx = stx +"uniformResourceIdentifier: ";
+								break;
+							case GeneralName.iPAddress:
+								stx = stx +"iPAddress: ";
+								break;
+							case GeneralName.registeredID:
+								stx = stx +"registeredID: ";
+								break;							
+							}
+					        switch (gn[y].getTagNo())
+					        {
+					        case GeneralName.rfc822Name:
+					        case GeneralName.dNSName:
+					        case GeneralName.uniformResourceIdentifier:
+					        	stx = stx + DERIA5String.getInstance(gn[y].getName()).getString();
+					            break;
+					        case GeneralName.directoryName:
+					        	stx = stx + X509Name.getInstance(gn[y].getName()).toString();
+					            break;
+					        default:
+					        	stx = stx + gn[y].toString();
+					        }
+						}
+						stx = stx + term;
+					}
+
+					//				m_aLogger.log(dpn.getName().toString());
+					GeneralNames gns = dp[i].getCRLIssuer();
+					if(gns != null) {
+						GeneralName[] gn = gns.getNames();
+						for(int y=0; y <gn.length;y++) {
+							stx = stx + gn[i].toString() + term;
+						}
+					}
+
+					ReasonFlags rsf = dp[i].getReasons();
+					if(rsf != null ){
+						m_aLogger.log("Reason flags:");
+						if((rsf.intValue() & ReasonFlags.unused) != 0)
+							stx = stx + " unused";			    
+						if((rsf.intValue() & ReasonFlags.keyCompromise) != 0)
+							stx = stx + " keyCompromise";
+						if((rsf.intValue() & ReasonFlags.cACompromise) != 0)
+							stx = stx + " cACompromise";
+						if((rsf.intValue() & ReasonFlags.affiliationChanged) != 0)
+							stx = stx + " affiliationChanged";
+						if((rsf.intValue() & ReasonFlags.superseded) != 0)
+							stx = stx + " superseded";
+						if((rsf.intValue() & ReasonFlags.cessationOfOperation) != 0)
+							stx = stx + " cessationOfOperation";
+						if((rsf.intValue() & ReasonFlags.certificateHold) != 0)
+							stx = stx + " certificateHold";
+						if((rsf.intValue() & ReasonFlags.privilegeWithdrawn) != 0)
+							stx = stx + " privilegeWithdrawn";
+						if((rsf.intValue() & ReasonFlags.aACompromise) != 0)
+							stx = stx + " aACompromise";
+						stx = stx + term;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			m_aLogger.log(stx);
+		}
+
+		protected void examineExtendedKeyUsage(ExtendedKeyUsage eku) {
+			//prepare a reverse lookup of keypurpose id
+			//this can be static in another class
+			HashMap<KeyPurposeId,String>		ReverseLookUp = new HashMap<KeyPurposeId, String>(22);
+			
+			ReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
+			ReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"id-kp-serverAuth");
+			ReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"id-kp-clientAuth");
+			ReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"id-kp-codeSigning");
+			ReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"id-kp-codeSigning");
+			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"id-kp-ipsecEndSystem");
+			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"id-kp-ipsecTunnel");
+			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"id-kp-ipsecUser");
+			ReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"id-kp-timeStamping");
+			ReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"id-kp-OCSPSigning");
+			ReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"id-kp-dvcs");
+			ReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"id-kp-sbgpCertAAServerAuth");
+			ReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"id-kp-scvp_responder");
+			ReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"id-kp-eapOverPPP");
+			ReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"id-kp-eapOverLAN");
+			ReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"id-kp-scvpServer");
+			ReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"id-kp-scvpClient");
+			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"id-kp-ipsecIKE");
+			ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"id-kp-capwapAC");
+			ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"id-kp-capwapWTP");
+			ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"id-kp-smartcardlogon");
+
+			m_aLogger.log("ExtendedKeyUsage");
+			Vector<DERObjectIdentifier> usages = eku.getUsages();
+			for(int i = 0; i < usages.size();i++)
+				m_aLogger.log("  "+usages.get(i).getId()+": "+ReverseLookUp.get(usages.get(i)));			
 		}
 	}
 
