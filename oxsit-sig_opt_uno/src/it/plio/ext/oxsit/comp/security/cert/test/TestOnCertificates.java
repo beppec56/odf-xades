@@ -55,6 +55,8 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -64,7 +66,10 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.PolicyInformation;
+import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.bouncycastle.asn1.x509.ReasonFlags;
+import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.Time;
@@ -72,8 +77,12 @@ import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
+import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.i18n.filter.TrustedInput;
 
 import com.sun.star.uno.XComponentContext;
 
@@ -104,6 +113,7 @@ public class TestOnCertificates {
 
 		private X509CertificateStructure xc509;
 
+		private String term = System.getProperty("line.separator");
 
 		/**
 		 * Constructor (null)
@@ -279,14 +289,14 @@ public class TestOnCertificates {
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(aext.isCritical())
-					examineExtension(extoid.get(i));
+					examineExtension(aext, extoid.get(i));
 			}
 			
 			m_aLogger.info("Non Critical Extensions:");
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(!aext.isCritical())
-					examineExtension(extoid.get(i));
+					examineExtension(aext, extoid.get(i));
 			}
 			//then the not critical
 			
@@ -308,54 +318,45 @@ public class TestOnCertificates {
 			certName = s;
 		}
 		
-		protected void examineExtension(DERObjectIdentifier _oid) {
-			X509Extension aext = xc509.getTBSCertificate().getExtensions().getExtension(_oid);
-			m_aLogger.log(""+_oid.toString());
+		protected void examineExtension(X509Extension aext, DERObjectIdentifier _oid) {
 			if(_oid.equals(X509Extensions.KeyUsage)) {
-				KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
-				examineKeyUsage(ku);
+				m_aLogger.log("Key Usage (OID: "+_oid.toString()+")");
+				examineKeyUsage(aext);
 			}
 			else if(_oid.equals(X509Extensions.CertificatePolicies)) {
 				//CertificatePolicies cp = CertificatePolicies.getInstance(aext);
-				m_aLogger.log("CertificatePolicies");
+				examineCertificatePolicies(aext);
 			}
 			else if(_oid.equals(X509Extensions.SubjectKeyIdentifier)) {
 				//SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
-				m_aLogger.log("SubjectKeyIdentifier");
+				examineSubjectKeyIdentifier(aext);
 			}
 			else if(_oid.equals(X509Extensions.SubjectDirectoryAttributes)) {
-				m_aLogger.log("SubjectDirectoryAttributes");
+				examineSubjectDirectoryAttributes(aext);				
 			}
 			else if(_oid.equals(X509Extensions.PrivateKeyUsagePeriod)) {
-				m_aLogger.log("PrivateKeyUsagePeriod");
+				examinePrivateKeyUsagePeriod(aext);				
 			}
 			else if(_oid.equals(X509Extensions.SubjectAlternativeName)) {
-				m_aLogger.log("SubjectAlternativeName");
+				examineSubjectAlternativeName(aext);	
 			}
 			else if(_oid.equals(X509Extensions.IssuerAlternativeName)) {
-				m_aLogger.log("IssuerAlternativeName");
+				examineIssuerAlternativeName(aext);	
 			}
 			else if(_oid.equals(X509Extensions.QCStatements)) {
-				m_aLogger.log("QCStatements");
+				examineQCStatements(aext);	
 			}
 			else if(_oid.equals(X509Extensions.AuthorityInfoAccess)) {
-				m_aLogger.log("AuthorityInfoAccess");
+				examineAuthorityInfoAccess(aext);
 			}
 			else if(_oid.equals(X509Extensions.AuthorityKeyIdentifier)) {
-				m_aLogger.log("AuthorityKeyIdentifier");
+				examineAuthorityKeyIdentifier(aext);
 			}
 			else if(_oid.equals(X509Extensions.CRLDistributionPoints)) {
-				try { 
-					DERObject dbj = X509Extension.convertValueToObject(aext);
-					CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
-					examineCRLDistributionPoints(crldp);
-				} catch (IllegalArgumentException e) {
-					m_aLogger.severe("CRLDistributionPoints",e);
-				}
+				examineCRLDistributionPoints(aext);
 			}
 			else if(_oid.equals(X509Extensions.ExtendedKeyUsage)) {
-				ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
-				examineExtendedKeyUsage(eku);
+				examineExtendedKeyUsage(aext);
 			}
 /*
     public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
@@ -379,44 +380,231 @@ public class TestOnCertificates {
     public static final DERObjectIdentifier TargetInformation = new DERObjectIdentifier("2.5.29.55");
  */
 		}
-		
+
+		/**
+		 * @param aext
+		 */
+		private void examineSubjectDirectoryAttributes(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("SubjectDirectoryAttributes");			
+			try {
+				DERObject dbj = X509Extension.convertValueToObject(aext);
+				SubjectDirectoryAttributes sda = SubjectDirectoryAttributes.getInstance(dbj);
+				m_aLogger.log("to be written...");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * @param aext
+		 */
+		private void examinePrivateKeyUsagePeriod(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("PrivateKeyUsagePeriod");
+			try {
+				PrivateKeyUsagePeriod pku = PrivateKeyUsagePeriod.getInstance(aext);
+				m_aLogger.log("to be written...");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * @param aext
+		 */
+		private void examineSubjectAlternativeName(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("SubjectAlternativeName");
+			try {
+				m_aLogger.log("to be written...");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * @param aext
+		 */
+		private void examineIssuerAlternativeName(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("IssuerAlternativeName");
+			try {
+				m_aLogger.log("to be written...");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * @param aext
+		 */
+		private void examineQCStatements(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("QCStatements");
+			try {
+                ASN1Sequence    dns = (ASN1Sequence)X509Extension.convertValueToObject(aext);
+                for(int i= 0; i<dns.size();i++) {
+                    QCStatement qcs = QCStatement.getInstance(dns.getObjectAt(i));
+                    if (QCStatement.id_etsi_qcs_QcCompliance.equals(qcs.getStatementId()))  {
+                        // process statement - just write a notification that the certificate contains this statement
+                        String stx = qcs.getStatementId()+" QcEuCompliance"+term;
+                        stx = stx + "  The issuer issued this certificate as a Qualified Certificate"+term;
+                        stx = stx + "  according Annex I and II of the Directive 1999/93/EC of the"+term;
+                        stx = stx + "  European Parliament and of the Council of 13 December 1999 on"+term;
+                        stx = stx + "  a Community framework for electronic signatures, as implemented"+term;
+                        stx = stx + "  in the law of the country specified in the issuer field of this"+term;
+                        stx = stx + "  certificate.";
+                        m_aLogger.log(stx);
+                    }
+                    else if(QCStatement.id_qcs_pkixQCSyntax_v1.equals(qcs.getStatementId())) {
+                        // process statement - just recognize the statement
+                    	m_aLogger.log(qcs.getStatementId()+" id_qcs_pkixQCSyntax_v1");
+                    }
+                    else if(QCStatement.id_etsi_qcs_QcSSCD.equals(qcs.getStatementId())) {
+                        // process statement - just write a notification that the certificate contains this statement
+                        String stx = qcs.getStatementId()+" QcSSCD"+term;
+                        
+                        stx=stx+"  The issuer claims that the private key associated with the"+term;
+                        stx=stx+"  public key in the certificate is protected according to"+term;
+                        stx=stx+"  Annex III of the Directive 1999/93/EC of the European Parliament"+term;
+                        stx=stx+"  and of the Council of 13 December 1999 on a Community framework"+term;
+                        stx=stx+"  for electronic signatures.";
+                        m_aLogger.log(stx);
+                    }
+                    else if(QCStatement.id_etsi_qcs_RetentionPeriod.equals(qcs.getStatementId())) {
+                    	String stx = qcs.getStatementId()+" RetentionPeriod"+term;
+                    	stx = stx+"  The issuer guarantees that material information relevant"+term;
+                    	stx = stx+"  to use of and reliance on the certificate will be archived"+term;
+                    	stx = stx+"  and can be made available upon request beyond the end of"+term;
+                    	stx = stx+"  the validity period of the certificate for the number of";
+                    	stx = stx+"  %1$s years.";
+                        m_aLogger.log(String.format(stx,qcs.getStatementInfo().toString()));
+                    }
+                    else if(QCStatement.id_etsi_qcs_LimiteValue.equals(qcs.getStatementId())) {
+                    	//FIXME: needs to be tested !
+                        // process statement - write a notification containing the limit value
+                        MonetaryValue limit = MonetaryValue.getInstance(qcs.getStatementInfo());
+                        Iso4217CurrencyCode currency = limit.getCurrency();
+                        double value = limit.getAmount().doubleValue() * Math.pow(10,limit.getExponent().doubleValue());
+                        /*
+                         * This statement is a statement by the issuer which impose a
+                         * limitation on the value of transaction for which this certificate
+                         * can be used to the specified amount (MonetaryValue), according to
+                         * the Directive 1999/93/EC of the European Parliament and of the
+                         * Council of 13 December 1999 on a Community framework for
+                         * electronic signatures, as implemented in the law of the country
+                         * specified in the issuer field of this certificate.
+                         */
+                        if(currency.isAlphabetic()) {
+                            m_aLogger.log(qcs.getStatementId()+" QcLimitValueAlpha"+
+                                    new Object[] {currency.getAlphabetic(),
+                                                  new TrustedInput(new Double(value)),
+                                                  limit});
+                        }
+                        else {
+                            m_aLogger.log(" QcLimitValueNum" +
+                                    new Object[] {new Integer(currency.getNumeric()),
+                                                  new TrustedInput(new Double(value)),
+                                                  limit});
+                        }
+                    }
+                    else
+                    	m_aLogger.log(" QcUnknownStatement: "+qcs.getStatementId());
+                }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * @param aext
+		 */
+		private void examineAuthorityInfoAccess(X509Extension aext) {
+			// TODO Auto-generated method stub
+			m_aLogger.log("AuthorityInfoAccess");
+			try {
+				AuthorityInformationAccess aia = AuthorityInformationAccess.getInstance(aext);
+				m_aLogger.log("to be written...");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void examineCertificatePolicies(X509Extension aext) {
+			m_aLogger.log("CertificatePolicies");
+			try {
+				DERObject dbj = X509Extension.convertValueToObject(aext);
+				PolicyInformation cp = PolicyInformation.getInstance(dbj);
+				m_aLogger.log("to be written...");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+
+		private void examineSubjectKeyIdentifier(X509Extension aext) {
+			m_aLogger.log("SubjectKeyIdentifier");
+			try {
+				SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
+				m_aLogger.log(Helpers.printHexBytes(ski.getKeyIdentifier()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+
+		private void examineAuthorityKeyIdentifier(X509Extension aext) {
+			m_aLogger.log("AuthorityKeyIdentifier");
+			try {
+				AuthorityKeyIdentifier aki = AuthorityKeyIdentifier.getInstance(aext);
+				m_aLogger.log(Helpers.printHexBytes(aki.getKeyIdentifier()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+
 		/**
 		 * @param ku
+		 * @param newParam TODO
 		 */
-		private void examineKeyUsage(KeyUsage ku) {
-			m_aLogger.log("Key Usage:");
-			String st = "";
-			if((ku.intValue() & KeyUsage.digitalSignature) != 0)
-				st = st + " digitalSignature";
-			if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
-				st = st + " nonRepudiation";
-			if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
-				st = st + " keyEncipherment";
-			if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
-				st = st + " dataEncipherment";
-			if((ku.intValue() & KeyUsage.keyAgreement) != 0)
-				st = st + " keyAgreement";
-			if((ku.intValue() & KeyUsage.keyCertSign) != 0)
-				st = st + " keyCertSign";
-			if((ku.intValue() & KeyUsage.cRLSign) != 0)
-				st = st + " cRLSign";
-			if((ku.intValue() & KeyUsage.encipherOnly) != 0)
-				st = st + " encipherOnly";
-			if((ku.intValue() & KeyUsage.decipherOnly) != 0)
-				st = st + " decipherOnly";
-			m_aLogger.log(st);			
+		private void examineKeyUsage(X509Extension aext) {
+			try {
+				KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
+				String st = "";
+				if((ku.intValue() & KeyUsage.digitalSignature) != 0)
+					st = st + " digitalSignature";
+				if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
+					st = st + " nonRepudiation";
+				if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
+					st = st + " keyEncipherment";
+				if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
+					st = st + " dataEncipherment";
+				if((ku.intValue() & KeyUsage.keyAgreement) != 0)
+					st = st + " keyAgreement";
+				if((ku.intValue() & KeyUsage.keyCertSign) != 0)
+					st = st + " keyCertSign";
+				if((ku.intValue() & KeyUsage.cRLSign) != 0)
+					st = st + " cRLSign";
+				if((ku.intValue() & KeyUsage.encipherOnly) != 0)
+					st = st + " encipherOnly";
+				if((ku.intValue() & KeyUsage.decipherOnly) != 0)
+					st = st + " decipherOnly";
+				m_aLogger.log(st);			
+			} catch (Exception e) {
+				e.printStackTrace();
+		}
 		}
 
 		/**
 		 * @param crldp 
 		 * 
 		 */
-		private void examineCRLDistributionPoints(CRLDistPoint crldp) {
+		private void examineCRLDistributionPoints(X509Extension aext) {
 			// TODO Auto-generated method stub
-
-			String term = System.getProperty("line.separator");
 			String stx = "CRLDistributionPoints:"+term;
 			try {
+				DERObject dbj = X509Extension.convertValueToObject(aext);
+				CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
 				DistributionPoint[] dp = crldp.getDistributionPoints();
 
 				for(int i = 0;i < dp.length;i++) {
@@ -516,43 +704,50 @@ public class TestOnCertificates {
 						stx = stx + term;
 					}
 				}
+			} catch (IllegalArgumentException e) {
+				m_aLogger.severe("CRLDistributionPoints",e);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			m_aLogger.log(stx);
 		}
 
-		protected void examineExtendedKeyUsage(ExtendedKeyUsage eku) {
-			//prepare a reverse lookup of keypurpose id
-			//this can be static in another class
-			HashMap<KeyPurposeId,String>		ReverseLookUp = new HashMap<KeyPurposeId, String>(22);
-			
-			ReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
-			ReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"id-kp-serverAuth");
-			ReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"id-kp-clientAuth");
-			ReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"id-kp-codeSigning");
-			ReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"id-kp-codeSigning");
-			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"id-kp-ipsecEndSystem");
-			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"id-kp-ipsecTunnel");
-			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"id-kp-ipsecUser");
-			ReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"id-kp-timeStamping");
-			ReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"id-kp-OCSPSigning");
-			ReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"id-kp-dvcs");
-			ReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"id-kp-sbgpCertAAServerAuth");
-			ReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"id-kp-scvp_responder");
-			ReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"id-kp-eapOverPPP");
-			ReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"id-kp-eapOverLAN");
-			ReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"id-kp-scvpServer");
-			ReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"id-kp-scvpClient");
-			ReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"id-kp-ipsecIKE");
-			ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"id-kp-capwapAC");
-			ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"id-kp-capwapWTP");
-			ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"id-kp-smartcardlogon");
-
-			m_aLogger.log("ExtendedKeyUsage");
-			Vector<DERObjectIdentifier> usages = eku.getUsages();
-			for(int i = 0; i < usages.size();i++)
+		private void examineExtendedKeyUsage(X509Extension aext) {
+			try {
+				//prepare a reverse lookup of keypurpose id
+				//this can be static in another class
+				ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
+				HashMap<KeyPurposeId,String>		ReverseLookUp = new HashMap<KeyPurposeId, String>(22);
+				
+				ReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
+				ReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"serverAuth");
+				ReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"clientAuth");
+				ReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"codeSigning");
+				ReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"codeSigning");
+				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"ipsecEndSystem");
+				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"ipsecTunnel");
+				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"ipsecUser");
+				ReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"timeStamping");
+				ReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"OCSPSigning");
+				ReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"dvcs");
+				ReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"sbgpCertAAServerAuth");
+				ReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"scvp_responder");
+				ReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"eapOverPPP");
+				ReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"eapOverLAN");
+				ReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"scvpServer");
+				ReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"scvpClient");
+				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"ipsecIKE");
+				ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"capwapAC");
+				ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"capwapWTP");
+				ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
+	
+				m_aLogger.log("ExtendedKeyUsage");
+				Vector<DERObjectIdentifier> usages = eku.getUsages();
+				for(int i = 0; i < usages.size();i++)
 				m_aLogger.log("  "+usages.get(i).getId()+": "+ReverseLookUp.get(usages.get(i)));			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
