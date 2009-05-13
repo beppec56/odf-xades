@@ -50,13 +50,16 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERGeneralizedTime;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -411,14 +414,41 @@ public class TestOnCertificates {
 		 * @param aext
 		 */
 		private void examineSubjectDirectoryAttributes(X509Extension aext) {
+			String stx = "";
 			try {
 				DERObject dbj = X509Extension.convertValueToObject(aext);
 				SubjectDirectoryAttributes sda = SubjectDirectoryAttributes.getInstance(dbj);
-				m_aLogger.log("to be written...");
-
+				/*
+				 *     SubjectDirectoryAttributes ::= Attributes
+				 *     Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
+				 *     Attribute ::= SEQUENCE 
+				 *     {
+				 *       type AttributeType 
+				 *       values SET OF AttributeValue 
+				 *     }
+				 *     
+				 *     AttributeType ::= OBJECT IDENTIFIER
+				 *     AttributeValue ::= ANY DEFINED BY AttributeType
+				 */
+				Vector<Attribute> attribv = sda.getAttributes();
+				//FIXME: checked for Italy only.
+				for(int i = 0; i < attribv.size();i++) {
+					Attribute atrb = attribv.get(i);
+					ASN1Set asns = atrb.getAttrValues();
+					for(int y=0; y<asns.size();y++) {
+						if(atrb.getAttrType().equals(X509Name.DATE_OF_BIRTH)) {
+							DERGeneralizedTime dgt = DERGeneralizedTime.getInstance(asns.getObjectAt(y));
+							stx = stx+"DateOfBirth (OID: "+atrb.getAttrType().getId()+")"+term+" "+dgt.getTime();
+						}
+						else
+							m_aLogger.log(atrb.getAttrType().getId()+" "+asns.getObjectAt(y).toString());
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				stx = stx+ "unknown object!";
 			}
+			m_aLogger.log(stx);
 		}
 
 		/**
@@ -427,7 +457,7 @@ public class TestOnCertificates {
 		private void examinePrivateKeyUsagePeriod(X509Extension aext) {
 			try {
 				PrivateKeyUsagePeriod pku = PrivateKeyUsagePeriod.getInstance(aext);
-				m_aLogger.log("to be written...");
+				m_aLogger.log("to be written..."+pku.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -539,7 +569,8 @@ public class TestOnCertificates {
 		private void examineAuthorityInfoAccess(X509Extension aext) {
 			try {
 				AuthorityInformationAccess aia = AuthorityInformationAccess.getInstance(aext);
-				m_aLogger.log("to be written...");
+				
+				m_aLogger.log("to be written..."+aia.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
