@@ -40,7 +40,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.security.auth.x500.X500Principal;
@@ -67,6 +69,8 @@ import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.PolicyInformation;
+import org.bouncycastle.asn1.x509.PolicyQualifierId;
+import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
@@ -317,46 +321,61 @@ public class TestOnCertificates {
 		public void setName(String s) {
 			certName = s;
 		}
-		
+
 		protected void examineExtension(X509Extension aext, DERObjectIdentifier _oid) {
 			if(_oid.equals(X509Extensions.KeyUsage)) {
-				m_aLogger.log("Key Usage (OID: "+_oid.toString()+")");
+				m_aLogger.log("KeyUsage (OID: "+_oid.toString()+")");
 				examineKeyUsage(aext);
 			}
 			else if(_oid.equals(X509Extensions.CertificatePolicies)) {
 				//CertificatePolicies cp = CertificatePolicies.getInstance(aext);
+				m_aLogger.log("CertificatePolicies (OID:"+_oid.getId()+")");
 				examineCertificatePolicies(aext);
 			}
 			else if(_oid.equals(X509Extensions.SubjectKeyIdentifier)) {
 				//SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
+				m_aLogger.log("SubjectKeyIdentifier (OID:"+_oid.getId()+")");
 				examineSubjectKeyIdentifier(aext);
 			}
 			else if(_oid.equals(X509Extensions.SubjectDirectoryAttributes)) {
+				m_aLogger.log("SubjectDirectoryAttributes (OID:"+_oid.getId()+")");			
 				examineSubjectDirectoryAttributes(aext);				
 			}
 			else if(_oid.equals(X509Extensions.PrivateKeyUsagePeriod)) {
+				m_aLogger.log("PrivateKeyUsagePeriod (OID:"+_oid.getId()+")");
 				examinePrivateKeyUsagePeriod(aext);				
 			}
 			else if(_oid.equals(X509Extensions.SubjectAlternativeName)) {
+				m_aLogger.log("SubjectAlternativeName (OID:"+_oid.getId()+")");
 				examineSubjectAlternativeName(aext);	
 			}
 			else if(_oid.equals(X509Extensions.IssuerAlternativeName)) {
+				m_aLogger.log("IssuerAlternativeName (OID:"+_oid.getId()+")");
 				examineIssuerAlternativeName(aext);	
 			}
 			else if(_oid.equals(X509Extensions.QCStatements)) {
+				m_aLogger.log("QCStatements (OID:"+_oid.getId()+")");
 				examineQCStatements(aext);	
 			}
 			else if(_oid.equals(X509Extensions.AuthorityInfoAccess)) {
+				m_aLogger.log("AuthorityInfoAccess (OID:"+_oid.getId()+")");
 				examineAuthorityInfoAccess(aext);
 			}
 			else if(_oid.equals(X509Extensions.AuthorityKeyIdentifier)) {
+				m_aLogger.log("AuthorityKeyIdentifier (OID:"+_oid.getId()+")");
 				examineAuthorityKeyIdentifier(aext);
 			}
 			else if(_oid.equals(X509Extensions.CRLDistributionPoints)) {
+				m_aLogger.log("CRLDistributionPoints (OID:"+_oid.getId()+")");
 				examineCRLDistributionPoints(aext);
 			}
 			else if(_oid.equals(X509Extensions.ExtendedKeyUsage)) {
+				m_aLogger.log("ExtendedKeyUsage (OID:"+_oid.getId()+")");
 				examineExtendedKeyUsage(aext);
+			}
+			else {
+				m_aLogger.log("Unknown extension (OID:"+_oid.getId()+")");
+				examineUnknownExtension(aext);
 			}
 /*
     public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
@@ -384,9 +403,14 @@ public class TestOnCertificates {
 		/**
 		 * @param aext
 		 */
+		private void examineUnknownExtension(X509Extension aext) {
+			m_aLogger.log(Helpers.printHexBytes(aext.getValue().getOctets()));
+		}
+
+		/**
+		 * @param aext
+		 */
 		private void examineSubjectDirectoryAttributes(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("SubjectDirectoryAttributes");			
 			try {
 				DERObject dbj = X509Extension.convertValueToObject(aext);
 				SubjectDirectoryAttributes sda = SubjectDirectoryAttributes.getInstance(dbj);
@@ -401,8 +425,6 @@ public class TestOnCertificates {
 		 * @param aext
 		 */
 		private void examinePrivateKeyUsagePeriod(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("PrivateKeyUsagePeriod");
 			try {
 				PrivateKeyUsagePeriod pku = PrivateKeyUsagePeriod.getInstance(aext);
 				m_aLogger.log("to be written...");
@@ -415,8 +437,6 @@ public class TestOnCertificates {
 		 * @param aext
 		 */
 		private void examineSubjectAlternativeName(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("SubjectAlternativeName");
 			try {
 				m_aLogger.log("to be written...");
 			} catch (Exception e) {
@@ -428,8 +448,6 @@ public class TestOnCertificates {
 		 * @param aext
 		 */
 		private void examineIssuerAlternativeName(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("IssuerAlternativeName");
 			try {
 				m_aLogger.log("to be written...");
 			} catch (Exception e) {
@@ -441,22 +459,20 @@ public class TestOnCertificates {
 		 * @param aext
 		 */
 		private void examineQCStatements(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("QCStatements");
+			String stx = "";
 			try {
                 ASN1Sequence    dns = (ASN1Sequence)X509Extension.convertValueToObject(aext);
                 for(int i= 0; i<dns.size();i++) {
                     QCStatement qcs = QCStatement.getInstance(dns.getObjectAt(i));
                     if (QCStatement.id_etsi_qcs_QcCompliance.equals(qcs.getStatementId()))  {
                         // process statement - just write a notification that the certificate contains this statement
-                        String stx = qcs.getStatementId()+" QcEuCompliance"+term;
+                        stx = stx + "QcCompliance (OID: "+qcs.getStatementId()+")"+term;
                         stx = stx + "  The issuer issued this certificate as a Qualified Certificate"+term;
                         stx = stx + "  according Annex I and II of the Directive 1999/93/EC of the"+term;
                         stx = stx + "  European Parliament and of the Council of 13 December 1999 on"+term;
                         stx = stx + "  a Community framework for electronic signatures, as implemented"+term;
                         stx = stx + "  in the law of the country specified in the issuer field of this"+term;
-                        stx = stx + "  certificate.";
-                        m_aLogger.log(stx);
+                        stx = stx + "  certificate."+term+term;
                     }
                     else if(QCStatement.id_qcs_pkixQCSyntax_v1.equals(qcs.getStatementId())) {
                         // process statement - just recognize the statement
@@ -464,23 +480,21 @@ public class TestOnCertificates {
                     }
                     else if(QCStatement.id_etsi_qcs_QcSSCD.equals(qcs.getStatementId())) {
                         // process statement - just write a notification that the certificate contains this statement
-                        String stx = qcs.getStatementId()+" QcSSCD"+term;
-                        
-                        stx=stx+"  The issuer claims that the private key associated with the"+term;
-                        stx=stx+"  public key in the certificate is protected according to"+term;
-                        stx=stx+"  Annex III of the Directive 1999/93/EC of the European Parliament"+term;
-                        stx=stx+"  and of the Council of 13 December 1999 on a Community framework"+term;
-                        stx=stx+"  for electronic signatures.";
-                        m_aLogger.log(stx);
+                        stx = stx+"QcSSCD (OID: "+qcs.getStatementId()+")"+term;
+                        stx = stx+"  The issuer claims that the private key associated with the"+term;
+                        stx = stx+"  public key in the certificate is protected according to"+term;
+                        stx = stx+"  Annex III of the Directive 1999/93/EC of the European Parliament"+term;
+                        stx = stx+"  and of the Council of 13 December 1999 on a Community framework"+term;
+                        stx = stx+"  for electronic signatures."+term+term;
                     }
                     else if(QCStatement.id_etsi_qcs_RetentionPeriod.equals(qcs.getStatementId())) {
-                    	String stx = qcs.getStatementId()+" RetentionPeriod"+term;
-                    	stx = stx+"  The issuer guarantees that material information relevant"+term;
-                    	stx = stx+"  to use of and reliance on the certificate will be archived"+term;
-                    	stx = stx+"  and can be made available upon request beyond the end of"+term;
-                    	stx = stx+"  the validity period of the certificate for the number of";
-                    	stx = stx+"  %1$s years.";
-                        m_aLogger.log(String.format(stx,qcs.getStatementInfo().toString()));
+                    	String stxf = "QcEuRetentionPeriod (OID: "+qcs.getStatementId()+")"+term;
+                    	stxf = stxf+"  The issuer guarantees that material information relevant"+term;
+                    	stxf = stxf+"  to use of and reliance on the certificate will be archived"+term;
+                    	stxf = stxf+"  and can be made available upon request beyond the end of"+term;
+                    	stxf = stxf+"  the validity period of the certificate for the number of";
+                    	stxf = stxf+"  %1$s years.";
+                    	stx = stx + String.format(stxf,qcs.getStatementInfo().toString())+term+term;
                     }
                     else if(QCStatement.id_etsi_qcs_LimiteValue.equals(qcs.getStatementId())) {
                     	//FIXME: needs to be tested !
@@ -498,7 +512,7 @@ public class TestOnCertificates {
                          * specified in the issuer field of this certificate.
                          */
                         if(currency.isAlphabetic()) {
-                            m_aLogger.log(qcs.getStatementId()+" QcLimitValueAlpha"+
+                            m_aLogger.log("QcEuLimitValue (OID: "+qcs.getStatementId()+")"+
                                     new Object[] {currency.getAlphabetic(),
                                                   new TrustedInput(new Double(value)),
                                                   limit});
@@ -516,14 +530,13 @@ public class TestOnCertificates {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+            m_aLogger.log(stx);
 		}
 
 		/**
 		 * @param aext
 		 */
 		private void examineAuthorityInfoAccess(X509Extension aext) {
-			// TODO Auto-generated method stub
-			m_aLogger.log("AuthorityInfoAccess");
 			try {
 				AuthorityInformationAccess aia = AuthorityInformationAccess.getInstance(aext);
 				m_aLogger.log("to be written...");
@@ -533,18 +546,49 @@ public class TestOnCertificates {
 		}
 
 		private void examineCertificatePolicies(X509Extension aext) {
-			m_aLogger.log("CertificatePolicies");
+			//Italian specific OIDs:
+			//1.3.76 == UNINFO
+			String stx ="";
 			try {
-				DERObject dbj = X509Extension.convertValueToObject(aext);
-				PolicyInformation cp = PolicyInformation.getInstance(dbj);
-				m_aLogger.log("to be written...");
+				ASN1Sequence cp = (ASN1Sequence)X509Extension.convertValueToObject(aext);
+				if(cp != null) {
+                    for(int i = 0; i < cp.size();i++) {
+                        PolicyInformation pi = PolicyInformation.getInstance(cp.getObjectAt(i));
+                        DERObjectIdentifier oid = pi.getPolicyIdentifier();
+                        if(oid.equals(PolicyQualifierId.id_qt_cps)) {
+                        	stx = stx + "cps (OID: "+oid.getId()+")"+term;
+                        }
+                        else if(oid.equals(PolicyQualifierId.id_qt_unotice)) {
+                        	stx = stx + "unotice (OID: "+oid.getId()+")"+term;                        	
+                        }
+                        else
+                        	stx=stx+"OID: "+oid.getId()+term;
+
+        				ASN1Sequence pqs = (ASN1Sequence)pi.getPolicyQualifiers();
+        				if(pqs != null) {
+        					for(int y = 0; y < pqs.size();y++) {
+        						PolicyQualifierInfo pqi = PolicyQualifierInfo.getInstance(pqs.getObjectAt(y));
+                                DERObjectIdentifier oidpqi = pqi.getPolicyQualifierId();
+                                if(oidpqi.equals(PolicyQualifierId.id_qt_cps)) {
+                                	stx = stx + "cps (OID: "+oidpqi.getId()+")";
+                                }
+                                else if(oidpqi.equals(PolicyQualifierId.id_qt_unotice)) {
+                                	stx = stx + "unotice (OID: "+oidpqi.getId()+")";                        	
+                                }
+                                else
+                                	stx=stx+"OID: "+oidpqi.getId();
+                                stx = stx + " "+pqi.getQualifier().toString()+term;
+        					}
+        				}
+                    }
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}			
+			m_aLogger.log(stx);
 		}
 
 		private void examineSubjectKeyIdentifier(X509Extension aext) {
-			m_aLogger.log("SubjectKeyIdentifier");
 			try {
 				SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
 				m_aLogger.log(Helpers.printHexBytes(ski.getKeyIdentifier()));
@@ -554,7 +598,6 @@ public class TestOnCertificates {
 		}
 
 		private void examineAuthorityKeyIdentifier(X509Extension aext) {
-			m_aLogger.log("AuthorityKeyIdentifier");
 			try {
 				AuthorityKeyIdentifier aki = AuthorityKeyIdentifier.getInstance(aext);
 				m_aLogger.log(Helpers.printHexBytes(aki.getKeyIdentifier()));
@@ -600,8 +643,7 @@ public class TestOnCertificates {
 		 * 
 		 */
 		private void examineCRLDistributionPoints(X509Extension aext) {
-			// TODO Auto-generated method stub
-			String stx = "CRLDistributionPoints:"+term;
+			String stx = "";
 			try {
 				DERObject dbj = X509Extension.convertValueToObject(aext);
 				CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
@@ -609,72 +651,67 @@ public class TestOnCertificates {
 
 				for(int i = 0;i < dp.length;i++) {
 					DistributionPointName dpn = dp[i].getDistributionPoint();
-
-					//				m_aLogger.log(dpn.toString());
-					{
-						//custom toString
-						if(dpn.getType() == DistributionPointName.FULL_NAME) {
-							stx = stx+"fullName:" + term;
-						}
-						else {
-							stx = stx+"nameRelativeToCRLIssuer:" + term;						
-						}
-						GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
-						GeneralName[] gn = gnx.getNames();
-						for(int y=0; y <gn.length;y++) {
-//							stx = stx + gn[y].toString() + term;
-							//set type
-							switch(gn[y].getTagNo())
-							{
-							case GeneralName.otherName:
-								stx = stx +"otherName: ";
-								break;
-							case GeneralName.rfc822Name:
-								stx = stx +"rfc822Name: ";
-								break;
-							case GeneralName.dNSName:
-								stx = stx +"dNSName: ";
-								break;
-							case GeneralName.x400Address:
-								stx = stx +"x400Address: ";
-								break;
-							case GeneralName.directoryName:
-								stx = stx +"directoryName: ";
-								break;
-							case GeneralName.ediPartyName:
-								stx = stx +"ediPartyName: ";
-								break;
-							case GeneralName.uniformResourceIdentifier:
-								stx = stx +"uniformResourceIdentifier: ";
-								break;
-							case GeneralName.iPAddress:
-								stx = stx +"iPAddress: ";
-								break;
-							case GeneralName.registeredID:
-								stx = stx +"registeredID: ";
-								break;							
-							}
-					        switch (gn[y].getTagNo())
-					        {
-					        case GeneralName.rfc822Name:
-					        case GeneralName.dNSName:
-					        case GeneralName.uniformResourceIdentifier:
-					        	stx = stx + DERIA5String.getInstance(gn[y].getName()).getString();
-					            break;
-					        case GeneralName.directoryName:
-					        	stx = stx + X509Name.getInstance(gn[y].getName()).toString();
-					            break;
-					        default:
-					        	stx = stx + gn[y].toString();
-					        }
-						}
-						stx = stx + term;
+					//custom toString
+					if(dpn.getType() == DistributionPointName.FULL_NAME) {
+						stx = stx+"fullName:" + term;
 					}
+					else {
+						stx = stx+"nameRelativeToCRLIssuer:" + term;						
+					}
+					GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
+					GeneralName[] gn = gnx.getNames();
+					for(int y=0; y <gn.length;y++) {
+						//set type
+						switch(gn[y].getTagNo())
+						{
+						case GeneralName.otherName:
+							stx = stx +"otherName: ";
+							break;
+						case GeneralName.rfc822Name:
+							stx = stx +"rfc822Name: ";
+							break;
+						case GeneralName.dNSName:
+							stx = stx +"dNSName: ";
+							break;
+						case GeneralName.x400Address:
+							stx = stx +"x400Address: ";
+							break;
+						case GeneralName.directoryName:
+							stx = stx +"directoryName: ";
+							break;
+						case GeneralName.ediPartyName:
+							stx = stx +"ediPartyName: ";
+							break;
+						case GeneralName.uniformResourceIdentifier:
+							stx = stx +"uniformResourceIdentifier: ";
+							break;
+						case GeneralName.iPAddress:
+							stx = stx +"iPAddress: ";
+							break;
+						case GeneralName.registeredID:
+							stx = stx +"registeredID: ";
+							break;							
+						}
+						switch (gn[y].getTagNo())
+						{
+						case GeneralName.rfc822Name:
+						case GeneralName.dNSName:
+						case GeneralName.uniformResourceIdentifier:
+							stx = stx + DERIA5String.getInstance(gn[y].getName()).getString();
+							break;
+						case GeneralName.directoryName:
+							stx = stx + X509Name.getInstance(gn[y].getName()).toString();
+							break;
+						default:
+							stx = stx + gn[y].toString();
+						}
+					}
+					stx = stx + term;
 
 					//				m_aLogger.log(dpn.getName().toString());
 					GeneralNames gns = dp[i].getCRLIssuer();
 					if(gns != null) {
-						GeneralName[] gn = gns.getNames();
+						gn = gns.getNames();
 						for(int y=0; y <gn.length;y++) {
 							stx = stx + gn[i].toString() + term;
 						}
@@ -713,6 +750,7 @@ public class TestOnCertificates {
 		}
 
 		private void examineExtendedKeyUsage(X509Extension aext) {
+			String stx = "";
 			try {
 				//prepare a reverse lookup of keypurpose id
 				//this can be static in another class
@@ -740,14 +778,14 @@ public class TestOnCertificates {
 				ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"capwapAC");
 				ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"capwapWTP");
 				ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
-	
-				m_aLogger.log("ExtendedKeyUsage");
+
 				Vector<DERObjectIdentifier> usages = eku.getUsages();
 				for(int i = 0; i < usages.size();i++)
-				m_aLogger.log("  "+usages.get(i).getId()+": "+ReverseLookUp.get(usages.get(i)));			
+					stx = stx+ReverseLookUp.get(usages.get(i))+" (OID: "+usages.get(i)+")"+term;			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			m_aLogger.log(stx);
 		}
 	}
 
