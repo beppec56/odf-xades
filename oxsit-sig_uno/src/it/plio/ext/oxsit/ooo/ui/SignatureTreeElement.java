@@ -52,7 +52,6 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 	public SignatureTreeElement(XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(context, _xmcf);
-		// TODO Auto-generated constructor stub
 		setNodeType(TreeNodeType.SIGNATURE);
 		setSignatureState(m_nSIGNATURE_STATE_TO_BE_VERIFIED);
 		setDocumentVerificationState(m_nDOCUMENT_VERIF_TO_BE_VERIFIED);

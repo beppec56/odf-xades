@@ -55,7 +55,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
 		setNodeType(TreeNodeType.CERTIFICATE);
-		getLogger().enableLogging();
+//		getLogger().enableLogging();
 		getLogger().ctor();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
