@@ -60,6 +60,9 @@ XOX_AvailableSSCDs interface or</p>
 		/** the human readable rapresentation of the serial number attribute of the certificate.
 		 */
 		[attribute, readonly] string SerialNumber ;
+		/** The short version of the issuer name
+		*/
+		[attribute, readonly] string IssuerDisplayName ;
 		/** the full issuer name attribute of the certificate.
 		 */
 		[attribute, readonly] string IssuerName ;

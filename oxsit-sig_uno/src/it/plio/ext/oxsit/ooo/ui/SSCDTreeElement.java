@@ -28,7 +28,7 @@ import com.sun.star.uno.XComponentContext;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.XOX_SSCDevice;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.
@@ -38,23 +38,27 @@ import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
  * @author beppec56
  *
  */
-public class CertificateTreeElement extends BaseCertificateTreeElement {
+public class SSCDTreeElement extends BaseGeneralMultilineTreeElement {
 
 	//=============================================
 	// describes the field for certificate general status
 	// only for certificate
-	public final int m_nFIELD_TITLE_VALID_FROM 				= 3;
-	public final int m_nFIELD_DATE_VALID_FROM 				= 4;
-	public final int m_nFIELD_TITLE_VALID_TO 				= 5;
-	public final int m_nFIELD_DATE_VALID_TO	 				= 6;
-	public final int m_nFIELD_TEXT_FIELD_10 				= 10;
-	public final int m_nFIELD_TEXT_FIELD_11					= 11;
-	public final int m_nFIELD_TEXT_FIELD_12 				= 12;
-	public final int m_nFIELD_TEXT_FIELD_13 				= 13;
+	public final int m_nFIELD_SSCD_TITLE_DESCRIPTION	= 0;
+	public final int m_nFIELD_SSCD_DESCRIPTION			= 1;
 
-	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
+	public final int m_nFIELD_SSCD_TITLE_MANUFACTURER	= 3;
+	public final int m_nFIELD_SSCD_MANUFACTURER			= 4;
+
+	public final int m_nFIELD_SSCD_TITLE_ATR			= 6;
+	public final int m_nFIELD_SSCD_ATR1					= 7;
+	public final int m_nFIELD_SSCD_ATR2					= 8;
+
+	public final int m_nFIELD_SSCD_TITLE_LIB			= 10;
+	public final int m_nFIELD_SSCD_LIB					= 11;
+
+	public SSCDTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
-		setNodeType(TreeNodeType.CERTIFICATE);
+		setNodeType(TreeNodeType.SSCDEVICE);
 		getLogger().enableLogging();
 		getLogger().ctor();
 		setMultiComponentFactory(_xMCF);
@@ -66,41 +70,35 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	 */
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
 //inizialize string grabber
+		super.initialize();
 		m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
 		//allocate string needed for display
 		try {
 			//initializes fixed string (titles)
-			m_sStringList[m_nFIELD_TITLE_VALID_FROM] = m_aRegAcc.getStringFromRegistry("cert_title_valid_from" );  
-			m_sStringList[m_nFIELD_DATE_VALID_FROM] = "";
-			m_sStringList[m_nFIELD_TITLE_VALID_TO] = m_aRegAcc.getStringFromRegistry("cert_title_valid_to" );
-			m_sStringList[m_nFIELD_DATE_VALID_TO] = "";
-//fill emtpy fields
-			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_12] = "r";
-			m_sStringList[m_nFIELD_TEXT_FIELD_13] = "r";
+			m_sStringList[m_nFIELD_SSCD_TITLE_DESCRIPTION] = m_aRegAcc.getStringFromRegistry("sscd_title_description" );  
+			m_sStringList[m_nFIELD_SSCD_TITLE_MANUFACTURER] = m_aRegAcc.getStringFromRegistry("sscd_title_manuf" );
+			m_sStringList[m_nFIELD_SSCD_TITLE_ATR] = m_aRegAcc.getStringFromRegistry("sscd_title_atr" );
+			m_sStringList[m_nFIELD_SSCD_TITLE_LIB] = m_aRegAcc.getStringFromRegistry("sscd_title_lib" );
 		} catch (Exception e) {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
-		super.initialize();
 	}
 
-	/** specific initialization for certificate
-	 * 
-	 * @param _aCertif
-	 */
-	public void setCertificateData(XOX_QualifiedCertificate _aCertif) {
-//set the node name		
-		setNodeName(_aCertif.getSubjectDisplayName());
-		initialize();
-		//init it correctly		
-		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ _aCertif.getNotValidBefore();
-		m_sStringList[m_nFIELD_DATE_VALID_TO] = "r"+_aCertif.getNotValidAfter();
-		//next should be set to the right certificate string to display
-		m_sStringList[m_nFIELD_OWNER_NAME] = "b"+getNodeName();  // will got it from the certificate raw data		
-		m_sStringList[m_nFIELD_ISSUER] = "r"+_aCertif.getIssuerDisplayName();
+	//custom node init function
+	public void setSSCDDATA(XOX_SSCDevice _aSSCdev) {
+		m_sStringList[m_nFIELD_SSCD_DESCRIPTION] = "r" + _aSSCdev.getDescription();
+		m_sStringList[m_nFIELD_SSCD_MANUFACTURER] = "r" +  _aSSCdev.getManufacturer();
+		String sAtrCode = _aSSCdev.getATRcode();
+		if(sAtrCode.length() > 4) {
+		m_sStringList[m_nFIELD_SSCD_ATR1] = "r"+ sAtrCode.substring(0, sAtrCode.length()/2);
+		m_sStringList[m_nFIELD_SSCD_ATR2] = "r  "+ sAtrCode.substring(sAtrCode.length()/2, sAtrCode.length());
+		}
+		else if (sAtrCode.length() == 4) {
+			m_sStringList[m_nFIELD_SSCD_ATR1] = "r"+ sAtrCode;
+		}
+		m_sStringList[m_nFIELD_SSCD_LIB] = "r"+ _aSSCdev.getCryptoLibraryUsed();
+		setNodeName(_aSSCdev.getDescription());
 	}
 }

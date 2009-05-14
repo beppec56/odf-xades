@@ -28,6 +28,8 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -35,6 +37,7 @@ import com.sun.star.awt.XControl;
 import com.sun.star.awt.XItemListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
+import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
 import com.sun.star.io.IOException;
@@ -191,13 +194,51 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		m_logger.info("Seleziona dispositivo");
 //		addOneCertificate();
 		//instantiate the SSCDs service
+		if(m_axoxAvailableSSCDs != null) {
+			XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
+			if(xComp != null)
+				xComp.dispose();
+		}
+		m_axoxAvailableSSCDs = null;
 		try {
 			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
 			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
-			if(m_axoxAvailableSSCDs != null)
+			if(m_axoxAvailableSSCDs != null) {
 				m_axoxAvailableSSCDs.scanDevices();
 			
-			m_axoxAvailableSSCDs.getAvailableSSCDevices();
+				m_axoxAvailableSSCDs.getAvailableSSCDevices();
+				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
+				if(xDevices != null) {
+					//empy the tree, then add the new certificates
+					
+					//add the new available certificates
+					for(int idx = 0; idx < xDevices.length; idx++) {
+						XOX_SSCDevice oSSCDev = xDevices[idx];
+// add this node to the tree
+						XMutableTreeNode xCertifNode = addSSCDToTreeRootHelper(oSSCDev);
+
+						if(oSSCDev.getHasQualifiedCertificates() > 0) {
+							XOX_QualifiedCertificate[] oCertifs = oSSCDev.getQualifiedCertificates();
+							for(int idx1=0; idx1<oCertifs.length;idx1++) {
+								addQualifiedCertificateToTree(xCertifNode, oCertifs[idx1]);
+/*								m_logger.log(xQualCert.getSubjectDisplayName());
+								m_logger.log(xQualCert.getVersion());
+								m_logger.log(xQualCert.getSerialNumber());
+								m_logger.log(xQualCert.getIssuerName());
+								m_logger.log(xQualCert.getNotValidBefore());
+								m_logger.log(xQualCert.getNotValidAfter());
+								m_logger.log(xQualCert.getSubjectName());
+								m_logger.log(xQualCert.getSubjectPublicKeyAlgorithm());
+								m_logger.log(xQualCert.getSubjectPublicKeyValue());
+								m_logger.log(xQualCert.getSignatureAlgorithm());
+								m_logger.log(xQualCert.getSHA1Thumbprint());
+								m_logger.log(xQualCert.getMD5Thumbprint());*/
+								
+							}
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			m_logger.severe("ctor", e);
 		}

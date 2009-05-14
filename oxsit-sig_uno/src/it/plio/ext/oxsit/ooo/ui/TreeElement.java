@@ -49,6 +49,7 @@ public abstract class TreeElement
 	 *
 	 */
 	public enum TreeNodeType {
+		SSCDEVICE, /* a SSCD containing certificates (simple descriptive node)*/
 		SIGNATURE, /* general state of the signature:
 		state: valid/not valid
 		short description of signee: name and Italian fiscal code

@@ -126,16 +126,18 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	protected CertificateAuthorityState m_CAState;
 	protected CertificateState			m_CState;
 
-	private String m_sSubjectDisplayName;
-	
 	//the certificate representation
 	private X509CertificateStructure m_aX509;
 
+	private String m_sSubjectDisplayName;
+	
 	private String m_sSubjectName = "";
 
 	private String m_sVersion = "";
 
 	private String m_sSerialNumber = "";
+
+	private String m_sIssuerDisplayName = "";
 
 	private String m_sIssuerName = "";
 
@@ -264,8 +266,17 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	public String getNotValidBefore() {
 		return m_sNotValidBefore;
 	}
-	
+
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerDisplayName()
+	 */
+	@Override
+	public String getIssuerDisplayName() {
+		return m_sIssuerDisplayName;
+	}
+
+	/* (non-Javadoc)
+
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerName()
 	 */
 	@Override
@@ -583,10 +594,38 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		m_sIssuerName = "";
 		X509Name aName = m_aX509.getIssuer();
 		Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
+		HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 		Vector<?> values = aName.getValues();
 		for(int i=0; i< oidv.size(); i++) {
 			m_sIssuerName = m_sIssuerName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
 					" (OID: "+oidv.elementAt(i).toString()+") \n";
+			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
 		}		
+		//look for givename (=nome di battesimo)
+		m_sIssuerDisplayName = "";			
+		//see BC source code for details about DefaultLookUp behaviour
+		DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
+		if(hm.containsKey(oix)) {
+			String tmpName = hm.get(oix).toString();
+			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
+			if(hm.containsKey(oix))
+				m_sIssuerDisplayName = tmpName +" "+hm.get(oix).toString();
+		}
+		if(m_sIssuerDisplayName.length() == 0) {
+			//check for CN
+			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+			if(hm.containsKey(oix)) {
+				m_sIssuerDisplayName = hm.get(oix).toString();
+			}
+		}
+		if(m_sIssuerDisplayName.length() == 0) {
+			//if still not, check for pseudodym
+			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
+			if(hm.containsKey(oix))
+				m_sIssuerDisplayName = hm.get(oix).toString();						
+		}
+		if(m_sIssuerDisplayName.length() == 0)
+			m_sIssuerDisplayName = m_sIssuerName;
 	}
+
 }

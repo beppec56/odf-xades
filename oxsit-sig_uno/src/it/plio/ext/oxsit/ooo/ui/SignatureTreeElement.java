@@ -33,7 +33,7 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class SignatureTreeElement extends CertificateTreeElementBase {
+public class SignatureTreeElement extends BaseCertificateTreeElement {
 	protected final int m_nFIELD_SIGNATURE_STATE = 0;
 	protected final int m_nFIELD_DOCUMENT_VERF_STATE = 1;
 	protected final int m_nFIELD_DOCUMENT_VERF_CONDT = 2;

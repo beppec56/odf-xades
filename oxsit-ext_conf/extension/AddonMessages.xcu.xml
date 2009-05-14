@@ -592,6 +592,33 @@ Confermate Salva  con nuovo nome?
 			</prop>
 		</node>
 		<!--
+		    Strings for SSCD display window titles
+		-->
+		<node oor:name="sscd_title_description" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iDescription</value>
+				<value xml:lang="it">iDescrizione</value>
+			</prop>
+		</node>
+		<node oor:name="sscd_title_manuf" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iManufacturer</value>
+				<value xml:lang="it">iCostruttore</value>
+			</prop>
+		</node>
+		<node oor:name="sscd_title_atr" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iATR String</value>
+				<value xml:lang="it">iStringa ATR</value>
+			</prop>
+		</node>
+		<node oor:name="sscd_title_lib" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">iUsed Library</value>
+				<value xml:lang="it">iLibreria usata</value>
+			</prop>
+		</node>
+		<!--
 		    String used to format time in certificate validity
 		-->
 		<node oor:name="id_validity_time_locale" oor:op="replace">
@@ -615,10 +642,58 @@ Confermate Salva  con nuovo nome?
 				<value xml:lang="it">Numero di serie</value>
 			</prop>
 		</node>
-		<node oor:name="id_cert_sbj_pub_key" oor:op="replace">
+		<node oor:name="id_cert_isser" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Subject Public Key</value>
-				<value xml:lang="it">Firma digitale (hex)</value>
+				<value xml:lang="en">Issuer</value>
+				<value xml:lang="it">Emittente</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_valid_from" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Valid not before</value>
+				<value xml:lang="it">Valido da</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_valid_to" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Valid not after</value>
+				<value xml:lang="it">Valido fino a</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_subject" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Subject</value>
+				<value xml:lang="it">Soggetto</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_sign_alg" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Subject Public Signature Algorithm</value>
+				<value xml:lang="it">Algoritmo di firma</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_pub_key" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Subject Public Key Data</value>
+				<value xml:lang="it">Chiave pubblica</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_thumbp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Signature Algorithm</value>
+				<value xml:lang="it">Algoritmo di impronta del certificato</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_sha1_thumbp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Certificate SHA1 Thumbprint</value>
+				<value xml:lang="it">Impronta SHA1 del certificato</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_md5_thumbp" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Certificate MD5 Thumbprint</value>
+				<value xml:lang="it">Impronta MD5 del certificato</value>
 			</prop>
 		</node>
 		<!--

@@ -7,6 +7,8 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.FocusEvent;
@@ -267,7 +269,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
-	protected XTreeControl insertTreeControl(XSelectionChangeListener _xActionListener,
+	private XTreeControl insertTreeControl(XSelectionChangeListener _xActionListener,
 			int _nPosX,
 			int _nPosY,
 			int _nHeight,
@@ -324,7 +326,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 					"PositionY", 
 //					"RootDisplayed",
 					"SelectionType",
-//					"ShowsRootHandles",
+					"ShowsRootHandles",
 					"Step",
 					"TabIndex",
 					"Width"
@@ -340,7 +342,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 					new Integer( _nPosY ),
 //					new Boolean( false ), //RootDisplayed, but does not function...
 					new Integer(com.sun.star.view.SelectionType.SINGLE_value),
-	//				new Boolean( false ),
+					new Boolean( true ),
 					new Integer( 0 ),//Step
 					new Short( (short)_nStep ), //TabIndex
 					new Integer( _nWidth )					
@@ -379,9 +381,40 @@ public class DialogCertTreeBase extends BasicDialog implements
 					);
 		}
 	}
-	
+
+	private XMutableTreeNode addMultiLineToTreeRootHelper(BaseGeneralMultilineTreeElement aSSCDnode) {		
+		//connect it to the right dialog pane
+		aSSCDnode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aSSCDnode.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
+		}
+		//add it to the tree root node
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aSSCDnode.getNodeName(), true);
+		if(aSSCDnode.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aSSCDnode.getNodeGraphic());
+
+		xaCNode.setDataValue(aSSCDnode);
+		try {
+			m_aTreeRootNode.appendChild(xaCNode);			
+			m_xTreeControl.expandNode(m_aTreeRootNode);			
+		} catch (IllegalArgumentException e) {
+			m_logger.severe("addMultiLineToTreeRootHelper", e);
+		} catch (ExpandVetoException e) {
+			m_logger.severe("addMultiLineToTreeRootHelper", e);
+		}
+		return xaCNode;
+	}
+		
+	protected XMutableTreeNode addSSCDToTreeRootHelper(XOX_SSCDevice _aSSCDev) {		
+		//add the device to the dialog, a single node, with the device as a description
+		SSCDTreeElement aSSCDnode = new SSCDTreeElement(m_xContext,m_xMCF);
+		aSSCDnode.initialize();
+		aSSCDnode.setSSCDDATA(_aSSCDev);
+		return  addMultiLineToTreeRootHelper(aSSCDnode);
+	}
+
 	////// methods to manage the certificate display
-	private XMutableTreeNode addOneCertificateHelper(CertificateTreeElementBase aCert) {		
+	protected XMutableTreeNode addOneCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
 		//connect it to the right dialog pane
 		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
@@ -406,6 +439,40 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
+	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
+		//instantiate a certificate node
+		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
+		aNewNode.setCertificateData(_aCertif);
+		
+		//connect it to the right dialog pane
+		aNewNode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aNewNode.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
+		}
+		//create a new node to be used for this element
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aNewNode.getNodeName(), true);
+		if(aNewNode.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aNewNode.getNodeGraphic());
+
+		//link to our data
+		xaCNode.setDataValue(aNewNode);
+		//add it to the parent node
+		try {
+			_aParentNode.appendChild(xaCNode);			
+			m_xTreeControl.expandNode(_aParentNode);			
+		} catch (IllegalArgumentException e) {
+			m_logger.severe("addOneCertificate", e);
+		} catch (ExpandVetoException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("addOneCertificate", e);
+		}
+		
+		//now add all the rest of the data
+
+//		m_xTreeDataModel, aStartNode
+				
+	}
+	
 	/**
 	 * FIXME: this method (nad th emethods it calls) MUST be changed to the one
 	 * needed to add a certificate to the tree. A better idea would be to move
@@ -415,7 +482,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 //create a fake certificate description
 		CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
-		XMutableTreeNode xNode = addOneCertificateHelper(aCert);
+		XMutableTreeNode xNode = addOneCertificateToTreeRootHelper(aCert);
 
 		addVariablePitchTreeElement(xNode, m_sLabelVersion,"V3");
 		addFixedPitchTreeElement(xNode, m_sLabelSubjectPublicKey,"30 82 01 0A 02 82 01 01 00 C4 1C 77 1D AD 89 18\nB1 6E 88 20 49 61 E9 AD 1E 3F 7B 9B 2B 39 A3 D8\nBF F1 42 E0 81 F0 03 E8 16 26 33 1A B1 DC 99 97\n4C 5D E2 A6 9A B8 D4 9A 68 DF 87 79 0A 98 75 F8\n33 54 61 71 40 9E 49 00 00 06 51 42 13 33 5C 6C\n34 AA FD 6C FA C2 7C 93 43 DD 8D 6F 75 0D 51 99\n83 F2 8F 4E 86 3A 42 22 05 36 3F 3C B6 D5 4A 8E\nDE A5 DC 2E CA 7B 90 F0 2B E9 3B 1E 02 94 7C 00\n8C 11 A9 B6 92 21 99 B6 3A 0B E6 82 71 E1 7E C2\nF5 1C BD D9 06 65 0E 69 42 C5 00 5E 3F 34 3D 33\n2F 20 DD FF 3C 51 48 6B F6 74 F3 A5 62 48 C9 A8\nC9 73 1C 8D 40 85 D4 78 AF 5F 87 49 4B CD 42 08\n5B C7 A4 D1 80 03 83 01 A9 AD C2 E3 63 87 62 09\nFE 98 CC D9 82 1A CB AD 41 72 48 02 D5 8A 76 C0\nD5 59 A9 FF CA 3C B5 0C 1E 04 F9 16 DB AB DE 01\nF7 A0 BE CF 94 2A 53 A4 DD C8 67 0C A9 AF 60 5F\n53 3A E1 F0 71 7C D7 36 AB 02 03 01 00 01");
@@ -425,7 +492,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//create a fake certificate description
 		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
-		addOneCertificateHelper(aCert);
+		addOneCertificateToTreeRootHelper(aCert);
 	}
 
 	private XMutableTreeNode addMultilineTreeElementHelper(XMutableTreeNode _Node, MultilineTreeElementBase _aElm, String _sLabel) {
