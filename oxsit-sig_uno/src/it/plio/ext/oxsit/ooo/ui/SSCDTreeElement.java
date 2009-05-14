@@ -38,7 +38,7 @@ import it.plio.ext.oxsit.security.XOX_SSCDevice;
  * @author beppec56
  *
  */
-public class SSCDTreeElement extends BaseGeneralMultilineTreeElement {
+public class SSCDTreeElement extends BaseGeneralNodeTreeElement {
 
 	//=============================================
 	// describes the field for certificate general status

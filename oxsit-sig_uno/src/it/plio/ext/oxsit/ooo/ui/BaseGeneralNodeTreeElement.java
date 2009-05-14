@@ -50,7 +50,7 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
  * @author beppec56
  *
  */
-public class BaseGeneralMultilineTreeElement extends TreeElement {
+public class BaseGeneralNodeTreeElement extends TreeElement {
 
 	// describes the field for certificate/signature status common to both
 
@@ -71,7 +71,7 @@ public class BaseGeneralMultilineTreeElement extends TreeElement {
 
 	protected MessageConfigurationAccess m_aRegAcc = null; 
 
-	public BaseGeneralMultilineTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
+	public BaseGeneralNodeTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		setNodeType(TreeNodeType.SSCDEVICE);
 		setLogger(new DynamicLogger(this,_xContext));
 		setMultiComponentFactory(_xMCF);

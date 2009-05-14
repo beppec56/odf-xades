@@ -396,7 +396,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
-	private XMutableTreeNode addMultiLineToTreeRootHelper(BaseGeneralMultilineTreeElement aSSCDnode) {		
+	private XMutableTreeNode addMultiLineToTreeRootHelper(BaseGeneralNodeTreeElement aSSCDnode) {		
 		//connect it to the right dialog pane
 		aSSCDnode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
