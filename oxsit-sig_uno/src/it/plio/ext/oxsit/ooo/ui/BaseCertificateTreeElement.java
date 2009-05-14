@@ -22,11 +22,13 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+
 import com.sun.star.awt.FontDescriptor;
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XFixedText;
-import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XWindow;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
@@ -38,9 +40,6 @@ import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.

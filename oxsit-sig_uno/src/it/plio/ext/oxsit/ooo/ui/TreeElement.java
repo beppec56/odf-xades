@@ -30,8 +30,8 @@ import com.sun.star.uno.XComponentContext;
 
 /** The base class of the data element to be shown in the tree control.
  * 
- * From this class are subclassed the other specialized classes needed
- * to manage the single node of the tree.
+ * <p>From this class are subclassed the other specialized classes needed
+ * to manage the data of the single node of the tree.</p>
  * 
  * @author beppec56
  *
@@ -85,7 +85,7 @@ public abstract class TreeElement
 	 * a node displaying for example the  VERSION type, in that
 	 * case it will point to the real certificate node
 	 */
-	public TreeElement m_sParentElement; 
+//	public TreeElement m_sParentElement; 
 
 	/**
 	 * constants for signature state

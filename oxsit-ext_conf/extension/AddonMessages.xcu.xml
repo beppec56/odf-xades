@@ -642,7 +642,7 @@ Confermate Salva  con nuovo nome?
 				<value xml:lang="it">Numero di serie</value>
 			</prop>
 		</node>
-		<node oor:name="id_cert_isser" oor:op="replace">
+		<node oor:name="id_cert_issuer" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Issuer</value>
 				<value xml:lang="it">Emittente</value>
@@ -668,19 +668,19 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="id_cert_sign_alg" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Subject Public Signature Algorithm</value>
-				<value xml:lang="it">Algoritmo di firma</value>
+				<value xml:lang="en">Subject Signature Algorithm</value>
+				<value xml:lang="it">Algoritmo di firma del soggetto</value>
 			</prop>
 		</node>
 		<node oor:name="id_cert_pub_key" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Subject Public Key Data</value>
-				<value xml:lang="it">Chiave pubblica</value>
+				<value xml:lang="it">Chiave pubblica del soggetto</value>
 			</prop>
 		</node>
 		<node oor:name="id_cert_thumbp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Signature Algorithm</value>
+				<value xml:lang="en">Thumbprint Signature Algorithm</value>
 				<value xml:lang="it">Algoritmo di impronta del certificato</value>
 			</prop>
 		</node>
@@ -690,7 +690,7 @@ Confermate Salva  con nuovo nome?
 				<value xml:lang="it">Impronta SHA1 del certificato</value>
 			</prop>
 		</node>
-		<node oor:name="id_cert_md5_thumbp" oor:op="replace">
+		<node oor:name="id_cert_mda5_thumbp" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Certificate MD5 Thumbprint</value>
 				<value xml:lang="it">Impronta MD5 del certificato</value>

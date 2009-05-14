@@ -7,6 +7,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
@@ -89,10 +90,17 @@ public class DialogCertTreeBase extends BasicDialog implements
 	protected String 			m_sFt_Hint_Doc = "id_title_mod_cert_treew";
 	
 	//Strings used for certificate elements
-	private String			m_sLabelVersion = "id_cert_version";
-	private String			m_sLabelSerialNumer = "id_cert_ser_numb";
-
-	private String 				m_sLabelSubjectPublicKey = "id_cert_sbj_pub_key";
+	private String				m_sLabelVersion = "id_cert_version";
+	private String				m_sLabelSerialNumer = "id_cert_ser_numb";
+	private String				m_sLabelIssuer = "id_cert_issuer";
+	private String				m_sLabelNotValidBefore = "id_cert_valid_from";
+	private String				m_sLabelNotValidAfter = "id_cert_valid_to";
+	private String				m_sLabelSubject = "id_cert_subject";
+	private String				m_sLabelSubjAlgor = "id_cert_sign_alg";
+	private String 				m_sLabelSubjectPublicKey = "id_cert_pub_key";
+	private String 				m_sLabelThumbAlgor = "id_cert_thumbp";
+	private String 				m_sLabelThumbSHA1 = "id_cert_sha1_thumbp";
+	private String 				m_sLabelThumbMDA5 = "id_cert_mda5_thumbp";
 
 	//graphic name string for indications for tree elements 
 	private String 				sSignatureOK; //signature ok
@@ -177,9 +185,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 //strings for certificate display
 			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );
 			m_sLabelSerialNumer = m_aRegAcc.getStringFromRegistry( m_sLabelSerialNumer );
-
+			m_sLabelIssuer = m_aRegAcc.getStringFromRegistry( m_sLabelIssuer );
+			m_sLabelNotValidBefore = m_aRegAcc.getStringFromRegistry( m_sLabelNotValidBefore );
+			m_sLabelNotValidAfter = m_aRegAcc.getStringFromRegistry( m_sLabelNotValidAfter );
+			m_sLabelSubject = m_aRegAcc.getStringFromRegistry( m_sLabelSubject );
+			m_sLabelSubjAlgor = m_aRegAcc.getStringFromRegistry( m_sLabelSubjAlgor );
 			m_sLabelSubjectPublicKey = m_aRegAcc.getStringFromRegistry( m_sLabelSubjectPublicKey );
-
+			m_sLabelThumbAlgor = m_aRegAcc.getStringFromRegistry( m_sLabelThumbAlgor );
+			m_sLabelThumbSHA1 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbSHA1 );
+			m_sLabelThumbMDA5 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbMDA5 );
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
@@ -439,6 +453,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
+	
 	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
@@ -466,28 +481,36 @@ public class DialogCertTreeBase extends BasicDialog implements
 			// TODO Auto-generated catch block
 			m_logger.severe("addOneCertificate", e);
 		}
-		
-		//now add all the rest of the data
+		//now add the rest of the data
+		//add the version
+		addVariablePitchTreeElement(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion());		
+		//add the serial number
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,_aCertif.getSerialNumber());
+		//add the issuer full description		
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName());
+		//add the not valid before
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore());
+		//add the not valid after
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter());
+		//add the subject
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,_aCertif.getSubjectName());
+		//add the subject signature algorithm
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT_ALGORITHM,m_sLabelSubjAlgor,_aCertif.getSubjectPublicKeyAlgorithm());
+		//add the subject public key (multiline, fixed pitch)
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.PUBLIC_KEY,m_sLabelSubjectPublicKey,_aCertif.getSubjectPublicKeyValue());
+		//add the thumbprint signature algorithm
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SIGNATURE_ALGORITHM,m_sLabelThumbAlgor,_aCertif.getSignatureAlgorithm());
+		//add the SHA1 thumbprint 
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_SHA1,m_sLabelThumbSHA1,_aCertif.getSHA1Thumbprint());
+		//add the MDA5 thumbprint
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_MD5,m_sLabelThumbMDA5,_aCertif.getMD5Thumbprint());
+		//add the critical extensions
 
-//		m_xTreeDataModel, aStartNode
-				
+		//add the non critical extensions
+
+		//add the certificate path
 	}
 	
-	/**
-	 * FIXME: this method (nad th emethods it calls) MUST be changed to the one
-	 * needed to add a certificate to the tree. A better idea would be to move
-	 * it somehow to the service implementing the XOX_QualifiedCertificate interface
-	 */
-	public void addOneCertificate() {
-//create a fake certificate description
-		CertificateTreeElement aCert = new CertificateTreeElement(m_xContext, m_xMCF);
-		aCert.initialize();
-		XMutableTreeNode xNode = addOneCertificateToTreeRootHelper(aCert);
-
-		addVariablePitchTreeElement(xNode, m_sLabelVersion,"V3");
-		addFixedPitchTreeElement(xNode, m_sLabelSubjectPublicKey,"30 82 01 0A 02 82 01 01 00 C4 1C 77 1D AD 89 18\nB1 6E 88 20 49 61 E9 AD 1E 3F 7B 9B 2B 39 A3 D8\nBF F1 42 E0 81 F0 03 E8 16 26 33 1A B1 DC 99 97\n4C 5D E2 A6 9A B8 D4 9A 68 DF 87 79 0A 98 75 F8\n33 54 61 71 40 9E 49 00 00 06 51 42 13 33 5C 6C\n34 AA FD 6C FA C2 7C 93 43 DD 8D 6F 75 0D 51 99\n83 F2 8F 4E 86 3A 42 22 05 36 3F 3C B6 D5 4A 8E\nDE A5 DC 2E CA 7B 90 F0 2B E9 3B 1E 02 94 7C 00\n8C 11 A9 B6 92 21 99 B6 3A 0B E6 82 71 E1 7E C2\nF5 1C BD D9 06 65 0E 69 42 C5 00 5E 3F 34 3D 33\n2F 20 DD FF 3C 51 48 6B F6 74 F3 A5 62 48 C9 A8\nC9 73 1C 8D 40 85 D4 78 AF 5F 87 49 4B CD 42 08\n5B C7 A4 D1 80 03 83 01 A9 AD C2 E3 63 87 62 09\nFE 98 CC D9 82 1A CB AD 41 72 48 02 D5 8A 76 C0\nD5 59 A9 FF CA 3C B5 0C 1E 04 F9 16 DB AB DE 01\nF7 A0 BE CF 94 2A 53 A4 DD C8 67 0C A9 AF 60 5F\n53 3A E1 F0 71 7C D7 36 AB 02 03 01 00 01");
-	}
-
 	public void addOneSignature() {
 		//create a fake certificate description
 		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
@@ -508,18 +531,20 @@ public class DialogCertTreeBase extends BasicDialog implements
 			_Node.appendChild(xaCNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("addOneCertificate", e);
+			m_logger.severe("addMultilineTreeElementHelper", e);
 		}
 		return xaCNode;		
 	}
 
-	private XMutableTreeNode addFixedPitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
+	private XMutableTreeNode addFixedPitchTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents) {
 		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
-	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, String _sLabel, String _sContents) {
+	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents) {
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
