@@ -84,7 +84,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		fillLocalizedString();
 // the next value should be read from configuration, when configuration is written...
 //		CertifTreeDlgDims.setDialogSize(0, 0); //to test
-		CertifTreeDlgDims.setDialogSize(300, 100, 0);
+		CertifTreeDlgDims.setDialogSize(310, 100, 0);
 	}
 
 	public void initialize(int _nPosX, int _nPosY ) throws BasicErrorException {
@@ -205,35 +205,21 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
 			if(m_axoxAvailableSSCDs != null) {
 				m_axoxAvailableSSCDs.scanDevices();
-			
+
 				m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				if(xDevices != null) {
 					//empy the tree, then add the new certificates
-					
+
 					//add the new available certificates
 					for(int idx = 0; idx < xDevices.length; idx++) {
 						XOX_SSCDevice oSSCDev = xDevices[idx];
 // add this node to the tree
 						XMutableTreeNode xCertifNode = addSSCDToTreeRootHelper(oSSCDev);
-
 						if(oSSCDev.getHasQualifiedCertificates() > 0) {
 							XOX_QualifiedCertificate[] oCertifs = oSSCDev.getQualifiedCertificates();
 							for(int idx1=0; idx1<oCertifs.length;idx1++) {
 								addQualifiedCertificateToTree(xCertifNode, oCertifs[idx1]);
-/*								m_logger.log(xQualCert.getSubjectDisplayName());
-								m_logger.log(xQualCert.getVersion());
-								m_logger.log(xQualCert.getSerialNumber());
-								m_logger.log(xQualCert.getIssuerName());
-								m_logger.log(xQualCert.getNotValidBefore());
-								m_logger.log(xQualCert.getNotValidAfter());
-								m_logger.log(xQualCert.getSubjectName());
-								m_logger.log(xQualCert.getSubjectPublicKeyAlgorithm());
-								m_logger.log(xQualCert.getSubjectPublicKeyValue());
-								m_logger.log(xQualCert.getSignatureAlgorithm());
-								m_logger.log(xQualCert.getSHA1Thumbprint());
-								m_logger.log(xQualCert.getMD5Thumbprint());*/
-								
 							}
 						}
 					}
