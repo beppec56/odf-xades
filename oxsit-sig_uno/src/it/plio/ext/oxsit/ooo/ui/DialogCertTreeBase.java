@@ -4,7 +4,6 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
@@ -15,13 +14,10 @@ import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.KeyEvent;
 import com.sun.star.awt.PushButtonType;
-import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
 import com.sun.star.awt.XDialog;
-import com.sun.star.awt.XFixedText;
 import com.sun.star.awt.XItemListener;
-import com.sun.star.awt.XKeyHandler;
 import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.tree.ExpandVetoException;
@@ -101,6 +97,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				m_sLabelThumbAlgor = "id_cert_thumbp";
 	private String 				m_sLabelThumbSHA1 = "id_cert_sha1_thumbp";
 	private String 				m_sLabelThumbMDA5 = "id_cert_mda5_thumbp";
+	private String 				m_sLabelCertPath = "id_cert_certif_path";
 
 	//graphic name string for indications for tree elements 
 	private String 				sSignatureOK; //signature ok
@@ -194,6 +191,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sLabelThumbAlgor = m_aRegAcc.getStringFromRegistry( m_sLabelThumbAlgor );
 			m_sLabelThumbSHA1 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbSHA1 );
 			m_sLabelThumbMDA5 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbMDA5 );
+			m_sLabelCertPath = m_aRegAcc.getStringFromRegistry( m_sLabelCertPath );
+
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
@@ -418,7 +417,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		return xaCNode;
 	}
-		
+
 	protected XMutableTreeNode addSSCDToTreeRootHelper(XOX_SSCDevice _aSSCDev) {		
 		//add the device to the dialog, a single node, with the device as a description
 		SSCDTreeElement aSSCDnode = new SSCDTreeElement(m_xContext,m_xMCF);
@@ -509,6 +508,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//add the non critical extensions
 
 		//add the certificate path
+		
+		
 	}
 	
 	public void addOneSignature() {

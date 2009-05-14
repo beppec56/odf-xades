@@ -29,21 +29,16 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -52,43 +47,17 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
-import com.sun.star.beans.Property;
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XProperty;
-import com.sun.star.beans.XPropertyAccess;
-import com.sun.star.beans.XPropertySetInfo;
-import com.sun.star.container.ElementExistException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameContainer;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
-import com.sun.star.lang.XTypeProvider;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.lib.uno.helper.WeakAdapter;
-import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.uno.Any;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.Type;
-import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
-import com.sun.star.uno.XWeak;
-import com.sun.star.util.DateTime;
-import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XChangesNotifier;
 
 /**
  *  This service implements the QualifiedCertificate service.
@@ -125,6 +94,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	
 	protected CertificateAuthorityState m_CAState;
 	protected CertificateState			m_CState;
+	
+	protected boolean	m_bDisplayOID;
 
 	//the certificate representation
 	private X509CertificateStructure m_aX509;
@@ -174,6 +145,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
     	m_CState = CertificateState.NOT_VERIFIABLE;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
+    	
+    	m_bDisplayOID = false;
     	
 //grab the locale string, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
@@ -464,7 +437,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			m_sVersion = String.format("V%d", m_aX509.getVersion());
 			m_sSerialNumber = new String(""+m_aX509.getSerialNumber().getValue());
 			initIssuerName();
-			
 			m_sNotValidBefore = initCertDate(m_aX509.getStartDate().getDate());
 			m_sNotValidAfter =  initCertDate(m_aX509.getEndDate().getDate());
 			m_sSubjectPublicKeyAlgorithm = initPublicKeyAlgorithm();
@@ -478,7 +450,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	////////////////// internal functions
-	
 	/**
 	 * 
 	 */
@@ -550,7 +521,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 		for(int i=0; i< oidv.size(); i++) {
 			m_sSubjectName = m_sSubjectName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
-					" (OID: "+oidv.elementAt(i).toString()+") \n";
+					((m_bDisplayOID) ? (" (OID: "+oidv.elementAt(i).toString()+")" ): "") +" \n";
 			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
 		}
 		//extract data from subject name following CNIPA recommendation
@@ -585,11 +556,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			}
 			if(m_sSubjectDisplayName.length() == 0)
 				m_sSubjectDisplayName = m_sSubjectName;
-
-/*			m_aLogger.log(m_sSubjectDisplayName);
-			m_aLogger.log(m_sSubjectName);*/
 	}
-	
+
 	protected void initIssuerName() {
 		m_sIssuerName = "";
 		X509Name aName = m_aX509.getIssuer();
@@ -598,7 +566,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		Vector<?> values = aName.getValues();
 		for(int i=0; i< oidv.size(); i++) {
 			m_sIssuerName = m_sIssuerName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
-					" (OID: "+oidv.elementAt(i).toString()+") \n";
+			((m_bDisplayOID) ? (" (OID: "+oidv.elementAt(i).toString()+")" ): "") +" \n";
 			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
 		}		
 		//look for givename (=nome di battesimo)
@@ -627,5 +595,4 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		if(m_sIssuerDisplayName.length() == 0)
 			m_sIssuerDisplayName = m_sIssuerName;
 	}
-
 }
