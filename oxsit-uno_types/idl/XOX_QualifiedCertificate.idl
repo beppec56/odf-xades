@@ -111,15 +111,32 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		[attribute, readonly] string MD5Thumbprint;
 
+		/** all the OIDs strings of the certificate extensions 
+		*/
+		[attribute, readonly] sequence<string> CertificateExtensionOIDs;
+
+		/** all the OIDs strings of the certificate extensions marked critical 
+		*/
+		[attribute, readonly] sequence<string> CriticalCertificateExtensionOIDs;
+		/** all the OIDs strings of the certificate extensions not marked critical
+		*/
+		[attribute, readonly] sequence<string> NotCriticalCertificateExtensionOIDs;
+
 		/** The first certificate in the certification path, this is the start of the certification path
 		tree.
 		*/
-		[attribute, readonly] XOX_QualifiedCertificate CertificationPath ;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate CertificationPath ;
 
-		/** Find an extension with a OID.
+		/** Find the localized name of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		XOX_CertificateExtension getCertificateExtension( [in]string oid ) ;
+		string getCertificateExtensionName( [in] string oid ) ;
+
+		/** Returns the human redeable content of an extension from OID.
+		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
+		*/
+		string getCertificateExtensionStringValue( [in] string oid ) ;
+
 		/** verify the Certificate Revocation List state of this 
 		 certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificateState field will have the result.</p>

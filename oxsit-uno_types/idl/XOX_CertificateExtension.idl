@@ -26,6 +26,8 @@
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** Extension of a X509 certificate
+<p>This interface permits to returns to a caller a human representation of an extension.</p>
+<p>It's implemented in CertificateExtension service.</p>
   */
 	interface XOX_CertificateExtension
 	{
@@ -37,10 +39,6 @@
 		/** This extension OID, as a human readable string
 		 */
 		[attribute, readonly] string ExtensionId ;
-
-		/** The extension value, DER encoded octects
-		 */
-		[attribute] sequence< byte > DEREncoded ;
 
 		/** The extension value, String representation, containing the human readable extension name
 		*/

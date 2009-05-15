@@ -36,9 +36,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -47,7 +49,13 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.PolicyInformation;
+import org.bouncycastle.asn1.x509.PolicyQualifierId;
+import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
@@ -75,7 +83,6 @@ import com.sun.star.uno.XComponentContext;
 public class QualifiedCertificate extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
-			XInitialization,
 			XOX_QualifiedCertificate
 			 {
 
@@ -86,7 +93,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
 	private XComponentContext m_xContext;
 	private XMultiComponentFactory m_xMCF;
-	
+	private String term = System.getProperty("line.separator");
+
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
 
@@ -131,6 +139,16 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	private String m_sSubjectUniqueID = "";
 
 	private Locale m_lTheLocale;
+	
+	//the hash map of all the extensions
+	//the String is the OID,
+	private HashMap<String,X509Extension>	m_aExtensions = new HashMap<String, X509Extension>(20);
+	private HashMap<String,String>			m_aExtensionLocalizedNames = new HashMap<String, String>(20);
+	private HashMap<String,String>			m_aExtensionDisplayValues = new HashMap<String, String>(20);
+	//the hash map of all the critical extensions
+	private HashMap<String,X509Extension>	m_aCriticalExtensions = new HashMap<String, X509Extension>(20);
+	//the hash map of all the non critical extensions
+	private HashMap<String,X509Extension>	m_aNotCriticalExtensions = new HashMap<String, X509Extension>(20);
 
 	/**
 	 * 
@@ -190,27 +208,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * 
-	 * arg0[0] = the DER stream of the certificate, e.g. a byte array that can be read as a
-	 * certificate.
-	 * It will initialize all the object contents
-	 */
-	@Override
-	public void initialize(Object[] _DEREncoded) throws Exception {
-		// TODO Auto-generated method stub
-		
-		//Will simply call its
-		//setDEREncoded(byte[] ) method
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectDisplayName()
 	 */
 	@Override
 	public String getSubjectDisplayName() {
-		// TODO Auto-generated method stub
 		return m_sSubjectDisplayName;
 	}
 
@@ -370,20 +371,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return null;
 	}
 
-	/**
-	 * 
-	 * @param _aOID the human redeable string of the OID, e.g. use "2.5.29.9" to obtain
-	 * the SubjectDirectoryAttribute extension.
-	 * 
-	 *  (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtension(java.lang.String)
-	 */
-	@Override
-	public XOX_CertificateExtension getCertificateExtension(String _aOID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
 	 */
@@ -429,6 +416,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	public void setDEREncoded(byte[] _DEREncoded) {
 		//
 		m_aX509 = null; //remove old certificate
+						//remove old data from HashMaps
+		
 		ByteArrayInputStream as = new ByteArrayInputStream(_DEREncoded); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado;
@@ -446,18 +435,144 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			m_sSubjectPublicKeyValue = initPublicKeyData();
 			m_sSignatureAlgorithm = initSignatureAlgorithm();
 			initThumbPrints();
-			//now initializes the Extension listing
-			//prepare a Vector of all the extensions found and then should we:
-			//prepare other two vectors:
-			// - one for the critical ones, and
-			// - another for the non critical ones
-			// or not?
+			//now initializes the Extension listing			
+			X509Extensions aX509Exts = m_aX509.getTBSCertificate().getExtensions();
+			//fill the internal extension HashMaps
+			//at the same time we'll get the extension localized name from resources and
+			//fill the display data
+			MessageConfigurationAccess m_aRegAcc = null;
+			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
+
+			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
+				DERObjectIdentifier aDERId = enume.nextElement();
+				String aTheOID = aDERId.getId();
+				X509Extension aext = aX509Exts.getExtension(aDERId);
+				m_aExtensions.put(aTheOID, aext);
+				//now grab the localized description
+				try {
+					m_aExtensionLocalizedNames.put(aTheOID, m_aRegAcc.getStringFromRegistry( aTheOID )+
+							((m_bDisplayOID) ? (" (OID: "+aTheOID.toString()+")" ): ""));
+				} catch (com.sun.star.uno.Exception e) {
+					m_aLogger.severe("setDEREncoded", e);
+					m_aExtensionLocalizedNames.put(aTheOID, aTheOID);
+				}
+				//and decode this extension
+				m_aExtensionDisplayValues.put(aTheOID, examineExtension(aext, aDERId));
+
+				if(aext.isCritical())
+					m_aCriticalExtensions.put(aTheOID, aext);
+				else
+					m_aNotCriticalExtensions.put(aTheOID, aext);					
+			}
+			m_aRegAcc.dispose();	
+			
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
 	}
 
 	////////////////// internal functions
+	/**
+	 * @param aext
+	 * @param _aOID TODO
+	 * @return
+	 */
+	private String examineExtension(X509Extension aext, DERObjectIdentifier _aOID) {
+		if(_aOID.equals(X509Extensions.KeyUsage))
+			return examineKeyUsage(aext);
+		else if(_aOID.equals(X509Extensions.CertificatePolicies))
+			return examineCertificatePolicies(aext);
+		else
+			return Helpers.printHexBytes(aext.getValue().getOctets());
+	}
+
+	/**
+	 * @param aext
+	 * @return
+	 */
+	private String examineCertificatePolicies(X509Extension aext) {
+		// TODO Auto-generated method stub
+		//Italian specific OIDs:
+		//1.3.76 == UNINFO
+		String stx ="";
+		try {
+			ASN1Sequence cp = (ASN1Sequence)X509Extension.convertValueToObject(aext);
+			if(cp != null) {
+                for(int i = 0; i < cp.size();i++) {
+                    PolicyInformation pi = PolicyInformation.getInstance(cp.getObjectAt(i));
+                    DERObjectIdentifier oid = pi.getPolicyIdentifier();
+                    if(oid.equals(PolicyQualifierId.id_qt_cps)) {
+                    	stx = stx + "cps"+
+                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
+                    			+term;
+                    }
+                    else if(oid.equals(PolicyQualifierId.id_qt_unotice)) {
+                    	stx = stx + "unotice"+
+                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
+                    			+term;                        	
+                    }
+                    else
+                    	stx=stx+"OID: "+oid.getId()+term;
+
+    				ASN1Sequence pqs = (ASN1Sequence)pi.getPolicyQualifiers();
+    				if(pqs != null) {
+    					for(int y = 0; y < pqs.size();y++) {
+    						PolicyQualifierInfo pqi = PolicyQualifierInfo.getInstance(pqs.getObjectAt(y));
+                            DERObjectIdentifier oidpqi = pqi.getPolicyQualifierId();
+                            if(oidpqi.equals(PolicyQualifierId.id_qt_cps)) {
+                            	stx = stx + "cps"+
+			                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
+			                    			+term;
+                            }
+                            else if(oidpqi.equals(PolicyQualifierId.id_qt_unotice)) {
+                            	stx = stx + "unotice"+
+			                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
+			                    			+term;                        	
+                            }
+                            else
+                            	stx=stx+"OID: "+oidpqi.getId();
+                            stx = stx + " "+pqi.getQualifier().toString()+term;
+    					}
+    				}
+                }
+			}
+		} catch (java.lang.Exception e) {
+			m_aLogger.severe("examineCertificatePolicies", e);
+		}			
+		return stx;
+	}
+
+	/**
+	 * @param ku
+	 * @param newParam TODO
+	 */
+	private String examineKeyUsage(X509Extension aext) {
+		String st = "";
+		try {
+			KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
+			if((ku.intValue() & KeyUsage.digitalSignature) != 0)
+				st = st + " digitalSignature";
+			if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
+				st = st + " nonRepudiation";
+			if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
+				st = st + " keyEncipherment";
+			if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
+				st = st + " dataEncipherment";
+			if((ku.intValue() & KeyUsage.keyAgreement) != 0)
+				st = st + " keyAgreement";
+			if((ku.intValue() & KeyUsage.keyCertSign) != 0)
+				st = st + " keyCertSign";
+			if((ku.intValue() & KeyUsage.cRLSign) != 0)
+				st = st + " cRLSign";
+			if((ku.intValue() & KeyUsage.encipherOnly) != 0)
+				st = st + " encipherOnly";
+			if((ku.intValue() & KeyUsage.decipherOnly) != 0)
+				st = st + " decipherOnly";
+		} catch (java.lang.Exception e) {
+			m_aLogger.severe("examineKeyUsage", e);
+		}
+		return st;
+	}
 	/**
 	 * 
 	 */
@@ -602,5 +717,59 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		}
 		if(m_sIssuerDisplayName.length() == 0)
 			m_sIssuerDisplayName = m_sIssuerName;
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	///////////////// area for extension display management
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionName(java.lang.String)
+	 */
+	@Override
+	public String getCertificateExtensionName(String _aOID) {
+		return m_aExtensionLocalizedNames.get(_aOID);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionStringValue(java.lang.String)
+	 */
+	@Override
+	public String getCertificateExtensionStringValue(String _aOID) {
+		return m_aExtensionDisplayValues.get(_aOID);
+	}
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionOIDs()
+	 */
+	@Override
+	public String[] getCertificateExtensionOIDs() {
+		if(m_aExtensions.isEmpty())
+			return null;
+		Set<String> aTheOIDs = m_aExtensions.keySet();
+		String[] ret = new String[aTheOIDs.size()]; 
+		return aTheOIDs.toArray(ret);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalCertificateExtensionOIDs()
+	 */
+	@Override
+	public String[] getCriticalCertificateExtensionOIDs() {
+		if(m_aCriticalExtensions.isEmpty())
+			return null;
+		Set<String> aTheOIDs = m_aCriticalExtensions.keySet();
+		String[] ret = new String[aTheOIDs.size()]; 
+		return aTheOIDs.toArray(ret);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotCriticalCertificateExtensionOIDs()
+	 */
+	@Override
+	public String[] getNotCriticalCertificateExtensionOIDs() {
+		// TODO Auto-generated method stub
+		if(m_aNotCriticalExtensions.isEmpty())
+			return null;
+		Set<String> aTheOIDs = m_aNotCriticalExtensions.keySet();
+		String[] ret = new String[aTheOIDs.size()]; 
+		return aTheOIDs.toArray(ret);
 	}
 }

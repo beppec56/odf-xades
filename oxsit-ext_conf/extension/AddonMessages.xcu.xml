@@ -696,6 +696,179 @@ Confermate Salva  con nuovo nome?
 				<value xml:lang="it">Impronta MD5 del certificato</value>
 			</prop>
 		</node>
+		<node oor:name="id_cert_certif_path" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Certification Path</value>
+				<value xml:lang="it">Percorso di certificazione</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_crit_ext" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Critical Extensions</value>
+				<value xml:lang="it">Estensioni critiche</value>
+			</prop>
+		</node>
+		<node oor:name="id_cert_notcrit_ext" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Not Critical Extension</value>
+				<value xml:lang="it">Estensioni non critiche</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.9" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">SubjectDirectoryAttributes</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.14" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">SubjectKeyIdentifier</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.15" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">KeyUsage</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.16" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">PrivateKeyUsagePeriod</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.17" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">SubjectAlternativeName</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.18" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">IssuerAlternativeName</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.19" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">BasicConstraints</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.20" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">CRLNumber</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.21" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">ReasonCode</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.23" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">InstructionCode</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.24" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">InvalidityDate</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.27" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">DeltaCRLIndicator</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.28" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">IssuingDistributionPoint</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.29" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">CertificateIssuer</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.30" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">NameConstraints</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.31" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">CRLDistributionPoints</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.32" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">CertificatePolicies</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.33" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">PolicyMappings</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.35" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">AuthorityKeyIdentifier</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.36" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">PolicyConstraints</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.37" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">ExtendedKeyUsage</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.46" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">FreshestCRL</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.54" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">InhibitAnyPolicy</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.1" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">AuthorityInfoAccess</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.11" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">SubjectInfoAccess</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.12" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">LogoType</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.2" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">BiometricInfo</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.3" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">QCStatements</value>
+			</prop>
+		</node>
+		<node oor:name="1.3.6.1.5.5.7.1.4" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">AuditIdentity</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.56" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">NoRevAvail</value>
+			</prop>
+		</node>
+		<node oor:name="2.5.29.55" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">TargetInformation</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

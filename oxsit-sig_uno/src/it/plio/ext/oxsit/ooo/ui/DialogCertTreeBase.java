@@ -98,6 +98,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				m_sLabelThumbSHA1 = "id_cert_sha1_thumbp";
 	private String 				m_sLabelThumbMDA5 = "id_cert_mda5_thumbp";
 	private String 				m_sLabelCertPath = "id_cert_certif_path";
+	private String 				m_sLabelCritExtension = "id_cert_crit_ext";
+	private String 				m_sLabelNotCritExtension = "id_cert_notcrit_ext";
 
 	//graphic name string for indications for tree elements 
 	private String 				sSignatureOK; //signature ok
@@ -192,7 +194,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sLabelThumbSHA1 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbSHA1 );
 			m_sLabelThumbMDA5 = m_aRegAcc.getStringFromRegistry( m_sLabelThumbMDA5 );
 			m_sLabelCertPath = m_aRegAcc.getStringFromRegistry( m_sLabelCertPath );
-
+			m_sLabelCritExtension = m_aRegAcc.getStringFromRegistry( m_sLabelCritExtension );
+			m_sLabelNotCritExtension = m_aRegAcc.getStringFromRegistry( m_sLabelNotCritExtension );
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
@@ -427,32 +430,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	////// methods to manage the certificate display
-	protected XMutableTreeNode addOneCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
-		//connect it to the right dialog pane
-		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
-		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
-			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
-		}
-		//add it to the tree root node
-		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aCert.getNodeName(), true);
-		if(aCert.getNodeGraphic() != null)
-			xaCNode.setNodeGraphicURL(aCert.getNodeGraphic());
-
-		xaCNode.setDataValue(aCert);
-		try {
-			m_aTreeRootNode.appendChild(xaCNode);			
-			m_xTreeControl.expandNode(m_aTreeRootNode);			
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("addOneCertificate", e);
-		} catch (ExpandVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return xaCNode;
-	}
-
-	
 	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
@@ -475,10 +452,10 @@ public class DialogCertTreeBase extends BasicDialog implements
 			_aParentNode.appendChild(xaCNode);			
 			m_xTreeControl.expandNode(_aParentNode);			
 		} catch (IllegalArgumentException e) {
-			m_logger.severe("addOneCertificate", e);
+			m_logger.severe("addQualifiedCertificateToTree", e);
 		} catch (ExpandVetoException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("addOneCertificate", e);
+			m_logger.severe("addQualifiedCertificateToTree", e);
 		}
 		//now add the rest of the data
 		//add the version
@@ -503,32 +480,85 @@ public class DialogCertTreeBase extends BasicDialog implements
 		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_SHA1,m_sLabelThumbSHA1,_aCertif.getSHA1Thumbprint());
 		//add the MDA5 thumbprint
 		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_MD5,m_sLabelThumbMDA5,_aCertif.getMD5Thumbprint());
+
 		//add the critical extensions
+		try {
+			String[] aCtritExt = _aCertif.getCriticalCertificateExtensionOIDs();
+			if(aCtritExt != null) {
+				//then there are extension marked critical
+				//add the main node
+				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
+							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension);
+				for(int i=0; i<aCtritExt.length;i++)
+					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
+							_aCertif.getCertificateExtensionName(aCtritExt[i]),
+							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]));
+			}
+		} catch (Exception e) {
+			m_logger.severe("addQualifiedCertificateToTree", e);
+		}
 
 		//add the non critical extensions
-
+		try {
+			String[] aNotCtritExt = _aCertif.getNotCriticalCertificateExtensionOIDs();
+			if(aNotCtritExt != null) {
+			//then there are extension NOT marked critical
+			//add the main node
+				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
+							TreeNodeType.EXTENSIONS_NON_CRITICAL,m_sLabelNotCritExtension);
+				for(int i=0; i<aNotCtritExt.length;i++)
+					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+							_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
+							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]));
+			}
+		} catch (Exception e) {
+			m_logger.severe("addQualifiedCertificateToTree", e);
+		}
 		//add the certificate path
-		
-		
+		XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
+				TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath);
 	}
-	
+
+	//test function, remove when ready!
 	public void addOneSignature() {
 		//create a fake certificate description
 		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
-		addOneCertificateToTreeRootHelper(aCert);
+		addOneFakeCertificateToTreeRootHelper(aCert);
+	}
+	protected XMutableTreeNode addOneFakeCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
+		//connect it to the right dialog pane
+		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aCert.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
+		}
+		//add it to the tree root node
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aCert.getNodeName(), true);
+		if(aCert.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aCert.getNodeGraphic());
+
+		xaCNode.setDataValue(aCert);
+		try {
+			m_aTreeRootNode.appendChild(xaCNode);			
+			m_xTreeControl.expandNode(m_aTreeRootNode);			
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			m_logger.severe("addOneCertificate", e);
+		} catch (ExpandVetoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return xaCNode;
 	}
 
 	private XMutableTreeNode addMultilineTreeElementHelper(XMutableTreeNode _Node, MultilineTreeElementBase _aElm, String _sLabel) {
-		//connect it to the right dialog pane
-		//add it to the tree root node
-		
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
 		if(_aElm.getNodeGraphic() != null)
 			xaCNode.setNodeGraphicURL(_aElm.getNodeGraphic());
 
 		xaCNode.setDataValue(_aElm);
 		try {
+			//add it to the tree node
 			_Node.appendChild(xaCNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -547,6 +577,18 @@ public class DialogCertTreeBase extends BasicDialog implements
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
+	}
+
+	private XMutableTreeNode addEmptyDataTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel) {
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
+		xaCNode.setDataValue(null);
+		try {
+			//add it to the tree node
+			_Node.appendChild(xaCNode);			
+		} catch (IllegalArgumentException e) {
+			m_logger.severe("addEmptyDataTreeElement", e);
+		}
+		return xaCNode;		
 	}
 
 	////////////////////////////////////
@@ -675,10 +717,12 @@ public class DialogCertTreeBase extends BasicDialog implements
 		if(m_aTheOldNode != null) {
 			//disable it, that is un-display it
 			oTreeNodeObject  = m_aTheOldNode.getDataValue();
-			xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
-			if(xTheCurrentComp != null) {
-				aCurrentNode = (TreeElement)oTreeNodeObject;
-				aCurrentNode.EnableDisplay(false);
+			if(oTreeNodeObject != null) {
+				xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
+				if(xTheCurrentComp != null) {
+					aCurrentNode = (TreeElement)oTreeNodeObject;
+					aCurrentNode.EnableDisplay(false);
+				}
 			}
 		}
 		else {// old node null, disable all all the display elements

@@ -71,7 +71,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
- *  This service implements the CertificateExtensionUNO service.
+ *  This service implements the CertificateExtension service.
  *  
  * This objects has properties, they are set by the calling UNO objects.
  * This service represents a single certificate extension. 
@@ -79,15 +79,10 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppec56
  *
  */
-public class CertificateExtensionUNO extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
-			implements 
-			XServiceInfo,
-			XInitialization,
-			XOX_CertificateExtension
-			 {
+public class CertificateExtensionPureJava  {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateExtensionUNO.class.getName();
+	public static final String			m_sImplementationName	= CertificateExtensionPureJava.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE };
@@ -96,8 +91,6 @@ public class CertificateExtensionUNO extends ComponentBase //help class, impleme
 
 	private boolean m_bIsCritical;
 
-	private byte[] m_aExtensionValue;
-	
 	private X509Extension m_aExtension;
 
 	private String m_sExtensionStringValue;
@@ -111,105 +104,58 @@ public class CertificateExtensionUNO extends ComponentBase //help class, impleme
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateExtensionUNO(XComponentContext _ctx) {
+	public CertificateExtensionPureJava(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();    	
 	}
 
-	public String getImplementationName() {
-		// TODO Auto-generated method stub
-		m_logger.entering("getImplementationName");
-		return m_sImplementationName;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
-	 */
-	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
-		m_logger.info("getSupportedServiceNames");
-		return m_sServiceNames;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
-	 */
-	public boolean supportsService(String _sService) {
-		int len = m_sServiceNames.length;
-
-		m_logger.info("supportsService",_sService);
-		for (int i = 0; i < len; i++) {
-			if (_sService.equals( m_sServiceNames[i] ))
-				return true;
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	/**
 	 * 
-	 * arg0[0] = the DER stream of the certificate
 	 */
-	@Override
-	public void initialize(Object[] arg0) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
-	 */
-	@Override
 	public String getExtensionId() {
 		// TODO Auto-generated method stub
 		return m_sExtensionId;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringName()
+	/**
+	 * 
+	 *
 	 */
-	@Override
 	public String getExtensionStringName() {
 		// TODO Auto-generated method stub
 		return m_sExtensionStringName;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
+	/**
+	 *
 	 */
-	@Override
 	public String getExtensionStringValue() {
-		// TODO Auto-generated method stub
 		return m_sExtensionStringValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionValue()
+	/**
+	 *
 	 */
-	@Override
-	public byte[] getDEREncoded() {
-		return m_aExtensionValue;
+	public boolean isCritical() {
+		return m_bIsCritical;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#setDEREncoded(byte[])
+	/**
+	 * @param m_aExtension the X509Extension to set
 	 */
-	@Override
-	public void setDEREncoded(byte[] _aDEREncoded) {
-		m_aExtensionValue = _aDEREncoded;
-//		m_aExtension;
-//set the critical/not critical stuff
-
-//analyze this extension and set the human readable strings to it.
+	public void setExtension(X509Extension m_aExtension) {
+		this.m_aExtension = m_aExtension;
+		//set the critical/not critical stuff
+		m_bIsCritical = m_aExtension.isCritical();
+		//analyze this extension and set the human readable strings to it.
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
+	/**
+	 * @return the X509Extension
 	 */
-	@Override
-	public boolean isCritical() {
-		return m_bIsCritical;
+	public X509Extension getExtension() {
+		return m_aExtension;
 	}
 }

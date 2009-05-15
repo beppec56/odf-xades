@@ -28,7 +28,7 @@ import it.plio.ext.oxsit.comp.options.ManageSSCDOptions;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.SSCDevice;
-import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionUNO;
+import it.plio.ext.oxsit.comp.security.cert.CertificateExtension;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -65,8 +65,8 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
-		else if ( sImplementationName.equals( CertificateExtensionUNO.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( CertificateExtensionUNO.class, CertificateExtensionUNO.m_sServiceNames );
+		else if ( sImplementationName.equals( CertificateExtension.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( CertificateExtension.class, CertificateExtension.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( QualifiedCertificate.m_sImplementationName ) ) {
@@ -106,7 +106,7 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
 
 		boolean retCertifExt = 
-			Factory.writeRegistryServiceInfo( CertificateExtensionUNO.m_sImplementationName, CertificateExtensionUNO.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( CertificateExtension.m_sImplementationName, CertificateExtension.m_sServiceNames, xRegistryKey );
 
 		boolean retQualCertif = 
 			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
