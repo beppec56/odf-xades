@@ -48,6 +48,7 @@ import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
 import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.i18n.filter.TrustedInput;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 
@@ -58,6 +59,33 @@ import com.sun.star.uno.XComponentContext;
  */
 public class CertificateExtensionDisplayHelper {
 	static final String term = System.getProperty("line.separator");
+	
+	static final Hashtable		m_aKeyPurposeIdReverseLookUp = new Hashtable();
+
+	static {
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"serverAuth");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"clientAuth");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"codeSigning");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"codeSigning");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"ipsecEndSystem");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"ipsecTunnel");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"ipsecUser");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"timeStamping");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"OCSPSigning");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"dvcs");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"sbgpCertAAServerAuth");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"scvp_responder");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"eapOverPPP");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"eapOverLAN");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"scvpServer");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"scvpClient");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"ipsecIKE");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"capwapAC");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"capwapWTP");
+		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
+	};
+
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
 	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID) {
@@ -153,15 +181,17 @@ public class CertificateExtensionDisplayHelper {
 		 *     AttributeType ::= OBJECT IDENTIFIER
 		 *     AttributeValue ::= ANY DEFINED BY AttributeType
 		 */
-		Vector<Attribute> attribv = sda.getAttributes();
+		Vector<?> attribv = sda.getAttributes();
 		//FIXME: checked for Italy only.
 		for(int i = 0; i < attribv.size();i++) {
-			Attribute atrb = attribv.get(i);
+			Attribute atrb = (Attribute) attribv.get(i);
 			ASN1Set asns = atrb.getAttrValues();
 			for(int y=0; y<asns.size();y++) {
 				if(atrb.getAttrType().equals(X509Name.DATE_OF_BIRTH)) {
 					DERGeneralizedTime dgt = DERGeneralizedTime.getInstance(asns.getObjectAt(y));
-					stx = stx+"DateOfBirth (OID: "+atrb.getAttrType().getId()+")"+term+" "+dgt.getTime();
+					stx = stx+"DateOfBirth"+
+						((m_bDisplayOID) ? " (OID: "+atrb.getAttrType().getId()+")":"")+
+						term+" "+dgt.getTime();
 				}
 				else
 					stx= stx+(atrb.getAttrType().getId()+" "+asns.getObjectAt(y).toString());
@@ -211,8 +241,8 @@ public class CertificateExtensionDisplayHelper {
         case GeneralName.iPAddress:
             stx = stx + "iPAddress: "+DEROctetString.getInstance(genName.getName()).getOctets();
             break;
-            default:
-                throw new IOException("Bad tag number: " + genName.getTagNo());
+        default:
+        	throw new IOException("Bad tag number: " + genName.getTagNo());
         }
 		return stx;
 	}
@@ -224,43 +254,11 @@ public class CertificateExtensionDisplayHelper {
 	private String examineAlternativeName(X509Extension aext) throws IOException {
 		String stx="";
         byte[] extnValue = aext.getValue().getOctets();//DEROctetString.getInstance(ASN1Object.fromByteArray(extVal)).getOctets();
-        Enumeration it = DERSequence.getInstance( ASN1Object.fromByteArray(extnValue)).getObjects();
+        Enumeration<?> it = DERSequence.getInstance( ASN1Object.fromByteArray(extnValue)).getObjects();
         while (it.hasMoreElements())
         {
             GeneralName genName = GeneralName.getInstance(it.nextElement());
             stx = stx + decodeAGeneralName(genName); 
-/*            switch (genName.getTagNo())
-            {
-            case GeneralName.ediPartyName:
-                stx = stx + "ediPartyName: "+ genName.getName().getDERObject();
-                break;
-            case GeneralName.x400Address:
-                stx = stx + "x400Address: "+ genName.getName().getDERObject();
-                break;
-            case GeneralName.otherName:
-                stx = stx + "otherName: "+ genName.getName().getDERObject();
-                break;
-            case GeneralName.directoryName:
-                stx = stx +"directoryName: "+X509Name.getInstance(genName.getName()).toString();
-                break;
-            case GeneralName.dNSName:
-            	stx = stx+"dNSName: "+((DERString)genName.getName()).getString();
-                break;
-            case GeneralName.rfc822Name:
-            	stx = stx+"e-mail: "+((DERString)genName.getName()).getString();
-                break;
-            case GeneralName.uniformResourceIdentifier:
-            	stx = stx+"URI: "+((DERString)genName.getName()).getString();
-                break;
-            case GeneralName.registeredID:
-                stx = stx + "registeredID: "+DERObjectIdentifier.getInstance(genName.getName()).getId();
-                break;
-            case GeneralName.iPAddress:
-                stx = stx + "iPAddress: "+DEROctetString.getInstance(genName.getName()).getOctets();
-                break;
-                default:
-                    throw new IOException("Bad tag number: " + genName.getTagNo());
-            }*/
         }		
 		return stx;
 	}
@@ -388,50 +386,6 @@ public class CertificateExtensionDisplayHelper {
 			
 			for(int y=0; y <gn.length;y++) {
 				stx = stx + decodeAGeneralName(gn[y]);
-				//set type
-/*				switch(gn[y].getTagNo())
-				{
-				case GeneralName.otherName:
-					stx = stx +"otherName: ";
-					break;
-				case GeneralName.rfc822Name:
-					stx = stx +"e-mail: ";
-					break;
-				case GeneralName.dNSName:
-					stx = stx +"dNSName: ";
-					break;
-				case GeneralName.x400Address:
-					stx = stx +"x400Address: ";
-					break;
-				case GeneralName.directoryName:
-					stx = stx +"directoryName: ";
-					break;
-				case GeneralName.ediPartyName:
-					stx = stx +"ediPartyName: ";
-					break;
-				case GeneralName.uniformResourceIdentifier:
-					stx = stx +"URI: ";
-					break;
-				case GeneralName.iPAddress:
-					stx = stx +"iPAddress: ";
-					break;
-				case GeneralName.registeredID:
-					stx = stx +"registeredID: ";
-					break;							
-				}
-				switch (gn[y].getTagNo())
-				{
-				case GeneralName.rfc822Name:
-				case GeneralName.dNSName:
-				case GeneralName.uniformResourceIdentifier:
-					stx = stx + DERIA5String.getInstance(gn[y].getName()).getString();
-					break;
-				case GeneralName.directoryName:
-					stx = stx + X509Name.getInstance(gn[y].getName()).toString();
-					break;
-				default:
-					stx = stx + gn[y].toString();
-				}*/
 			}
 			stx = stx + term;
 
@@ -478,33 +432,10 @@ public class CertificateExtensionDisplayHelper {
 		//prepare a reverse lookup of keypurpose id
 		//this can be static in another class
 		ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
-		HashMap<KeyPurposeId,String>		ReverseLookUp = new HashMap<KeyPurposeId, String>(22);
 
-		ReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
-		ReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"serverAuth");
-		ReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"clientAuth");
-		ReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"codeSigning");
-		ReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"codeSigning");
-		ReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"ipsecEndSystem");
-		ReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"ipsecTunnel");
-		ReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"ipsecUser");
-		ReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"timeStamping");
-		ReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"OCSPSigning");
-		ReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"dvcs");
-		ReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"sbgpCertAAServerAuth");
-		ReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"scvp_responder");
-		ReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"eapOverPPP");
-		ReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"eapOverLAN");
-		ReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"scvpServer");
-		ReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"scvpClient");
-		ReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"ipsecIKE");
-		ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"capwapAC");
-		ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"capwapWTP");
-		ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
-
-		Vector<DERObjectIdentifier> usages = eku.getUsages();
+		Vector<?> usages = eku.getUsages();
 		for(int i = 0; i < usages.size();i++) {
-			stx = stx+" "+ReverseLookUp.get(usages.get(i))+
+			stx = stx+" "+m_aKeyPurposeIdReverseLookUp.get(usages.get(i))+
 				((m_bDisplayOID) ? (" (OID: "+usages.get(i)+")"):"")+term;
 		}
 		return stx+term;
