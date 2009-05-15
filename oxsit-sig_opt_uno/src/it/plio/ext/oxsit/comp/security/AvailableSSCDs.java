@@ -332,7 +332,6 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public void scanDevices() {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("scanDevices");
 
 		PCSCHelper pcsc = new PCSCHelper(true);
@@ -363,7 +362,7 @@ public class AvailableSSCDs extends ComponentBase
 				try {
 					oAnSSCD = m_MCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
 					xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
-					
+
 					xSSCDevice.setDescription(ci.getProperty("description"));
 					xSSCDevice.setManufacturer(ci.getProperty("manufacturer"));
 					xSSCDevice.setATRcode(ci.getProperty("atr"));
@@ -395,7 +394,6 @@ public class AvailableSSCDs extends ComponentBase
 								m_aLogger.severe("scanDevices",e);
 							}	
 						}
-
 						rt.closeSession();
 						rt.libFinalize();
 						indexToken++;

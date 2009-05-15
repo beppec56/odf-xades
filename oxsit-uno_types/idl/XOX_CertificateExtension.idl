@@ -34,13 +34,13 @@
 		 */
 		boolean isCritical() ;
 
-		/** This extension OID.
+		/** This extension OID, as a human readable string
 		 */
-		[attribute, readonly] sequence< byte > ExtensionId ;
+		[attribute, readonly] string ExtensionId ;
 
 		/** The extension value, DER encoded octects
 		 */
-		[attribute, readonly] sequence< byte > ExtensionValue ;
+		[attribute] sequence< byte > DEREncoded ;
 
 		/** The extension value, String representation, containing the human readable extension name
 		*/

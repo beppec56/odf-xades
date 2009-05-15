@@ -28,6 +28,7 @@ import it.plio.ext.oxsit.comp.options.ManageSSCDOptions;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.SSCDevice;
+import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionUNO;
 import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -63,6 +64,10 @@ public class RegisterServices {
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( CertificateExtensionUNO.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( CertificateExtensionUNO.class, CertificateExtensionUNO.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( QualifiedCertificate.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( QualifiedCertificate.class, QualifiedCertificate.m_sServiceNames );
@@ -100,6 +105,9 @@ public class RegisterServices {
 		boolean retDigitalSignatures = 
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
 
+		boolean retCertifExt = 
+			Factory.writeRegistryServiceInfo( CertificateExtensionUNO.m_sImplementationName, CertificateExtensionUNO.m_sServiceNames, xRegistryKey );
+
 		boolean retQualCertif = 
 			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
 
@@ -121,6 +129,9 @@ public class RegisterServices {
 		if (!retDigitalSignatures)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
+		if (!retCertifExt)
+			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
+
 		if (!retQualCertif)
 			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
 
@@ -130,6 +141,8 @@ public class RegisterServices {
 		if (!retAvailSSCDs)
 			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs.m_sImplementationName + "failed");		
 
-		return (retGeneral && retLogging && retDigitalSignatures && retQualCertif && retSSCDevice && retAvailSSCDs && retSSCDOpts);
+		return (retGeneral && retLogging && retDigitalSignatures &&
+					retQualCertif && retSSCDevice && retAvailSSCDs &&
+					retSSCDOpts && retCertifExt);
 	}
 }

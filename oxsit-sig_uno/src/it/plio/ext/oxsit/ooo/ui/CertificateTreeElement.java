@@ -73,9 +73,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 		try {
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_VALID_FROM] = m_aRegAcc.getStringFromRegistry("cert_title_valid_from" );  
-			m_sStringList[m_nFIELD_DATE_VALID_FROM] = "";
 			m_sStringList[m_nFIELD_TITLE_VALID_TO] = m_aRegAcc.getStringFromRegistry("cert_title_valid_to" );
-			m_sStringList[m_nFIELD_DATE_VALID_TO] = "";
 //fill emtpy fields
 			m_sStringList[m_nFIELD_TEXT_FIELD_10] = "r";
 			m_sStringList[m_nFIELD_TEXT_FIELD_11] = "r";

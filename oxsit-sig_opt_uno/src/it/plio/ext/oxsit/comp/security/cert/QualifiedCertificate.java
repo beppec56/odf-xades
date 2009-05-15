@@ -145,10 +145,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
     	m_CState = CertificateState.NOT_VERIFIABLE;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
-    	
     	m_bDisplayOID = false;
-    	
-//grab the locale string, we'll use the interface language as a locale
+    	//grab the locale strings, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
@@ -168,7 +166,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 //		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
@@ -372,7 +370,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * 
+	 * @param _aOID the human redeable string of the OID, e.g. use "2.5.29.9" to obtain
+	 * the SubjectDirectoryAttribute extension.
+	 * 
+	 *  (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtension(java.lang.String)
 	 */
 	@Override
@@ -444,6 +447,11 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			m_sSignatureAlgorithm = initSignatureAlgorithm();
 			initThumbPrints();
 			//now initializes the Extension listing
+			//prepare a Vector of all the extensions found and then should we:
+			//prepare other two vectors:
+			// - one for the critical ones, and
+			// - another for the non critical ones
+			// or not?
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}

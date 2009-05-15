@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import org.bouncycastle.asn1.x509.X509Extension;
+
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
@@ -69,34 +71,47 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
- *  This service implements the CertificateExtension service.
+ *  This service implements the CertificateExtensionUNO service.
  *  
  * This objects has properties, they are set by the calling UNO objects.
- * This service rapresent a single certificate extension. 
+ * This service represents a single certificate extension. 
  * 
  * @author beppec56
  *
  */
-public class CertificateExtension extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificateExtensionUNO extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
-			XInitialization
+			XInitialization,
+			XOX_CertificateExtension
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateExtension.class.getName();
+	public static final String			m_sImplementationName	= CertificateExtensionUNO.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE };
 
 	protected DynamicLogger m_logger;
+
+	private boolean m_bIsCritical;
+
+	private byte[] m_aExtensionValue;
+	
+	private X509Extension m_aExtension;
+
+	private String m_sExtensionStringValue;
+
+	private String m_sExtensionStringName;
+
+	private String m_sExtensionId;
 	
 	/**
 	 * 
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateExtension(XComponentContext _ctx) {
+	public CertificateExtensionUNO(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
     	m_logger.enableLogging();
     	m_logger.ctor();    	
@@ -140,5 +155,61 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	public void initialize(Object[] arg0) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
+	 */
+	@Override
+	public String getExtensionId() {
+		// TODO Auto-generated method stub
+		return m_sExtensionId;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringName()
+	 */
+	@Override
+	public String getExtensionStringName() {
+		// TODO Auto-generated method stub
+		return m_sExtensionStringName;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
+	 */
+	@Override
+	public String getExtensionStringValue() {
+		// TODO Auto-generated method stub
+		return m_sExtensionStringValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionValue()
+	 */
+	@Override
+	public byte[] getDEREncoded() {
+		return m_aExtensionValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#setDEREncoded(byte[])
+	 */
+	@Override
+	public void setDEREncoded(byte[] _aDEREncoded) {
+		m_aExtensionValue = _aDEREncoded;
+//		m_aExtension;
+//set the critical/not critical stuff
+
+//analyze this extension and set the human readable strings to it.
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
+	 */
+	@Override
+	public boolean isCritical() {
+		return m_bIsCritical;
 	}
 }

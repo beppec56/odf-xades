@@ -226,7 +226,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				}
 			}
 		} catch (Exception e) {
-			m_logger.severe("ctor", e);
+			m_logger.severe("selectButtonPressed", e);
 		}
 	}
 
