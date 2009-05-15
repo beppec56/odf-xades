@@ -717,156 +717,243 @@ Confermate Salva  con nuovo nome?
 		<node oor:name="2.5.29.9" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">SubjectDirectoryAttributes</value>
+				<value xml:lang="it">SubjectDirectoryAttributes</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.14" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">SubjectKeyIdentifier</value>
+				<value xml:lang="it">SubjectKeyIdentifier</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.15" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">KeyUsage</value>
+				<value xml:lang="it">KeyUsage</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.16" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">PrivateKeyUsagePeriod</value>
+				<value xml:lang="it">PrivateKeyUsagePeriod</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.17" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">SubjectAlternativeName</value>
+				<value xml:lang="it">SubjectAlternativeName</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.18" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">IssuerAlternativeName</value>
+				<value xml:lang="it">IssuerAlternativeName</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.19" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">BasicConstraints</value>
+				<value xml:lang="it">BasicConstraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.20" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">CRLNumber</value>
+				<value xml:lang="it">CRLNumber</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.21" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">ReasonCode</value>
+				<value xml:lang="it">ReasonCode</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.23" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">InstructionCode</value>
+				<value xml:lang="it">InstructionCode</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.24" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">InvalidityDate</value>
+				<value xml:lang="it">InvalidityDate</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.27" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">DeltaCRLIndicator</value>
+				<value xml:lang="it">DeltaCRLIndicator</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.28" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">IssuingDistributionPoint</value>
+				<value xml:lang="it">IssuingDistributionPoint</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.29" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">CertificateIssuer</value>
+				<value xml:lang="it">CertificateIssuer</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.30" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">NameConstraints</value>
+				<value xml:lang="it">NameConstraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.31" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">CRLDistributionPoints</value>
+				<value xml:lang="it">CRLDistributionPoints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.32" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">CertificatePolicies</value>
+				<value xml:lang="it">CertificatePolicies</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.33" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">PolicyMappings</value>
+				<value xml:lang="it">PolicyMappings</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.35" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">AuthorityKeyIdentifier</value>
+				<value xml:lang="it">AuthorityKeyIdentifier</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.36" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">PolicyConstraints</value>
+				<value xml:lang="it">PolicyConstraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.37" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">ExtendedKeyUsage</value>
+				<value xml:lang="it">ExtendedKeyUsage</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.46" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">FreshestCRL</value>
+				<value xml:lang="it">FreshestCRL</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.54" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">InhibitAnyPolicy</value>
+				<value xml:lang="it">InhibitAnyPolicy</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.1" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">AuthorityInfoAccess</value>
+				<value xml:lang="it">AuthorityInfoAccess</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.11" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">SubjectInfoAccess</value>
+				<value xml:lang="it">SubjectInfoAccess</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.12" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">LogoType</value>
+				<value xml:lang="it">LogoType</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.2" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">BiometricInfo</value>
+				<value xml:lang="it">BiometricInfo</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.3" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">QCStatements</value>
+				<value xml:lang="it">QCStatements</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.4" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">AuditIdentity</value>
+				<value xml:lang="it">AuditIdentity</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.56" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">NoRevAvail</value>
+				<value xml:lang="it">NoRevAvail</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.55" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">TargetInformation</value>
+				<value xml:lang="it">TargetInformation</value>
+			</prop>
+		</node>
+		<!--
+		    QC Statements
+		-->
+		<node oor:name="0.4.0.1862.1.1" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">  The issuer issued this certificate as a Qualified
+  Certificate  according Annex I and II of the
+  Directive 1999/93/EC of the  European Parliament
+  and of the Council of 13 December 1999 on  a
+  Community framework for electronic signatures,
+  as implemented  in the law of the country
+  specified in the issuer field of this  certificate.
+</value>
+				<value xml:lang="it">  L'emittente ha emesso questo certificato come
+  Certificato Qualificato, in accordo con gli Allegati
+  I e II della Direttiva 1999/93/EC del Parlamento
+  Europeo e del Consiglio del 13 dicembre 1999 su
+  una  struttura Comunitaria per le firme digitali,
+  come  implementato nello Stato specificato nel
+  campo Emittente di questo certificato.
+ </value>
+			</prop>
+		</node>
+		<node oor:name="0.4.0.1862.1.3" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">  The issuer guarantees that material information
+  relevant  to use of and reliance on the certificate
+  will be archived and can be made available upon
+  request beyond the end of  the validity period of
+  the certificate for the number of  %1$s years.
+</value>
+				<value xml:lang="it">  L'emittente garantisce che le informazioni mate-
+  riali rilevanti per l'uso e l'affidabilità del certificato
+  saranno  archiviate e rese disponibili su richiesta
+  oltre la scadenza del certificato per un periodo di
+  %1$s anni.
+</value>
+			</prop>
+		</node>
+		<node oor:name="0.4.0.1862.1.4" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">  The issuer claims that the private key associated
+  with the  public key in the certificate is protected
+  according to Annex III of the Directive 1999/93/EC
+  of the European Parliament and of the Council of
+  13 December 1999 on a Community  framework
+  for electronic signatures.
+</value>
+				<value xml:lang="it">  L'emittente specifica che la chiave privata
+  associata con la chiave pubblica del certificato è
+  protetta in accordo con l'Allegato III della
+  Direttiva 1999/93/EC del Parlamento Europeo e
+  del Consiglio del 13 dicembre 1999 su una
+  struttura Comunitaria per le firme digitali.</value>
 			</prop>
 		</node>
 		<!--

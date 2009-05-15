@@ -46,13 +46,22 @@ import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.PolicyQualifierId;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
+import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
@@ -443,6 +452,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			MessageConfigurationAccess m_aRegAcc = null;
 			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID);
+
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();
 				String aTheOID = aDERId.getId();
@@ -457,7 +468,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					m_aExtensionLocalizedNames.put(aTheOID, aTheOID);
 				}
 				//and decode this extension
-				m_aExtensionDisplayValues.put(aTheOID, examineExtension(aext, aDERId));
+				m_aExtensionDisplayValues.put(aTheOID, aHelper.examineExtension(aext, aDERId));
 
 				if(aext.isCritical())
 					m_aCriticalExtensions.put(aTheOID, aext);
@@ -472,107 +483,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	////////////////// internal functions
-	/**
-	 * @param aext
-	 * @param _aOID TODO
-	 * @return
-	 */
-	private String examineExtension(X509Extension aext, DERObjectIdentifier _aOID) {
-		if(_aOID.equals(X509Extensions.KeyUsage))
-			return examineKeyUsage(aext);
-		else if(_aOID.equals(X509Extensions.CertificatePolicies))
-			return examineCertificatePolicies(aext);
-		else
-			return Helpers.printHexBytes(aext.getValue().getOctets());
-	}
-
-	/**
-	 * @param aext
-	 * @return
-	 */
-	private String examineCertificatePolicies(X509Extension aext) {
-		// TODO Auto-generated method stub
-		//Italian specific OIDs:
-		//1.3.76 == UNINFO
-		String stx ="";
-		try {
-			ASN1Sequence cp = (ASN1Sequence)X509Extension.convertValueToObject(aext);
-			if(cp != null) {
-                for(int i = 0; i < cp.size();i++) {
-                    PolicyInformation pi = PolicyInformation.getInstance(cp.getObjectAt(i));
-                    DERObjectIdentifier oid = pi.getPolicyIdentifier();
-                    if(oid.equals(PolicyQualifierId.id_qt_cps)) {
-                    	stx = stx + "cps"+
-                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
-                    			+term;
-                    }
-                    else if(oid.equals(PolicyQualifierId.id_qt_unotice)) {
-                    	stx = stx + "unotice"+
-                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
-                    			+term;                        	
-                    }
-                    else
-                    	stx=stx+"OID: "+oid.getId()+term;
-
-    				ASN1Sequence pqs = (ASN1Sequence)pi.getPolicyQualifiers();
-    				if(pqs != null) {
-    					for(int y = 0; y < pqs.size();y++) {
-    						PolicyQualifierInfo pqi = PolicyQualifierInfo.getInstance(pqs.getObjectAt(y));
-                            DERObjectIdentifier oidpqi = pqi.getPolicyQualifierId();
-                            if(oidpqi.equals(PolicyQualifierId.id_qt_cps)) {
-                            	stx = stx + "cps"+
-			                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
-			                    			+term;
-                            }
-                            else if(oidpqi.equals(PolicyQualifierId.id_qt_unotice)) {
-                            	stx = stx + "unotice"+
-			                    			((m_bDisplayOID) ? (" (OID: "+oid.getId()+")"):"") 
-			                    			+term;                        	
-                            }
-                            else
-                            	stx=stx+"OID: "+oidpqi.getId();
-                            stx = stx + " "+pqi.getQualifier().toString()+term;
-    					}
-    				}
-                }
-			}
-		} catch (java.lang.Exception e) {
-			m_aLogger.severe("examineCertificatePolicies", e);
-		}			
-		return stx;
-	}
-
-	/**
-	 * @param ku
-	 * @param newParam TODO
-	 */
-	private String examineKeyUsage(X509Extension aext) {
-		String st = "";
-		try {
-			KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
-			if((ku.intValue() & KeyUsage.digitalSignature) != 0)
-				st = st + " digitalSignature";
-			if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
-				st = st + " nonRepudiation";
-			if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
-				st = st + " keyEncipherment";
-			if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
-				st = st + " dataEncipherment";
-			if((ku.intValue() & KeyUsage.keyAgreement) != 0)
-				st = st + " keyAgreement";
-			if((ku.intValue() & KeyUsage.keyCertSign) != 0)
-				st = st + " keyCertSign";
-			if((ku.intValue() & KeyUsage.cRLSign) != 0)
-				st = st + " cRLSign";
-			if((ku.intValue() & KeyUsage.encipherOnly) != 0)
-				st = st + " encipherOnly";
-			if((ku.intValue() & KeyUsage.decipherOnly) != 0)
-				st = st + " decipherOnly";
-		} catch (java.lang.Exception e) {
-			m_aLogger.severe("examineKeyUsage", e);
-		}
-		return st;
-	}
 	/**
 	 * 
 	 */

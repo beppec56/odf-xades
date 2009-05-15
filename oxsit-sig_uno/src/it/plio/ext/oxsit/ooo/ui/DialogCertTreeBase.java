@@ -199,7 +199,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		} catch (com.sun.star.uno.Exception e) {
 			m_logger.severe("fillLocalizedString", e);
 		}
-		m_aRegAcc.dispose();	
+		m_aRegAcc.dispose();
 	}
 
 	public void initializeLocal(String _sName, String _sTitle, int posX, int posY) throws BasicErrorException {
@@ -489,10 +489,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 				//add the main node
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
 							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension);
-				for(int i=0; i<aCtritExt.length;i++)
+				for(int i=0; i<aCtritExt.length;i++) {
 					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
 							_aCertif.getCertificateExtensionName(aCtritExt[i]),
 							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]));
+				}
 			}
 		} catch (Exception e) {
 			m_logger.severe("addQualifiedCertificateToTree", e);
@@ -506,10 +507,18 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//add the main node
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
 							TreeNodeType.EXTENSIONS_NON_CRITICAL,m_sLabelNotCritExtension);
-				for(int i=0; i<aNotCtritExt.length;i++)
+				for(int i=0; i<aNotCtritExt.length;i++) {
+					if(aNotCtritExt[i].equalsIgnoreCase("2.5.29.14") ||
+							aNotCtritExt[i].equalsIgnoreCase("2.5.29.35")) 
+						addFixedPitchTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+								_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
+								_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]));
+						
+					else
 					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
 							_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
 							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]));
+				}
 			}
 		} catch (Exception e) {
 			m_logger.severe("addQualifiedCertificateToTree", e);
