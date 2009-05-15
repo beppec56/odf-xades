@@ -720,26 +720,26 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="2.5.29.9" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">SubjectDirectoryAttributes</value>
-				<value xml:lang="it">SubjectDirectoryAttributes</value>
+				<value xml:lang="en">Subject Directory Attributes</value>
+				<value xml:lang="it">Subject Directory Attributes</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.14" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">SubjectKeyIdentifier</value>
-				<value xml:lang="it">SubjectKeyIdentifier</value>
+				<value xml:lang="en">Subject Key Identifier</value>
+				<value xml:lang="it">Subject Key Identifier</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.15" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">KeyUsage</value>
-				<value xml:lang="it">KeyUsage</value>
+				<value xml:lang="en">Key Usage</value>
+				<value xml:lang="it">Key Usage</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.16" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">PrivateKeyUsagePeriod</value>
-				<value xml:lang="it">PrivateKeyUsagePeriod</value>
+				<value xml:lang="en">Private Key Usage Period</value>
+				<value xml:lang="it">Private Key Usage Period</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.17" oor:op="replace">
@@ -756,56 +756,56 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="2.5.29.19" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">BasicConstraints</value>
-				<value xml:lang="it">BasicConstraints</value>
+				<value xml:lang="en">Basic Constraints</value>
+				<value xml:lang="it">Basic Constraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.20" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">CRLNumber</value>
-				<value xml:lang="it">CRLNumber</value>
+				<value xml:lang="en">CRL Number</value>
+				<value xml:lang="it">CRL Number</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.21" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">ReasonCode</value>
-				<value xml:lang="it">ReasonCode</value>
+				<value xml:lang="en">Reason Code</value>
+				<value xml:lang="it">Reason Code</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.23" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">InstructionCode</value>
-				<value xml:lang="it">InstructionCode</value>
+				<value xml:lang="en">Instruction Code</value>
+				<value xml:lang="it">Instruction Code</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.24" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">InvalidityDate</value>
-				<value xml:lang="it">InvalidityDate</value>
+				<value xml:lang="en">Invalidity Date</value>
+				<value xml:lang="it">Invalidity Date</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.27" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">DeltaCRLIndicator</value>
-				<value xml:lang="it">DeltaCRLIndicator</value>
+				<value xml:lang="en">Delta CRL Indicator</value>
+				<value xml:lang="it">Delta CRL Indicator</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.28" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">IssuingDistributionPoint</value>
-				<value xml:lang="it">IssuingDistributionPoint</value>
+				<value xml:lang="en">Issuing Distribution Point</value>
+				<value xml:lang="it">Issuing Distribution Point</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.29" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">CertificateIssuer</value>
-				<value xml:lang="it">CertificateIssuer</value>
+				<value xml:lang="en">Certificate Issuer</value>
+				<value xml:lang="it">Certificate Issuer</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.30" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">NameConstraints</value>
-				<value xml:lang="it">NameConstraints</value>
+				<value xml:lang="en">Name Constraints</value>
+				<value xml:lang="it">Name Constraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.31" oor:op="replace">
@@ -816,68 +816,68 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="2.5.29.32" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">CertificatePolicies</value>
-				<value xml:lang="it">CertificatePolicies</value>
+				<value xml:lang="en">Certificate Policies</value>
+				<value xml:lang="it">Certificate Policies</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.33" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">PolicyMappings</value>
-				<value xml:lang="it">PolicyMappings</value>
+				<value xml:lang="en">Policy Mappings</value>
+				<value xml:lang="it">Policy Mappings</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.35" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">AuthorityKeyIdentifier</value>
-				<value xml:lang="it">AuthorityKeyIdentifier</value>
+				<value xml:lang="en">Authority Key Identifier</value>
+				<value xml:lang="it">Authority Key Identifier</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.36" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">PolicyConstraints</value>
-				<value xml:lang="it">PolicyConstraints</value>
+				<value xml:lang="en">Policy Constraints</value>
+				<value xml:lang="it">Policy Constraints</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.37" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">ExtendedKeyUsage</value>
-				<value xml:lang="it">ExtendedKeyUsage</value>
+				<value xml:lang="en">Extended Key Usage</value>
+				<value xml:lang="it">Extended Key Usage</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.46" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">FreshestCRL</value>
-				<value xml:lang="it">FreshestCRL</value>
+				<value xml:lang="en">Delta CRL Distribution Point</value>
+				<value xml:lang="it">Delta CRL Distribution Point</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.54" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">InhibitAnyPolicy</value>
-				<value xml:lang="it">InhibitAnyPolicy</value>
+				<value xml:lang="en">Inhibit Any Policy</value>
+				<value xml:lang="it">Inhibit Any Policy</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.1" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">AuthorityInfoAccess</value>
-				<value xml:lang="it">AuthorityInfoAccess</value>
+				<value xml:lang="en">Authority Information Access</value>
+				<value xml:lang="it">Authority Information Access</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.11" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">SubjectInfoAccess</value>
-				<value xml:lang="it">SubjectInfoAccess</value>
+				<value xml:lang="en">Subject Information Access</value>
+				<value xml:lang="it">Subject Information Access</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.12" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">LogoType</value>
-				<value xml:lang="it">LogoType</value>
+				<value xml:lang="en">Logo Type</value>
+				<value xml:lang="it">Logo Type</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.2" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">BiometricInfo</value>
-				<value xml:lang="it">BiometricInfo</value>
+				<value xml:lang="en">Biometric Information</value>
+				<value xml:lang="it">Biometric Information</value>
 			</prop>
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.3" oor:op="replace">
@@ -888,20 +888,20 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="1.3.6.1.5.5.7.1.4" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">AuditIdentity</value>
-				<value xml:lang="it">AuditIdentity</value>
+				<value xml:lang="en">Audit Identity</value>
+				<value xml:lang="it">Audit Identity</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.56" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">NoRevAvail</value>
-				<value xml:lang="it">NoRevAvail</value>
+				<value xml:lang="en">No Rev Avail</value>
+				<value xml:lang="it">No Rev Avail</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.55" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">TargetInformation</value>
-				<value xml:lang="it">TargetInformation</value>
+				<value xml:lang="en">Target Information</value>
+				<value xml:lang="it">Target Information</value>
 			</prop>
 		</node>
 		<!--

@@ -82,6 +82,7 @@ import com.sun.star.util.XChangesNotifier;
 public class CertificateExtension extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
+			XInitialization,
 			XOX_CertificateExtension
 			 {
 
@@ -94,6 +95,8 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	protected DynamicLogger m_logger;
 
 	private boolean m_bIsCritical;
+	
+	private X509Extension m_aExtension;
 
 	private String m_sExtensionStringValue;
 
@@ -112,8 +115,8 @@ public class CertificateExtension extends ComponentBase //help class, implements
     	m_logger.ctor();    	
 	}
 
+	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
 		m_logger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
@@ -121,8 +124,8 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
+	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
 		m_logger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
@@ -130,6 +133,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
 	 */
+	@Override
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
@@ -141,12 +145,45 @@ public class CertificateExtension extends ComponentBase //help class, implements
 		return false;
 	}
 
+	/** Function used internally when instantiating the object
+	 * 
+	 * Called using:
+	 *
+	 *		Object[] aArguments = new Object[4];
+	 *
+	 *		aArguments[0] = new String(OID);
+	 *
+	 *		aArguments[1] = new String("TheName"));
+	 *		aArguments[2] = new String("The Value");
+	 *		aArguments[3] = new Boolean(true or false);
+	 * 
+	 * Object aExt = m_xMCF.createInstanceWithArgumentsAndContext(
+	 *				"", _eValue, m_xContext);
+	 *
+	 * @param _eValue array of 4 object:
+	 * <p>_eValue[0] string OID</p>
+	 * <p>_eValue[1] string Localized Name</p>
+	 * <p>_eValue[2] string Value </p>
+	 * <p>_eValue[3] Boolean(isCritical)</p>
+	 * 
+	 * (non-Javadoc)
+	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	 *  
+	 */
+	@Override
+	public void initialize(Object[] _eValue) throws Exception {
+		//the eValue is the byte stream of the extension
+		m_sExtensionId = (String)_eValue[0];
+		m_sExtensionStringName = (String)_eValue[1];
+		m_sExtensionStringValue = (String)_eValue[2];
+		m_bIsCritical = ((Boolean)_eValue[3]).booleanValue();
+	}
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
 	 */
 	@Override
-	public String getExtensionId() {
-		// TODO Auto-generated method stub
+	public String getExtensionOID() {
 		return m_sExtensionId;
 	}
 
@@ -154,8 +191,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringName()
 	 */
 	@Override
-	public String getExtensionStringName() {
-		// TODO Auto-generated method stub
+	public String getExtensionLocalizedName() {
 		return m_sExtensionStringName;
 	}
 
@@ -164,7 +200,6 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String getExtensionStringValue() {
-		// TODO Auto-generated method stub
 		return m_sExtensionStringValue;
 	}
 
@@ -173,7 +208,6 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 */
 	@Override
 	public boolean isCritical() {
-		// TODO Auto-generated method stub
-		return false;
+		return m_bIsCritical;
 	}
 }

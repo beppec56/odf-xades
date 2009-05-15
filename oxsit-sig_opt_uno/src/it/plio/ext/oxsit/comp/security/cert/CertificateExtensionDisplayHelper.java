@@ -246,6 +246,7 @@ public class CertificateExtensionDisplayHelper {
         }
 		return stx;
 	}
+
 	/**
 	 * @param aext
 	 * @return
@@ -253,10 +254,9 @@ public class CertificateExtensionDisplayHelper {
 	 */
 	private String examineAlternativeName(X509Extension aext) throws IOException {
 		String stx="";
-        byte[] extnValue = aext.getValue().getOctets();//DEROctetString.getInstance(ASN1Object.fromByteArray(extVal)).getOctets();
+        byte[] extnValue = aext.getValue().getOctets();
         Enumeration<?> it = DERSequence.getInstance( ASN1Object.fromByteArray(extnValue)).getObjects();
-        while (it.hasMoreElements())
-        {
+        while (it.hasMoreElements()) {
             GeneralName genName = GeneralName.getInstance(it.nextElement());
             stx = stx + decodeAGeneralName(genName); 
         }		

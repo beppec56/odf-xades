@@ -127,6 +127,16 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate CertificationPath ;
 
+		/** Returns all the critical extensions.
+		<p></p>
+		*/
+		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCriticalCertificateExtensions();
+
+		/** Returns all the Not critical extensions.
+		<p></p>
+		*/
+		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCertificateExtensions();
+
 		/** Find the localized name of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/

@@ -74,6 +74,8 @@ import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.RuntimeException;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -681,5 +683,49 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		Set<String> aTheOIDs = m_aNotCriticalExtensions.keySet();
 		String[] ret = new String[aTheOIDs.size()]; 
 		return aTheOIDs.toArray(ret);
+	}
+
+	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCrtitcal) {
+		XOX_CertificateExtension[] retValue = new XOX_CertificateExtension[critOIDs.length];
+		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
+		//fill the retValue
+		for(int i=0;i< critOIDs.length;i++) {
+			Object[] aArguments = new Object[4];
+			aArguments[0] = new String(critOIDs[i]);//aExts.getExtension(new DERObjectIdentifier(critOIDs[i])).getValue().getOctets();
+			aArguments[1] = new String(getCertificateExtensionName(critOIDs[i]));
+			aArguments[2] = new String(getCertificateExtensionStringValue(critOIDs[i]));
+			aArguments[3] = new Boolean(_bIsCrtitcal);
+
+			try {
+				Object	aExt = m_xMCF.createInstanceWithArgumentsAndContext(
+							GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE, aArguments, m_xContext);
+				retValue[i] = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, aExt);
+			} catch (Exception e) {
+				m_aLogger.severe("getExtensionsHelper", e);
+			} catch (RuntimeException e) {
+				m_aLogger.severe("getExtensionsHelper", e);
+			}
+		}
+		return retValue;		
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalCertificateExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getCriticalCertificateExtensions() {
+		//build all the critical extensions, returns the array
+		String[] critOIDs = getCriticalCertificateExtensionOIDs();
+		return getExtensionsHelper(critOIDs,true);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getCertificateExtensions() {
+		//build all the critical extensions, returns the array
+		String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
+		return getExtensionsHelper(critOIDs,false);
 	}
 }

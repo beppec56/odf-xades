@@ -25,7 +25,7 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** Extension of a X509 certificate
+/** Extension of a X509 certificate, UNO representation suitable for other UNO bridges.
 <p>This interface permits to returns to a caller a human representation of an extension.</p>
 <p>It's implemented in CertificateExtension service.</p>
   */
@@ -38,15 +38,16 @@
 
 		/** This extension OID, as a human readable string
 		 */
-		[attribute, readonly] string ExtensionId ;
+		[attribute, readonly] string ExtensionOID ;
 
 		/** The extension value, String representation, containing the human readable extension name
 		*/
-		[attribute, readonly] string ExtensionStringName ;
+		[attribute, readonly] string ExtensionLocalizedName ;
 
 		/** The extension value, String representation, containing the human readable extension value
 		*/
 		[attribute, readonly] string ExtensionStringValue ;
+
 	}; 
  
   }; }; }; }; };  };

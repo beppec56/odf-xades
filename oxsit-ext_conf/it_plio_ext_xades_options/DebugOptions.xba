@@ -17,12 +17,12 @@ sub tryCertificateDiscovery()
  	&apos;istanzia il servizio di ricerca cetificati
 	sscds = createUNOservice(&quot;it.plio.ext.oxsit.security.AvailableSSCDs&quot;)
  	&apos;presenta il servizio, senza certificati
-	xray sscds
+&apos;	xray sscds
  	&apos;esegue la ricerca dei dispositivi presenti
 	sscds.scanDevices()
 	if sscds.HasSSCDevices &gt; 0 then
 		&apos;presenta la ricerca eseguita
-		xray sscds
+&apos;		xray sscds
 	 
 		dim sscdList() as object
 	
@@ -31,7 +31,7 @@ sub tryCertificateDiscovery()
 		&apos;presenta oggetto dispositivi trovati
 		dim ix as integer
 		for ix = 0 to (sscds.HasSSCDevices - 1)
-			xray sscdList(ix)
+&apos;			xray sscdList(ix)
 
 			if sscdList(ix).HasQualifiedCertificates &gt; 0 then
 				dim certList() as object
@@ -39,6 +39,17 @@ sub tryCertificateDiscovery()
 				&apos;print certificati
 				for i = 0 to (sscdList(ix).HasQualifiedCertificates-1)
 					xray certList(i)
+					dim sExt() as object
+					sExt() = certList(i).CriticalCertificateExtensions
+&apos;					xray sExt
+					for ax = 0 to UBound(sExt)
+						xray sExt(ax)
+					next ax
+					sExt() = certList(i).CertificateExtensions
+&apos;					xray sExt
+					for ax = 0 to UBound(sExt)
+						xray sExt(ax)
+					next ax
 				next i
 			else
 				print &quot;non ci sono certificati&quot;
