@@ -3,18 +3,25 @@
  */
 package it.plio.ext.oxsit.comp.security.cert;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Vector;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERGeneralizedTime;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
@@ -57,6 +64,7 @@ public class CertificateExtensionDisplayHelper {
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
 	}
+
 	/**
 	 * @param aext
 	 * @param _aOID TODO
@@ -75,9 +83,9 @@ public class CertificateExtensionDisplayHelper {
 			else if(_aOID.equals(X509Extensions.PrivateKeyUsagePeriod))
 				return examinePrivateKeyUsagePeriod(aext);				
 			else if(_aOID.equals(X509Extensions.SubjectAlternativeName))
-				return examineIssuerAlternativeName(aext);	
+				return examineAlternativeName(aext);	
 			else if(_aOID.equals(X509Extensions.IssuerAlternativeName))
-				return examineIssuerAlternativeName(aext);	
+				return examineAlternativeName(aext);	
 			else if(_aOID.equals(X509Extensions.QCStatements))
 				return examineQCStatements(aext);	
 			else if(_aOID.equals(X509Extensions.AuthorityInfoAccess))
@@ -92,7 +100,7 @@ public class CertificateExtensionDisplayHelper {
 				return Helpers.printHexBytes(aext.getValue().getOctets());
 			}
 		} catch (java.lang.Exception e) {
-			return "Exception while processing OID: " + _aOID.getId() +":"+term+e.toString();
+			return "Exception while processing OID: " + _aOID.getId() +":"+term+DynamicLogger.getStackFromException(e);
 		}
 	}
 	/*
@@ -172,13 +180,89 @@ public class CertificateExtensionDisplayHelper {
 		return "to be written..."+Helpers.printHexBytes(aext.getValue().getOctets());
 	}
 
+	private String decodeAGeneralName(GeneralName genName) throws IOException {
+		String stx ="";
+        switch (genName.getTagNo())
+        {
+        case GeneralName.ediPartyName:
+            stx = stx + "ediPartyName: "+ genName.getName().getDERObject();
+            break;
+        case GeneralName.x400Address:
+            stx = stx + "x400Address: "+ genName.getName().getDERObject();
+            break;
+        case GeneralName.otherName:
+            stx = stx + "otherName: "+ genName.getName().getDERObject();
+            break;
+        case GeneralName.directoryName:
+            stx = stx +"directoryName: "+X509Name.getInstance(genName.getName()).toString();
+            break;
+        case GeneralName.dNSName:
+        	stx = stx+"dNSName: "+((DERString)genName.getName()).getString();
+            break;
+        case GeneralName.rfc822Name:
+        	stx = stx+"e-mail: "+((DERString)genName.getName()).getString();
+            break;
+        case GeneralName.uniformResourceIdentifier:
+        	stx = stx+"URI: "+((DERString)genName.getName()).getString();
+            break;
+        case GeneralName.registeredID:
+            stx = stx + "registeredID: "+DERObjectIdentifier.getInstance(genName.getName()).getId();
+            break;
+        case GeneralName.iPAddress:
+            stx = stx + "iPAddress: "+DEROctetString.getInstance(genName.getName()).getOctets();
+            break;
+            default:
+                throw new IOException("Bad tag number: " + genName.getTagNo());
+        }
+		return stx;
+	}
 	/**
 	 * @param aext
 	 * @return
+	 * @throws IOException 
 	 */
-	private String examineIssuerAlternativeName(X509Extension aext) {
-		// TODO Auto-generated method stub
-		return "to be written..."+Helpers.printHexBytes(aext.getValue().getOctets());
+	private String examineAlternativeName(X509Extension aext) throws IOException {
+		String stx="";
+        byte[] extnValue = aext.getValue().getOctets();//DEROctetString.getInstance(ASN1Object.fromByteArray(extVal)).getOctets();
+        Enumeration it = DERSequence.getInstance( ASN1Object.fromByteArray(extnValue)).getObjects();
+        while (it.hasMoreElements())
+        {
+            GeneralName genName = GeneralName.getInstance(it.nextElement());
+            stx = stx + decodeAGeneralName(genName); 
+/*            switch (genName.getTagNo())
+            {
+            case GeneralName.ediPartyName:
+                stx = stx + "ediPartyName: "+ genName.getName().getDERObject();
+                break;
+            case GeneralName.x400Address:
+                stx = stx + "x400Address: "+ genName.getName().getDERObject();
+                break;
+            case GeneralName.otherName:
+                stx = stx + "otherName: "+ genName.getName().getDERObject();
+                break;
+            case GeneralName.directoryName:
+                stx = stx +"directoryName: "+X509Name.getInstance(genName.getName()).toString();
+                break;
+            case GeneralName.dNSName:
+            	stx = stx+"dNSName: "+((DERString)genName.getName()).getString();
+                break;
+            case GeneralName.rfc822Name:
+            	stx = stx+"e-mail: "+((DERString)genName.getName()).getString();
+                break;
+            case GeneralName.uniformResourceIdentifier:
+            	stx = stx+"URI: "+((DERString)genName.getName()).getString();
+                break;
+            case GeneralName.registeredID:
+                stx = stx + "registeredID: "+DERObjectIdentifier.getInstance(genName.getName()).getId();
+                break;
+            case GeneralName.iPAddress:
+                stx = stx + "iPAddress: "+DEROctetString.getInstance(genName.getName()).getOctets();
+                break;
+                default:
+                    throw new IOException("Bad tag number: " + genName.getTagNo());
+            }*/
+        }		
+		return stx;
 	}
 
 	/**
@@ -282,8 +366,9 @@ public class CertificateExtensionDisplayHelper {
 	/**
 	 * @param aext
 	 * @return
+	 * @throws IOException 
 	 */
-	private String examineCRLDistributionPoints(X509Extension aext)	{
+	private String examineCRLDistributionPoints(X509Extension aext) throws IOException	{
 		String stx = "";
 		DERObject dbj = X509Extension.convertValueToObject(aext);
 		CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
@@ -300,15 +385,17 @@ public class CertificateExtensionDisplayHelper {
 			}
 			GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
 			GeneralName[] gn = gnx.getNames();
+			
 			for(int y=0; y <gn.length;y++) {
+				stx = stx + decodeAGeneralName(gn[y]);
 				//set type
-				switch(gn[y].getTagNo())
+/*				switch(gn[y].getTagNo())
 				{
 				case GeneralName.otherName:
 					stx = stx +"otherName: ";
 					break;
 				case GeneralName.rfc822Name:
-					stx = stx +"rfc822Name: ";
+					stx = stx +"e-mail: ";
 					break;
 				case GeneralName.dNSName:
 					stx = stx +"dNSName: ";
@@ -323,7 +410,7 @@ public class CertificateExtensionDisplayHelper {
 					stx = stx +"ediPartyName: ";
 					break;
 				case GeneralName.uniformResourceIdentifier:
-					stx = stx +"uniformResourceIdentifier: ";
+					stx = stx +"URI: ";
 					break;
 				case GeneralName.iPAddress:
 					stx = stx +"iPAddress: ";
@@ -344,11 +431,10 @@ public class CertificateExtensionDisplayHelper {
 					break;
 				default:
 					stx = stx + gn[y].toString();
-				}
+				}*/
 			}
 			stx = stx + term;
 
-			//				m_aLogger.log(dpn.getName().toString());
 			GeneralNames gns = dp[i].getCRLIssuer();
 			if(gns != null) {
 				gn = gns.getNames();

@@ -173,6 +173,16 @@ public class DynamicLogger {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, "", ex);
 	}
 
+	public static String getStackFromException(Exception ex) {
+		String stack = "\n"+ex.toString();
+
+		StackTraceElement[] ste = ex.getStackTrace();
+		if(ste != null)
+			for(int i = 0; i < ste.length; i++)
+				stack = stack+"\n\t"+ste[i].toString();
+		return stack;
+	}
+
 	private void log_exception(int n_TheLevel, String _theMethod, String _message, Exception ex) {
 		String stack = "\n"+ex.toString();
 
@@ -181,7 +191,9 @@ public class DynamicLogger {
 			for(int i = 0; i < ste.length; i++)
 				stack = stack+"\n\t"+ste[i].toString();
 
-		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod +" "+_message, ex.getLocalizedMessage()+stack);
+		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
+					_theMethod +" "+_message, 
+					ex.getLocalizedMessage()+DynamicLogger.getStackFromException(ex));
 	}
 
 //enable/disable, set level

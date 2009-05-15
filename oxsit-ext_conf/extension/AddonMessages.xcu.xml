@@ -360,21 +360,25 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="err_txt_crl_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">rControl with CRL enabled</value>
 				<value xml:lang="it">rControllo con CRL abilitato</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_dis" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">wControl with CRL not enabled (options)</value>
 				<value xml:lang="it">wControllo con CRL non abilitato (opzioni)</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_cannot" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCRL not available</value>
 				<value xml:lang="it">eCRL non accessibile</value>
 			</prop>
 		</node>
 		<node oor:name="err_txt_crl_noroot" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertification path: missing root</value>
 				<value xml:lang="it">ePercorso di certificazione: manca root</value>
 			</prop>
 		</node>
@@ -740,14 +744,14 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="2.5.29.17" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">SubjectAlternativeName</value>
-				<value xml:lang="it">SubjectAlternativeName</value>
+				<value xml:lang="en">Subject Alternative Name</value>
+				<value xml:lang="it">Subject Alternative Name</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.18" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">IssuerAlternativeName</value>
-				<value xml:lang="it">IssuerAlternativeName</value>
+				<value xml:lang="en">Issuer Alternative Name</value>
+				<value xml:lang="it">Issuer Alternative Name</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.19" oor:op="replace">
@@ -806,8 +810,8 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="2.5.29.31" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">CRLDistributionPoints</value>
-				<value xml:lang="it">CRLDistributionPoints</value>
+				<value xml:lang="en">CRL Distribution Points</value>
+				<value xml:lang="it">CRL Distribution Points</value>
 			</prop>
 		</node>
 		<node oor:name="2.5.29.32" oor:op="replace">

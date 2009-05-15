@@ -24,7 +24,9 @@ package it.plio.ext.oxsit.comp.security.cert.test;
 
 import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
@@ -91,6 +93,7 @@ import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.i18n.filter.TrustedInput;
 
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -290,23 +293,38 @@ public class TestOnCertificates {
 			for(Enumeration<DERObjectIdentifier> enume = xc509Ext.oids(); enume.hasMoreElements();) {
 				extoid.add(enume.nextElement());
 			}			
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xCC,true);
+			MessageConfigurationAccess m_aRegAcc = null;
+			m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_xCC.getServiceManager() );
 			
 			//first the critical one
 			m_aLogger.info("Critical Extensions:");
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(aext.isCritical())
-					examineExtension(aext, extoid.get(i));
+					try {
+						m_aLogger.log(extoid.get(i).getId()+ " "+m_aRegAcc.getStringFromRegistry(extoid.get(i).getId())+term+
+								aHelper.examineExtension(aext, extoid.get(i)));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 			
 			m_aLogger.info("Non Critical Extensions:");
 			for(int i=0; i<extoid.size();i++) {
 				X509Extension aext = xc509Ext.getExtension(extoid.get(i));
 				if(!aext.isCritical())
-					examineExtension(aext, extoid.get(i));
+					try {
+						m_aLogger.log(extoid.get(i).getId()+ " "+m_aRegAcc.getStringFromRegistry(extoid.get(i).getId())+term+
+								aHelper.examineExtension(aext, extoid.get(i)));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
-			//then the not critical
 			
+			m_aRegAcc.dispose();
 			
 			//print the certificate path
 			printSubjectNameForNode(xc509.getIssuer());
@@ -323,500 +341,6 @@ public class TestOnCertificates {
 
 		public void setName(String s) {
 			certName = s;
-		}
-
-		protected void examineExtension(X509Extension aext, DERObjectIdentifier _oid) {
-			if(_oid.equals(X509Extensions.KeyUsage)) {
-				m_aLogger.log("KeyUsage (OID: "+_oid.toString()+")");
-				examineKeyUsage(aext);
-			}
-			else if(_oid.equals(X509Extensions.CertificatePolicies)) {
-				//CertificatePolicies cp = CertificatePolicies.getInstance(aext);
-				m_aLogger.log("CertificatePolicies (OID:"+_oid.getId()+")");
-				examineCertificatePolicies(aext);
-			}
-			else if(_oid.equals(X509Extensions.SubjectKeyIdentifier)) {
-				//SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
-				m_aLogger.log("SubjectKeyIdentifier (OID:"+_oid.getId()+")");
-				examineSubjectKeyIdentifier(aext);
-			}
-			else if(_oid.equals(X509Extensions.SubjectDirectoryAttributes)) {
-				m_aLogger.log("SubjectDirectoryAttributes (OID:"+_oid.getId()+")");			
-				examineSubjectDirectoryAttributes(aext);				
-			}
-			else if(_oid.equals(X509Extensions.PrivateKeyUsagePeriod)) {
-				m_aLogger.log("PrivateKeyUsagePeriod (OID:"+_oid.getId()+")");
-				examinePrivateKeyUsagePeriod(aext);				
-			}
-			else if(_oid.equals(X509Extensions.SubjectAlternativeName)) {
-				m_aLogger.log("SubjectAlternativeName (OID:"+_oid.getId()+")");
-				examineSubjectAlternativeName(aext);	
-			}
-			else if(_oid.equals(X509Extensions.IssuerAlternativeName)) {
-				m_aLogger.log("IssuerAlternativeName (OID:"+_oid.getId()+")");
-				examineIssuerAlternativeName(aext);	
-			}
-			else if(_oid.equals(X509Extensions.QCStatements)) {
-				m_aLogger.log("QCStatements (OID:"+_oid.getId()+")");
-				examineQCStatements(aext);	
-			}
-			else if(_oid.equals(X509Extensions.AuthorityInfoAccess)) {
-				m_aLogger.log("AuthorityInfoAccess (OID:"+_oid.getId()+")");
-				examineAuthorityInfoAccess(aext);
-			}
-			else if(_oid.equals(X509Extensions.AuthorityKeyIdentifier)) {
-				m_aLogger.log("AuthorityKeyIdentifier (OID:"+_oid.getId()+")");
-				examineAuthorityKeyIdentifier(aext);
-			}
-			else if(_oid.equals(X509Extensions.CRLDistributionPoints)) {
-				m_aLogger.log("CRLDistributionPoints (OID:"+_oid.getId()+")");
-				examineCRLDistributionPoints(aext);
-			}
-			else if(_oid.equals(X509Extensions.ExtendedKeyUsage)) {
-				m_aLogger.log("ExtendedKeyUsage (OID:"+_oid.getId()+")");
-				examineExtendedKeyUsage(aext);
-			}
-			else {
-				m_aLogger.log("Unknown extension (OID:"+_oid.getId()+")");
-				examineUnknownExtension(aext);
-			}
-/*
-    public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
-    public static final DERObjectIdentifier CRLNumber = new DERObjectIdentifier("2.5.29.20");
-    public static final DERObjectIdentifier ReasonCode = new DERObjectIdentifier("2.5.29.21");
-    public static final DERObjectIdentifier InstructionCode = new DERObjectIdentifier("2.5.29.23");
-    public static final DERObjectIdentifier InvalidityDate = new DERObjectIdentifier("2.5.29.24");
-    public static final DERObjectIdentifier DeltaCRLIndicator = new DERObjectIdentifier("2.5.29.27");
-    public static final DERObjectIdentifier IssuingDistributionPoint = new DERObjectIdentifier("2.5.29.28");
-    public static final DERObjectIdentifier CertificateIssuer = new DERObjectIdentifier("2.5.29.29");
-    public static final DERObjectIdentifier NameConstraints = new DERObjectIdentifier("2.5.29.30");
-    public static final DERObjectIdentifier PolicyMappings = new DERObjectIdentifier("2.5.29.33");
-    public static final DERObjectIdentifier PolicyConstraints = new DERObjectIdentifier("2.5.29.36");
-    public static final DERObjectIdentifier FreshestCRL = new DERObjectIdentifier("2.5.29.46");
-    public static final DERObjectIdentifier InhibitAnyPolicy = new DERObjectIdentifier("2.5.29.54");
-    public static final DERObjectIdentifier SubjectInfoAccess = new DERObjectIdentifier("1.3.6.1.5.5.7.1.11");
-    public static final DERObjectIdentifier LogoType = new DERObjectIdentifier("1.3.6.1.5.5.7.1.12");
-    public static final DERObjectIdentifier BiometricInfo = new DERObjectIdentifier("1.3.6.1.5.5.7.1.2");
-    public static final DERObjectIdentifier AuditIdentity = new DERObjectIdentifier("1.3.6.1.5.5.7.1.4");
-    public static final DERObjectIdentifier NoRevAvail = new DERObjectIdentifier("2.5.29.56");
-    public static final DERObjectIdentifier TargetInformation = new DERObjectIdentifier("2.5.29.55");
- */
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineUnknownExtension(X509Extension aext) {
-			m_aLogger.log(Helpers.printHexBytes(aext.getValue().getOctets()));
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineSubjectDirectoryAttributes(X509Extension aext) {
-			String stx = "";
-			try {
-				DERObject dbj = X509Extension.convertValueToObject(aext);
-				SubjectDirectoryAttributes sda = SubjectDirectoryAttributes.getInstance(dbj);
-				/*
-				 *     SubjectDirectoryAttributes ::= Attributes
-				 *     Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
-				 *     Attribute ::= SEQUENCE 
-				 *     {
-				 *       type AttributeType 
-				 *       values SET OF AttributeValue 
-				 *     }
-				 *     
-				 *     AttributeType ::= OBJECT IDENTIFIER
-				 *     AttributeValue ::= ANY DEFINED BY AttributeType
-				 */
-				Vector<Attribute> attribv = sda.getAttributes();
-				//FIXME: checked for Italy only.
-				for(int i = 0; i < attribv.size();i++) {
-					Attribute atrb = attribv.get(i);
-					ASN1Set asns = atrb.getAttrValues();
-					for(int y=0; y<asns.size();y++) {
-						if(atrb.getAttrType().equals(X509Name.DATE_OF_BIRTH)) {
-							DERGeneralizedTime dgt = DERGeneralizedTime.getInstance(asns.getObjectAt(y));
-							stx = stx+"DateOfBirth (OID: "+atrb.getAttrType().getId()+")"+term+" "+dgt.getTime();
-						}
-						else
-							m_aLogger.log(atrb.getAttrType().getId()+" "+asns.getObjectAt(y).toString());
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				stx = stx+ "unknown object!";
-			}
-			m_aLogger.log(stx);
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examinePrivateKeyUsagePeriod(X509Extension aext) {
-			try {
-				PrivateKeyUsagePeriod pku = PrivateKeyUsagePeriod.getInstance(aext);
-				m_aLogger.log("to be written..."+pku.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineSubjectAlternativeName(X509Extension aext) {
-			try {
-				m_aLogger.log("to be written...");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineIssuerAlternativeName(X509Extension aext) {
-			try {
-				m_aLogger.log("to be written...");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineQCStatements(X509Extension aext) {
-			String stx = "";
-			try {
-                ASN1Sequence    dns = (ASN1Sequence)X509Extension.convertValueToObject(aext);
-                for(int i= 0; i<dns.size();i++) {
-                    QCStatement qcs = QCStatement.getInstance(dns.getObjectAt(i));
-                    if (QCStatement.id_etsi_qcs_QcCompliance.equals(qcs.getStatementId()))  {
-                        // process statement - just write a notification that the certificate contains this statement
-                        stx = stx + "QcCompliance (OID: "+qcs.getStatementId()+")"+term;
-                        stx = stx + "  The issuer issued this certificate as a Qualified Certificate"+term;
-                        stx = stx + "  according Annex I and II of the Directive 1999/93/EC of the"+term;
-                        stx = stx + "  European Parliament and of the Council of 13 December 1999 on"+term;
-                        stx = stx + "  a Community framework for electronic signatures, as implemented"+term;
-                        stx = stx + "  in the law of the country specified in the issuer field of this"+term;
-                        stx = stx + "  certificate."+term+term;
-                    }
-                    else if(QCStatement.id_qcs_pkixQCSyntax_v1.equals(qcs.getStatementId())) {
-                        // process statement - just recognize the statement
-                    	m_aLogger.log(qcs.getStatementId()+" id_qcs_pkixQCSyntax_v1");
-                    }
-                    else if(QCStatement.id_etsi_qcs_QcSSCD.equals(qcs.getStatementId())) {
-                        // process statement - just write a notification that the certificate contains this statement
-                        stx = stx+"QcSSCD (OID: "+qcs.getStatementId()+")"+term;
-                        stx = stx+"  The issuer claims that the private key associated with the"+term;
-                        stx = stx+"  public key in the certificate is protected according to"+term;
-                        stx = stx+"  Annex III of the Directive 1999/93/EC of the European Parliament"+term;
-                        stx = stx+"  and of the Council of 13 December 1999 on a Community framework"+term;
-                        stx = stx+"  for electronic signatures."+term+term;
-                    }
-                    else if(QCStatement.id_etsi_qcs_RetentionPeriod.equals(qcs.getStatementId())) {
-                    	String stxf = "QcEuRetentionPeriod (OID: "+qcs.getStatementId()+")"+term;
-                    	stxf = stxf+"  The issuer guarantees that material information relevant"+term;
-                    	stxf = stxf+"  to use of and reliance on the certificate will be archived"+term;
-                    	stxf = stxf+"  and can be made available upon request beyond the end of"+term;
-                    	stxf = stxf+"  the validity period of the certificate for the number of";
-                    	stxf = stxf+"  %1$s years.";
-                    	stx = stx + String.format(stxf,qcs.getStatementInfo().toString())+term+term;
-                    }
-                    else if(QCStatement.id_etsi_qcs_LimiteValue.equals(qcs.getStatementId())) {
-                    	//FIXME: needs to be tested !
-                        // process statement - write a notification containing the limit value
-                        MonetaryValue limit = MonetaryValue.getInstance(qcs.getStatementInfo());
-                        Iso4217CurrencyCode currency = limit.getCurrency();
-                        double value = limit.getAmount().doubleValue() * Math.pow(10,limit.getExponent().doubleValue());
-                        /*
-                         * This statement is a statement by the issuer which impose a
-                         * limitation on the value of transaction for which this certificate
-                         * can be used to the specified amount (MonetaryValue), according to
-                         * the Directive 1999/93/EC of the European Parliament and of the
-                         * Council of 13 December 1999 on a Community framework for
-                         * electronic signatures, as implemented in the law of the country
-                         * specified in the issuer field of this certificate.
-                         */
-                        if(currency.isAlphabetic()) {
-                            m_aLogger.log("QcEuLimitValue (OID: "+qcs.getStatementId()+")"+
-                                    new Object[] {currency.getAlphabetic(),
-                                                  new TrustedInput(new Double(value)),
-                                                  limit});
-                        }
-                        else {
-                            m_aLogger.log(" QcLimitValueNum" +
-                                    new Object[] {new Integer(currency.getNumeric()),
-                                                  new TrustedInput(new Double(value)),
-                                                  limit});
-                        }
-                    }
-                    else
-                    	m_aLogger.log(" QcUnknownStatement: "+qcs.getStatementId());
-                }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-            m_aLogger.log(stx);
-		}
-
-		/**
-		 * @param aext
-		 */
-		private void examineAuthorityInfoAccess(X509Extension aext) {
-			try {
-				AuthorityInformationAccess aia = AuthorityInformationAccess.getInstance(aext);
-				
-				m_aLogger.log("to be written..."+aia.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		private void examineCertificatePolicies(X509Extension aext) {
-			//Italian specific OIDs:
-			//1.3.76 == UNINFO
-			String stx ="";
-			try {
-				ASN1Sequence cp = (ASN1Sequence)X509Extension.convertValueToObject(aext);
-				if(cp != null) {
-                    for(int i = 0; i < cp.size();i++) {
-                        PolicyInformation pi = PolicyInformation.getInstance(cp.getObjectAt(i));
-                        DERObjectIdentifier oid = pi.getPolicyIdentifier();
-                        if(oid.equals(PolicyQualifierId.id_qt_cps)) {
-                        	stx = stx + "cps (OID: "+oid.getId()+")"+term;
-                        }
-                        else if(oid.equals(PolicyQualifierId.id_qt_unotice)) {
-                        	stx = stx + "unotice (OID: "+oid.getId()+")"+term;                        	
-                        }
-                        else
-                        	stx=stx+"OID: "+oid.getId()+term;
-
-        				ASN1Sequence pqs = (ASN1Sequence)pi.getPolicyQualifiers();
-        				if(pqs != null) {
-        					for(int y = 0; y < pqs.size();y++) {
-        						PolicyQualifierInfo pqi = PolicyQualifierInfo.getInstance(pqs.getObjectAt(y));
-                                DERObjectIdentifier oidpqi = pqi.getPolicyQualifierId();
-                                if(oidpqi.equals(PolicyQualifierId.id_qt_cps)) {
-                                	stx = stx + "cps (OID: "+oidpqi.getId()+")";
-                                }
-                                else if(oidpqi.equals(PolicyQualifierId.id_qt_unotice)) {
-                                	stx = stx + "unotice (OID: "+oidpqi.getId()+")";                        	
-                                }
-                                else
-                                	stx=stx+"OID: "+oidpqi.getId();
-                                stx = stx + " "+pqi.getQualifier().toString()+term;
-        					}
-        				}
-                    }
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-			m_aLogger.log(stx);
-		}
-
-		private void examineSubjectKeyIdentifier(X509Extension aext) {
-			try {
-				SubjectKeyIdentifier ski = SubjectKeyIdentifier.getInstance(aext);
-				m_aLogger.log(Helpers.printHexBytes(ski.getKeyIdentifier()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}
-
-		private void examineAuthorityKeyIdentifier(X509Extension aext) {
-			try {
-				AuthorityKeyIdentifier aki = AuthorityKeyIdentifier.getInstance(aext);
-				m_aLogger.log(Helpers.printHexBytes(aki.getKeyIdentifier()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}
-
-		/**
-		 * @param ku
-		 * @param newParam TODO
-		 */
-		private void examineKeyUsage(X509Extension aext) {
-			try {
-				KeyUsage ku = new KeyUsage( KeyUsage.getInstance(aext) );
-				String st = "";
-				if((ku.intValue() & KeyUsage.digitalSignature) != 0)
-					st = st + " digitalSignature";
-				if((ku.intValue() & KeyUsage.nonRepudiation) != 0)
-					st = st + " nonRepudiation";
-				if((ku.intValue() & KeyUsage.keyEncipherment) != 0)
-					st = st + " keyEncipherment";
-				if((ku.intValue() & KeyUsage.dataEncipherment) != 0)
-					st = st + " dataEncipherment";
-				if((ku.intValue() & KeyUsage.keyAgreement) != 0)
-					st = st + " keyAgreement";
-				if((ku.intValue() & KeyUsage.keyCertSign) != 0)
-					st = st + " keyCertSign";
-				if((ku.intValue() & KeyUsage.cRLSign) != 0)
-					st = st + " cRLSign";
-				if((ku.intValue() & KeyUsage.encipherOnly) != 0)
-					st = st + " encipherOnly";
-				if((ku.intValue() & KeyUsage.decipherOnly) != 0)
-					st = st + " decipherOnly";
-				m_aLogger.log(st);			
-			} catch (Exception e) {
-				e.printStackTrace();
-		}
-		}
-
-		/**
-		 * @param crldp 
-		 * 
-		 */
-		private void examineCRLDistributionPoints(X509Extension aext) {
-			String stx = "";
-			try {
-				DERObject dbj = X509Extension.convertValueToObject(aext);
-				CRLDistPoint	crldp = CRLDistPoint.getInstance(dbj);
-				DistributionPoint[] dp = crldp.getDistributionPoints();
-
-				for(int i = 0;i < dp.length;i++) {
-					DistributionPointName dpn = dp[i].getDistributionPoint();
-					//custom toString
-					if(dpn.getType() == DistributionPointName.FULL_NAME) {
-						stx = stx+"fullName:" + term;
-					}
-					else {
-						stx = stx+"nameRelativeToCRLIssuer:" + term;						
-					}
-					GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
-					GeneralName[] gn = gnx.getNames();
-					for(int y=0; y <gn.length;y++) {
-						//set type
-						switch(gn[y].getTagNo())
-						{
-						case GeneralName.otherName:
-							stx = stx +"otherName: ";
-							break;
-						case GeneralName.rfc822Name:
-							stx = stx +"rfc822Name: ";
-							break;
-						case GeneralName.dNSName:
-							stx = stx +"dNSName: ";
-							break;
-						case GeneralName.x400Address:
-							stx = stx +"x400Address: ";
-							break;
-						case GeneralName.directoryName:
-							stx = stx +"directoryName: ";
-							break;
-						case GeneralName.ediPartyName:
-							stx = stx +"ediPartyName: ";
-							break;
-						case GeneralName.uniformResourceIdentifier:
-							stx = stx +"uniformResourceIdentifier: ";
-							break;
-						case GeneralName.iPAddress:
-							stx = stx +"iPAddress: ";
-							break;
-						case GeneralName.registeredID:
-							stx = stx +"registeredID: ";
-							break;							
-						}
-						switch (gn[y].getTagNo())
-						{
-						case GeneralName.rfc822Name:
-						case GeneralName.dNSName:
-						case GeneralName.uniformResourceIdentifier:
-							stx = stx + DERIA5String.getInstance(gn[y].getName()).getString();
-							break;
-						case GeneralName.directoryName:
-							stx = stx + X509Name.getInstance(gn[y].getName()).toString();
-							break;
-						default:
-							stx = stx + gn[y].toString();
-						}
-					}
-					stx = stx + term;
-
-					//				m_aLogger.log(dpn.getName().toString());
-					GeneralNames gns = dp[i].getCRLIssuer();
-					if(gns != null) {
-						gn = gns.getNames();
-						for(int y=0; y <gn.length;y++) {
-							stx = stx + gn[i].toString() + term;
-						}
-					}
-
-					ReasonFlags rsf = dp[i].getReasons();
-					if(rsf != null ){
-						m_aLogger.log("Reason flags:");
-						if((rsf.intValue() & ReasonFlags.unused) != 0)
-							stx = stx + " unused";			    
-						if((rsf.intValue() & ReasonFlags.keyCompromise) != 0)
-							stx = stx + " keyCompromise";
-						if((rsf.intValue() & ReasonFlags.cACompromise) != 0)
-							stx = stx + " cACompromise";
-						if((rsf.intValue() & ReasonFlags.affiliationChanged) != 0)
-							stx = stx + " affiliationChanged";
-						if((rsf.intValue() & ReasonFlags.superseded) != 0)
-							stx = stx + " superseded";
-						if((rsf.intValue() & ReasonFlags.cessationOfOperation) != 0)
-							stx = stx + " cessationOfOperation";
-						if((rsf.intValue() & ReasonFlags.certificateHold) != 0)
-							stx = stx + " certificateHold";
-						if((rsf.intValue() & ReasonFlags.privilegeWithdrawn) != 0)
-							stx = stx + " privilegeWithdrawn";
-						if((rsf.intValue() & ReasonFlags.aACompromise) != 0)
-							stx = stx + " aACompromise";
-						stx = stx + term;
-					}
-				}
-			} catch (IllegalArgumentException e) {
-				m_aLogger.severe("CRLDistributionPoints",e);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			m_aLogger.log(stx);
-		}
-
-		private void examineExtendedKeyUsage(X509Extension aext) {
-			String stx = "";
-			try {
-				//prepare a reverse lookup of keypurpose id
-				//this can be static in another class
-				ExtendedKeyUsage eku = ExtendedKeyUsage.getInstance(aext);
-				HashMap<KeyPurposeId,String>		ReverseLookUp = new HashMap<KeyPurposeId, String>(22);
-				
-				ReverseLookUp.put(KeyPurposeId.anyExtendedKeyUsage,"anyExtendedKeyUsage");
-				ReverseLookUp.put(KeyPurposeId.id_kp_serverAuth,"serverAuth");
-				ReverseLookUp.put(KeyPurposeId.id_kp_clientAuth,"clientAuth");
-				ReverseLookUp.put(KeyPurposeId.id_kp_codeSigning,"codeSigning");
-				ReverseLookUp.put(KeyPurposeId.id_kp_emailProtection,"codeSigning");
-				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecEndSystem,"ipsecEndSystem");
-				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecTunnel,"ipsecTunnel");
-				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecUser,"ipsecUser");
-				ReverseLookUp.put(KeyPurposeId.id_kp_timeStamping,"timeStamping");
-				ReverseLookUp.put(KeyPurposeId.id_kp_OCSPSigning,"OCSPSigning");
-				ReverseLookUp.put(KeyPurposeId.id_kp_dvcs,"dvcs");
-				ReverseLookUp.put(KeyPurposeId.id_kp_sbgpCertAAServerAuth,"sbgpCertAAServerAuth");
-				ReverseLookUp.put(KeyPurposeId.id_kp_scvp_responder,"scvp_responder");
-				ReverseLookUp.put(KeyPurposeId.id_kp_eapOverPPP,"eapOverPPP");
-				ReverseLookUp.put(KeyPurposeId.id_kp_eapOverLAN,"eapOverLAN");
-				ReverseLookUp.put(KeyPurposeId.id_kp_scvpServer,"scvpServer");
-				ReverseLookUp.put(KeyPurposeId.id_kp_scvpClient,"scvpClient");
-				ReverseLookUp.put(KeyPurposeId.id_kp_ipsecIKE,"ipsecIKE");
-				ReverseLookUp.put(KeyPurposeId.id_kp_capwapAC,"capwapAC");
-				ReverseLookUp.put(KeyPurposeId.id_kp_capwapWTP,"capwapWTP");
-				ReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
-
-				Vector<DERObjectIdentifier> usages = eku.getUsages();
-				for(int i = 0; i < usages.size();i++)
-					stx = stx+ReverseLookUp.get(usages.get(i))+" (OID: "+usages.get(i)+")"+term;			
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			m_aLogger.log(stx);
 		}
 	}
 
