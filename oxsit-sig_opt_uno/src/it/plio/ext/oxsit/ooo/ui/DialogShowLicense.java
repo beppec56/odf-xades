@@ -43,9 +43,9 @@ public class DialogShowLicense extends BasicDialog {
 
 	private static final String	DLS_SHOW_LIC	= "showlicdlg";
 	private XWindowPeer			m_xParentWindow	= null;
-	private String				m_sTitle = new String("empty title");
+	protected String				m_sTitle = new String("empty title");
 	private String				m_sOk  = new String("Ok");
-	private String				m_sTheLicense = new String("License text missing...");
+	protected String				m_sTheTextToShow = new String("License text missing...");
 
 	/**
 	 * @param frame
@@ -61,7 +61,7 @@ public class DialogShowLicense extends BasicDialog {
 		try {
 			m_sTitle = m_aRegAcc.getStringFromRegistry( "id_title_show_license" );
 			m_sOk = m_aRegAcc.getStringFromRegistry( "id_ok" );
-			m_sTheLicense = m_aRegAcc.getStringFromRegistry( "id_main_license" );
+			m_sTheTextToShow = m_aRegAcc.getStringFromRegistry( "id_main_license" );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,7 +92,7 @@ public class DialogShowLicense extends BasicDialog {
 						ControlDims.DLG_SHOW_LICENSE_HEIGH - ( ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 2 ),
 						ControlDims.DLG_SHOW_LICENSE_WIDTH -
 						ControlDims.RSC_SP_DLG_INNERBORDER_LEFT -
-						ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT, 0, m_sTheLicense, "cyx",
+						ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT, 0, m_sTheTextToShow, "cyx",
 				true, true, true, false );
 
 		XPropertySet xPSet = (XPropertySet) UnoRuntime

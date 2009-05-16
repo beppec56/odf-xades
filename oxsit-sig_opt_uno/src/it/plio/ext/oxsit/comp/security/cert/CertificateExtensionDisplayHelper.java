@@ -10,6 +10,8 @@ import java.util.Vector;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
 import org.bouncycastle.asn1.ASN1Object;
@@ -86,11 +88,16 @@ public class CertificateExtensionDisplayHelper {
 		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
 	};
 
+//	protected IDynamicLogger m_aLogger; 
+	protected DynamicLoggerDialog m_aLogger; 
+
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
-	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID) {
+	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID, IDynamicLogger _aLogger) {
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
+		m_aLogger = (DynamicLoggerDialog)_aLogger;
+		m_aLogger.enableLogging();
 	}
 
 	/**
@@ -116,8 +123,8 @@ public class CertificateExtensionDisplayHelper {
 				return examineAlternativeName(aext);	
 			else if(_aOID.equals(X509Extensions.QCStatements))
 				return examineQCStatements(aext);	
-			else if(_aOID.equals(X509Extensions.AuthorityInfoAccess))
-				return examineAuthorityInfoAccess(aext);
+	/*		else if(_aOID.equals(X509Extensions.AuthorityInfoAccess))
+				return examineAuthorityInfoAccess(aext);*/
 			else if(_aOID.equals(X509Extensions.AuthorityKeyIdentifier))
 				return examineAuthorityKeyIdentifier(aext);
 			else if(_aOID.equals(X509Extensions.CRLDistributionPoints))
@@ -125,10 +132,13 @@ public class CertificateExtensionDisplayHelper {
 			else if(_aOID.equals(X509Extensions.ExtendedKeyUsage))
 				return examineExtendedKeyUsage(aext);
 			else {
-				return Helpers.printHexBytes(aext.getValue().getOctets());
+				throw (new java.lang.Exception(Helpers.printHexBytes(aext.getValue().getOctets())));
+//				return Helpers.printHexBytes(aext.getValue().getOctets());
 			}
 		} catch (java.lang.Exception e) {
-			return "Exception while processing OID: " + _aOID.getId() +":"+term+DynamicLogger.getStackFromException(e);
+			String ret = "Exception while processing OID: " + _aOID.getId() +":"+term+DynamicLogger.getStackFromException(e);
+			m_aLogger.severe(e);
+			return ret;
 		}
 	}
 	/*

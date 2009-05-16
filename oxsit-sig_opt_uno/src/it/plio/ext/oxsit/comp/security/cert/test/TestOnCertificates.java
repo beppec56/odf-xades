@@ -26,6 +26,7 @@ import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
@@ -178,7 +179,7 @@ public class TestOnCertificates {
 			Vector<?> values = _aName.getValues();
 			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
 			for(int i=0; i< oidv.size(); i++) {
-//				m_aLogger.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+X509Name.DefaultSymbols.get(oidv.elementAt(i)));
+//				m_aLoggerDialog.info(oidv.elementAt(i).getId()+" = "+values.elementAt(i)+" "+X509Name.DefaultSymbols.get(oidv.elementAt(i)));
 				hm.put(oidv.elementAt(i), values.elementAt(i).toString());
 			}
 			//look for givename (=nome di battesimo)
@@ -260,7 +261,7 @@ public class TestOnCertificates {
 							"pkcs-1 sha1WithRSAEncryption" : oi.getId()));
 
 /*			sbjkd = xc509.getSignature().getBytes();
-			m_aLogger.info("Signature Data:\n"+Helpers.printHexBytes(sbjkd));*/
+			m_aLoggerDialog.info("Signature Data:\n"+Helpers.printHexBytes(sbjkd));*/
 
 			//obtain a byte block of the entire certificate data
 			ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
@@ -293,7 +294,8 @@ public class TestOnCertificates {
 			for(Enumeration<DERObjectIdentifier> enume = xc509Ext.oids(); enume.hasMoreElements();) {
 				extoid.add(enume.nextElement());
 			}			
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xCC,true);
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xCC,true,
+					new DynamicLoggerDialog(this,m_xCC));
 			MessageConfigurationAccess m_aRegAcc = null;
 			m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_xCC.getServiceManager() );
 			

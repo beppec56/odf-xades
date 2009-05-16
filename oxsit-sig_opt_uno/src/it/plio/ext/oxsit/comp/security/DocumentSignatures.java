@@ -258,7 +258,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 			m_nDocumentSignatureState = _nState;
 			m_aMtx_setDocumentSignatureState.notify();
 		}
-//		m_aLogger.exiting("setDocumentSignatureState","");
+//		m_aLoggerDialog.exiting("setDocumentSignatureState","");
 	}
 
 	/* (non-Javadoc)

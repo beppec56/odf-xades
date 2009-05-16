@@ -275,14 +275,14 @@ public abstract class TreeElement
 	}
 
 	/**
-	 * @param m_aLogger the m_aLogger to set
+	 * @param m_aLoggerDialog the m_aLoggerDialog to set
 	 */
 	public void setLogger(DynamicLogger m_aLogger) {
 		this.m_aLogger = m_aLogger;
 	}
 
 	/**
-	 * @return the m_aLogger
+	 * @return the m_aLoggerDialog
 	 */
 	public DynamicLogger getLogger() {
 		return m_aLogger;

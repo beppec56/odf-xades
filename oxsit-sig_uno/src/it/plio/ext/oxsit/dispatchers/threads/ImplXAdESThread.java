@@ -73,7 +73,7 @@ public class ImplXAdESThread extends Thread {
 				m_theClassTB.impl_removeStatusListener(m_aListener, m_aURL);
 				break;
 			default:
-//				m_aLogger.info("no code supplied!");
+//				m_aLoggerDialog.info("no code supplied!");
 			}
 		}*/
 	}

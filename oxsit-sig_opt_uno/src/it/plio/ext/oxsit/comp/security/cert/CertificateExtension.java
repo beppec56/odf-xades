@@ -158,7 +158,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 *		aArguments[3] = new Boolean(true or false);
 	 * 
 	 * Object aExt = m_xMCF.createInstanceWithArgumentsAndContext(
-	 *				"", _eValue, m_xContext);
+	 *				"it.plio.ext.oxsit.security.cert.CertificateExtension", aArguments, m_xContext);
 	 *
 	 * @param _eValue array of 4 object:
 	 * <p>_eValue[0] string OID</p>

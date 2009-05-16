@@ -804,7 +804,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void focusGained(FocusEvent arg0) {
-//		m_aLogger.entering("focusGained, please implement on subclass!");
+//		m_aLoggerDialog.entering("focusGained, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -812,7 +812,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void focusLost(FocusEvent arg0) {
-//		m_aLogger.entering("focusLost, please implement on subclass!");
+//		m_aLoggerDialog.entering("focusLost, please implement on subclass!");
 	}
 
 	public void itemStateChanged(ItemEvent arg0) {

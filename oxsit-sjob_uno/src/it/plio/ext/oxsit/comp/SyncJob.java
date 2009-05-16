@@ -121,7 +121,7 @@ public class SyncJob extends ComponentBase
 
 		try {
 			m_axoxSingletonDataAccess = Helpers.getSingletonDataAccess(m_xComponentContext);
-//			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_axoxSingletonDataAccess));
+//			m_aLoggerDialog.info(" singleton service data "+Helpers.getHashHex(m_axoxSingletonDataAccess));
 		} catch (ClassCastException e) {
 			m_aLogger.severe("", "",e);
 		} catch (ServiceNotFoundException e) {

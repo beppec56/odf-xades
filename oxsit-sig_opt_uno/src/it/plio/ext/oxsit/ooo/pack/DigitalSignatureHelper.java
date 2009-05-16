@@ -68,9 +68,9 @@ public class DigitalSignatureHelper {
 
     public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
 		String[] aElements = xThePackage.getElementNames();
-/*		m_aLogger.info(_rootElement+" elements:");
+/*		m_aLoggerDialog.info(_rootElement+" elements:");
 		for(int i = 0; i < aElements.length; i++)
-			m_aLogger.info("'"+aElements[i]+"'");*/
+			m_aLoggerDialog.info("'"+aElements[i]+"'");*/
 		for(int i = 0; i < aElements.length; i++) {
 			if( aElements[i] != "META-INF" ) {
 				try {
@@ -195,15 +195,15 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Thumbnails\" substorage missing", e);
 		}*/
 
     	//Basic
@@ -214,15 +214,15 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Basic\" substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Basic\" substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Basic\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Basic\" substorage missing", e);
 		}*/
 
 		//Pictures
@@ -233,15 +233,15 @@ public class DigitalSignatureHelper {
 		}
 		catch (IOException e) {
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\"Pictures\" substorage missing", e);
 		}*/
 
     	//OLE
@@ -256,15 +256,15 @@ public class DigitalSignatureHelper {
 			}
 			catch (IOException e) {
 				//no problem if not existent
-				m_aLogger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
+				m_aLoggerDialog.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			} catch (StorageWrappedTargetException e) {
 				// TODO Auto-generated catch block
 				//no problem if not existent
-				m_aLogger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
+				m_aLoggerDialog.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				//no problem if not existent
-				m_aLogger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
+				m_aLoggerDialog.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 			}*/
 			
 			//Object folders
@@ -282,7 +282,7 @@ public class DigitalSignatureHelper {
 					}
 					catch (IOException e)
 					{
-						m_aLogger.info("makeTheElementList", "the substorage "+aObjName[i]+" might be locked, get the last committed version of it");
+						m_aLoggerDialog.info("makeTheElementList", "the substorage "+aObjName[i]+" might be locked, get the last committed version of it");
 					   try {
 						   Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
 						   XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
@@ -293,7 +293,7 @@ public class DigitalSignatureHelper {
 						   xAnotherSubStore.dispose();						   
 					   } catch (Exception e1) {
 						// TODO Auto-generated catch block
-							m_aLogger.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e1);
+							m_aLoggerDialog.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e1);
 					   } // should create an empty temporary storage
 					} 					
 				}
@@ -301,19 +301,19 @@ public class DigitalSignatureHelper {
 		} */
 /*		catch (IOException e) {
 			//no problem if not existent
-			m_aLogger.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e);
+			m_aLoggerDialog.severe("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 		} catch (StorageWrappedTargetException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\""+sElementName+" missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\""+sElementName+" missing", e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
+			m_aLoggerDialog.warning("makeTheElementList", "\""+sElementName+"\""+" missing", e);
 		} catch (NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			//no problem if not existent
-			m_aLogger.warning("makeTheElementList", "", e);
+			m_aLoggerDialog.warning("makeTheElementList", "", e);
 		}*/
     	return aElements;
     }

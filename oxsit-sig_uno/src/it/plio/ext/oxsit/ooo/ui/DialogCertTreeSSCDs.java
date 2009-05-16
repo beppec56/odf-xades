@@ -262,7 +262,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
-//		m_aLogger.entering("enableSingleButton");
+//		m_aLoggerDialog.entering("enableSingleButton");
 		//grab the button...
 		XControl xTFControl = m_xDlgContainer.getControl( sButtonName );
 		if(xTFControl != null){

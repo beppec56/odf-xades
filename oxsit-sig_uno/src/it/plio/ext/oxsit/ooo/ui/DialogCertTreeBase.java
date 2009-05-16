@@ -714,7 +714,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void selectionChanged( com.sun.star.lang.EventObject _eventObject ) {
-//		m_aLogger.entering("selectionChanged");
+//		m_aLoggerDialog.entering("selectionChanged");
 		Object oObject = m_xTreeControl.getSelection();
 // check if it's a node		
 		XMutableTreeNode xaENode = (XMutableTreeNode)UnoRuntime.queryInterface( XMutableTreeNode.class, 
@@ -761,7 +761,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-/*		m_aLogger.entering("keyPressed on subclass"+arg0.KeyCode);*/
+/*		m_aLoggerDialog.entering("keyPressed on subclass"+arg0.KeyCode);*/
 	}
 
 	/* (non-Javadoc)
@@ -771,7 +771,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-//		m_aLogger.entering("keyReleased, on subclass! "+arg0.KeyCode);
+//		m_aLoggerDialog.entering("keyReleased, on subclass! "+arg0.KeyCode);
 		
 		//if arg0.KeyCode = 773 (key F6), set focus to certificate tree element
 		if(arg0.KeyCode == com.sun.star.awt.Key.F6) {
@@ -786,7 +786,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void focusGained(FocusEvent arg0) {
-//		m_aLogger.entering("focusGained, on subclass!");
+//		m_aLoggerDialog.entering("focusGained, on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -794,6 +794,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void focusLost(FocusEvent arg0) {
-//		m_aLogger.entering("focusLost, on subclass!");
+//		m_aLoggerDialog.entering("focusLost, on subclass!");
 	}
 }

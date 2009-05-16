@@ -58,7 +58,7 @@ public class ManageGeneralOptions extends ManageOptions  {
      */
 	public ManageGeneralOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_general");
-//		m_aLogger.enableLogging();// disabled in base class
+//		m_aLoggerDialog.enableLogging();// disabled in base class
 		m_logger.ctor();
 		//prepare the list of controls on the page
 

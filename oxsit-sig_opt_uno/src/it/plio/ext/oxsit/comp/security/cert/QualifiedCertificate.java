@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
@@ -168,7 +169,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+//		m_aLoggerDialog.enableLogging();
     	m_aLogger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
     	m_CState = CertificateState.NOT_VERIFIABLE;
@@ -192,7 +193,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	public String getImplementationName() {
-//		m_aLogger.entering("getImplementationName");
+//		m_aLoggerDialog.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 
@@ -200,7 +201,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
 	public String[] getSupportedServiceNames() {
-//		m_aLogger.info("getSupportedServiceNames");
+//		m_aLoggerDialog.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -414,7 +415,9 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public byte[] getDEREncoded() {
-		return m_aX509.getDEREncoded();
+		if(m_aX509 != null)
+			return m_aX509.getDEREncoded();
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -428,7 +431,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		//
 		m_aX509 = null; //remove old certificate
 						//remove old data from HashMaps
-		
+		m_aExtensions.clear();
+		m_aExtensionLocalizedNames.clear();
+		m_aExtensionDisplayValues.clear();
+		m_aCriticalExtensions.clear();
+		m_aNotCriticalExtensions.clear();
+
 		ByteArrayInputStream as = new ByteArrayInputStream(_DEREncoded); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado;
@@ -454,7 +462,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			MessageConfigurationAccess m_aRegAcc = null;
 			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID);
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID,
+					new DynamicLoggerDialog(this,m_xContext));
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();

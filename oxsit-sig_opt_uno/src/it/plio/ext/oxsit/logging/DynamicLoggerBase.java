@@ -23,13 +23,16 @@
 package it.plio.ext.oxsit.logging;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.ui.ControlDims;
+import it.plio.ext.oxsit.ooo.ui.DialogDisplayLog;
 
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- * class to wrap the UNO logger. Carachterizes the class owner
+ * class to wrap the UNO logger. Characterizes the class owner
  * Can be used only if the UNO context is known
  * All the logging rigamarole is carried out in an UNO singleton object.
  * The drawback is that the
@@ -37,10 +40,10 @@ import com.sun.star.uno.XComponentContext;
  * Main logging switch turned on/off on a owner basis (eg the parent class).
  * 
  * 
- * @author beppe
+ * @author beppec56
  *
  */
-public class DynamicLogger implements IDynamicLogger {
+abstract class DynamicLoggerBase implements IDynamicLogger {
 	protected String m_sOwnerClass;
 	protected String m_sOwnerClassHashHex;
 	protected XOX_Logger m_xLogger;
@@ -61,7 +64,7 @@ public class DynamicLogger implements IDynamicLogger {
 	 * @param _theOwner parent object
 	 * @param _ctx the UNO context
 	 */
-	public DynamicLogger(Object _theOwner, XComponentContext _ctx) {
+	public DynamicLoggerBase(Object _theOwner, XComponentContext _ctx) {
 		//compute the parent class ID hex hash
 		m_xCC = _ctx;
 		m_xMCF = _ctx.getServiceManager();
@@ -157,32 +160,15 @@ public class DynamicLogger implements IDynamicLogger {
 			log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex);
 	}
 
-	public void severe(String _theMethod, String _message) {
-		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE,  m_sOwnerClassHashHex+" "+m_sOwnerClass, _theMethod, _message);
-	}
+	public abstract void severe(String _theMethod, String _message);
 
-	/**
-	 * this method cannot be disabled.
-	 * Severe log messages are always sent to UNO logger.
-	 * 
-	 * 
-	 * @param _theMethod
-	 * @param _message
-	 * @param ex
-	 */
-	public void severe(Exception ex) {
-		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, "", "", ex);
-	}
+	public abstract void severe(java.lang.Exception ex);
 
-	public void severe(String _theMethod, String _message, Exception ex) {
-		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, _message, ex);
-	}
+	public abstract void severe(String _theMethod, String _message, java.lang.Exception ex);
 
-	public void severe(String _theMethod, Exception ex) {
-		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, "", ex);
-	}
+	public abstract void severe(String _theMethod, java.lang.Exception ex);
 
-	public static String getStackFromException(Exception ex) {
+	public static String getStackFromException(java.lang.Exception ex) {
 		String stack = "\n"+ex.toString();
 
 		StackTraceElement[] ste = ex.getStackTrace();
@@ -192,8 +178,23 @@ public class DynamicLogger implements IDynamicLogger {
 		return stack;
 	}
 
-	public void log_exception(int n_TheLevel, String _theMethod, String _message, Exception ex) {
+	public void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex, boolean usedialog) {
 		String stack = "\n"+ex.toString();
+
+		if(n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
+			//Use the dialog
+			String theMex = m_sOwnerClassHashHex+" "+m_sOwnerClass+" "+_theMethod +" "+_message+" "+ex.getLocalizedMessage()+DynamicLogger.getStackFromException(ex);			
+			info("using dialog: "+theMex);
+			DialogDisplayLog dlg = new DialogDisplayLog(/*m_xParentFrame*/ null,m_xCC,m_xMCF,theMex);
+			try {
+				dlg.initialize( 0, 0);
+				dlg.executeDialog();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				warning("error showing dialog");
+			}
+		}
 
 		StackTraceElement[] ste = ex.getStackTrace();
 		if(ste != null)
@@ -202,7 +203,7 @@ public class DynamicLogger implements IDynamicLogger {
 
 		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
 					_theMethod +" "+_message, 
-					ex.getLocalizedMessage()+DynamicLogger.getStackFromException(ex));
+					ex.getLocalizedMessage()+DynamicLoggerBase.getStackFromException(ex));
 	}
 
 //enable/disable, set level

@@ -555,7 +555,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	}
 
 /*	public void impl_removeStatusListener(com.sun.star.frame.XStatusListener aListener, URL aURL) {
-		m_aLogger.entering("impl_removeStatusListener");
+		m_aLoggerDialog.entering("impl_removeStatusListener");
 		synchronized (Listeners) {
 			try {
 				Listeners.remove( aListener );
@@ -607,7 +607,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			aNotifier.removeChangesListener(this);
 		}
 		else
-			m_aLogger.severe("disposing (docu)", "XChangesNotifier missing");
+			m_aLoggerDialog.severe("disposing (docu)", "XChangesNotifier missing");
 //now remove all the StatusListeners
 		Listeners.clear();
 */		
@@ -634,7 +634,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	@Override
 	public void notifyEvent(com.sun.star.document.EventObject aEventObj) {
-		// DEBUG		m_aLogger.entering("notifyEvent: "+aEventObj.EventName);
+		// DEBUG		m_aLoggerDialog.entering("notifyEvent: "+aEventObj.EventName);
 		if (/*aEventObj.EventName.equalsIgnoreCase( "OnSaveAsDone" ) ||*/
 				aEventObj.EventName.equalsIgnoreCase( "OnModifyChanged" )) {
 //set the modified status accordingly
@@ -753,7 +753,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	// oneway function: implemented as separate task, comes from changesOccurred above
 /*	public void impl_changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
-		m_aLogger.log(" impl_changesOccurred()" );
+		m_aLoggerDialog.log(" impl_changesOccurred()" );
 		// refresh status of the document model/component
 			grabModel();
 			
@@ -777,31 +777,31 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 /*		printHash("frameAction");
 		switch (aEvent.Action.getValue()) {
 		case com.sun.star.frame.FrameAction.COMPONENT_DETACHING_value:
-			m_aLogger.log( "COMPONENT_DETACHING_value" );
+			m_aLoggerDialog.log( "COMPONENT_DETACHING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_ATTACHED_value:
-			m_aLogger.log( "COMPONENT_ATTACHED_value" );
+			m_aLoggerDialog.log( "COMPONENT_ATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.COMPONENT_REATTACHED_value:
-			m_aLogger.log( "COMPONENT_REATTACHED_value" );
+			m_aLoggerDialog.log( "COMPONENT_REATTACHED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_ACTIVATED_value:
-			m_aLogger.log( "FRAME_ACTIVATED_value" );
+			m_aLoggerDialog.log( "FRAME_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
-			m_aLogger.log( "FRAME_DEACTIVATING_value" );
+			m_aLoggerDialog.log( "FRAME_DEACTIVATING_value" );
 			break;
 		case com.sun.star.frame.FrameAction.CONTEXT_CHANGED_value:
-			m_aLogger.log( "CONTEXT_CHANGED_value" );
+			m_aLoggerDialog.log( "CONTEXT_CHANGED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_ACTIVATED_value:
-			m_aLogger.log( "FRAME_UI_ACTIVATED_value" );
+			m_aLoggerDialog.log( "FRAME_UI_ACTIVATED_value" );
 			break;
 		case com.sun.star.frame.FrameAction.FRAME_UI_DEACTIVATING_value:
-			m_aLogger.log( "FRAME_UI_DEACTIVATING_value" );
+			m_aLoggerDialog.log( "FRAME_UI_DEACTIVATING_value" );
 			break;
 		default:
-			m_aLogger.log( "frameAction other value" );
+			m_aLoggerDialog.log( "frameAction other value" );
 		}
 		print("\n");*/
 	}

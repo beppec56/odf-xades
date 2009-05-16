@@ -126,7 +126,7 @@ public class AvailableSSCDs extends ComponentBase
 
 	@Override
 	public String getImplementationName() {
-//		m_aLogger.entering("getImplementationName");
+//		m_aLoggerDialog.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 
@@ -137,7 +137,7 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-//		m_aLogger.info("getSupportedServiceNames");
+//		m_aLoggerDialog.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
