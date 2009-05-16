@@ -19,7 +19,7 @@ sub tryCertificateDiscovery()
  	&apos;presenta il servizio, senza certificati
 &apos;	xray sscds
  	&apos;esegue la ricerca dei dispositivi presenti
-	sscds.scanDevices()
+	sscds.scanDevices( true )
 	if sscds.HasSSCDevices &gt; 0 then
 		&apos;presenta la ricerca eseguita
 &apos;		xray sscds

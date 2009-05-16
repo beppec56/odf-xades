@@ -22,6 +22,7 @@ public class DialogDisplayLog extends DialogShowLicense {
 			XMultiComponentFactory _xmcf, String theLog) {
 		super(frame, context, _xmcf);
 		//only title and text to display are different
+		//FIXME: localize the title
 		m_sTitle = "Display a severe log ";
 		m_sTheTextToShow = theLog;
 	}

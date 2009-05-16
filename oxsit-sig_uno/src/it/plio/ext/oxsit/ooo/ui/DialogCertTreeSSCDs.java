@@ -204,7 +204,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
 			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
 			if(m_axoxAvailableSSCDs != null) {
-				m_axoxAvailableSSCDs.scanDevices();
+				m_axoxAvailableSSCDs.scanDevices(true);
 
 				m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();

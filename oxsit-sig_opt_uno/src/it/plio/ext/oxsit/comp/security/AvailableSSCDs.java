@@ -331,7 +331,7 @@ public class AvailableSSCDs extends ComponentBase
 	 * called to initiated a scan of the devices available on system.
 	 */
 	@Override
-	public void scanDevices() {
+	public void scanDevices(boolean _bUseGUI) {
 		m_aLogger.entering("scanDevices");
 
 		PCSCHelper pcsc = new PCSCHelper(true);
@@ -382,12 +382,19 @@ public class AvailableSSCDs extends ComponentBase
 								//instantiating the service
 								cert.getEncoded();
 //all seems right, instantiate the certificate service
-								Object oACertificate = m_MCF.createInstanceWithContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE, m_xCC);
+								//prepare objects for subordinate service
+								Object[] aArguments = new Object[2];
+//								byte[] aCert = cert.getEncoded();
+								//set the certificate raw value
+								aArguments[0] = cert.getEncoded();//aCert;
+								aArguments[1] = new Boolean(_bUseGUI);//FIXME change according to UI (true) or not UI (false)
+								Object oACertificate = m_MCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
+										aArguments, m_xCC);
 								//get the main interface
 								XOX_QualifiedCertificate xQualCert = 
 									(XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oACertificate);
-								//set the certificate raw value
-								xQualCert.setDEREncoded(cert.getEncoded());
+
+//								xQualCert.setDEREncoded(cert.getEncoded());
 								//add it to this token collection
 								xSSCDevice.addAQualifiedCertificate(xQualCert);
 							} catch (CertificateEncodingException e) {

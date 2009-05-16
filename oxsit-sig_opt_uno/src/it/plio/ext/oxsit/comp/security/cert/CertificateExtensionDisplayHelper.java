@@ -88,16 +88,16 @@ public class CertificateExtensionDisplayHelper {
 		m_aKeyPurposeIdReverseLookUp.put(KeyPurposeId.id_kp_smartcardlogon,"smartcardlogon");
 	};
 
-//	protected IDynamicLogger m_aLogger; 
-	protected DynamicLoggerDialog m_aLogger; 
+	protected IDynamicLogger m_aLogger; 
+//	protected DynamicLoggerDialog m_aLogger; 
 
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
 	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID, IDynamicLogger _aLogger) {
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
-		m_aLogger = (DynamicLoggerDialog)_aLogger;
-		m_aLogger.enableLogging();
+		m_aLogger = _aLogger;
+//		m_aLogger.enableLogging();
 	}
 
 	/**
@@ -132,11 +132,11 @@ public class CertificateExtensionDisplayHelper {
 			else if(_aOID.equals(X509Extensions.ExtendedKeyUsage))
 				return examineExtendedKeyUsage(aext);
 			else {
-				throw (new java.lang.Exception(Helpers.printHexBytes(aext.getValue().getOctets())));
-//				return Helpers.printHexBytes(aext.getValue().getOctets());
+				throw (new java.lang.NoSuchMethodException(term+"While processing OID: " + _aOID.getId() +":"+term+
+						Helpers.printHexBytes(aext.getValue().getOctets())));
 			}
 		} catch (java.lang.Exception e) {
-			String ret = "Exception while processing OID: " + _aOID.getId() +":"+term+DynamicLogger.getStackFromException(e);
+			String ret = "Exception while processing OID: " + _aOID.getId();
 			m_aLogger.severe(e);
 			return ret;
 		}

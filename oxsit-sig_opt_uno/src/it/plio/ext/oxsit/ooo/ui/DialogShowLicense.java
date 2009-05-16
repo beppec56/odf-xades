@@ -93,7 +93,7 @@ public class DialogShowLicense extends BasicDialog {
 						ControlDims.DLG_SHOW_LICENSE_WIDTH -
 						ControlDims.RSC_SP_DLG_INNERBORDER_LEFT -
 						ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT, 0, m_sTheTextToShow, "cyx",
-				true, true, true, false );
+				true, true, true, true );
 
 		XPropertySet xPSet = (XPropertySet) UnoRuntime
 							.queryInterface( XPropertySet.class, oEdit );

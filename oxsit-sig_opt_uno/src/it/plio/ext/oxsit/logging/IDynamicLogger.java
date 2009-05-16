@@ -88,5 +88,5 @@ public interface IDynamicLogger {
 
 	abstract void stopLogging();
 	
-	abstract void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex);
+	abstract void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex, boolean useDialog);
 }

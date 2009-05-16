@@ -111,7 +111,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 */
 	public CertificateExtension(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
-    	m_logger.enableLogging();
+//    	m_logger.enableLogging();
     	m_logger.ctor();    	
 	}
 

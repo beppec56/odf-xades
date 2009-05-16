@@ -25,6 +25,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
@@ -95,6 +96,7 @@ import com.sun.star.uno.XComponentContext;
 public class QualifiedCertificate extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
+			XInitialization,
 			XOX_QualifiedCertificate
 			 {
 
@@ -162,6 +164,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	//the hash map of all the non critical extensions
 	private HashMap<String,X509Extension>	m_aNotCriticalExtensions = new HashMap<String, X509Extension>(20);
 
+	private boolean m_bIsFromUI;
+
 	/**
 	 * 
 	 * 
@@ -176,6 +180,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
     	m_bDisplayOID = false;
+    	m_bIsFromUI = false;
     	//grab the locale strings, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
 		MessageConfigurationAccess m_aRegAcc = null;
@@ -217,6 +222,23 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				return true;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
+	 * _arg[0] the certificate (DER binary value)
+	 * _arg[1] Bolean(true if from UI, else false)
+	 */
+	@Override
+	public void initialize(Object[] _arg) throws Exception {
+		byte[] theCert;
+		if(_arg.length >0) {
+			theCert = (byte[]) _arg[0];
+			if(_arg.length >1) {
+				m_bIsFromUI = ((Boolean)_arg[1]).booleanValue();
+			}
+			setDEREncoded(theCert);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -461,9 +483,15 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			//fill the display data
 			MessageConfigurationAccess m_aRegAcc = null;
 			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
-
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID,
-					new DynamicLoggerDialog(this,m_xContext));
+//FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
+			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
+			IDynamicLogger aDlgH = null;
+			if(m_bIsFromUI)
+				aDlgH = new DynamicLoggerDialog(this,m_xContext);
+			else
+				aDlgH = new DynamicLogger(this,m_xContext);				
+			aDlgH.enableLogging();
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, aDlgH);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();

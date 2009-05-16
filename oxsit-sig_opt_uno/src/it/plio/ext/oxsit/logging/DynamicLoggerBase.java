@@ -155,10 +155,7 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_WARNING, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);
 	}
 
-	public void warning(String _theMethod, String _message, Exception ex) {
-		if(m_bLogEnabled && m_bWarningEnabled)
-			log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex);
-	}
+	public abstract void warning(String _theMethod, String _message, java.lang.Exception ex);
 
 	public abstract void severe(String _theMethod, String _message);
 
@@ -169,41 +166,35 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	public abstract void severe(String _theMethod, java.lang.Exception ex);
 
 	public static String getStackFromException(java.lang.Exception ex) {
-		String stack = "\n"+ex.toString();
+		String term = System.getProperty("line.separator");
+		String stack = term+ex.toString();
 
 		StackTraceElement[] ste = ex.getStackTrace();
 		if(ste != null)
 			for(int i = 0; i < ste.length; i++)
-				stack = stack+"\n\t"+ste[i].toString();
+				stack = stack+term+"\t"+ste[i].toString();
 		return stack;
 	}
 
 	public void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex, boolean usedialog) {
-		String stack = "\n"+ex.toString();
+		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
+					_theMethod +" "+_message,
+					DynamicLoggerBase.getStackFromException(ex));
 
-		if(n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
-			//Use the dialog
-			String theMex = m_sOwnerClassHashHex+" "+m_sOwnerClass+" "+_theMethod +" "+_message+" "+ex.getLocalizedMessage()+DynamicLogger.getStackFromException(ex);			
-			info("using dialog: "+theMex);
-			DialogDisplayLog dlg = new DialogDisplayLog(/*m_xParentFrame*/ null,m_xCC,m_xMCF,theMex);
+		if(usedialog && n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
 			try {
+			//Use the dialog
+				String theMex = m_sOwnerClassHashHex+" "+m_sOwnerClass+" "+_theMethod +
+									" "+_message+
+									DynamicLoggerBase.getStackFromException(ex);			
+				DialogDisplayLog dlg = new DialogDisplayLog(null,m_xCC,m_xMCF,theMex);
 				dlg.initialize( 0, 0);
 				dlg.executeDialog();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
+			} catch (java.lang.Exception e) {
 				e.printStackTrace();
 				warning("error showing dialog");
 			}
 		}
-
-		StackTraceElement[] ste = ex.getStackTrace();
-		if(ste != null)
-			for(int i = 0; i < ste.length; i++)
-				stack = stack+"\n\t"+ste[i].toString();
-
-		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
-					_theMethod +" "+_message, 
-					ex.getLocalizedMessage()+DynamicLoggerBase.getStackFromException(ex));
 	}
 
 //enable/disable, set level

@@ -56,8 +56,8 @@ public class ControlDims {
 	public static final int	DLG_ABOUT_WIDTH			= 205;
 	public static final int	DLG_ABOUT_HEIGH			= 140;
 	
-	public static final int	DLG_SHOW_LICENSE_WIDTH			= 255;
-	public static final int	DLG_SHOW_LICENSE_HEIGH			= 170;
+	public static final int	DLG_SHOW_LICENSE_WIDTH			= 270;
+	public static final int	DLG_SHOW_LICENSE_HEIGH			= 180;
 	
 	public static final int	DLG_ABOUT_BACKG_COLOR			= Utilities.getRGBColor(255, 255, 234);
 	public static final int	DLG_CERT_TREE_BACKG_COLOR		= Utilities.getRGBColor(255, 255, 245);

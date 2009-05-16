@@ -42,8 +42,10 @@
 
 
 		/** This method will start the scan of the available SSCDs devices.
+		@param bCalledFromGUI set to true if a GUI exception error dialog is needed, else set to false.
+		<p>Important: do not set it to true if there is no GUI (for example from headless mode) because a crash may happen.</p> 
 		*/
-		void scanDevices();
+		void scanDevices( [in] boolean bCalledFromGUI);
 		/** Add a new device to the list of available devices.
 		*/
 		void addSSCDevice( [in] it::plio::ext::oxsit::security::XOX_SSCDevice SSCDevice );
