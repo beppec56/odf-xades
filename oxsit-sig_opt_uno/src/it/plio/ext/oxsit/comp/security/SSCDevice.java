@@ -39,6 +39,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
@@ -199,8 +200,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_aLogger.log("addEventListener");
 		super.addEventListener(arg0);
 	}
 
@@ -213,7 +212,16 @@ public class SSCDevice extends ComponentBase
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		m_aLogger.log("dispose");
+		m_aLogger.entering("dispose");
+		//dispose of all the certificate
+		if(!m_xQualCertList.isEmpty()) {
+			for(int i=0; i< m_xQualCertList.size();i++) {
+				XOX_QualifiedCertificate xQC = m_xQualCertList.elementAt(i);
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
+				if(xComp != null)
+					xComp.dispose();
+			}
+		}
 		super.dispose();
 	}
 
@@ -225,8 +233,6 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_aLogger.log("removeEventListener");
 		super.removeEventListener(arg0);
 	}
 

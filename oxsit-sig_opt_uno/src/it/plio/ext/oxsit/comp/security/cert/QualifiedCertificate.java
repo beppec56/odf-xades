@@ -48,22 +48,9 @@ import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.x509.CRLDistPoint;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.PolicyInformation;
-import org.bouncycastle.asn1.x509.PolicyQualifierId;
-import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
-import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
@@ -71,6 +58,8 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
@@ -107,7 +96,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
 	private XComponentContext m_xContext;
 	private XMultiComponentFactory m_xMCF;
-	private String term = System.getProperty("line.separator");
 
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
@@ -153,6 +141,9 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	private String m_sSubjectUniqueID = "";
 
 	private Locale m_lTheLocale;
+
+	private XOX_CertificateExtension[] m_xCritExt = null;
+	private XOX_CertificateExtension[] m_xExt = null;
 	
 	//the hash map of all the extensions
 	//the String is the OID,
@@ -173,7 +164,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLoggerDialog.enableLogging();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
     	m_CState = CertificateState.NOT_VERIFIABLE;
@@ -448,6 +439,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * When this method is called, the DER image passed will be used as the new certificate representation
 	 * and the certificate extensions will be evaluated again. 
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setDEREncoded(byte[] _DEREncoded) {
 		//
@@ -582,6 +574,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return time;
 	}	
 
+	@SuppressWarnings("unchecked")
 	protected void initSubjectName() {
 		m_sSubjectName = "";
 		//print the subject
@@ -630,6 +623,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				m_sSubjectDisplayName = m_sSubjectName;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void initIssuerName() {
 		m_sIssuerName = "";
 		X509Name aName = m_aX509.getIssuer();
@@ -724,7 +718,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCrtitcal) {
 		XOX_CertificateExtension[] retValue = new XOX_CertificateExtension[critOIDs.length];
-		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
+//		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
 		//fill the retValue
 		for(int i=0;i< critOIDs.length;i++) {
 			Object[] aArguments = new Object[4];
@@ -752,8 +746,11 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public XOX_CertificateExtension[] getCriticalCertificateExtensions() {
 		//build all the critical extensions, returns the array
-		String[] critOIDs = getCriticalCertificateExtensionOIDs();
-		return getExtensionsHelper(critOIDs,true);
+		if(m_xCritExt == null) {
+			String[] critOIDs = getCriticalCertificateExtensionOIDs();
+			m_xCritExt = getExtensionsHelper(critOIDs,true);
+		}
+		return m_xCritExt;
 	}
 
 	/* (non-Javadoc)
@@ -761,8 +758,53 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public XOX_CertificateExtension[] getCertificateExtensions() {
-		//build all the critical extensions, returns the array
-		String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
-		return getExtensionsHelper(critOIDs,false);
+		//build all the not critical extensions, returns the array
+		if(m_xExt == null) {
+			String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
+			m_xExt = getExtensionsHelper(critOIDs,false);
+		}
+		return m_xExt;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		super.addEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		m_aLogger.entering("dispose");
+		if(m_xExt != null) {
+			for(int i=0; i < m_xExt.length; i++) {
+				XOX_CertificateExtension xExt = m_xExt[i];
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xExt);
+				if(xComp != null)
+					xComp.dispose();
+			}
+		}
+		if(m_xCritExt != null) {
+			for(int i=0; i < m_xCritExt.length; i++) {
+				XOX_CertificateExtension xExt = m_xCritExt[i];
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xExt);
+				if(xComp != null)
+					xComp.dispose();
+			}			
+		}
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		super.removeEventListener(arg0);
 	}
 }

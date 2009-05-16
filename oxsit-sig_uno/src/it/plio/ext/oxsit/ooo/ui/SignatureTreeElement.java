@@ -44,7 +44,6 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 	public final int m_nFIELD_DATE_SIGN_CONDT_L1			= 12;
 	public final int m_nFIELD_DATE_SIGN_CONDT_L2			= 13;
 
-	
 	/**
 	 * @param context
 	 * @param _xmcf

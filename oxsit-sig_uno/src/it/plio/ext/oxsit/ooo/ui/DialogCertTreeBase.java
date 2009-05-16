@@ -9,6 +9,7 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.utilities.OOoServerInfo;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.FocusEvent;
@@ -25,6 +26,7 @@ import com.sun.star.awt.tree.XMutableTreeDataModel;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeControl;
 import com.sun.star.awt.tree.XTreeExpansionListener;
+import com.sun.star.awt.tree.XTreeNode;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
@@ -66,7 +68,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private XMutableTreeNode 		m_aTreeRootNode;
 	private Object 					m_oTreeControlModel;	
 	private XTreeControl 			m_xTreeControl = null;
-	private XMutableTreeNode 		m_aTheOldNode = null;
+	private XMutableTreeNode 		m_aTheCurrentlySelectedTreeNode = null;
 	// the following two fields are needed to be able to change
 	// the font at run-time
 	private Object					m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
@@ -116,8 +118,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 	private String 				sSignatureInvalid2;
 	///////////// end of graphic name string
-	
-	
+
 	/**
 	 * Note on the display:
 	 * two ways on right pane:
@@ -398,6 +399,52 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
+	private void removeTreeNodeHelper(XMutableTreeNode _aStartNode) {
+//		m_logger.entering("removeTreeNodeHelper "+m_nNestedLevel);
+		//get the XTreeNode interface
+		//child index
+		Object oObj = new Object();
+		int childIndex = _aStartNode.getChildCount();
+		try {
+			while(childIndex > 0) {
+				childIndex--;
+				oObj = _aStartNode.getChildAt(childIndex);
+				XMutableTreeNode aNode = (XMutableTreeNode)UnoRuntime.queryInterface(XMutableTreeNode.class, oObj);
+				m_xTreeControl.collapseNode(aNode);
+				if(aNode.getChildCount() == 0) {
+					//node with no child, remove it
+					//FIXME: first remove the child node data
+					// for now, only cleared
+					Object oTreeNodeObject  = aNode.getDataValue();
+					if(oTreeNodeObject != null) {
+						if(oTreeNodeObject instanceof TreeElement) {
+							TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
+							aCurrentNode.dispose();
+						}
+						else
+							m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+					}
+					
+					aNode.setDataValue(null);
+					m_xTreeControl.collapseNode(aNode);
+					//then remove it
+					_aStartNode.removeChildByIndex(childIndex);
+				}
+				else
+					removeTreeNodeHelper(aNode); //recursive call
+				childIndex = _aStartNode.getChildCount();
+			}
+		} catch (java.lang.Exception e) {
+			m_logger.severe("Index: "+childIndex,e);
+		}
+	}
+
+	protected void removeAllTreeNodes() {
+//first remove all selection from the tree control
+		m_xTreeControl.clearSelection();
+		removeTreeNodeHelper(m_aTreeRootNode);		
+	}
+	
 	private XMutableTreeNode addMultiLineToTreeRootHelper(BaseGeneralNodeTreeElement aSSCDnode) {		
 		//connect it to the right dialog pane
 		aSSCDnode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
@@ -450,7 +497,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//add it to the parent node
 		try {
 			_aParentNode.appendChild(xaCNode);			
-			m_xTreeControl.expandNode(_aParentNode);			
+			m_xTreeControl.expandNode(_aParentNode);
 		} catch (IllegalArgumentException e) {
 			m_logger.severe("addQualifiedCertificateToTree", e);
 		} catch (ExpandVetoException e) {
@@ -714,31 +761,28 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void selectionChanged( com.sun.star.lang.EventObject _eventObject ) {
-//		m_aLoggerDialog.entering("selectionChanged");
 		Object oObject = m_xTreeControl.getSelection();
 // check if it's a node		
 		XMutableTreeNode xaENode = (XMutableTreeNode)UnoRuntime.queryInterface( XMutableTreeNode.class, 
 				oObject );
-		Object oTreeNodeObject = null;
-		TreeElement aCurrentNode = null;
-		XComponent xTheCurrentComp = null;
-		//disable the previous Node
-		if(m_aTheOldNode != null) {
+		//disable the previous Node (which still is the current one)
+		if(m_aTheCurrentlySelectedTreeNode != null) {
 			//disable it, that is un-display it
-			oTreeNodeObject  = m_aTheOldNode.getDataValue();
+			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
 			if(oTreeNodeObject != null) {
-				xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
-				if(xTheCurrentComp != null) {
-					aCurrentNode = (TreeElement)oTreeNodeObject;
+				if(oTreeNodeObject instanceof TreeElement) {
+					TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
 					aCurrentNode.EnableDisplay(false);
 				}
+				else
+					m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
 		}
 		else {// old node null, disable all all the display elements
 			disableAllNamedControls();
 		}
 		//...and set the new old node
-		m_aTheOldNode = xaENode;
+		m_aTheCurrentlySelectedTreeNode = xaENode;
 
 		if(xaENode != null) {
 			checkButtonsEnable(xaENode.getDataValue());

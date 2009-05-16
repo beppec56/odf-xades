@@ -22,11 +22,13 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+
 import com.sun.star.awt.FontDescriptor;
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XFixedText;
-import com.sun.star.awt.XTextComponent;
 import com.sun.star.awt.XWindow;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
@@ -35,17 +37,14 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.
  * This element shows on the right side of the dialog a series of text lines, with the status of
- * the certificate.
+ * the element represented.
+ * The subclass should add the relevant behavior
  * 
  * @author beppec56
  *
@@ -76,9 +75,9 @@ public class BaseGeneralNodeTreeElement extends TreeElement {
 		setLogger(new DynamicLogger(this,_xContext));
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
-		setCertificateState(TreeElement.m_nCERTIFICATE_STATE_NOT_VERIFIED);
+/*		setCertificateState(TreeElement.m_nCERTIFICATE_STATE_NOT_VERIFIED);
 		setCertificateStateConditions(TreeElement.m_nCERTIFICATE_STATE_CONDT_DISABLED);
-		setIssuerState(TreeElement.m_nISSUER_STATE_NO_CTRL);
+		setIssuerState(TreeElement.m_nISSUER_STATE_NO_CTRL);*/
 		setNodeGraphic(null);
 		m_sStringList = new String[CertifTreeDlgDims.m_nMAXIMUM_FIELDS];
 		m_xControlLines = new Object[CertifTreeDlgDims.m_nMAXIMUM_FIELDS];

@@ -58,6 +58,7 @@ sub tryCertificateDiscovery()
 	else
 		print &quot;non ci sono token!&quot;
 	end if
+	sscds.dispose()
 end sub
 
 </script:module>

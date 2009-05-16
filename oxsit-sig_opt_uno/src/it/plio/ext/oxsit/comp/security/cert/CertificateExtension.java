@@ -96,8 +96,6 @@ public class CertificateExtension extends ComponentBase //help class, implements
 
 	private boolean m_bIsCritical;
 	
-	private X509Extension m_aExtension;
-
 	private String m_sExtensionStringValue;
 
 	private String m_sExtensionStringName;
@@ -111,7 +109,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 */
 	public CertificateExtension(XComponentContext _ctx) {
 		m_logger = new DynamicLogger(this, _ctx);
-//    	m_logger.enableLogging();
+ //   	m_logger.enableLogging();
     	m_logger.ctor();    	
 	}
 
@@ -209,5 +207,30 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	@Override
 	public boolean isCritical() {
 		return m_bIsCritical;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		super.addEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		m_logger.entering("dispose");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		super.removeEventListener(arg0);
 	}
 }

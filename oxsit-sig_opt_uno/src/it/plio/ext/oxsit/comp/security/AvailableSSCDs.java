@@ -204,8 +204,6 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_aLogger.log("addEventListener");
 		super.addEventListener(arg0);
 	}
 
@@ -218,7 +216,17 @@ public class AvailableSSCDs extends ComponentBase
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		m_aLogger.log("dispose");
+		m_aLogger.entering("dispose");
+//remove all the device, calling the dispose method of each one
+		if(!m_aSSCDList.isEmpty()) {
+			for(int i=0; i< m_aSSCDList.size();i++) {
+				XOX_SSCDevice aSSCD = m_aSSCDList.get(i);
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, aSSCD);
+				if(xComp != null)
+					xComp.dispose();
+			}
+		}
+		
 		super.dispose();
 	}
 
@@ -230,8 +238,6 @@ public class AvailableSSCDs extends ComponentBase
 	 */
 	@Override
 	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_aLogger.log("removeEventListener");
 		super.removeEventListener(arg0);
 	}
 

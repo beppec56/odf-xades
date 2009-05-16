@@ -37,8 +37,7 @@ import com.sun.star.uno.XComponentContext;
  *
  */
 public abstract class TreeElement
-		implements XComponent // XComponent implement for convenience, to be able to examine the interface
-							// using UNO functions
+		implements XComponent // XComponent implement for convenience, to be able to implement a dispose method
 		{
 
 	/** enum to mark the type of the node.
@@ -117,99 +116,6 @@ public abstract class TreeElement
 							"err_txt_docum_ok",
 							"err_txt_docum_mod",
 							"err_txt_docum_to_ver"
-						};
-
-	/**
-	 * constants for signature and document verification state conditions
-	 * 
-	 */
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_ENABLED = 0;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_SIG_OPT = 1;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_DOC_OPT = 2;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_DISAB = 3;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_INET = 4;
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sDOCUMENT_VERIF_STATE_CONDT =  { 
-							"err_txt_docum_verf_condt_ok",
-							"err_txt_docum_verf_condt_nosig",
-							"err_txt_docum_verf_condt_nodocu",
-							"err_txt_docum_verf_condt_disb",
-							"err_txt_verf_condt_no_inet"
-						};
-
-	/**
-	 * some constant for certificate validation state
-	 */
-	public static final int m_nCERTIFICATE_STATE_VALID = 0;
-	public static final int m_nCERTIFICATE_STATE_EXPIRED = 1;
-	public static final int m_nCERTIFICATE_STATE_REVOKED = 2;
-	public static final int m_nCERTIFICATE_STATE_NOT_ACTIVE = 3;
-	public static final int m_nCERTIFICATE_STATE_INCONSISTENT = 4;
-	public static final int m_nCERTIFICATE_STATE_NOT_VERIFIED = 5;
-
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sCERTIFICATE_STATE =  { 
-							"err_txt_cert_ok",
-							"err_txt_cert_exp",							
-							"err_txt_cert_rev",
-							"err_txt_cert_noact",
-							"err_txt_cert_noconf",
-							"err_txt_cert_nover"
-						};
-
-	/**
-	 * some constant for certificate validation conditions
-	 */
-	public static final int m_nCERTIFICATE_STATE_CONDT_ENABLED = 0;
-	public static final int m_nCERTIFICATE_STATE_CONDT_DISABLED = 1;
-	public static final int m_nCERTIFICATE_STATE_CONDT_CRL_KO = 2;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH_ROOT = 3;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH_MIDDLE = 4;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH = 5;
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sCERTIFICATE_STATE_CONDT =  { 
-									"err_txt_crl_ok",
-									"err_txt_crl_dis",
-									"err_txt_crl_cannot",
-									"err_txt_crl_noroot",
-									"err_txt_crl_noint",
-									"err_txt_crl_noclo"
-						};
-	
-	/**
-	 * some constant for certificate validation state
-	 */
-	public static final int m_nISSUER_STATE_VALID = 0;
-	public static final int m_nISSUER_STATE_NO_CTRL = 1;
-	public static final int m_nISSUER_STATE_KO = 2;
-	public static final int m_nISSUER_STATE_DB_NO_UPDT = 3;
-	public static final int m_nISSUER_STATE_NO_THUMB = 4;
-	public static final int m_nISSUER_STATE_DB_UPDT_KO = 5;
-	public static final int m_nISSUER_STATE_DB_KO_CERT = 6;
-	public static final int m_nISSUER_STATE_EXPIRED = 7;
-	public static final int m_nISSUER_STATE_KO_EXPIRED = 8;
-	public static final int m_nISSUER_STATE_UNKNOWN = 9;
-
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sISSUER_STATE =  { 
-							"err_txt_ca_ok",
-							"err_txt_ca_noctrl",
-							"err_txt_ca_ko",
-							"err_txt_ca_stale",
-							"err_txt_ca_nover",
-							"err_txt_ca_noact",
-							"err_txt_ca_noroot",
-							"err_txt_ca_exp",
-							"err_txt_ca_ko_exp",
-							"err_txt_ca_unkn",
 						};
 
 	/**
