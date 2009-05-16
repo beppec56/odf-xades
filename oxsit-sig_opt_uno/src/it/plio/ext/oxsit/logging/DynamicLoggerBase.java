@@ -167,12 +167,12 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 
 	public static String getStackFromException(java.lang.Exception ex) {
 		String term = System.getProperty("line.separator");
-		String stack = term+ex.toString();
+		String stack = term+ex.toString()+" ";
 
 		StackTraceElement[] ste = ex.getStackTrace();
 		if(ste != null)
 			for(int i = 0; i < ste.length; i++)
-				stack = stack+term+"\t"+ste[i].toString();
+				stack = stack+term+"\t"+ste[i].toString()+" ";
 		return stack;
 	}
 

@@ -24,6 +24,7 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
@@ -93,13 +94,24 @@ public class CertificateExtensionDisplayHelper {
 
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
-	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID, IDynamicLogger _aLogger) {
+
+	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID, IDynamicLogger _aLogger ) {
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
-		m_aLogger = _aLogger;
+		if(_aLogger != null)
+			m_aLogger = _aLogger;
+		else
+			m_aLogger = new DynamicLogger(this,_context);
 //		m_aLogger.enableLogging();
 	}
 
+	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID) {
+		m_bDisplayOID = _bDisplayOID;
+		m_xCC = _context;
+		m_aLogger = new DynamicLogger(this,_context);
+//		m_aLogger.enableLogging();
+	}
+	
 	/**
 	 * @param aext
 	 * @param _aOID TODO
@@ -123,8 +135,8 @@ public class CertificateExtensionDisplayHelper {
 				return examineAlternativeName(aext);	
 			else if(_aOID.equals(X509Extensions.QCStatements))
 				return examineQCStatements(aext);	
-	/*		else if(_aOID.equals(X509Extensions.AuthorityInfoAccess))
-				return examineAuthorityInfoAccess(aext);*/
+			else if(_aOID.equals(X509Extensions.AuthorityInfoAccess))
+				return examineAuthorityInfoAccess(aext);
 			else if(_aOID.equals(X509Extensions.AuthorityKeyIdentifier))
 				return examineAuthorityKeyIdentifier(aext);
 			else if(_aOID.equals(X509Extensions.CRLDistributionPoints))
@@ -359,7 +371,22 @@ public class CertificateExtensionDisplayHelper {
 	private String examineAuthorityInfoAccess(X509Extension aext) {
 		// TODO Auto-generated method stub
 		AuthorityInformationAccess aia = AuthorityInformationAccess.getInstance(aext);
-		return "to be written..."+Helpers.printHexBytes(aext.getValue().getOctets());
+		AccessDescription[] aAccess = aia.getAccessDescriptions();
+		String stx = "";
+		for(int i=0;i< aAccess.length;i++) {
+			if(aAccess[i].getAccessMethod().equals(AccessDescription.id_ad_caIssuers))
+				stx = stx+"caIssuers";
+			else if(aAccess[i].getAccessMethod().equals(AccessDescription.id_ad_ocsp))
+					stx = stx+"ocsp";
+			stx = stx + ": "+term+"  ";
+			GeneralName aName = aAccess[i].getAccessLocation();
+			try {
+				stx = stx + decodeAGeneralName(aName)+" "+term;
+			} catch (IOException e) {
+				m_aLogger.severe(e);
+			}
+		}
+		return stx;
 	}
 
 	/**
