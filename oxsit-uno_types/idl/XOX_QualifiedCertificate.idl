@@ -27,6 +27,7 @@
 #include "XOX_CertificateExtension.idl"
 #include "CertificateState.idl"
 #include "CertificateAuthorityState.idl"
+#include "XOX_CertificationPathControlProcedure.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -40,15 +41,19 @@ XOX_AvailableSSCDs interface or</p>
 	interface XOX_QualifiedCertificate 
 	{
 
+		/** the state of the certificate, for graphic display.
+	 	*/
+		[attribute, readonly] long CertificateGraficStateValue;
 		/** the state of the certificate.
 	 	*/
-		[attribute, readonly] long CertificateGraficStateValue ;
-		/** the state of the certificate.
-	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState ;
+		[attribute, readonly] long CertificateState;
 		/** the state of the CA (certificate Authority) control.
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificationAuthorityState;
+		[attribute, readonly] long CertificationAuthorityState;
+		/** the object used to control the certification path of this certificate
+		*/
+		[attribute] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificateCertificationPathControl;
+
 		/** the human readable rapresentation of the holder (subject) of this certificate.
 		<p>This string is formed from the SubjectDN certificate field in the following way:</p>
 		<p>If givenName and surname both exist, they are used togeter to form a string in the form of
@@ -154,12 +159,14 @@ XOX_AvailableSSCDs interface or</p>
 		/** verify the Certificate Revocation List state of this 
 		 certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificateState field will have the result.</p>
+		 <p>The CertificateGraficStateValue field will have the result as well</p>
 		*/
 		boolean verifyCRLForCertificate( );
-		/** verify the Certificate Authority of this certificate. Returns false if not OK, true if OK.
+		/** verify the Certification Path (e.g. the Certificate Authority) of this certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificationAuthorityState field will have the result.</p>
+		 <p>The CertificateGraficStateValue field will have the result as well</p>
 		  */
-		boolean verifyCAForCertificate( );
+		boolean verifyCertificateCertificationPath( );
 	} ;
 
   }; }; }; }; };  };

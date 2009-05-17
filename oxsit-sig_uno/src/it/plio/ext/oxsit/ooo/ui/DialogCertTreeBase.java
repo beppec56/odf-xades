@@ -112,6 +112,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				m_sCertificateElementWarning;
 	private String 				m_sCertificateElementError;
 	private String 				m_sCertificateElementBroken;
+	protected String			m_sSSCDeviceElement;
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
 
 	private String 				sSignatureInvalid2;
@@ -154,6 +155,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
 			sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
 
+			m_sSSCDeviceElement = m_imagesUrl + "/"+GlobConstant.m_sSSCD_ELEMENT +aSize;
 			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.NOT_VERIFIED_value]
 			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_UNKNOWN +aSize;
 			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.OK_value]
@@ -487,6 +489,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//add the device to the dialog, a single node, with the device as a description
 		SSCDTreeElement aSSCDnode = new SSCDTreeElement(m_xContext,m_xMCF);
 		aSSCDnode.initialize();
+		aSSCDnode.setNodeGraphic(m_sSSCDeviceElement);
 		aSSCDnode.setSSCDDATA(_aSSCDev);
 		return  addMultiLineToTreeRootHelper(aSSCDnode);
 	}

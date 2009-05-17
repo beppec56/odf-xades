@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import java.io.ByteArrayInputStream;
@@ -103,8 +104,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	protected DynamicLogger m_aLogger;
 	
-	protected CertificateAuthorityState m_CAState;
-	protected CertificateState			m_CState;
+	protected int m_nCAState;
+	protected int m_nCertificateState;
 	
 	protected boolean	m_bDisplayOID;
 
@@ -171,8 +172,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		m_aLogger = new DynamicLogger(this, _ctx);
 //		m_aLogger.enableLogging();
     	m_aLogger.ctor();
-    	m_CAState = CertificateAuthorityState.NO_CNIPA_ROOT;
-    	m_CState = CertificateState.NOT_VERIFIABLE;
+    	m_nCAState = CertificateAuthorityState.UNCHECKED_value;
+    	m_nCertificateState = CertificateState.NOT_VERIFIABLE_value;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
     	m_bDisplayOID = false;
@@ -223,8 +224,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * _arg[0] the certificate (DER binary value)
-	 * _arg[1] Bolean(true if from UI, else false)
+	 * _arg[0] the certificate (DER binary value), mandatory
+	 * _arg[1] Boolean(true if from UI, else false), mandatory
+	 * _arg[2] the interface object to control the Certification Path (e.g. the CA), optional 
+	 * _arg[3] the interface object to control the CRL, optional
 	 */
 	@Override
 	public void initialize(Object[] _arg) throws Exception {
@@ -233,6 +236,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			theCert = (byte[]) _arg[0];
 			if(_arg.length >1) {
 				m_bIsFromUI = ((Boolean)_arg[1]).booleanValue();
+				if(_arg.length>2) {
+					//check the type of elements we have, can be C>RL or CP control					
+					if(_arg.length>3) {
+						//check the type of elements we have
+					}
+				}
 			}
 			setDEREncoded(theCert);
 		}
@@ -363,7 +372,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCAForCertificate()
 	 */
 	@Override
-	public boolean verifyCAForCertificate() {
+	public boolean verifyCertificateCertificationPath() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -381,16 +390,16 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateState()
 	 */
 	@Override
-	public CertificateState getCertificateState() {
-		return m_CState;
+	public int getCertificateState() {
+		return m_nCertificateState;
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityState()
 	 */
 	@Override
-	public CertificateAuthorityState getCertificationAuthorityState() {
-		return m_CAState;
+	public int getCertificationAuthorityState() {
+		return m_nCAState;
 	}
 
 	/* (non-Javadoc)
@@ -785,9 +794,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// FIXME 
+		// TODO need to check if this element is referenced somewhere before deallocating it
 		m_aLogger.entering("dispose");
-		if(m_xExt != null) {
+/*		if(m_xExt != null) {
 			for(int i=0; i < m_xExt.length; i++) {
 				XOX_CertificateExtension xExt = m_xExt[i];
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xExt);
@@ -803,7 +813,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					xComp.dispose();
 			}			
 		}
-		super.dispose();
+		super.dispose();*/
 	}
 
 	/* (non-Javadoc)
@@ -820,5 +830,24 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public int getCertificateGraficStateValue() {
 		return m_nCertificateGraficStateValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateCertificationPathControl()
+	 */
+	@Override
+	public XOX_CertificationPathControlProcedure getCertificateCertificationPathControl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateCertificationPathControl(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
+	 */
+	@Override
+	public void setCertificateCertificationPathControl(
+			XOX_CertificationPathControlProcedure arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

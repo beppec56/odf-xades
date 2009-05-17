@@ -92,6 +92,9 @@ public class GlobConstant {
 	public static final int		m_nSIGNATURESTATE_SIGNATURES_INVALID		= 4;
 
 	//names of icons used to display state of certificate/certificate elements
+
+	public static final String	m_sSSCD_ELEMENT = "sscd-device";
+
 	public static final String	m_nCERTIFICATE = "certificato";
 	public static final String	m_nCERTIFICATE_CHECKED_OK = "certificato-ok";
 	public static final String	m_nCERTIFICATE_CHECKED_WARNING = "certificato-warning";

@@ -224,6 +224,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	public void dispose() {
 		// TODO Auto-generated method stub
 		m_logger.entering("dispose");
+//		super.dispose();
 	}
 
 	/* (non-Javadoc)

@@ -183,13 +183,14 @@ public class SSCDevice extends ComponentBase
 	 * (non-Javadoc)
 	 * 
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * Called when instantiating using the CreateInstanceWithArguments() method 
+	 * Called when instantiating using the CreateInstanceWithArgumentsAndContext() method 
 	 * when instantiated, _oObj[0] first certificate object (service), _oObj[1] the second ... 
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("initialize");
+		throw(new com.sun.star.lang.NoSupportException("method com.sun.star.lang.XInitialization#initialize not yet supported"));
 	}
 
 	/*
@@ -211,10 +212,10 @@ public class SSCDevice extends ComponentBase
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		m_aLogger.entering("dispose");
+		// FIXME 
+		// TODO need to check if this element is referenced somewhere before deallocating it		m_aLogger.entering("dispose");
 		//dispose of all the certificate
-		if(!m_xQualCertList.isEmpty()) {
+/*		if(!m_xQualCertList.isEmpty()) {
 			for(int i=0; i< m_xQualCertList.size();i++) {
 				XOX_QualifiedCertificate xQC = m_xQualCertList.elementAt(i);
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
@@ -222,7 +223,7 @@ public class SSCDevice extends ComponentBase
 					xComp.dispose();
 			}
 		}
-		super.dispose();
+		super.dispose();*/
 	}
 
 	/*

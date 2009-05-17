@@ -32,12 +32,12 @@
 		/** the Certificate Authority was verified, it's reliable (accredited).
 		 */
 		RELIABLE,
-		/** the root cnipa certificate not checked.
+		/** the root certificate not checked.
 		 */
-		NO_CNIPA_ROOT,
+		NO_CA_ROOT_CHECKED,
 		/** the Certificate Authority it's nonreliable (not accredited).
 		 */
-		UNRELIABLE ,
+		UNRELIABLE,
 		/** the CA DB was not updated.
 		 */
 		CA_LIST_DB_NOT_UPDATED,
@@ -49,7 +49,7 @@
 		 */
 		CA_LIST_DB_UPDATE_DISABLED,
  
-		/** The CNIPA root certificate is missing
+		/** The root certificate is missing
 		 */
 		MISSING_ROOT_CA,
  
@@ -59,8 +59,15 @@
 
 		/** The CA is not reliable, and the CA certificate is expired
 		 */
-		UNRELIABLE_EXPIRED
+		UNRELIABLE_EXPIRED,
 
+		/** certification path and CA not checked
+		*/
+		UNCHECKED,
+
+		/** Last state (maximum state).
+		*/
+		LAST_STATE
 	}; 
  
   }; }; }; }; };  };
