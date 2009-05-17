@@ -8,8 +8,8 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
-import it.plio.ext.oxsit.utilities.OOoServerInfo;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.FocusEvent;
@@ -26,7 +26,6 @@ import com.sun.star.awt.tree.XMutableTreeDataModel;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeControl;
 import com.sun.star.awt.tree.XTreeExpansionListener;
-import com.sun.star.awt.tree.XTreeNode;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
@@ -34,7 +33,6 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
@@ -68,7 +66,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private XMutableTreeNode 		m_aTreeRootNode;
 	private Object 					m_oTreeControlModel;	
 	private XTreeControl 			m_xTreeControl = null;
-	private XMutableTreeNode 		m_aTheCurrentlySelectedTreeNode = null;
+	protected XMutableTreeNode 		m_aTheCurrentlySelectedTreeNode = null;
 	// the following two fields are needed to be able to change
 	// the font at run-time
 	private Object					m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
@@ -110,14 +108,16 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				sSignatureInvalid; //signature cannot be validated
 	private String 				sSignatureAdding;
 	private String 				sSignatureRemoving;
-	private String 				sCertificateValid = null; //
-	private String 				sCertificateNotValidated = null; //
-	private String 				sCertificateElementWarning = null;
-	private String 				sCertificateElementError;
-	private String 				sCertificateElementBroken;
+	//certificate grafich path holders
+	private String 				m_sCertificateElementWarning;
+	private String 				m_sCertificateElementError;
+	private String 				m_sCertificateElementBroken;
+	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
 
 	private String 				sSignatureInvalid2;
 	///////////// end of graphic name string
+	private String sCertificateSelectedAdd;
+	private String sCertificateSelectedRemove;
 
 	/**
 	 * Note on the display:
@@ -154,11 +154,26 @@ public class DialogCertTreeBase extends BasicDialog implements
 			sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
 			sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
 
-			sCertificateValid = m_imagesUrl + GlobConstant.m_nCERTIFICATE+aSize;
-			sCertificateNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
-			sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
-			sCertificateElementError = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
-			sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.NOT_VERIFIED_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_UNKNOWN +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.OK_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.WARNING_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.NO_DATE_VALID_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2 +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.NOT_COMPLIANT_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.NOT_VALID_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.MARKED_TO_BE_ADDED_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING +aSize;
+			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.MARKED_TO_BE_REMOVED_value]
+			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING +aSize;
+//the certificate elements graphic name string			
+			m_sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
+			m_sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
+			m_sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
 		}
 		else
 			m_logger.severe("ctor","no package location !");
@@ -182,7 +197,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( m_sBtn_AddCertLabel );
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( m_sFt_Hint_Doc );
 
-//strings for certificate display
+//strings for certificate tre control display
 			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );
 			m_sLabelSerialNumer = m_aRegAcc.getStringFromRegistry( m_sLabelSerialNumer );
 			m_sLabelIssuer = m_aRegAcc.getStringFromRegistry( m_sLabelIssuer );
@@ -489,6 +504,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		//create a new node to be used for this element
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aNewNode.getNodeName(), true);
+
+		aNewNode.setNodeGraphic(m_sCertificateValidityGraphicName[_aCertif.getCertificateGraficStateValue()]);
 		if(aNewNode.getNodeGraphic() != null)
 			xaCNode.setNodeGraphicURL(aNewNode.getNodeGraphic());
 

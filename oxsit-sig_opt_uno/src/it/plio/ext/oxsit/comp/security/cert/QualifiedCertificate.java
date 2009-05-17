@@ -29,6 +29,7 @@ import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
@@ -157,6 +158,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private boolean m_bIsFromUI;
 
+	//state of this certificate, comes from controls of the certificate itself
+	// the returned value will be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
+	private int m_nCertificateGraficStateValue;
+
 	/**
 	 * 
 	 * 
@@ -172,6 +177,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
     	m_xMCF = m_xContext.getServiceManager();
     	m_bDisplayOID = false;
     	m_bIsFromUI = false;
+    	m_nCertificateGraficStateValue = CertificateGraphicDisplayState.NOT_VERIFIED_value;
     	//grab the locale strings, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
 		MessageConfigurationAccess m_aRegAcc = null;
@@ -806,5 +812,13 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		super.removeEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateGraficStateValue()
+	 */
+	@Override
+	public int getCertificateGraficStateValue() {
+		return m_nCertificateGraficStateValue;
 	}
 }

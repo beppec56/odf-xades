@@ -29,6 +29,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import com.sun.star.awt.PushButtonType;
@@ -150,8 +151,19 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
-		m_logger.info("Aggiunto certificato");				
-		addOneSignature();		
+		m_logger.info("cambio stato certificato");
+		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
+		Object aObj = xAnode.getDataValue();
+		if(aObj instanceof CertificateTreeElement) {
+			CertificateTreeElement ct = (CertificateTreeElement)aObj;
+			int avl = ct.getCertificateGraficStateValue();
+			avl++;
+			if(avl >= CertificateGraphicDisplayState.LAST_STATE_value)
+				avl = CertificateGraphicDisplayState.NOT_VERIFIED_value;
+			ct.setCertificateGraficStateValue(avl);
+			xAnode.setNodeGraphicURL(m_sCertificateValidityGraphicName[avl]);
+		}
+//		addOneSignature();		
 	}
 
 	/* (non-Javadoc)

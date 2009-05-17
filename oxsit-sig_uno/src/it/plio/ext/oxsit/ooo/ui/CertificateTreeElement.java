@@ -28,6 +28,7 @@ import com.sun.star.uno.XComponentContext;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 /** This class describes the node representing a certificate obtained from
@@ -51,6 +52,10 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public final int m_nFIELD_TEXT_FIELD_11					= 11;
 	public final int m_nFIELD_TEXT_FIELD_12 				= 12;
 	public final int m_nFIELD_TEXT_FIELD_13 				= 13;
+	
+	//state of this certificate, comes from controls of the certificate itself
+	// the returned value will be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
+	private int m_nCertificateGraficStateValue;
 
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
@@ -59,6 +64,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 		getLogger().ctor();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
+		m_nCertificateGraficStateValue = CertificateGraphicDisplayState.NOT_VERIFIED_value;
 	}
 
 	/* (non-Javadoc)
@@ -100,5 +106,24 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 		//next should be set to the right certificate string to display
 		m_sStringList[m_nFIELD_OWNER_NAME] = "b"+getNodeName();  // will got it from the certificate raw data		
 		m_sStringList[m_nFIELD_ISSUER] = "r"+_aCertif.getIssuerDisplayName();
+	}
+
+	/**
+	 * @param m_nCertificateGraficStateValue the m_nCertificateGraficStateValue to set
+	 * value MUST be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
+	 * this value is normally driven from the XOX_QualifiedCertificated interface object.
+	 */
+	public void setCertificateGraficStateValue(
+			int m_nCertificateGraficStateValue) {
+		this.m_nCertificateGraficStateValue = m_nCertificateGraficStateValue;
+	}
+
+	/**
+	 * @return the CertificateGraficStateValue, 
+	 * the returned value will be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
+
+	 */
+	public int getCertificateGraficStateValue() {
+		return m_nCertificateGraficStateValue;
 	}
 }

@@ -20,41 +20,45 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_CertificateState_idl__
-#define __it_plio_ext_oxsit_security_cert_CertificateState_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_CertificateGraphicDisplayState_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificateGraphicDisplayState_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** State of a Certificate, for string display
+/** State of a Certificate, for graphic display
+	<p>This constants are driven from the specification, they indicate the certificate state.</p>
+	<p>The integer value has the form <state name>_value, e.g. NOT_VERIFIED_value.
  */
-	enum CertificateState
+	enum CertificateGraphicDisplayState
 	{
 		/** the certificate was verified, it's ok.
 		 */
+		NOT_VERIFIED, 
+		/** The certificate state is ok.
+		 */
 		OK, 
-		/** the certificate has expired.
+		/** The certificate state is ok.
 		 */
-		EXPIRED, 
-		/** the certificate was revoked.
+		WARNING, 
+		/** the certificate ha validy date out of legal bounds.
 		 */
-		REVOKED, 
-		/** the certificate is not yet active.
+		NO_DATE_VALID, 
+		/** the certificate is not consistent with the standard used to control it
+		(e.g. the CRL control intercae object and the certification path interface control object.
 		 */
-		NOT_ACTIVE, 
-		/** the certificate is not consistent with the Italian standard.
+		NOT_COMPLIANT,
+		/** the certificate ha error differents from the others, cannot be used to sign.
 		 */
-		NOT_CONSISTENT, 
- 
-		/** the certificate cannot be verified.
+		NOT_VALID, 
+		/** the certificate is going to be used to sign.
 		 */
-		NOT_VERIFIABLE, 
- 
-		/** the certificate was not verified.
+		MARKED_TO_BE_ADDED,
+		/** the certificate is going to be removed.
 		 */
-		NOT_YET_VERIFIED,
-		/**
+		MARKED_TO_BE_REMOVED,
+		/** Last state (maximum state).
 		*/
-		LAST_STATE
+		LAST_STATE 
  
 	}; 
  

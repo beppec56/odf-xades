@@ -39,6 +39,10 @@ XOX_AvailableSSCDs interface or</p>
  */
 	interface XOX_QualifiedCertificate 
 	{
+
+		/** the state of the certificate.
+	 	*/
+		[attribute, readonly] long CertificateGraficStateValue ;
 		/** the state of the certificate.
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState ;
