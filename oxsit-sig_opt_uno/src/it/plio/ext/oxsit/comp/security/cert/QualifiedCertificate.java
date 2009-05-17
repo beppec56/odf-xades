@@ -29,6 +29,7 @@ import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
@@ -60,7 +61,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
-import com.sun.star.lang.XComponent;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -163,6 +164,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	// the returned value will be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
 	private int m_nCertificateGraficStateValue;
 
+	private XOX_CertificationPathControlProcedure m_xoxCertificationPathControlProcedure;
+
 	/**
 	 * 
 	 * 
@@ -222,12 +225,25 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return false;
 	}
 
+	private void initializeHelper(Object _arg) throws IllegalArgumentException {
+		//check the type of elements we have, can be CRL or CP control
+		
+		XOX_CertificationPathControlProcedure xCert =
+			(XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(
+							XOX_CertificationPathControlProcedure.class, _arg);
+		if(xCert == null)
+			throw(new com.sun.star.lang.IllegalArgumentException());
+		m_xoxCertificationPathControlProcedure = xCert;
+		
+	}
+
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
 	 * _arg[0] the certificate (DER binary value), mandatory
 	 * _arg[1] Boolean(true if from UI, else false), mandatory
 	 * _arg[2] the interface object to control the Certification Path (e.g. the CA), optional 
 	 * _arg[3] the interface object to control the CRL, optional
+	 * _arg[4] the interface object to control the certificate compliance to the implmentation
 	 */
 	@Override
 	public void initialize(Object[] _arg) throws Exception {
@@ -236,15 +252,20 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			theCert = (byte[]) _arg[0];
 			if(_arg.length >1) {
 				m_bIsFromUI = ((Boolean)_arg[1]).booleanValue();
+				//check the type of optional elements we have
 				if(_arg.length>2) {
-					//check the type of elements we have, can be C>RL or CP control					
+					initializeHelper(_arg[2]);
 					if(_arg.length>3) {
-						//check the type of elements we have
+						initializeHelper(_arg[3]);
+						if(_arg.length>4)
+							initializeHelper(_arg[4]);
 					}
 				}
+				setDEREncoded(theCert);
+				return;
 			}
-			setDEREncoded(theCert);
 		}
+		throw(new com.sun.star.lang.IllegalArgumentException("QualifiedCertificate#initialize: missing arguments"));
 	}
 
 	/* (non-Javadoc)
@@ -679,6 +700,16 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	
 	//////////////////////////////////////////////////////////////////
 	///////////////// area for extension display management
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionErrorState(java.lang.String)
+	 */
+	@Override
+	public int getCertificateExtensionErrorState(String arg0) {
+		// TODO Auto-generated method stub
+		return CertificateExtensionState.OK_value;
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionName(java.lang.String)
 	 */
@@ -731,7 +762,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		return aTheOIDs.toArray(ret);
 	}
 
-	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCrtitcal) {
+	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCritical) {
 		XOX_CertificateExtension[] retValue = new XOX_CertificateExtension[critOIDs.length];
 //		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
 		//fill the retValue
@@ -740,7 +771,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			aArguments[0] = new String(critOIDs[i]);//aExts.getExtension(new DERObjectIdentifier(critOIDs[i])).getValue().getOctets();
 			aArguments[1] = new String(getCertificateExtensionName(critOIDs[i]));
 			aArguments[2] = new String(getCertificateExtensionStringValue(critOIDs[i]));
-			aArguments[3] = new Boolean(_bIsCrtitcal);
+			aArguments[3] = new Boolean(_bIsCritical);
 
 			try {
 				Object	aExt = m_xMCF.createInstanceWithArgumentsAndContext(
@@ -754,7 +785,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		}
 		return retValue;		
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalCertificateExtensions()
 	 */
@@ -838,16 +869,21 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public XOX_CertificationPathControlProcedure getCertificateCertificationPathControl() {
 		// TODO Auto-generated method stub
-		return null;
+		return m_xoxCertificationPathControlProcedure;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateCertificationPathControl(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificationPathControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
 	 */
 	@Override
-	public void setCertificateCertificationPathControl(
-			XOX_CertificationPathControlProcedure arg0) {
-		// TODO Auto-generated method stub
-		
+	public void setCertificationPathControlObject(
+			XOX_CertificationPathControlProcedure arg0)
+			throws IllegalArgumentException, Exception {
+
+		XOX_CertificationPathControlProcedure xCert = (XOX_CertificationPathControlProcedure)
+		UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, arg0);
+		if(xCert == null)
+			throw(new com.sun.star.lang.IllegalArgumentException());
+		m_xoxCertificationPathControlProcedure = arg0;
 	}
 }

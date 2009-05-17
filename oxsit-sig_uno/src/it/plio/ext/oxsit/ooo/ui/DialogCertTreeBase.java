@@ -8,6 +8,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
@@ -108,17 +109,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				sSignatureInvalid; //signature cannot be validated
 	private String 				sSignatureAdding;
 	private String 				sSignatureRemoving;
-	//certificate grafich path holders
-	private String 				m_sCertificateElementWarning;
-	private String 				m_sCertificateElementError;
-	private String 				m_sCertificateElementBroken;
+	//certificate graphic path holders
 	protected String			m_sSSCDeviceElement;
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
+	private String[] 			m_sCertificateElementGraphicName = new String[CertificateExtensionState.LAST_STATE_value];
 
 	private String 				sSignatureInvalid2;
 	///////////// end of graphic name string
-	private String sCertificateSelectedAdd;
-	private String sCertificateSelectedRemove;
 
 	/**
 	 * Note on the display:
@@ -172,10 +169,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING +aSize;
 			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.MARKED_TO_BE_REMOVED_value]
 			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING +aSize;
-//the certificate elements graphic name string			
-			m_sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
-			m_sCertificateElementWarning = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
-			m_sCertificateElementBroken = m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
+//the certificate elements graphic name string
+			m_sCertificateElementGraphicName[CertificateExtensionState.NOT_VERIFIED_value] = "";
+			m_sCertificateElementGraphicName[CertificateExtensionState.OK_value] = "";
+			m_sCertificateElementGraphicName[CertificateExtensionState.BROKEN_value] =
+								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
+			m_sCertificateElementGraphicName[CertificateExtensionState.WARNING_value] =
+								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
+			m_sCertificateElementGraphicName[CertificateExtensionState.INVALID_value] =
+								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
 		}
 		else
 			m_logger.severe("ctor","no package location !");
@@ -554,12 +556,17 @@ public class DialogCertTreeBase extends BasicDialog implements
 			if(aCtritExt != null) {
 				//then there are extension marked critical
 				//add the main node
+				//FIXME:
+				//the root node for extensions should see for the aggregate state of all
+				//the critical extensions
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
-							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension);
+							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension,
+							m_sCertificateElementGraphicName[CertificateExtensionState.OK_value]);
 				for(int i=0; i<aCtritExt.length;i++) {
-					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
+					addVariablePitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
 							_aCertif.getCertificateExtensionName(aCtritExt[i]),
-							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]));
+							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]),
+							_aCertif.getCertificateExtensionErrorState(aCtritExt[i]));
 				}
 			}
 		} catch (Exception e) {
@@ -572,27 +579,44 @@ public class DialogCertTreeBase extends BasicDialog implements
 			if(aNotCtritExt != null) {
 			//then there are extension NOT marked critical
 			//add the main node
+				//FIXME:
+				//the root node for extensions should see for the aggregate state of all
+				//the NOT critical extensions
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
-							TreeNodeType.EXTENSIONS_NON_CRITICAL,m_sLabelNotCritExtension);
+							TreeNodeType.EXTENSIONS_NON_CRITICAL, m_sLabelNotCritExtension,
+							m_sCertificateElementGraphicName[CertificateExtensionState.OK_value]);
 				for(int i=0; i<aNotCtritExt.length;i++) {
 					if(aNotCtritExt[i].equalsIgnoreCase("2.5.29.14") ||
 							aNotCtritExt[i].equalsIgnoreCase("2.5.29.35")) 
-						addFixedPitchTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+						addFixedPitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
 								_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
-								_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]));
-						
+								_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
+								_aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]));
 					else
-					addVariablePitchTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+						addVariablePitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
 							_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
-							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]));
+							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
+							_aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]));
 				}
 			}
 		} catch (Exception e) {
 			m_logger.severe("addQualifiedCertificateToTree", e);
 		}
 		//add the certificate path
+		//first see if there is a path
+		String sPathGraph = "";
+		XOX_QualifiedCertificate xCPath = _aCertif.getCertificationPath();
+		if(xCPath == null)
+			sPathGraph = m_sCertificateElementGraphicName[CertificateExtensionState.INVALID_value];
+		else {
+			//set to the value of the certificate found
+			sPathGraph = m_sCertificateValidityGraphicName[xCPath.getCertificateGraficStateValue()];			
+		}
+
 		XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
-				TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath);
+				TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath, 
+				sPathGraph);
+		
 	}
 
 	//test function, remove when ready!
@@ -649,15 +673,28 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
+	private XMutableTreeNode addFixedPitchExtensionTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
+		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeType(_aType);
+		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
+	}
 	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents) {
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
-	private XMutableTreeNode addEmptyDataTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel) {
+	private XMutableTreeNode addVariablePitchExtensionTreeElement(XMutableTreeNode _Node, 
+							TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
+		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeType(_aType);
+		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
+	}
+
+	private XMutableTreeNode addEmptyDataTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sGraphic) {
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
 		xaCNode.setDataValue(null);
+		xaCNode.setNodeGraphicURL(_sGraphic);
 		try {
 			//add it to the tree node
 			_Node.appendChild(xaCNode);			
