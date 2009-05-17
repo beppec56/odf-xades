@@ -30,6 +30,7 @@
 #include "CertificateState.idl"
 #include "CertificateAuthorityState.idl"
 #include "XOX_CertificationPathControlProcedure.idl"
+#include "XOX_CertificateComplianceControlProcedure.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -42,7 +43,6 @@ XOX_AvailableSSCDs interface or</p>
  */
 	interface XOX_QualifiedCertificate 
 	{
-
 		/** the state of the certificate, for graphic display.
 	 	*/
 		[attribute, readonly] long CertificateGraficStateValue;
@@ -55,6 +55,10 @@ XOX_AvailableSSCDs interface or</p>
 		/** the object used to control the certification path of this certificate
 		*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificateCertificationPathControl;
+
+		/** the object used to control the certificate compliance
+		*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure CertificateComplianceControl;
 
 		/** the human readable rapresentation of the holder (subject) of this certificate.
 		<p>This string is formed from the SubjectDN certificate field in the following way:</p>
@@ -170,12 +174,18 @@ XOX_AvailableSSCDs interface or</p>
 		 <p>The CertificateGraficStateValue field will have the result as well</p>
 		*/
 		boolean verifyCRLForCertificate( );
+
+		/**
+		*/
+		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
 		/** verify the Certification Path (e.g. the Certificate Authority) of this certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificationAuthorityState field will have the result.</p>
 		 <p>The CertificateGraficStateValue field will have the result as well</p>
 		  */
 		boolean verifyCertificateCertificationPath( );
-		void setCertificationPathControlObject([in] XOX_CertificationPathControlProcedure arg0)
+		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 	} ;

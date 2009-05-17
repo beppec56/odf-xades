@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
@@ -49,6 +50,7 @@ import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.ElementExistException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameContainer;
+import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -62,6 +64,7 @@ import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
@@ -71,51 +74,41 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
 
 /**
- *  This service implements the CertificateExtension service.
+ *  This service implements the CertificateComplianceIT service, used to check the
+ *  certificate for compliance on Italian law.
  *  
- * This objects has properties, they are set by the calling UNO objects.
- * This service represents a single certificate extension. 
- * 
  * @author beppec56
  *
  */
-public class CertificateExtension extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificateComplianceIT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificateExtension
+			XOX_CertificateComplianceControlProcedure
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateExtension.class.getName();
+	public static final String			m_sImplementationName	= CertificateComplianceIT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE };
+	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
 
-	protected DynamicLogger m_logger;
+	protected DynamicLogger m_aLogger;
 
-	private boolean m_bIsCritical;
-	
-	private String m_sExtensionStringValue;
-
-	private String m_sExtensionStringName;
-
-	private String m_sExtensionId;
-	
 	/**
 	 * 
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateExtension(XComponentContext _ctx) {
-		m_logger = new DynamicLogger(this, _ctx);
+	public CertificateComplianceIT(XComponentContext _ctx) {
+		m_aLogger = new DynamicLogger(this, _ctx);
  //   	m_aLogger.enableLogging();
-    	m_logger.ctor();    	
+    	m_aLogger.ctor();    	
 	}
 
 	@Override
 	public String getImplementationName() {
-		m_logger.entering("getImplementationName");
+		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 	
@@ -124,7 +117,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_logger.info("getSupportedServiceNames");
+		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -135,7 +128,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_logger.info("supportsService",_sService);
+		m_aLogger.info("supportsService",_sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -158,11 +151,8 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 * Object aExt = m_xMCF.createInstanceWithArgumentsAndContext(
 	 *				"it.plio.ext.oxsit.security.cert.CertificateExtension", aArguments, m_xContext);
 	 *
-	 * @param _eValue array of 4 object:
-	 * <p>_eValue[0] string OID</p>
-	 * <p>_eValue[1] string Localized Name</p>
-	 * <p>_eValue[2] string Value </p>
-	 * <p>_eValue[3] Boolean(isCritical)</p>
+	 * @param _eValue array of ? object:
+	 * <p>_eValue[0] string ??</p>
 	 * 
 	 * (non-Javadoc)
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
@@ -171,42 +161,6 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	@Override
 	public void initialize(Object[] _eValue) throws Exception {
 		//the eValue is the byte stream of the extension
-		m_sExtensionId = (String)_eValue[0];
-		m_sExtensionStringName = (String)_eValue[1];
-		m_sExtensionStringValue = (String)_eValue[2];
-		m_bIsCritical = ((Boolean)_eValue[3]).booleanValue();
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
-	 */
-	@Override
-	public String getExtensionOID() {
-		return m_sExtensionId;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringName()
-	 */
-	@Override
-	public String getExtensionLocalizedName() {
-		return m_sExtensionStringName;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
-	 */
-	@Override
-	public String getExtensionStringValue() {
-		return m_sExtensionStringValue;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
-	 */
-	@Override
-	public boolean isCritical() {
-		return m_bIsCritical;
 	}
 
 	/* (non-Javadoc)
@@ -223,7 +177,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		m_logger.entering("dispose");
+		m_aLogger.entering("dispose");
 //		super.dispose();
 	}
 
@@ -233,5 +187,37 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		super.removeEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 */
+	@Override
+	public void configureOptions(XFrame arg0, XComponentContext arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificationAuthorityState()
+	 */
+	@Override
+	public CertificateState getCertificationAuthorityState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public CertificateState verifyCertificateCertificateCompliance(
+			XComponent arg0) throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		XOX_QualifiedCertificate xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		if(xQc == null)
+			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
+		m_aLogger.exiting("XOX_verifyCertificateCertificateCompliance#verifyCertificateCertificateCompliance","");
+		return null;
 	}
 }

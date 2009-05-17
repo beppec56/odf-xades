@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
@@ -226,7 +227,6 @@ public class AvailableSSCDs extends ComponentBase
 					xComp.dispose();
 			}
 		}
-		
 		super.dispose();
 	}
 
@@ -388,12 +388,22 @@ public class AvailableSSCDs extends ComponentBase
 								//instantiating the service
 								cert.getEncoded();
 //all seems right, instantiate the certificate service
+								//now create the Certificate Control UNO objects
+								//first the certificate compliance control
+								//
+								Object oACCObj = m_MCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+/*								XOX_CertificateComplianceControlProcedure xCCPP =
+									(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
+											XOX_CertificateComplianceControlProcedure.class, oACCObj);*/
+								
 								//prepare objects for subordinate service
-								Object[] aArguments = new Object[2];
+								Object[] aArguments = new Object[3];
 //								byte[] aCert = cert.getEncoded();
 								//set the certificate raw value
 								aArguments[0] = cert.getEncoded();//aCert;
 								aArguments[1] = new Boolean(_bUseGUI);//FIXME change according to UI (true) or not UI (false)
+								aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+
 								Object oACertificate = m_MCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
 										aArguments, m_xCC);
 								//get the main interface

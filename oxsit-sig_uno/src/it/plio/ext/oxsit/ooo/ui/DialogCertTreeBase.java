@@ -419,7 +419,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	private void removeTreeNodeHelper(XMutableTreeNode _aStartNode) {
-//		m_logger.entering("removeTreeNodeHelper "+m_nNestedLevel);
+//		m_aLogger.entering("removeTreeNodeHelper "+m_nNestedLevel);
 		//get the XTreeNode interface
 		//child index
 		Object oObj = new Object();

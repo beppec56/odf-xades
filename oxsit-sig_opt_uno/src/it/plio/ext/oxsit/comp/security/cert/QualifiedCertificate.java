@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
@@ -62,6 +63,7 @@ import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -166,6 +168,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private XOX_CertificationPathControlProcedure m_xoxCertificationPathControlProcedure;
 
+	private XOX_CertificateComplianceControlProcedure m_xoxCertificateComplianceControlProcedure;
+
 	/**
 	 * 
 	 * 
@@ -231,10 +235,21 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		XOX_CertificationPathControlProcedure xCert =
 			(XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(
 							XOX_CertificationPathControlProcedure.class, _arg);
-		if(xCert == null)
-			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificationPathControlProcedure = xCert;
-		
+		if(xCert != null) {
+			m_xoxCertificationPathControlProcedure = xCert;
+			return;
+		}
+		else {
+			XOX_CertificateComplianceControlProcedure xCert1 =
+				(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
+						XOX_CertificateComplianceControlProcedure.class, _arg);
+			
+			if(xCert1 != null) {
+				m_xoxCertificateComplianceControlProcedure = xCert1;
+				return;
+			}
+		}
+		throw(new com.sun.star.lang.IllegalArgumentException());
 	}
 
 	/* (non-Javadoc)
@@ -542,8 +557,22 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				else
 					m_aNotCriticalExtensions.put(aTheOID, aext);					
 			}
-			m_aRegAcc.dispose();	
-			
+			m_aRegAcc.dispose();
+//now check the certificate for the compliance
+			if(m_xoxCertificateComplianceControlProcedure != null) {
+				XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
+				if(xCtl != null) {
+					try {
+						//FIXME
+						//add the result to the certificate status
+						m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(xCtl);
+					} catch (IllegalArgumentException e) {
+						m_aLogger.severe(e);
+					} catch (Exception e) {
+						m_aLogger.severe(e);
+					}
+				}
+			}
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
@@ -884,6 +913,30 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, arg0);
 		if(xCert == null)
 			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificationPathControlProcedure = arg0;
+		m_xoxCertificationPathControlProcedure = xCert;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateComplianceControl()
+	 */
+	@Override
+	public XOX_CertificateComplianceControlProcedure getCertificateComplianceControl() {
+		return m_xoxCertificateComplianceControlProcedure;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateComplianceControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure)
+	 */
+	@Override
+	public void setCertificateComplianceControlObject(
+			XOX_CertificateComplianceControlProcedure arg0)
+			throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		XOX_CertificateComplianceControlProcedure xCert = (XOX_CertificateComplianceControlProcedure)
+		UnoRuntime.queryInterface(XOX_CertificateComplianceControlProcedure.class, arg0);
+		if(xCert == null)
+			throw(new com.sun.star.lang.IllegalArgumentException());
+		m_xoxCertificateComplianceControlProcedure = xCert;
+		
 	}
 }
