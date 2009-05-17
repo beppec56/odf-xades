@@ -556,12 +556,17 @@ public class DialogCertTreeBase extends BasicDialog implements
 			if(aCtritExt != null) {
 				//then there are extension marked critical
 				//add the main node
-				//FIXME:
 				//the root node for extensions should see for the aggregate state of all
 				//the critical extensions
+				int aggregateState = 0;
+				for(int i=0; i<aCtritExt.length;i++) {
+					int temp = _aCertif.getCertificateExtensionErrorState(aCtritExt[i]);
+					if(temp > aggregateState)
+						aggregateState = temp;
+				}
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
 							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension,
-							m_sCertificateElementGraphicName[CertificateExtensionState.OK_value]);
+							m_sCertificateElementGraphicName[aggregateState]);
 				for(int i=0; i<aCtritExt.length;i++) {
 					addVariablePitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
 							_aCertif.getCertificateExtensionName(aCtritExt[i]),
@@ -582,9 +587,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 				//FIXME:
 				//the root node for extensions should see for the aggregate state of all
 				//the NOT critical extensions
+				int aggregateState = 0;
+				for(int i=0; i<aNotCtritExt.length;i++) {
+					int temp = _aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]);
+					if(temp > aggregateState)
+						aggregateState = temp;
+				}
 				XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
 							TreeNodeType.EXTENSIONS_NON_CRITICAL, m_sLabelNotCritExtension,
-							m_sCertificateElementGraphicName[CertificateExtensionState.OK_value]);
+							m_sCertificateElementGraphicName[aggregateState]);
 				for(int i=0; i<aNotCtritExt.length;i++) {
 					if(aNotCtritExt[i].equalsIgnoreCase("2.5.29.14") ||
 							aNotCtritExt[i].equalsIgnoreCase("2.5.29.35")) 
@@ -626,6 +637,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		aCert.initialize();
 		addOneFakeCertificateToTreeRootHelper(aCert);
 	}
+
 	protected XMutableTreeNode addOneFakeCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
 		//connect it to the right dialog pane
 		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
@@ -651,6 +663,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
+	//////////////////////////
 	private XMutableTreeNode addMultilineTreeElementHelper(XMutableTreeNode _Node, MultilineTreeElementBase _aElm, String _sLabel) {
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
 		if(_aElm.getNodeGraphic() != null)
@@ -667,30 +680,40 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;		
 	}
 
+	//////////////////////////
 	private XMutableTreeNode addFixedPitchTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents) {
 		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
+	//////////////////////////
 	private XMutableTreeNode addFixedPitchExtensionTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
 		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeGraphic(
+				m_sCertificateElementGraphicName[_nExtensionState]);
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
+
+	//////////////////////////
 	private XMutableTreeNode addVariablePitchTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents) {
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
+	//////////////////////////
 	private XMutableTreeNode addVariablePitchExtensionTreeElement(XMutableTreeNode _Node, 
 							TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
+		aElem.setNodeGraphic(
+				m_sCertificateElementGraphicName[_nExtensionState]);
 		aElem.setNodeType(_aType);
 		return addMultilineTreeElementHelper(_Node, aElem, _sLabel);
 	}
 
+	//////////////////////////
 	private XMutableTreeNode addEmptyDataTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sGraphic) {
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);
 		xaCNode.setDataValue(null);

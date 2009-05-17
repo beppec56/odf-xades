@@ -168,6 +168,12 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		long getCertificateExtensionErrorState( [in] string oid ) ;
 
+		/** Set the error state of an extension, in value of
+		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value
+		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
+		*/
+		void setCertificateExtensionErrorState( [in] string oid, [in] long newState) ;
+
 		/** verify the Certificate Revocation List state of this 
 		 certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificateState field will have the result.</p>

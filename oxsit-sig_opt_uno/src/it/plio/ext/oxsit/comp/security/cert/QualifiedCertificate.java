@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
@@ -159,6 +160,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	private HashMap<String,X509Extension>	m_aCriticalExtensions = new HashMap<String, X509Extension>(20);
 	//the hash map of all the non critical extensions
 	private HashMap<String,X509Extension>	m_aNotCriticalExtensions = new HashMap<String, X509Extension>(20);
+	//Hashmap of the extension or oid state
+	private Hashtable<String,Integer>	m_aExtensionStates = new Hashtable<String, Integer>(20);
 
 	private boolean m_bIsFromUI;
 
@@ -734,25 +737,35 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionErrorState(java.lang.String)
 	 */
 	@Override
-	public int getCertificateExtensionErrorState(String arg0) {
-		// TODO Auto-generated method stub
+	public int getCertificateExtensionErrorState(String _oid) {
+		Integer aInt = m_aExtensionStates.get(_oid);
+		if(aInt != null)
+			return aInt.intValue();
 		return CertificateExtensionState.OK_value;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateExtensionErrorState(java.lang.String, int)
+	 */
+	@Override
+	public void setCertificateExtensionErrorState(String _oid, int arg1) {
+		m_aExtensionStates.put(_oid, new Integer(arg1));		
+	}
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionName(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionName(String _aOID) {
-		return m_aExtensionLocalizedNames.get(_aOID);
+	public String getCertificateExtensionName(String _oid) {
+		return m_aExtensionLocalizedNames.get(_oid);
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionStringValue(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionStringValue(String _aOID) {
-		return m_aExtensionDisplayValues.get(_aOID);
+	public String getCertificateExtensionStringValue(String _oid) {
+		return m_aExtensionDisplayValues.get(_oid);
 	}
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionOIDs()
