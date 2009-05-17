@@ -1,0 +1,70 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceControlProcedure_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceControlProcedure_idl__
+
+#include <com/sun/star/lang/XComponent.idl>
+#include <com/sun/star/uno/Exception.idl>
+#include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/uno/XComponentContext.idl> 
+#include <com/sun/star/frame/XFrame.idl>
+#include "CertificateState.idl"
+
+  module it { module plio { module ext { module oxsit { module security { module cert {
+
+/** Interface of a Qualified X509 Certificate
+<p>The certificate accessed through this interface can only be created in two ways:</p>
+<p>by instantiating an AvailableSSCDs service and callig the scanDevices() method of its
+XOX_AvailableSSCDs interface or</p>
+<p>by opening an ODF document that contains one it it in its XAdES signature.</p>
+<p>See service QualifiedCertificate for details.</p>
+ */
+	interface XOX_CertificateComplianceControlProcedure
+	{
+		/** the state of the CA (certificate Authority) control.
+		This in in the form of an enumeration, the one defined for Certification state
+	 	*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificationAuthorityState;
+
+		/** control the certification path of the UNO component passed as a parameter.
+			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
+			for executing the function. 
+		  */
+		it::plio::ext::oxsit::security::cert::CertificateState
+			verifyCertificateCertificateCompliance([in] com::sun::star::lang::XComponent xCertificate)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+		/**
+		Called from configuration UI dialog.
+		<p>It's meant to perform initialization for the special service implmenting the interface,
+		since behavior can change from a checker to another.</p>
+		<p>the passed frame and context are the one of the calling object, that is the ones to
+		be used to instantiate the dialog boxes needed for parameter editing</p>
+		*/
+		void	configureOptions([in] com::sun::star::frame::XFrame arg0, 
+							[in] com::sun::star::uno::XComponentContext arg1);
+	} ;
+
+  }; }; }; }; };  };
+ 
+#endif
