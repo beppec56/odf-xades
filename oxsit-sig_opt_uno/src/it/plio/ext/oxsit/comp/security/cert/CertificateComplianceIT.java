@@ -27,71 +27,58 @@
 
 package it.plio.ext.oxsit.comp.security.cert;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
+import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
+import org.bouncycastle.asn1.x509.X509Name;
 
-import com.sun.star.beans.Property;
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XProperty;
-import com.sun.star.beans.XPropertyAccess;
-import com.sun.star.beans.XPropertySetInfo;
-import com.sun.star.container.ElementExistException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameContainer;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
-import com.sun.star.lang.XTypeProvider;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.lib.uno.helper.WeakAdapter;
-import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.uno.Any;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
-import com.sun.star.uno.XWeak;
-import com.sun.star.util.DateTime;
-import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XChangesNotifier;
 
 /**
  *  This service implements the CertificateComplianceIT service, used to check the
  *  certificate for compliance on Italian law.
+ *  
+ *  The conformance will be checked for the certificate dates, certificate configuration
+ *  and for extension  that are mandatori according to the following criteria/Norms,
+ *  listed in ascending order, the precedence order is from top to below:
+ *  - Deliberazione CNIPA del 17 febbraio 2005 n 4
+ *  - ETSI TS 102 280 V1.1.1
+ *  - ETSI TS 101 862 V1.3.2
  *  
  * @author beppec56
  *
@@ -111,6 +98,11 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 
 	protected DynamicLogger m_aLogger;
 
+	protected XOX_QualifiedCertificate m_xQc;
+
+	private CertificateState m_aCertificateState;
+    private java.security.cert.X509Certificate m_JavaCert = null;
+
 	/**
 	 * 
 	 * 
@@ -118,7 +110,8 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 */
 	public CertificateComplianceIT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
- //   	m_aLogger.enableLogging();
+//
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
 
@@ -215,12 +208,11 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificationAuthorityState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateState()
 	 */
 	@Override
-	public CertificateState getCertificationAuthorityState() {
-		// TODO Auto-generated method stub
-		return null;
+	public CertificateState getCertificateState() {
+		return m_aCertificateState;
 	}
 
 	/* (non-Javadoc)
@@ -230,54 +222,152 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	public CertificateState verifyCertificateCertificateCompliance(
 			XComponent arg0) throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
-		XOX_QualifiedCertificate xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
-		if(xQc == null)
+		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
-		//convert the certificate to java internal rapresentation
-        java.security.cert.X509Certificate javaCert = null;
+		m_aCertificateState = CertificateState.OK;
+		//convert the certificate to java internal representation
         java.security.cert.CertificateFactory cf;
 		try {
 			cf = java.security.cert.CertificateFactory.getInstance("X.509");
 			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(xQc.getDEREncoded());
-            javaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
-			int tempState = CertificateExtensionState.OK_value;
-			if(!isKeyUsageNonRepudiationCritical(javaCert))
-				tempState =  CertificateExtensionState.INVALID_value;
-			xQc.setCertificateExtensionErrorState(X509Extensions.KeyUsage.getId(), tempState);
+            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
+            //check for version, if version is not 3, exits, certificate cannot be used
+            if(m_JavaCert.getVersion() != 3) {
+    			m_xQc.setCertificateExtensionErrorState("Version", CertificateElementState.INVALID_value);			
+    			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+            	return m_aCertificateState;
+            }
+			//check for validity date
+			try {
+/*				//test for date information
+				//not yet valid
+				GregorianCalendar aCal = new GregorianCalendar(2008,12,12);
+				//expired
+				GregorianCalendar aCal = new GregorianCalendar(2019,12,12);
+				m_JavaCert.checkValidity(aCal.getTime());*/
+				m_JavaCert.checkValidity();
+			} catch (CertificateExpiredException e) {
+				m_xQc.setCertificateExtensionErrorState("NotValidAfter", CertificateElementState.INVALID_value);
+				setCertificateStateHelper(CertificateState.EXPIRED);
+			} catch (CertificateNotYetValidException e) {
+				m_xQc.setCertificateExtensionErrorState("NotValidBefore", CertificateElementState.INVALID_value);
+				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
+			}
+
+			//check the KeyUsage extension
+			int tempState = CertificateElementState.OK_value;
+			if(!isKeyUsageNonRepudiationCritical(m_JavaCert)) {
+				tempState =  CertificateElementState.INVALID_value;
+				setCertificateStateHelper(CertificateState.ERROR_IN_EXTENSION);
+			}
+			m_xQc.setCertificateExtensionErrorState(X509Extensions.KeyUsage.getId(), tempState);
 		} catch (CertificateException e) {
 			m_aLogger.severe(e);
-			throw (new Exception(" wrapped exception: "));		
+			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
 		}
 
-//convert to BC rapresentation		
-/*		ByteArrayInputStream as = new ByteArrayInputStream(xQc.getDEREncoded()); 
+//convert to BC representation		
+		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado = null;
 		try {
 			ado = aderin.readObject();
 			X509CertificateStructure x509Str = new X509CertificateStructure((ASN1Sequence) ado);
-			//check the key usage function
-			int tempState = CertificateExtensionState.OK_value;
-			if(!isKeyUsageNonRepudiationCritical(x509Str))
-				tempState =  CertificateExtensionState.INVALID_value;
-			xQc.setCertificateExtensionErrorState(X509Extensions.KeyUsage.getId(), tempState);
+			//check issuer field for conformance
+			TBSCertificateStructure xTBSCert = x509Str.getTBSCertificate();
 			
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			m_aLogger.severe(e);
-			throw (new Exception(" wrapped exception: "));
-		}*/
+			if(!isIssuerIdOk(xTBSCert)) {
+				m_xQc.setCertificateExtensionErrorState("IssuerName", CertificateElementState.INVALID_value);
+				setCertificateStateHelper(CertificateState.NOT_CONSISTENT);
+			}
+	
+			//check if qcStatements are present
+			if(!hasQcStatements(xTBSCert)) {
+				m_xQc.setCertificateExtensionErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
+				setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+				return m_aCertificateState;
+			}
 
-		return null;
+			//check if either one of IssuerUniqueID or SubjectUniqueID is present
+			//ETSI 102 280 5.3
+			if(!isOKUniqueIds(xTBSCert)) {
+				setCertificateStateHelper(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID);
+				return m_aCertificateState;
+			}
+
+		} catch (java.io.IOException e) {
+			m_aLogger.severe(e);
+			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
+		} catch (java.lang.Exception e) {
+			m_aLogger.severe(e);
+			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
+		}
+		return m_aCertificateState;
 	}
 
+	/**
+	 * @param cert
+	 * @return
+	 */
+	private boolean isOKUniqueIds(TBSCertificateStructure cert) {
+		//check if either one of IssuerUniqueID or SubjectUniqueID is present
+		//ETSI 102 280 5.3
+		DERString isUid = cert.getIssuerUniqueId();
+		DERString isSid = cert.getSubjectUniqueId();
+		if(isUid == null && isSid == null)
+			return true;
+		m_aLogger.log("detected spurious IssuerUniqueID od SubjectUniqueID");
+		return false;
+	}
+
+	/**
+	 * check for priority of certificate state and set it accordingly
+	 * @param _newState
+	 */
+	private void setCertificateStateHelper(CertificateState _newState) {
+		if(Helpers.mapCertificateStateToValue(_newState) >
+		Helpers.mapCertificateStateToValue(m_aCertificateState))
+			m_aCertificateState = _newState;
+	}
   
     /**
+	 * @param _TbsC 
+     * @return
+	 */
+	private boolean isIssuerIdOk(TBSCertificateStructure _TbsC) {
+		//check if issuer element has both organizationName and countryName
+		boolean isOk = false;
+		//the CNIPA requirement are identical to
+		//ETSI 102 280 and ETSI 101 862 requirements
+		Vector<DERObjectIdentifier> oidv =  _TbsC.getIssuer().getOIDs();
+		if(oidv.contains(X509Name.O) && 		//organizationName
+				oidv.contains(X509Name.C))		//countryName
+			isOk = true;
+		return isOk;
+	}
+
+	/**
+	 * check if qcStatements are present as per ETSI 
+	 * @param _TbsC 
+	 * @return
+	 */
+	private boolean hasQcStatements(TBSCertificateStructure _TbsC) {
+		// TODO Auto-generated method stub
+		//first check for CNIPA requirement
+		//then check for ETSI 102 280 requirements
+		//then check for ETSI 101 862
+		return false;
+	}
+
+	/**
      * checks Key Usage constraints of a java certificate.
      *
-     * @param javaCert
+     * @param m_JavaCert
      *            the certificate to check as java object.
      * @return true if the given certificate has a KeyUsage extension of 'non
      *         repudiation' (OID: 2.5.29.15) marked as critical.
@@ -289,7 +379,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
         boolean isNonRepudiationPresent = false;
         boolean isKeyUsageCritical = false;
 
-        Set oids = javaCert.getCriticalExtensionOIDs();
+        Set<String> oids = javaCert.getCriticalExtensionOIDs();
         if (oids != null) {
             // check presence between critical extensions of oid:2.5.29.15
             // (KeyUsage)

@@ -20,20 +20,20 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_CertificateExtensionState_idl__
-#define __it_plio_ext_oxsit_security_cert_CertificateExtensionState_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_CertificateElementState_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificateElementState_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** State of a Certificate, for graphic display.
 <p>The lower, the better, meaning that the code nearer to LAST_STATE is the worst</p>
  */
-	enum CertificateExtensionState
+	enum CertificateElementState
 	{
-		/** the certificate extension was not verified yet
+		/** the certificate element was not verified yet
 		 */
 		NOT_VERIFIED,
-		/** the certificate extension was verified ok
+		/** the certificate element was verified ok
 		 */
 		OK,
 		/** 

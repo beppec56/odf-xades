@@ -43,11 +43,19 @@ XOX_AvailableSSCDs interface or</p>
  */
 	interface XOX_QualifiedCertificate 
 	{
+		/** the DER encoded form of the certificate.
+		 */
+		[attribute] sequence< byte > DEREncoded ;
 		/** the state of the certificate, for graphic display.
 	 	*/
 		[attribute, readonly] long CertificateGraficStateValue;
-		/** the state of the certificate.
+		/** the state of the certificate, for general and string indications.
+		<p>It's an integer in the form of <type scope="it::plio::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
+		not the enum (e.g. CertificateState.OK_value).</p>
+		
 	 	*/
+		/* @see it::plio::ext::module::oxsit::security::cert::CertificateState
+		*/
 		[attribute, readonly] long CertificateState;
 		/** the state of the CA (certificate Authority) control.
 	 	*/
@@ -90,24 +98,6 @@ XOX_AvailableSSCDs interface or</p>
 		/** the validity NotAfter date attribute of the certificate.
 		 */
 		[attribute, readonly] string NotValidAfter ;
-		/** the human readable rapresentation of the issuer unique ID attribute of the certificate.
-		 */
-		[attribute, readonly] string IssuerUniqueID ;
-		/** the human readable rapresentation of the subject unique ID attribute of the certificate.
-		 */
-		[attribute, readonly] string SubjectUniqueID ;
-		/** all extensions of a certificate.
-		 */
-		[attribute, readonly] sequence< XOX_CertificateExtension > Extensions ;
-		/** all critical extensions of a certificate.
-		 */
-		[attribute, readonly] sequence< XOX_CertificateExtension > CriticalExtensions ;
-		/** all non critical extensions of a certificate.
-		 */
-		[attribute, readonly] sequence< XOX_CertificateExtension > NonCriticalExtensions ;
-		/** the DER encoded form of the certificate.
-		 */
-		[attribute] sequence< byte > DEREncoded ;
 		/** the human readable rapresentation of the algorithm of the subject public key
 		 */
 		[attribute, readonly] string SubjectPublicKeyAlgorithm;
@@ -145,12 +135,12 @@ XOX_AvailableSSCDs interface or</p>
 		/** Returns all the critical extensions.
 		<p></p>
 		*/
-		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCriticalCertificateExtensions();
+		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCriticalExtensions();
 
 		/** Returns all the Not critical extensions.
 		<p></p>
 		*/
-		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCertificateExtensions();
+		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getNotCriticalExtensions();
 
 		/** Find the localized name of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
@@ -165,8 +155,10 @@ XOX_AvailableSSCDs interface or</p>
 		/** Returns the error state of an extension, in value of
 		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
+		<p>For the certificate item that don't have an OID, use the certificate element name; for example IssuerName will
+		return the state of the check performed on issuerName element of TBSCertificate</p> 
 		*/
-		long getCertificateExtensionErrorState( [in] string oid ) ;
+		long getCertificateElementErrorState( [in] string oid ) ;
 
 		/** Set the error state of an extension, in value of
 		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value

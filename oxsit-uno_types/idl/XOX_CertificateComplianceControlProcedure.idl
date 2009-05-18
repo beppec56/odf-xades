@@ -41,10 +41,11 @@ XOX_AvailableSSCDs interface or</p>
  */
 	interface XOX_CertificateComplianceControlProcedure
 	{
-		/** the state of the CA (certificate Authority) control.
-		This in in the form of an enumeration, the one defined for Certification state
+		/** the state of the certificate.
+		<p>This in in the form of an enumeration, the one defined for Certification state</p>
+		It can be read to asses the certificate state at the end of control
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificationAuthorityState;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState;
 
 		/** control the certification path of the UNO component passed as a parameter.
 			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
@@ -59,7 +60,7 @@ XOX_AvailableSSCDs interface or</p>
 		<p>It's meant to perform initialization for the special service implmenting the interface,
 		since behavior can change from a checker to another.</p>
 		<p>the passed frame and context are the one of the calling object, that is the ones to
-		be used to instantiate the dialog boxes needed for parameter editing</p>
+		be used to instantiate the dialog boxes needed for parameters editing</p>
 		*/
 		void	configureOptions([in] com::sun::star::frame::XFrame arg0, 
 							[in] com::sun::star::uno::XComponentContext arg1);

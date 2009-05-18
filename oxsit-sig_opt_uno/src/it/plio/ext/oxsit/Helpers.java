@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import com.sun.star.beans.*;
@@ -55,7 +56,33 @@ import java.util.*;
 public class Helpers {
 	protected Helpers() {
 	}
-	
+
+	public static int mapCertificateStateToValue(CertificateState _theState) {
+		if(_theState == CertificateState.NOT_VERIFIABLE)
+			return CertificateState.NOT_VERIFIABLE_value;
+		if(_theState == CertificateState.NOT_YET_VERIFIED)
+			return CertificateState.NOT_YET_VERIFIED_value;
+		if(_theState == CertificateState.OK)
+			return CertificateState.OK_value;
+		if(_theState == CertificateState.EXPIRED)
+			return CertificateState.EXPIRED_value;
+		if(_theState == CertificateState.REVOKED)
+			return CertificateState.REVOKED_value;
+		if(_theState == CertificateState.NOT_ACTIVE)
+			return CertificateState.NOT_ACTIVE_value;
+		if(_theState == CertificateState.NOT_CONSISTENT)
+			return CertificateState.NOT_CONSISTENT_value;
+		if(_theState == CertificateState.ERROR_IN_EXTENSION)
+			return CertificateState.ERROR_IN_EXTENSION_value;
+		if(_theState == CertificateState.MISSING_EXTENSION)
+			return CertificateState.MISSING_EXTENSION_value;
+		if(_theState == CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID)
+			return CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value;
+		if(_theState == CertificateState.MALFORMED_CERTIFICATE)
+			return CertificateState.MALFORMED_CERTIFICATE_value;
+		return -1;
+	}
+
 	/** Return the hex hash code of an object.
 	 * 
 	 * @param _oObj the object to be examined

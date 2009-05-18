@@ -29,33 +29,50 @@
  */
 	enum CertificateState
 	{
-		/** the certificate was verified, it's ok.
-		 */
-		OK, 
-		/** the certificate has expired.
-		 */
-		EXPIRED, 
-		/** the certificate was revoked.
-		 */
-		REVOKED, 
-		/** the certificate is not yet active.
-		 */
-		NOT_ACTIVE, 
-		/** the certificate is not consistent with the Italian standard.
-		 */
-		NOT_CONSISTENT, 
- 
-		/** the certificate cannot be verified.
+		/** The certificate cannot be verified.
 		 */
 		NOT_VERIFIABLE, 
  
-		/** the certificate was not verified.
+		/** The certificate was not verified.
 		 */
 		NOT_YET_VERIFIED,
+
+		/** The certificate was verified, it's ok.
+		 */
+		OK,
+		/** The certificate has expired.
+		 */
+		EXPIRED, 
+		/** The certificate was revoked.
+		 */
+		REVOKED, 
+		/** The certificate is not yet active.
+		 */
+		NOT_ACTIVE, 
+		/** The certificate is not consistent with the Italian standard.
+		 */
+		NOT_CONSISTENT, 
+ 
+		/** The certificate has some extension in a state not as required by
+		compliance.
+		*/
+		ERROR_IN_EXTENSION,
+
+		/** The certificate is malformed, internal structure seems broken.
+		*/
+		MISSING_EXTENSION,
+
+		/** The certificate is malformed, internal does not conform to the requests.
+		*/
+		CORE_CERTIFICATE_ELEMENT_INVALID,
+
+		/** The certificate is malformed, internal structure seems broken.
+		*/
+		MALFORMED_CERTIFICATE,
+
 		/** Last state (maximum state).
 		*/
 		LAST_STATE
- 
 	}; 
  
   }; }; }; }; };  };

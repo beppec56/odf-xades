@@ -8,7 +8,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
+import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
@@ -112,7 +112,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	//certificate graphic path holders
 	protected String			m_sSSCDeviceElement;
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
-	private String[] 			m_sCertificateElementGraphicName = new String[CertificateExtensionState.LAST_STATE_value];
+	private String[] 			m_sCertificateElementGraphicName = new String[CertificateElementState.LAST_STATE_value];
 
 	private String 				sSignatureInvalid2;
 	///////////// end of graphic name string
@@ -170,13 +170,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sCertificateValidityGraphicName[CertificateGraphicDisplayState.MARKED_TO_BE_REMOVED_value]
 			                                  	= m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING +aSize;
 //the certificate elements graphic name string
-			m_sCertificateElementGraphicName[CertificateExtensionState.NOT_VERIFIED_value] = "";
-			m_sCertificateElementGraphicName[CertificateExtensionState.OK_value] = "";
-			m_sCertificateElementGraphicName[CertificateExtensionState.BROKEN_value] =
+			m_sCertificateElementGraphicName[CertificateElementState.NOT_VERIFIED_value] = "";
+			m_sCertificateElementGraphicName[CertificateElementState.OK_value] = "";
+			m_sCertificateElementGraphicName[CertificateElementState.BROKEN_value] =
 								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_BROKEN +aSize;
-			m_sCertificateElementGraphicName[CertificateExtensionState.WARNING_value] =
+			m_sCertificateElementGraphicName[CertificateElementState.WARNING_value] =
 								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_WARNING +aSize;
-			m_sCertificateElementGraphicName[CertificateExtensionState.INVALID_value] =
+			m_sCertificateElementGraphicName[CertificateElementState.INVALID_value] =
 								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
 		}
 		else
@@ -528,15 +528,19 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		//now add the rest of the data
 		//add the version
-		addVariablePitchTreeElement(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion());		
+		addVariablePitchTreeElementAndState(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion(),
+				_aCertif.getCertificateElementErrorState("Version"));		
 		//add the serial number
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,_aCertif.getSerialNumber());
 		//add the issuer full description		
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName());
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName(),
+				_aCertif.getCertificateElementErrorState("IssuerName"));
 		//add the not valid before
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore());
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore(),
+				_aCertif.getCertificateElementErrorState("NotValidBefore"));
 		//add the not valid after
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter());
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter(),
+				_aCertif.getCertificateElementErrorState("NotValidAfter"));
 		//add the subject
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,_aCertif.getSubjectName());
 		//add the subject signature algorithm
@@ -560,7 +564,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				//the critical extensions
 				int aggregateState = 0;
 				for(int i=0; i<aCtritExt.length;i++) {
-					int temp = _aCertif.getCertificateExtensionErrorState(aCtritExt[i]);
+					int temp = _aCertif.getCertificateElementErrorState(aCtritExt[i]);
 					if(temp > aggregateState)
 						aggregateState = temp;
 				}
@@ -568,10 +572,10 @@ public class DialogCertTreeBase extends BasicDialog implements
 							TreeNodeType.EXTENSIONS_CRITICAL,m_sLabelCritExtension,
 							m_sCertificateElementGraphicName[aggregateState]);
 				for(int i=0; i<aCtritExt.length;i++) {
-					addVariablePitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
+					addVariablePitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
 							_aCertif.getCertificateExtensionName(aCtritExt[i]),
 							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]),
-							_aCertif.getCertificateExtensionErrorState(aCtritExt[i]));
+							_aCertif.getCertificateElementErrorState(aCtritExt[i]));
 				}
 			}
 		} catch (Exception e) {
@@ -589,7 +593,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				//the NOT critical extensions
 				int aggregateState = 0;
 				for(int i=0; i<aNotCtritExt.length;i++) {
-					int temp = _aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]);
+					int temp = _aCertif.getCertificateElementErrorState(aNotCtritExt[i]);
 					if(temp > aggregateState)
 						aggregateState = temp;
 				}
@@ -599,15 +603,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 				for(int i=0; i<aNotCtritExt.length;i++) {
 					if(aNotCtritExt[i].equalsIgnoreCase("2.5.29.14") ||
 							aNotCtritExt[i].equalsIgnoreCase("2.5.29.35")) 
-						addFixedPitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+						addFixedPitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
 								_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
 								_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
-								_aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]));
+								_aCertif.getCertificateElementErrorState(aNotCtritExt[i]));
 					else
-						addVariablePitchExtensionTreeElement(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
+						addVariablePitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
 							_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
 							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
-							_aCertif.getCertificateExtensionErrorState(aNotCtritExt[i]));
+							_aCertif.getCertificateElementErrorState(aNotCtritExt[i]));
 				}
 			}
 		} catch (Exception e) {
@@ -618,7 +622,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		String sPathGraph = "";
 		XOX_QualifiedCertificate xCPath = _aCertif.getCertificationPath();
 		if(xCPath == null)
-			sPathGraph = m_sCertificateElementGraphicName[CertificateExtensionState.INVALID_value];
+			sPathGraph = m_sCertificateElementGraphicName[CertificateElementState.INVALID_value];
 		else {
 			//set to the value of the certificate found
 			sPathGraph = m_sCertificateValidityGraphicName[xCPath.getCertificateGraficStateValue()];			
@@ -688,7 +692,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	//////////////////////////
-	private XMutableTreeNode addFixedPitchExtensionTreeElement(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
+	private XMutableTreeNode addFixedPitchTreeElementAndState(XMutableTreeNode _Node, TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
 		FixedFontPitchTreeElement aElem = new FixedFontPitchTreeElement(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeGraphic(
 				m_sCertificateElementGraphicName[_nExtensionState]);
@@ -704,7 +708,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	//////////////////////////
-	private XMutableTreeNode addVariablePitchExtensionTreeElement(XMutableTreeNode _Node, 
+	private XMutableTreeNode addVariablePitchTreeElementAndState(XMutableTreeNode _Node, 
 							TreeNodeType _aType, String _sLabel, String _sContents, int _nExtensionState) {
 		MultilineTreeElementBase aElem = new MultilineTreeElementBase(m_xContext, m_xMCF, _sContents, m_xDlgContainer.getControl( m_sMultilineText ));
 		aElem.setNodeGraphic(

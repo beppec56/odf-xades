@@ -392,10 +392,7 @@ public class AvailableSSCDs extends ComponentBase
 								//first the certificate compliance control
 								//
 								Object oACCObj = m_MCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
-/*								XOX_CertificateComplianceControlProcedure xCCPP =
-									(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
-											XOX_CertificateComplianceControlProcedure.class, oACCObj);*/
-								
+
 								//prepare objects for subordinate service
 								Object[] aArguments = new Object[3];
 //								byte[] aCert = cert.getEncoded();

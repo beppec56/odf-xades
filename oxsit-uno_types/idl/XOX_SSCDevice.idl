@@ -27,8 +27,10 @@
 
   module it { module plio { module ext { module oxsit { module security {
 
-	/** this interface represents the main interface to describe
-	  the available SSCD devices on system.
+	/** this interface represents the main interface to hold data
+	  of a single SSCD element on system (called token).
+	  <p>The attributes described here can be retrieved using getters, for example the QualifiedCertificates attribute can be retrieved using:</p>
+	  <p>getQualifiedCertificates(), which returns a sequence of XOX_QualifiedCertificate objects.</p>
 	  <p>It needs to be expanded</p>
 	 */
   interface XOX_SSCDevice
@@ -37,15 +39,15 @@
 		*/
 		[attribute] string Description;
 
-		/**
+		/** name of the manufacturer
 		*/
 		[attribute] string Manufacturer;
 
-		/**
+		/** the returned ATR code, (if this is a smart card, to be seen when it's something else)
 		*/
 		[attribute] string ATRcode;
 
-		/**
+		/** the low level crypto library used
 		*/
 		[attribute] string CryptoLibraryUsed;
 
@@ -57,15 +59,8 @@
 		*/
 		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> QualifiedCertificates;
 
-		/** this document id
+		/** Adds a certificate to the list of certificates available on this token.
 		*/
-//		[attribute] string DocumentId;
-
-		/** This method will return all the certificate available on this token.
-		*/
-//		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;
-//		sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> getQualifiedCertificates();
-
 		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate aCertificate);
   };
  

@@ -29,7 +29,7 @@ import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateExtensionState;
+import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
@@ -138,13 +138,9 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private String m_sSignatureAlgorithm = "";
 
-	private String m_sIssuerUniqueID = "";
-
 	private String m_sMD5Thumbprint = "";
 
 	private String m_sSHA1Thumbprint = "";
-
-	private String m_sSubjectUniqueID = "";
 
 	private Locale m_lTheLocale;
 
@@ -336,14 +332,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerUniqueID()
-	 */
-	@Override
-	public String getIssuerUniqueID() {
-		return m_sIssuerUniqueID;
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getMD5Thumbprint()
 	 */
 	@Override
@@ -400,14 +388,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectUniqueID()
-	 */
-	@Override
-	public String getSubjectUniqueID() {
-		return m_sSubjectUniqueID;
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCAForCertificate()
 	 */
 	@Override
@@ -446,33 +426,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public XOX_QualifiedCertificate getCertificationPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getExtensions()
-	 */
-	@Override
-	public XOX_CertificateExtension[] getExtensions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalExtensions()
-	 */
-	@Override
-	public XOX_CertificateExtension[] getCriticalExtensions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNonCriticalExtensions()
-	 */
-	@Override
-	public XOX_CertificateExtension[] getNonCriticalExtensions() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -634,7 +587,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	protected String initCertDate(Date _aTime) {
 		//force UTC time
 		TimeZone gmt = TimeZone.getTimeZone("UTC");
-		Calendar calendar = new GregorianCalendar(gmt,m_lTheLocale);
+		GregorianCalendar calendar = new GregorianCalendar(gmt,m_lTheLocale);
 		calendar.setTime(_aTime);	
 //string with time only
 //the locale should be the one of the extension not the Java one.
@@ -734,14 +687,14 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	///////////////// area for extension display management
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionErrorState(java.lang.String)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateElementErrorState(java.lang.String)
 	 */
 	@Override
-	public int getCertificateExtensionErrorState(String _oid) {
+	public int getCertificateElementErrorState(String _oid) {
 		Integer aInt = m_aExtensionStates.get(_oid);
 		if(aInt != null)
 			return aInt.intValue();
-		return CertificateExtensionState.OK_value;
+		return CertificateElementState.OK_value;
 	}
 
 	/* (non-Javadoc)
@@ -829,10 +782,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalCertificateExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalExtensions()
 	 */
 	@Override
-	public XOX_CertificateExtension[] getCriticalCertificateExtensions() {
+	public XOX_CertificateExtension[] getCriticalExtensions() {
 		//build all the critical extensions, returns the array
 		if(m_xCritExt == null) {
 			String[] critOIDs = getCriticalCertificateExtensionOIDs();
@@ -842,10 +795,10 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotCriticalExtensions()
 	 */
 	@Override
-	public XOX_CertificateExtension[] getCertificateExtensions() {
+	public XOX_CertificateExtension[] getNotCriticalExtensions() {
 		//build all the not critical extensions, returns the array
 		if(m_xExt == null) {
 			String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
