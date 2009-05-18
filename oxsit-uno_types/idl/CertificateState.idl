@@ -40,18 +40,22 @@
 		/** The certificate was verified, it's ok.
 		 */
 		OK,
+
 		/** The certificate has expired.
 		 */
 		EXPIRED, 
+
 		/** The certificate was revoked.
 		 */
 		REVOKED, 
+
 		/** The certificate is not yet active.
 		 */
 		NOT_ACTIVE, 
+		
 		/** The certificate is not consistent with the Italian standard.
 		 */
-		NOT_CONSISTENT, 
+		NOT_COMPLIANT, 
  
 		/** The certificate has some extension in a state not as required by
 		compliance.

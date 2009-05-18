@@ -23,14 +23,11 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 
-import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.AdjustmentEvent;
-import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.ItemEvent;
-import com.sun.star.awt.KeyEvent;
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.SpinEvent;
 import com.sun.star.awt.TextEvent;
@@ -45,7 +42,6 @@ import com.sun.star.awt.XFixedText;
 import com.sun.star.awt.XFocusListener;
 import com.sun.star.awt.XItemEventBroadcaster;
 import com.sun.star.awt.XItemListener;
-import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XListBox;
 import com.sun.star.awt.XSpinListener;
 import com.sun.star.awt.XTextComponent;
@@ -57,7 +53,6 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.ExpandVetoException;
 import com.sun.star.awt.tree.TreeExpansionEvent;
 import com.sun.star.awt.tree.XTreeExpansionListener;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XIndexContainer;
@@ -67,7 +62,6 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFramesSupplier;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
-import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
@@ -83,7 +77,7 @@ import com.sun.star.uno.XComponentContext;
  */
 
 public class BasicDialog implements XTextListener, XSpinListener, XActionListener,
-		XFocusListener, XItemListener, XAdjustmentListener, XTreeExpansionListener, XKeyListener {
+		/*XFocusListener,*/ XItemListener, XAdjustmentListener, XTreeExpansionListener /*, XKeyListener*/ {
 
 	protected XComponentContext							m_xContext			= null;
 	protected com.sun.star.lang.XMultiComponentFactory	m_xMCF;
@@ -206,10 +200,10 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			// button...
 			xButton.addActionListener( _xActionListener );
 			
-			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
-							xButtonControl );
+/*			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+							xButtonControl );*/
 //			xTFWindow.addFocusListener( this );
-			xTFWindow.addKeyListener( this );			
+//			xTFWindow.addKeyListener( this );			
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -372,7 +366,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					xTFControl );
 			xTFWindow.addFocusListener( _xFocusListener );
 			xTextComponent.addTextListener( _xTextListener );
-			xTFWindow.addKeyListener( this );
+//			xTFWindow.addKeyListener( this );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
 			 * perform individual exception handling here. Possible exception
@@ -428,8 +422,8 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			XControl xFTControl = m_xDlgContainer.getControl( _sName );
 			xFixedText = (XFixedText) UnoRuntime.queryInterface( XFixedText.class,
 					xFTControl );
-			XWindow xWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
-					xFTControl );
+/*			XWindow xWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+					xFTControl );*/
 //			xWindow.addMouseListener( _xMouseListener );
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
@@ -661,8 +655,8 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 				// XToolkit xToolkit = SignatureHandler.getToolkit();
 				Object oToolkit = m_xMCF.createInstanceWithContext(
 						"com.sun.star.awt.Toolkit", m_xContext );
-				XWindowPeer xWindowParentPeer = ( (XToolkit) UnoRuntime.queryInterface(
-						XToolkit.class, oToolkit ) ).getDesktopWindow();
+/*				XWindowPeer xWindowParentPeer = ( (XToolkit) UnoRuntime.queryInterface(
+						XToolkit.class, oToolkit ) ).getDesktopWindow();*/
 				XToolkit xToolkit = (XToolkit) UnoRuntime.queryInterface( XToolkit.class,
 						oToolkit );
 				// mxReschedule = (XReschedule)
@@ -700,11 +694,11 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	public void addRoadmap(XItemListener _xItemListener, int _nPosX, int _nPosY,
 			int _nHeigh, int _nWidth, String _sLabel) {
-		XPropertySet xDialogModelPropertySet = null;
+//		XPropertySet xDialogModelPropertySet = null;
 		try {
 			String sRoadmapName = createUniqueName( m_xDlgModelNameContainer, "Roadmap" );
-			xDialogModelPropertySet = (XPropertySet) UnoRuntime.queryInterface(
-					XPropertySet.class, m_xMSFDialogModel );
+/*			xDialogModelPropertySet = (XPropertySet) UnoRuntime.queryInterface(
+					XPropertySet.class, m_xMSFDialogModel );*/
 			// Similar to the office assistants the roadmap is adjusted to the
 			// height of the dialog
 			// where a certain space is left at the bottom for the buttons...
@@ -737,8 +731,8 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			XItemEventBroadcaster xRMBroadcaster = (XItemEventBroadcaster) UnoRuntime
 					.queryInterface( XItemEventBroadcaster.class, xRMControl );
 			xRMBroadcaster.addItemListener( getRoadmapItemStateChangeListener() );
-		} catch (java.lang.Exception jexception) {
-			jexception.printStackTrace( System.out );
+		} catch (java.lang.Exception e) {
+			m_logger.severe(e);
 		}
 	}
 
@@ -803,18 +797,18 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
 	 */
-	@Override
+	/*@Override
 	public void focusGained(FocusEvent arg0) {
 //		m_aLoggerDialog.entering("focusGained, please implement on subclass!");
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
 	 */
-	@Override
+/*	@Override
 	public void focusLost(FocusEvent arg0) {
 //		m_aLoggerDialog.entering("focusLost, please implement on subclass!");
-	}
+	}*/
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
@@ -876,18 +870,18 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XKeyListener#keyPressed(com.sun.star.awt.KeyEvent)
 	 */
-	@Override
+/*	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("keyPressed, please implement on subclass! "+arg0.KeyCode);
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XKeyListener#keyReleased(com.sun.star.awt.KeyEvent)
 	 */
-	@Override
+/*	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		m_logger.entering("keyReleased, please implement on subclass! "+arg0.KeyCode);		
-	}
+	}*/
 }

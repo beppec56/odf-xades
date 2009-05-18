@@ -57,6 +57,9 @@ XOX_AvailableSSCDs interface or</p>
 		/* @see it::plio::ext::module::oxsit::security::cert::CertificateState
 		*/
 		[attribute, readonly] long CertificateState;
+		/** conditions observed in checking the certificate state
+		*/
+		[attribute, readonly] long CertificateStateConditions;
 		/** the state of the CA (certificate Authority) control.
 	 	*/
 		[attribute, readonly] long CertificationAuthorityState;

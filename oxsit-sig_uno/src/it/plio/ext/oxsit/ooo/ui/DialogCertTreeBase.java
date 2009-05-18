@@ -229,7 +229,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//inserts the control elements needed to display properties
 			//multiline text control used as a light yellow background
 					//multiline text control for details
-			Object oEdit = insertEditFieldModel(this, this,
+			Object oEdit = insertEditFieldModel(this, /*this*/null,
 							CertifTreeDlgDims.dsTextFieldColumn(),
 							CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
@@ -245,7 +245,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			insertDisplayLinesOfText();
 
 			//multiline text control for details of tree node element under selection
-			m_xDisplElementModel = insertEditFieldModel(this, this,
+			m_xDisplElementModel = insertEditFieldModel(this, /*this*/null,
 							CertifTreeDlgDims.dsTextFieldColumn(),
 							CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
@@ -630,7 +630,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 		XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
 				TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath, 
-				sPathGraph);
+				""/*sPathGraph*/);
 		
 	}
 
@@ -912,16 +912,16 @@ public class DialogCertTreeBase extends BasicDialog implements
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
 	 */
-	@Override
+/*	@Override
 	public void focusGained(FocusEvent arg0) {
 //		m_aLoggerDialog.entering("focusGained, on subclass!");
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
 	 */
-	@Override
+/*	@Override
 	public void focusLost(FocusEvent arg0) {
 //		m_aLoggerDialog.entering("focusLost, on subclass!");
-	}
+	}*/
 }

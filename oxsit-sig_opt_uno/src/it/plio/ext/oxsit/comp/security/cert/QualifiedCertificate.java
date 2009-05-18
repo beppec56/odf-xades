@@ -176,7 +176,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	public QualifiedCertificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+//
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_nCAState = CertificateAuthorityState.UNCHECKED_value;
     	m_nCertificateState = CertificateState.NOT_VERIFIABLE_value;
@@ -414,6 +415,14 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateStateConditions()
+	 */
+	@Override
+	public int getCertificateStateConditions() {
+		return 0;
+	}
+	
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityState()
 	 */
 	@Override
@@ -515,20 +524,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			}
 			m_aRegAcc.dispose();
 //now check the certificate for the compliance
-			if(m_xoxCertificateComplianceControlProcedure != null) {
-				XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
-				if(xCtl != null) {
-					try {
-						//FIXME
-						//add the result to the certificate status
-						m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(xCtl);
-					} catch (IllegalArgumentException e) {
-						m_aLogger.severe(e);
-					} catch (Exception e) {
-						m_aLogger.severe(e);
-					}
-				}
-			}
+			verifyCertificatCompliance();
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
@@ -538,6 +534,26 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	/**
 	 * 
 	 */
+	
+	protected void verifyCertificatCompliance() {
+		if(m_xoxCertificateComplianceControlProcedure != null) {
+			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
+			if(xCtl != null) {
+				try {
+					//FIXME
+					//add the result to the certificate status
+					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(xCtl);
+					m_aLogger.log("State: "+
+							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
+		}
+	}
+	
 	protected void initThumbPrints() {
 		//obtain a byte block of the entire certificate data
 		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();

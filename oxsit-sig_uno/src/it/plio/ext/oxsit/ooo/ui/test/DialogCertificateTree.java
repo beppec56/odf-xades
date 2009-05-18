@@ -231,7 +231,7 @@ public class DialogCertificateTree extends BasicDialog implements
 	//inserts the control elements needed to display properties
 	//multiline text control used as a light yellow background
 			//multiline text control for details
-			Object oEdit = insertEditFieldModel(this, this,
+			Object oEdit = insertEditFieldModel(this, /*this*/null,
 					CertifTreeDlgDims.dsTextFieldColumn(),
 					CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),
@@ -247,7 +247,7 @@ public class DialogCertificateTree extends BasicDialog implements
 			insertDisplayLinesOfText();
 
 	//multiline text control for details
-			m_xDisplElementModel = insertEditFieldModel(this, this,
+			m_xDisplElementModel = insertEditFieldModel(this, /*this*/null,
 					CertifTreeDlgDims.dsTextFieldColumn(),
 					CertifTreeDlgDims.DS_ROW_1(),
 					CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_1(),

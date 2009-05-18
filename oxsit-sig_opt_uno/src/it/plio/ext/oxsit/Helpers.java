@@ -70,8 +70,8 @@ public class Helpers {
 			return CertificateState.REVOKED_value;
 		if(_theState == CertificateState.NOT_ACTIVE)
 			return CertificateState.NOT_ACTIVE_value;
-		if(_theState == CertificateState.NOT_CONSISTENT)
-			return CertificateState.NOT_CONSISTENT_value;
+		if(_theState == CertificateState.NOT_COMPLIANT)
+			return CertificateState.NOT_COMPLIANT_value;
 		if(_theState == CertificateState.ERROR_IN_EXTENSION)
 			return CertificateState.ERROR_IN_EXTENSION_value;
 		if(_theState == CertificateState.MISSING_EXTENSION)

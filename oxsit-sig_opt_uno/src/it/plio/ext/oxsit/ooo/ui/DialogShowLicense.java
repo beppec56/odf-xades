@@ -87,7 +87,7 @@ public class DialogShowLicense extends BasicDialog {
 				// button
 				_nPosButton, ControlDims.RSC_CD_PUSHBUTTON_WIDTH, "okb", m_sOk,
 				(short) PushButtonType.OK_value );
-		Object oEdit = insertEditFieldModel( this, this, ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
+		Object oEdit = insertEditFieldModel( this, /*this*/null, ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
 						ControlDims.RSC_SP_DLG_INNERBORDER_TOP,
 						ControlDims.DLG_SHOW_LICENSE_HEIGH - ( ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 2 ),
 						ControlDims.DLG_SHOW_LICENSE_WIDTH -

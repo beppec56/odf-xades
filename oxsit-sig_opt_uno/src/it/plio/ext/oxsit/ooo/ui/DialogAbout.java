@@ -146,7 +146,7 @@ public class DialogAbout extends BasicDialog {
 				_nPosButton, ControlDims.RSC_CD_PUSHBUTTON_WIDTH, SHOW_LICENSE_PB, m_sShowLicense,
 				(short) PushButtonType.STANDARD_value );
 
-		Object oEdit = insertEditFieldModel( this, this, ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
+		Object oEdit = insertEditFieldModel( this, /*this*/null, ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
 				ControlDims.RSC_SP_DLG_INNERBORDER_TOP, ControlDims.DLG_ABOUT_HEIGH
 						- ( ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 2 ), ControlDims.DLG_ABOUT_WIDTH
 						- ControlDims.RSC_SP_DLG_INNERBORDER_LEFT

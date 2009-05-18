@@ -54,8 +54,13 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
+import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
+import org.bouncycastle.i18n.filter.TrustedInput;
 
 import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.frame.XFrame;
@@ -281,13 +286,12 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 			
 			if(!isIssuerIdOk(xTBSCert)) {
 				m_xQc.setCertificateExtensionErrorState("IssuerName", CertificateElementState.INVALID_value);
-				setCertificateStateHelper(CertificateState.NOT_CONSISTENT);
+				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
 			}
 	
 			//check if qcStatements are present
+			//the function set the error itself
 			if(!hasQcStatements(xTBSCert)) {
-				m_xQc.setCertificateExtensionErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
-				setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
 				return m_aCertificateState;
 			}
 
@@ -357,11 +361,43 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 * @return
 	 */
 	private boolean hasQcStatements(TBSCertificateStructure _TbsC) {
-		// TODO Auto-generated method stub
 		//first check for CNIPA requirement
 		//then check for ETSI 102 280 requirements
-		//then check for ETSI 101 862
-		return false;
+		//then check for ETSI 101 862		
+		//qcstatements are defined in ETSI 101 862
+		X509Extensions xExt = _TbsC.getExtensions();
+		X509Extension qcStats = xExt.getExtension(X509Extensions.QCStatements);
+
+		if(qcStats == null) {
+			//no qcStatement
+			setCertificateStateHelper(CertificateState.MISSING_EXTENSION);
+			m_aLogger.log("missing qcStatements");
+			return false;
+		}
+		int numberOfChecksOk = 4; //if this drops to zero,
+
+		//it's not marked critical
+		if(!qcStats.isCritical())
+			numberOfChecksOk--;
+
+        ASN1Sequence    dns = (ASN1Sequence)X509Extension.convertValueToObject(qcStats);
+        for(int i= 0; i<dns.size();i++) {
+            QCStatement qcs = QCStatement.getInstance(dns.getObjectAt(i));
+            if (QCStatement.id_etsi_qcs_QcCompliance.equals(qcs.getStatementId()))
+            	numberOfChecksOk--;
+            if(QCStatement.id_etsi_qcs_QcSSCD.equals(qcs.getStatementId()))
+            	numberOfChecksOk--;
+            if(QCStatement.id_etsi_qcs_RetentionPeriod.equals(qcs.getStatementId()))
+            	numberOfChecksOk--;
+        }
+
+        if(numberOfChecksOk != 0) {
+			m_xQc.setCertificateExtensionErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
+			setCertificateStateHelper(CertificateState.ERROR_IN_EXTENSION);
+			return false;
+        }
+		
+		return true;
 	}
 
 	/**
