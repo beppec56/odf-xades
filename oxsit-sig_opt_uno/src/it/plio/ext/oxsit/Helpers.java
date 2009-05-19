@@ -57,6 +57,34 @@ public class Helpers {
 	protected Helpers() {
 	}
 
+	public static CertificateState mapCertificateStateToEnum(int _theState) {
+		switch(_theState) {
+		default:
+		case CertificateState.NOT_VERIFIABLE_value:
+			return CertificateState.NOT_VERIFIABLE;
+		case CertificateState.NOT_YET_VERIFIED_value:
+			return CertificateState.NOT_YET_VERIFIED;
+		case CertificateState.OK_value:
+			return CertificateState.OK;
+		case CertificateState.EXPIRED_value:
+			return CertificateState.EXPIRED;
+		case CertificateState.REVOKED_value:
+			return CertificateState.REVOKED;
+		case CertificateState.NOT_ACTIVE_value:
+			return CertificateState.NOT_ACTIVE;
+		case CertificateState.NOT_COMPLIANT_value:
+			return CertificateState.NOT_COMPLIANT;
+		case CertificateState.ERROR_IN_EXTENSION_value:
+			return CertificateState.ERROR_IN_EXTENSION;
+		case CertificateState.MISSING_EXTENSION_value:
+			return CertificateState.MISSING_EXTENSION;
+		case CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value:
+			return CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID;
+		case CertificateState.MALFORMED_CERTIFICATE_value:
+			return CertificateState.MALFORMED_CERTIFICATE;
+		}
+	}
+	
 	public static int mapCertificateStateToValue(CertificateState _theState) {
 		if(_theState == CertificateState.NOT_VERIFIABLE)
 			return CertificateState.NOT_VERIFIABLE_value;

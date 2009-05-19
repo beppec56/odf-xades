@@ -336,6 +336,36 @@ Roberto Resoli, developer
 				<value xml:lang="it">eCertificato non verificabile</value>
 			</prop>
 		</node>
+		<node oor:name="err_txt_cert_no_read" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eUnreadable certificate</value>
+				<value xml:lang="it">eCertificato illeggibile</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_ko_core" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eUnreadable core certificate elements</value>
+				<value xml:lang="it">eElementi base del certificato non validi</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_ko_extension" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate extension faulty</value>
+				<value xml:lang="it">eEstensione del certificato errata</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_miss_ext" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eMissing certificate extension</value>
+				<value xml:lang="it">eAl certificato manca un'estensione</value>
+			</prop>
+		</node>
+		<node oor:name="err_txt_cert_noyver" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate not yet verified</value>
+				<value xml:lang="it">eCertificato non ancora verificato</value>
+			</prop>
+		</node>
 		<!--
 		    document state
 		-->

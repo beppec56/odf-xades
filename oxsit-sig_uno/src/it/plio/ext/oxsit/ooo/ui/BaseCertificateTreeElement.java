@@ -22,9 +22,12 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.cert.CertificateState;
 
+import java.util.Hashtable;
 import com.sun.star.awt.FontDescriptor;
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.XControl;
@@ -37,7 +40,7 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.uno.Exception;
+import java.lang.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -79,27 +82,22 @@ public class BaseCertificateTreeElement extends TreeElement {
 							"err_txt_verf_condt_no_inet"
 						};
 
-	/**
-	 * some constant for certificate validation state
-	 */
-	public static final int m_nCERTIFICATE_STATE_VALID = 0;
-	public static final int m_nCERTIFICATE_STATE_EXPIRED = 1;
-	public static final int m_nCERTIFICATE_STATE_REVOKED = 2;
-	public static final int m_nCERTIFICATE_STATE_NOT_ACTIVE = 3;
-	public static final int m_nCERTIFICATE_STATE_INCONSISTENT = 4;
-	public static final int m_nCERTIFICATE_STATE_NOT_VERIFIED = 5;
-
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sCERTIFICATE_STATE =  { 
-							"err_txt_cert_ok",
-							"err_txt_cert_exp",							
-							"err_txt_cert_rev",
-							"err_txt_cert_noact",
-							"err_txt_cert_noconf",
-							"err_txt_cert_nover"
-						};
+	//hash table to convert the enum of the certificate state to the id string in resources
+	public static Hashtable<CertificateState,String>	m_aCERTIFICATE_STATE = new Hashtable<CertificateState, String>(15);
+	
+	static {
+		m_aCERTIFICATE_STATE.put(CertificateState.NOT_VERIFIABLE, "err_txt_cert_nover");
+		m_aCERTIFICATE_STATE.put(CertificateState.NOT_YET_VERIFIED, "err_txt_cert_noyver");
+		m_aCERTIFICATE_STATE.put(CertificateState.OK, "err_txt_cert_ok");
+		m_aCERTIFICATE_STATE.put(CertificateState.EXPIRED, "err_txt_cert_exp");
+		m_aCERTIFICATE_STATE.put(CertificateState.REVOKED, "err_txt_cert_rev");
+		m_aCERTIFICATE_STATE.put(CertificateState.NOT_ACTIVE, "err_txt_cert_noact");
+		m_aCERTIFICATE_STATE.put(CertificateState.NOT_COMPLIANT, "err_txt_cert_noconf");
+		m_aCERTIFICATE_STATE.put(CertificateState.ERROR_IN_EXTENSION, "err_txt_cert_ko_extension");
+		m_aCERTIFICATE_STATE.put(CertificateState.MISSING_EXTENSION, "err_txt_cert_miss_ext");
+		m_aCERTIFICATE_STATE.put(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID, "err_txt_cert_ko_core");
+		m_aCERTIFICATE_STATE.put(CertificateState.MALFORMED_CERTIFICATE, "err_txt_cert_no_read");
+	};
 
 	/**
 	 * some constant for certificate validation conditions
@@ -174,7 +172,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 		setLogger(new DynamicLogger(this,_xContext));
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
-		setCertificateState(m_nCERTIFICATE_STATE_NOT_VERIFIED);
+		setCertificateState(CertificateState.NOT_YET_VERIFIED_value);
 		setCertificateStateConditions(m_nCERTIFICATE_STATE_CONDT_DISABLED);
 		setIssuerState(m_nISSUER_STATE_NO_CTRL);
 		setNodeGraphic(null);
@@ -199,15 +197,21 @@ public class BaseCertificateTreeElement extends TreeElement {
 			m_sStringList[m_nFIELD_TITLE_ISSUER] = m_aRegAcc.getStringFromRegistry("cert_title_issuer" );
 
 			//grab the string for certificate status
+			try {
 			m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
-					m_aRegAcc.getStringFromRegistry( m_sCERTIFICATE_STATE[getCertificateState()] );
+					m_aRegAcc.getStringFromRegistry(
+							m_aCERTIFICATE_STATE.get(
+									CertificateState.fromInt(getCertificateState())
+											));
 			m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
 				m_aRegAcc.getStringFromRegistry( m_sCERTIFICATE_STATE_CONDT[getCertificateStateConditions()] );
-	
-			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
-				m_aRegAcc.getStringFromRegistry( m_sISSUER_STATE[getIssuerState()] );			
 
-		} catch (Exception e) {
+			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
+				m_aRegAcc.getStringFromRegistry( m_sISSUER_STATE[getIssuerState()] );
+			} catch (java.lang.Exception e) {
+				getLogger().severe("initialize", e);
+			}
+		} catch (java.lang.Exception e) {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();

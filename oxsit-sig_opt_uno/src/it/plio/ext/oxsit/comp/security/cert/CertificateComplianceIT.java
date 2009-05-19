@@ -115,8 +115,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 */
 	public CertificateComplianceIT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
 
@@ -125,7 +124,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
 	 */
@@ -240,7 +239,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             //check for version, if version is not 3, exits, certificate cannot be used
             if(m_JavaCert.getVersion() != 3) {
-    			m_xQc.setCertificateExtensionErrorState("Version", CertificateElementState.INVALID_value);			
+    			m_xQc.setCertificateElementErrorState("Version", CertificateElementState.INVALID_value);			
     			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
             	return m_aCertificateState;
             }
@@ -254,10 +253,10 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 				m_JavaCert.checkValidity(aCal.getTime());*/
 				m_JavaCert.checkValidity();
 			} catch (CertificateExpiredException e) {
-				m_xQc.setCertificateExtensionErrorState("NotValidAfter", CertificateElementState.INVALID_value);
+				m_xQc.setCertificateElementErrorState("NotValidAfter", CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
 			} catch (CertificateNotYetValidException e) {
-				m_xQc.setCertificateExtensionErrorState("NotValidBefore", CertificateElementState.INVALID_value);
+				m_xQc.setCertificateElementErrorState("NotValidBefore", CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
 			}
 
@@ -265,16 +264,16 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 			int tempState = CertificateElementState.OK_value;
 			if(!isKeyUsageNonRepudiationCritical(m_JavaCert)) {
 				tempState =  CertificateElementState.INVALID_value;
-				setCertificateStateHelper(CertificateState.ERROR_IN_EXTENSION);
+				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
 			}
-			m_xQc.setCertificateExtensionErrorState(X509Extensions.KeyUsage.getId(), tempState);
+			m_xQc.setCertificateElementErrorState(X509Extensions.KeyUsage.getId(), tempState);
 		} catch (CertificateException e) {
 			m_aLogger.severe(e);
 			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
 			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
 		}
 
-//convert to BC representation		
+//convert to Bouncy Castle representation		
 		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado = null;
@@ -283,22 +282,22 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 			X509CertificateStructure x509Str = new X509CertificateStructure((ASN1Sequence) ado);
 			//check issuer field for conformance
 			TBSCertificateStructure xTBSCert = x509Str.getTBSCertificate();
-			
-			if(!isIssuerIdOk(xTBSCert)) {
-				m_xQc.setCertificateExtensionErrorState("IssuerName", CertificateElementState.INVALID_value);
-				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
-			}
-	
-			//check if qcStatements are present
-			//the function set the error itself
-			if(!hasQcStatements(xTBSCert)) {
-				return m_aCertificateState;
-			}
 
 			//check if either one of IssuerUniqueID or SubjectUniqueID is present
 			//ETSI 102 280 5.3
 			if(!isOKUniqueIds(xTBSCert)) {
 				setCertificateStateHelper(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID);
+				return m_aCertificateState;
+			}
+
+			if(!isIssuerIdOk(xTBSCert)) {
+				m_xQc.setCertificateElementErrorState("IssuerName", CertificateElementState.INVALID_value);
+				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
+			}
+
+			//check if qcStatements are present
+			//the function set the error itself
+			if(!hasQcStatements(xTBSCert)) {
 				return m_aCertificateState;
 			}
 
@@ -392,7 +391,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
         }
 
         if(numberOfChecksOk != 0) {
-			m_xQc.setCertificateExtensionErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
+			m_xQc.setCertificateElementErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
 			setCertificateStateHelper(CertificateState.ERROR_IN_EXTENSION);
 			return false;
         }

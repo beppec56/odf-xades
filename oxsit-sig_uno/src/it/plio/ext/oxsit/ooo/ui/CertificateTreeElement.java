@@ -60,7 +60,8 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
 		setNodeType(TreeNodeType.CERTIFICATE);
-//		getLogger().enableLogging();
+//
+		getLogger().enableLogging();
 		getLogger().ctor();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
@@ -99,6 +100,9 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public void setCertificateData(XOX_QualifiedCertificate _aCertif) {
 //set the node name		
 		setNodeName(_aCertif.getSubjectDisplayName());
+//FIXME		setCertificateGraficStateValue(_aCertif.getCertificateGraficStateValue());
+		setCertificateState(_aCertif.getCertificateState());
+		setCertificateStateConditions(_aCertif.getCertificateStateConditions());
 		initialize();
 		//init it correctly		
 		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ _aCertif.getNotValidBefore();
@@ -116,6 +120,8 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public void setCertificateGraficStateValue(
 			int m_nCertificateGraficStateValue) {
 		this.m_nCertificateGraficStateValue = m_nCertificateGraficStateValue;
+//set the right string
+		
 	}
 
 	/**

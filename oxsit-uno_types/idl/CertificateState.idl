@@ -53,10 +53,6 @@
 		 */
 		NOT_ACTIVE, 
 		
-		/** The certificate is not consistent with the Italian standard.
-		 */
-		NOT_COMPLIANT, 
- 
 		/** The certificate has some extension in a state not as required by
 		compliance.
 		*/
@@ -66,6 +62,10 @@
 		*/
 		MISSING_EXTENSION,
 
+		/** The certificate is not consistent with the Italian standard.
+		 */
+		NOT_COMPLIANT, 
+ 
 		/** The certificate is malformed, internal does not conform to the requests.
 		*/
 		CORE_CERTIFICATE_ELEMENT_INVALID,

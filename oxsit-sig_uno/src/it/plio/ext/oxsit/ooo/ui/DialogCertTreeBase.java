@@ -10,6 +10,7 @@ import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
+import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
 import com.sun.star.awt.ActionEvent;
@@ -103,18 +104,19 @@ public class DialogCertTreeBase extends BasicDialog implements
 	private String 				m_sLabelNotCritExtension = "id_cert_notcrit_ext";
 
 	//graphic name string for indications for tree elements 
-	private String 				sSignatureOK; //signature ok
-	private String 				sSignatureNotValidated; //signature ok, but certificate not valid
-	private String 				sSignatureBroken; //signature does not mach content: document changed after signature
-	private String 				sSignatureInvalid; //signature cannot be validated
+	private String 				m_sSignatureOrCertificateOK; //signature/certificate ok
+	private String 				m_sSignatureNotValidatedOrCertificateNotVerified; //signature ok, but certificate not valid
+	private String 				m_sSignatureOrCertificateInvalid; //signature does not mach content: document changed after signature
+	private String 				m_sSignatureOrCertificateBroken2; //signature cannot be validated
+	private String 				m_sSignatureOrCertificateBroken;
 	private String 				sSignatureAdding;
 	private String 				sSignatureRemoving;
+
 	//certificate graphic path holders
 	protected String			m_sSSCDeviceElement;
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
 	private String[] 			m_sCertificateElementGraphicName = new String[CertificateElementState.LAST_STATE_value];
 
-	private String 				sSignatureInvalid2;
 	///////////// end of graphic name string
 
 	/**
@@ -144,11 +146,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 			String m_imagesUrl = sLoc + "/images";
 //main, depends from application, for now. To be changed
 			//TODO change to a name not depending from the application
-			sSignatureOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
-			sSignatureNotValidated = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
-			sSignatureBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
-			sSignatureInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
-			sSignatureInvalid2 = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //
+			m_sSignatureOrCertificateOK = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize; //signature ok
+			m_sSignatureNotValidatedOrCertificateNotVerified = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_WARNING+aSize; //signature ok, but certificate not valid
+			m_sSignatureOrCertificateInvalid = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_INVALID+aSize; //signature does not mach content: document changed after signature
+			m_sSignatureOrCertificateBroken2 = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN2+aSize; //
+			m_sSignatureOrCertificateBroken = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_BROKEN+aSize; //
 			sSignatureAdding = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_ADDING+aSize; //
 			sSignatureRemoving = m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_REMOVING+aSize; //
 
@@ -463,7 +465,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		m_xTreeControl.clearSelection();
 		removeTreeNodeHelper(m_aTreeRootNode);		
 	}
-	
+
 	private XMutableTreeNode addMultiLineToTreeRootHelper(BaseGeneralNodeTreeElement aSSCDnode) {		
 		//connect it to the right dialog pane
 		aSSCDnode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
@@ -496,12 +498,52 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return  addMultiLineToTreeRootHelper(aSSCDnode);
 	}
 
+	/**
+	 * analyzes the certificate value to build a graphic representation for the certificate
+	 * 
+	 * @param _aCertif
+	 * @return
+	 */
+	protected String setCertificateNodeGraficStringHelper(XOX_QualifiedCertificate _aCertif) {
+		//get the certificate state
+		int nCertState = _aCertif.getCertificateState();
+		//get the certificate state check conditions
+		int ncertState = _aCertif.getCertificateStateConditions();
+		//get the Certification Path state
+		//get the Certification Path state conditions
+		//now check
+		switch(nCertState) {
+			case CertificateState.EXPIRED_value:
+			case CertificateState.NOT_ACTIVE_value:
+				return m_sSignatureOrCertificateBroken2;
+			case CertificateState.ERROR_IN_EXTENSION_value:
+			case CertificateState.MISSING_EXTENSION_value:
+			default:
+			case CertificateState.NOT_VERIFIABLE_value:
+			case CertificateState.NOT_YET_VERIFIED_value:
+				return m_sSignatureNotValidatedOrCertificateNotVerified;
+			case CertificateState.OK_value:
+				return m_sSignatureOrCertificateOK;
+			case CertificateState.NOT_COMPLIANT_value:
+				return m_sSignatureOrCertificateBroken;
+			case CertificateState.MALFORMED_CERTIFICATE_value:
+			case CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value:
+			case CertificateState.REVOKED_value:
+				return m_sSignatureOrCertificateInvalid;
+		}
+	}
+
 	////// methods to manage the certificate display
 	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
-		aNewNode.setCertificateData(_aCertif);
+		//now set the certificate graphic state
+
+
+		//and then sets the strings, according to the state from the certificate itself
+//		aNewNode.m_sStringList[CertificateTreeElement.] = m_sCertificateState[_aCertif.getCertificateState()]; 
 		
+		aNewNode.setCertificateData(_aCertif);
 		//connect it to the right dialog pane
 		aNewNode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
@@ -510,7 +552,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//create a new node to be used for this element
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aNewNode.getNodeName(), true);
 
-		aNewNode.setNodeGraphic(m_sCertificateValidityGraphicName[_aCertif.getCertificateGraficStateValue()]);
+		aNewNode.setNodeGraphic(setCertificateNodeGraficStringHelper(_aCertif));
 		if(aNewNode.getNodeGraphic() != null)
 			xaCNode.setNodeGraphicURL(aNewNode.getNodeGraphic());
 
@@ -625,7 +667,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			sPathGraph = m_sCertificateElementGraphicName[CertificateElementState.INVALID_value];
 		else {
 			//set to the value of the certificate found
-			sPathGraph = m_sCertificateValidityGraphicName[xCPath.getCertificateGraficStateValue()];			
+			sPathGraph = "";//m_sCertificateValidityGraphicName[xCPath.getCertificateGraficStateValue()];			
 		}
 
 		XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,

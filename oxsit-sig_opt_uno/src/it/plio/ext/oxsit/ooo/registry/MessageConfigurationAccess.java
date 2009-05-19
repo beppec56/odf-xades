@@ -51,7 +51,9 @@ public class MessageConfigurationAccess extends ConfigurationAccess implements X
 		}			
 	}
 
-    public String getStringFromRegistry( String _stringIdToRetrieve ) throws Exception {   	
+    public String getStringFromRegistry( String _stringIdToRetrieve ) throws Exception {
+    	if(_stringIdToRetrieve == null)
+    		return "";
     	if(m_oMessagesRegKey != null) {
 //get the string at id
 //    		Utilities.showInterfaces( (XInterface) m_oMessagesRegKey );

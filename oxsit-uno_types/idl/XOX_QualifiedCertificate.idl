@@ -46,9 +46,6 @@ XOX_AvailableSSCDs interface or</p>
 		/** the DER encoded form of the certificate.
 		 */
 		[attribute] sequence< byte > DEREncoded ;
-		/** the state of the certificate, for graphic display.
-	 	*/
-		[attribute, readonly] long CertificateGraficStateValue;
 		/** the state of the certificate, for general and string indications.
 		<p>It's an integer in the form of <type scope="it::plio::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
 		not the enum (e.g. CertificateState.OK_value).</p>
@@ -167,8 +164,18 @@ XOX_AvailableSSCDs interface or</p>
 		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		void setCertificateExtensionErrorState( [in] string oid, [in] long newState) ;
+		void setCertificateElementErrorState( [in] string oid, [in] long newState) ;
 
+		/** Set the interface objects used for the certificate compliance controlo procedure.
+		<p>This interface is used internally at the end of the certificate preparation, inside setter method setDEREncoded().</p>
+		<p>
+		@see it::plio::oxsit::ext::security::cert::QualifiedCertificate
+			For a description of the suggested method to use this interface.
+		</p>
+		*/
+		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
 		/** verify the Certificate Revocation List state of this 
 		 certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificateState field will have the result.</p>
@@ -176,9 +183,9 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		boolean verifyCRLForCertificate( );
 
-		/**
+		/** Sets the interface object used to check for the certificate certification path.
 		*/
-		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
+		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/** verify the Certification Path (e.g. the Certificate Authority) of this certificate. Returns false if not OK, true if OK.
@@ -186,9 +193,6 @@ XOX_AvailableSSCDs interface or</p>
 		 <p>The CertificateGraficStateValue field will have the result as well</p>
 		  */
 		boolean verifyCertificateCertificationPath( );
-		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure arg0)
-						raises( ::com::sun::star::lang::IllegalArgumentException,
-								::com::sun::star::uno::Exception );
 	} ;
 
   }; }; }; }; };  };

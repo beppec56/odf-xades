@@ -157,13 +157,9 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	//the hash map of all the non critical extensions
 	private HashMap<String,X509Extension>	m_aNotCriticalExtensions = new HashMap<String, X509Extension>(20);
 	//Hashmap of the extension or oid state
-	private Hashtable<String,Integer>	m_aExtensionStates = new Hashtable<String, Integer>(20);
+	private Hashtable<String,Integer>	m_aElementStates = new Hashtable<String, Integer>(20);
 
 	private boolean m_bIsFromUI;
-
-	//state of this certificate, comes from controls of the certificate itself
-	// the returned value will be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
-	private int m_nCertificateGraficStateValue;
 
 	private XOX_CertificationPathControlProcedure m_xoxCertificationPathControlProcedure;
 
@@ -185,7 +181,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
     	m_xMCF = m_xContext.getServiceManager();
     	m_bDisplayOID = false;
     	m_bIsFromUI = false;
-    	m_nCertificateGraficStateValue = CertificateGraphicDisplayState.NOT_VERIFIED_value;
     	//grab the locale strings, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
 		MessageConfigurationAccess m_aRegAcc = null;
@@ -545,6 +540,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(xCtl);
 					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
+					m_nCertificateState = 
+							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
@@ -707,7 +704,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public int getCertificateElementErrorState(String _oid) {
-		Integer aInt = m_aExtensionStates.get(_oid);
+		Integer aInt = m_aElementStates.get(_oid);
 		if(aInt != null)
 			return aInt.intValue();
 		return CertificateElementState.OK_value;
@@ -717,8 +714,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateExtensionErrorState(java.lang.String, int)
 	 */
 	@Override
-	public void setCertificateExtensionErrorState(String _oid, int arg1) {
-		m_aExtensionStates.put(_oid, new Integer(arg1));		
+	public void setCertificateElementErrorState(String _oid, int arg1) {
+		m_aElementStates.put(_oid, new Integer(arg1));		
 	}
 
 	/* (non-Javadoc)
@@ -864,14 +861,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		super.removeEventListener(arg0);
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateGraficStateValue()
-	 */
-	@Override
-	public int getCertificateGraficStateValue() {
-		return m_nCertificateGraficStateValue;
 	}
 
 	/* (non-Javadoc)
