@@ -69,7 +69,7 @@ public class CertificationAuthorities {
     }
 
     /**
-     * Instatiate the class with an empty list of CA. If you need to add a CA,
+     * Instantiate the class with an empty list of CA. If you need to add a CA,
      * use<BR>
      * the addCertificateAuthority method.<BR>
      * <BR>

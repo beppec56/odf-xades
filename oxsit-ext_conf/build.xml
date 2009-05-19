@@ -186,6 +186,9 @@ build-extension
 		<!-- ROB copy BC libs -->
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcmail_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcprov_jar}" todir="${extension_dest_dir}" />
+		<!--beppec56 test for pkcs#11 wrapper native libraries -->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/OCFPCSC1.dll" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/pkcs11wrapper.dll" todir="${extension_dest_dir}" />
 		
 		
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />

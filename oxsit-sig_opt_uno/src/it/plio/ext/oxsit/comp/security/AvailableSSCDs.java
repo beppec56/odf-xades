@@ -339,6 +339,12 @@ public class AvailableSSCDs extends ComponentBase
 	@Override
 	public void scanDevices(boolean _bUseGUI) {
 		m_aLogger.entering("scanDevices");
+		
+		//get the library path property
+		//
+		m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
+		m_aLogger.log("java.library.path: \""+
+				System.getProperty("java.library.path")+"\"");
 
 		PCSCHelper pcsc = new PCSCHelper(true);
 

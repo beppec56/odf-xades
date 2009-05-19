@@ -211,7 +211,7 @@ public class CLICRLTest {
     public static void main(String[] args) throws IOException, CMSException,
             CertificateException, GeneralSecurityException {
 
-        CLICRLTest prova = new CLICRLTest("cacerts_sv.zip", "ciao.txt.p7m");
+        CLICRLTest prova = new CLICRLTest("LISTACER_20090303.zip", "specifica-firma-XAdES-biblio.odb.nuovo-cert.p7m");
         prova.verifica();
     }
 }
