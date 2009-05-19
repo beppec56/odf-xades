@@ -22,6 +22,8 @@
 
 package it.plio.ext.oxsit.comp;
 
+import java.net.URISyntaxException;
+
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
@@ -307,7 +309,30 @@ public class SyncJob extends ComponentBase
 	}
 
 	protected void executeOnStartApp() {
-		//we'll need to initialize the security stuff, done once on init.					
+		//we'll need to initialize the security stuff, done once on init.
+		
+		m_aLogger.log("os.name: \""+System.getProperty("os.name")+"\"");
+		m_aLogger.log("os.arch: \""+System.getProperty("os.arch")+"\"");
+		m_aLogger.log("os.version: \""+System.getProperty("os.version")+"\"");
+
+		m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
+		m_aLogger.log("java.library.path: \""+
+				System.getProperty("java.library.path")+"\"");
+		
+		//try to change the java.library.path
+		try {
+			String libPath = System.getProperty("java.library.path");
+			//form the current extension path
+			String m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xComponentContext);
+			m_aLogger.log("extension installed in: " + m_sExtensionSystemPath);
+			libPath = libPath+System.getProperty("path.separator")+m_sExtensionSystemPath;
+			System.setProperty("java.library.path", libPath);
+
+		} catch (URISyntaxException e) {
+			m_aLogger.severe( e );
+		} catch (java.lang.Exception e) {
+			m_aLogger.severe(e);
+		}
 	}
 
 	protected void executeOnUnload() {
@@ -454,6 +479,11 @@ public class SyncJob extends ComponentBase
 	 */
 	protected void executeOnCloseApp() {
 		m_aLogger.stopLogging();
+		
+		//at this stage, remove cache used in running
+		//in Italian implementation this contains the CA list and the CRL used to control the 
+		// certificates
+
 	}
 
 	/*
