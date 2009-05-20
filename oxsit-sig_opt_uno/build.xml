@@ -185,6 +185,7 @@ the default target must be removed
 		<!-- ROB Copy BC libs in the distribution directory -->
 		<copy file="lib/${bcmail_jar}" todir="${dist}/lib" />
 		<copy file="lib/${bcprov_jar}" todir="${dist}/lib" />
+		<copy file="lib/libOCFPCSC1.so" todir="${dist}/lib" />
 		<copy file="lib/OCFPCSC1.dll" todir="${dist}/lib" />
 		<copy file="lib/pkcs11wrapper.dll" todir="${dist}/lib" />
 

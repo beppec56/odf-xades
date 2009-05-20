@@ -35,6 +35,9 @@
  */
 
 package com.ibm.opencard.terminal.pcsc10;
+
+import it.trento.comune.j4sign.pcsc.PCSCHelper;
+
 //ROB: Commented out to eliminate dependencies from opencard.core.util.Tracer
 //import opencard.core.util.Tracer;
 
@@ -55,29 +58,83 @@ public class OCFPCSC1 {
    *  @exception com.ibm.opencard.terminal.pcsc10.PcscException
    *		 thrown when error occured in PC/SC-Interface
    */
+	
+	static {
+		System.out.println("Started...");
+	}
+	
   public OCFPCSC1() throws PcscException {
       //ROB: Commented out to eliminate dependencies from:
       // opencard.core.util.Tracer
      //initTrace();
   }
-  
-  /* load the Wrapper-DLL */
-  static public void loadLib() {
-    try {
 
+  /* load the Wrapper-DLL */
+  static public void loadLibZZ() {
+	  boolean ret = false;
+    try {
+    	System.out.println("loading library...");
       //netscape.security.PrivilegeManager.enablePrivilege("UniversalLinkAccess");
       
       //ROB: Decommented (used instead of:
       //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary()
-      System.loadLibrary("OCFPCSC1");
-      
+		System.loadLibrary("OCFPCSC1");
+		ret = true;
       //ROB: commented to avoid dependencies from core ocf packages
       //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary("OCFPCSC1");
 
+    } catch (SecurityException  e) {
+          e.printStackTrace();
+    } catch (UnsatisfiedLinkError  e) {
+          e.printStackTrace();
+    } catch (NullPointerException e) {
+          e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
+  // 	return ret;
   }
+  
+  static public boolean loadLib() {
+	  	return OCFPCSC1.loadLib(null);
+  }
+
+  /* load the Wrapper-DLL */
+  static public boolean loadLib(String aPath) {
+//	  String aPath = PCSCHelper.m_sLibPath;
+	  boolean ret = false;
+    try {
+    	System.out.println("loading library...");
+      //netscape.security.PrivilegeManager.enablePrivilege("UniversalLinkAccess");
+      
+      //ROB: Decommented (used instead of:
+      //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary()
+    	if(aPath == null) {
+    		System.loadLibrary("OCFPCSC1");
+    		ret = true;
+    	}
+    	else {
+    		aPath = aPath+System.getProperty("file.separator")+"libOCFPCSC1.so";
+    		System.out.println(aPath);
+    		System.load(aPath);
+    		ret = true;
+    	}
+
+      //ROB: commented to avoid dependencies from core ocf packages
+      //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary("OCFPCSC1");
+
+    } catch (SecurityException  e) {
+          e.printStackTrace();
+    } catch (UnsatisfiedLinkError  e) {
+          e.printStackTrace();
+    } catch (NullPointerException e) {
+          e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return ret;
+  }
+
   /**************************************************************/
   /*								*/
   /* native Methods						*/

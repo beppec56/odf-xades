@@ -41,8 +41,6 @@ import com.ibm.opencard.terminal.pcsc10.OCFPCSC1;
 import com.ibm.opencard.terminal.pcsc10.Pcsc10Constants;
 import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.*;
 
 /**
@@ -81,15 +79,22 @@ public class PCSCHelper {
 
     private String[] readers = null;
 
-
     public PCSCHelper(boolean loadLib) {
+    	this(loadLib,null);
+    }
+
+	public static String m_sLibPath = null;
+
+    public PCSCHelper(boolean loadLib, String aPath) {
 
         try {
             System.out.println("connect to PCSC 1.0 resource manager");
 
             // load native library
             if (loadLib) {
-                OCFPCSC1.loadLib();
+//                OCFPCSC1.loadLib(aPath);
+            	m_sLibPath = aPath;
+                OCFPCSC1.loadLib(aPath);
             }
 
             pcsc = new OCFPCSC1();
@@ -107,7 +112,12 @@ public class PCSCHelper {
 
         } catch (PcscException e) {
             System.out.println(e);
-        }
+            
+        } catch (NoSuchMethodError e) {
+            System.out.println(e);
+	    } catch (java.lang.Exception e) {
+	        System.out.println(e);
+	    }
 
         /* add one slot */
         //this.addSlots(1);

@@ -320,7 +320,7 @@ public class SyncJob extends ComponentBase
 				System.getProperty("java.library.path")+"\"");
 		
 		//try to change the java.library.path
-		try {
+/*		try {
 			String libPath = System.getProperty("java.library.path");
 			//form the current extension path
 			String m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xComponentContext);
@@ -332,7 +332,7 @@ public class SyncJob extends ComponentBase
 			m_aLogger.severe( e );
 		} catch (java.lang.Exception e) {
 			m_aLogger.severe(e);
-		}
+		}*/
 	}
 
 	protected void executeOnUnload() {
