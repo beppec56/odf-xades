@@ -105,7 +105,7 @@ public class PKCS11Implementation implements PKCS11 {
    * @preconditions
    * @postconditions
    * 
-   * beppec56 changed inti to use library local
+   * beppec56 changed initialization to use library local to the OOo extension
    */
   public static synchronized void ensureLinkedAndInitialized(String localLib) {
     if (!linkedAndInitialized_) {

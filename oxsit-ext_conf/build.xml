@@ -262,6 +262,8 @@ build-extension
 		<copy file="${license_dir}/EUPL v.1.1 - licenza.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - licenza.pdf" />		
 
 		<!-- copy third parties licenses (if needed) -->
+		<copy file="${license_dir}/third_parties/LICENSE_pcsc10_wrapper" tofile="${extension_dest_dir}/license/LICENSE_pcsc10_wrapper" />		
+		<copy file="${license_dir}/third_parties/LICENSE_pkcs11_wrapper" tofile="${extension_dest_dir}/license/LICENSE_pkcs11_wrapper" />		
 
 		<!-- copy the configuration files -->
 		<!-- copy Office/UI -->
