@@ -47,6 +47,12 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
+
 import java.util.Collection;
 
 /**
@@ -65,6 +71,7 @@ import java.util.Collection;
  *
  *
  * @author Roberto Resoli
+ * modified for OOo beppec56
  */
 public class PKCS11Signer {
 
@@ -100,43 +107,51 @@ public class PKCS11Signer {
      * The <code>PrintStream</code> where logging messages are written.
      *
      */
-    private java.io.PrintStream log = null;
+//	private java.io.PrintStream log = null;
+    
+    private IDynamicLogger m_aLogger;
 
     public PKCS11Signer(String cryptokiLib, long mechanism,
                         java.io.PrintStream out) throws IOException,
             TokenException {
-
-        this(cryptokiLib, out);
-
+        this("",cryptokiLib);
         initializeTokenAndMechanism(mechanism);
-
     }
 
     public PKCS11Signer(String cryptokiLib, long mechanism, String reader,
                         java.io.PrintStream out) throws IOException,
             TokenException {
-
-        this(cryptokiLib, out);
+        this("",cryptokiLib);
         setMechanism(mechanism);
         initializeTokenInReader(reader);
-
     }
 
-
     public PKCS11Signer(String cryptokiLib, java.io.PrintStream out) throws
+			IOException, TokenException {
+    	this("",cryptokiLib);
+    }
+    
+    public PKCS11Signer(String pkcs11WrapLib, String cryptokiLib) throws
+    						IOException, TokenException {
+    	this(null, pkcs11WrapLib,cryptokiLib);
+    }
+ 
+    public PKCS11Signer(IDynamicLogger aLogger, String pkcs11WrapLib, String cryptokiLib) throws
             IOException, TokenException {
-        super();
+        super(); //????
 
-        log = out;
+    	setLogger(aLogger);
+
+//        log = out;
         cryptokiLibrary = cryptokiLib;
 
-        log.println("\n\nInitializing PKCS11Signer...\n");
+        m_aLogger.info("Initializing PKCS11Signer...");
 
-        log.println("Trying to connect to PKCS#11 module: '" + cryptokiLibrary
+        m_aLogger.info("Trying to connect to PKCS#11 module: '" + cryptokiLibrary
                     + "' ...");
-
-        pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary);
-        log.println("connected.\n");
+        
+        pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary,pkcs11WrapLib);
+        m_aLogger.info("connected");
 
         initializeLibrary();
     }
@@ -147,20 +162,18 @@ public class PKCS11Signer {
      * @throws PKCS11Exception
      */
     private void initializeLibrary() throws PKCS11Exception {
-        log.println("\ninitializing module ... ");
+        m_aLogger.info("Initializing module ... ");
         pkcs11Module.C_Initialize(null);
-        log.println("initialized.\n");
+        m_aLogger.info("initialized.");
     }
-
-
 
     private void initializeTokenAndMechanism(long mechanism) throws
             PKCS11Exception {
         tokenHandle = getTokenSupportingMechanism(mechanism);
 
         if (tokenHandle >= 0) {
-            log.println("\nSetting signing token handle: " + tokenHandle);
-            log.println("\nSetting signing  mechanism id: " + mechanism
+            m_aLogger.info("\nSetting signing token handle: " + tokenHandle);
+            m_aLogger.info("\nSetting signing  mechanism id: " + mechanism
                         + " -> " + Functions.mechanismCodeToString(mechanism));
 
             setMechanism(mechanism);
@@ -178,13 +191,13 @@ public class PKCS11Signer {
             String readerFromCiR2 = reader.replaceAll(" ", "");
             readerFromPKCS11 = readerFromPKCS11.substring(0,
                     readerFromPKCS11.length() - 1);
-            //log.println(readerFromCiR + " = " + readerFromPKCS11 + "?");
-            // log.println(readerFromCiR2 + " = " + readerFromPKCS112 + "?");
+            //m_aLogger.info(readerFromCiR + " = " + readerFromPKCS11 + "?");
+            // m_aLogger.info(readerFromCiR2 + " = " + readerFromPKCS112 + "?");
 
             //riconoscimento lettore tramite name reader
             if ((readerFromPKCS11.startsWith(reader)) ||
                 (readerFromCiR2.endsWith(readerFromPKCS112))) {
-                log.println("Settato token " +
+                m_aLogger.info("Settato token " +
                             getSlotDescription((long) tokens[i]));
                 tokenHandle = tokens[i];
 
@@ -193,7 +206,7 @@ public class PKCS11Signer {
         }
 
         if (tokenHandle >= 0) {
-            log.println("\nSetting signing token handle: " + tokenHandle);
+            m_aLogger.info("\nSetting signing token handle: " + tokenHandle);
 
         }
     }
@@ -222,7 +235,7 @@ public class PKCS11Signer {
         if (getSession() == -1L) {
             return;
         }
-        log.println("\nClosing session ...");
+        m_aLogger.info("Closing session ...");
         pkcs11Module.C_CloseSession(getSession());
         setSession( -1L);
 
@@ -237,7 +250,7 @@ public class PKCS11Signer {
      */
     public void closeSession(long sessionHandle) throws PKCS11Exception {
 
-        log.println("\nClosing session with handle: " + sessionHandle + " ...");
+        m_aLogger.info("\nClosing session with handle: " + sessionHandle + " ...");
         pkcs11Module.C_CloseSession(sessionHandle);
 
     }
@@ -280,7 +293,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("finding signature key with label: '" + label + "'");
+        m_aLogger.info("finding signature key with label: '" + label + "'");
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
         //CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
 
@@ -300,15 +313,14 @@ public class PKCS11Signer {
         //maximum of 100 at once
 
         if (availableSignatureKeys == null) {
-            log.println("null returned - no signature key found");
+            m_aLogger.info("null returned - no signature key found");
         } else {
-            log.println("found " + availableSignatureKeys.length
+            m_aLogger.info("found " + availableSignatureKeys.length
                         + " signature keys, picking first.");
             for (int i = 0; i < availableSignatureKeys.length; i++) {
                 if (i == 0) { // the first we find, we take as our signature key
                     signatureKeyHandle = availableSignatureKeys[i];
-                    log
-                            .println(
+                    m_aLogger.info(
                                     "for signing we use signature key with handle: "
                                     + signatureKeyHandle);
                 }
@@ -339,7 +351,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("finding signature key from id.");
+        m_aLogger.info("finding signature key from id.");
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
 
         attributeTemplateList[0] = new CK_ATTRIBUTE();
@@ -358,16 +370,15 @@ public class PKCS11Signer {
         //maximum of 100 at once
 
         if (availableSignatureKeys == null) {
-            log
-                    .println(
+        	m_aLogger.info(
                             "null returned - no signature key found with matching ID");
         } else {
-            log.println("found " + availableSignatureKeys.length
+            m_aLogger.info("found " + availableSignatureKeys.length
                         + " signature keys, picking first.");
             for (int i = 0; i < availableSignatureKeys.length; i++) {
                 if (i == 0) { // the first we find, we take as our signature key
                     signatureKeyHandle = availableSignatureKeys[i];
-                    log.println("returning signature key with handle: "
+                    m_aLogger.info("returning signature key with handle: "
                                 + signatureKeyHandle);
                 }
 
@@ -392,7 +403,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("finding a signature key...");
+        m_aLogger.info("finding a signature key...");
 
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
 
@@ -407,15 +418,14 @@ public class PKCS11Signer {
         //maximum of 100 at once
 
         if (availableSignatureKeys == null) {
-            log.println("null returned - no signature key found");
+            m_aLogger.info("null returned - no signature key found");
         } else {
-            log.println("found " + availableSignatureKeys.length
+            m_aLogger.info("found " + availableSignatureKeys.length
                         + " signature keys, picking first.");
             for (int i = 0; i < availableSignatureKeys.length; i++) {
                 if (i == 0) { // the first we find, we take as our signature key
                     signatureKeyHandle = availableSignatureKeys[i];
-                    log
-                            .println(
+                    m_aLogger.info(
                                     "for signing we use signature key with handle: "
                                     + signatureKeyHandle);
                 }
@@ -523,7 +533,7 @@ public class PKCS11Signer {
         long signatureKeyHandle = findSignatureKeyFromLabel(label);
 
         if (signatureKeyHandle > 0) {
-            log.println("\nStarting digest encryption...");
+            m_aLogger.info("\nStarting digest encryption...");
             encryptedDigest = signDataSinglePart(signatureKeyHandle, digest);
         } else {
             //         we have not found a suitable key, we cannot contiue
@@ -554,12 +564,12 @@ public class PKCS11Signer {
         long s = openSession(token);
 
         if (s == -1L) {
-            log.println("Unable to open a session on token with handle: "
+            m_aLogger.info("Unable to open a session on token with handle: "
                         + token);
             return -1L;
         }
 
-        log.println("finding a certificate with "
+        m_aLogger.info("finding a certificate with "
                     + "Critical KeyUsage including non repudiation\n"
                     + " on token with handle: " + token);
 
@@ -576,9 +586,9 @@ public class PKCS11Signer {
         pkcs11Module.C_FindObjectsFinal(s);
 
         if (availableCertificates == null) {
-            log.println("null returned - no certificate key found");
+            m_aLogger.info("null returned - no certificate key found");
         } else {
-            log.println("found " + availableCertificates.length
+            m_aLogger.info("found " + availableCertificates.length
                         + " certificates");
 
             byte[] certBytes = null;
@@ -589,7 +599,7 @@ public class PKCS11Signer {
             java.io.ByteArrayInputStream bais = null;
             for (int i = 0; (i < availableCertificates.length)
                          && (certKeyHandle < 0); i++) {
-                log.println("Checking KeyUsage for certificate with handle: "
+                m_aLogger.info("Checking KeyUsage for certificate with handle: "
                             + availableCertificates[i]);
                 certBytes = getDEREncodedCertificate(availableCertificates[i],
                         s);
@@ -598,9 +608,9 @@ public class PKCS11Signer {
                            .generateCertificate(bais);
                 if (isKeyUsageNonRepudiationCritical(javaCert)) {
                     certKeyHandle = availableCertificates[i];
-                    log.println("Check OK!");
+                    m_aLogger.info("Check OK!");
                 } else {
-                    log.println("Check failed.");
+                    m_aLogger.info("Check failed.");
                 }
             }
         }
@@ -640,8 +650,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log
-                .println(
+        m_aLogger.info(
                         "finding a certificate with Critical KeyUsage including non repudiation ...");
 
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
@@ -658,9 +667,9 @@ public class PKCS11Signer {
         pkcs11Module.C_FindObjectsFinal(getSession());
 
         if (availableCertificates == null) {
-            log.println("null returned - no certificate key found");
+            m_aLogger.info("null returned - no certificate key found");
         } else {
-            log.println("found " + availableCertificates.length
+            m_aLogger.info("found " + availableCertificates.length
                         + " certificates");
 
             byte[] certBytes = null;
@@ -673,7 +682,7 @@ public class PKCS11Signer {
             for (int i = 0; (i < availableCertificates.length)
                          && (certKeyHandle < 0); i++) {
 
-                log.println("Checking KeyUsage for certificate with handle: "
+                m_aLogger.info("Checking KeyUsage for certificate with handle: "
                             + availableCertificates[i]);
                 certBytes = getDEREncodedCertificate(availableCertificates[i]);
                 bais = new java.io.ByteArrayInputStream(certBytes);
@@ -681,9 +690,9 @@ public class PKCS11Signer {
                            .generateCertificate(bais);
                 if (isKeyUsageNonRepudiationCritical(javaCert)) {
                     certKeyHandle = availableCertificates[i];
-                    log.println("Check OK!");
+                    m_aLogger.info("Check OK!");
                 } else {
-                    log.println("Check failed.");
+                    m_aLogger.info("Check failed.");
                 }
             }
 
@@ -706,8 +715,7 @@ public class PKCS11Signer {
 
         long certKeyHandle = -1L;
 
-        log
-                .println("finding all certificates on token ...");
+        m_aLogger.info("finding all certificates on token ...");
 
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
 
@@ -725,9 +733,9 @@ public class PKCS11Signer {
         pkcs11Module.C_FindObjectsFinal(getSession());
 
         if (availableCertificates == null) {
-            log.println("null returned - no certificate key found");
+            m_aLogger.info("null returned - no certificate key found");
         } else {
-            log.println("found " + availableCertificates.length
+            m_aLogger.info("found " + availableCertificates.length
                         + " certificates");
 
         }
@@ -784,7 +792,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("find certificate from id.");
+        m_aLogger.info("find certificate from id.");
 
         // now get the certificate with the same ID as the signature key
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
@@ -802,16 +810,16 @@ public class PKCS11Signer {
                 100);
         //maximum of 100 at once
         if (availableCertificates == null) {
-            log.println("null returned - no certificate found");
+            m_aLogger.info("null returned - no certificate found");
         } else {
-            log.println("found " + availableCertificates.length
+            m_aLogger.info("found " + availableCertificates.length
                         + " certificates with matching ID");
             for (int i = 0; i < availableCertificates.length; i++) {
                 if (i == 0) { // the first we find, we take as our certificate
                     certificateHandle = availableCertificates[i];
                     System.out.print("for verification we use ");
                 }
-                log.println("certificate " + i);
+                m_aLogger.info("certificate " + i);
             }
         }
         pkcs11Module.C_FindObjectsFinal(getSession());
@@ -835,7 +843,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("find certificate from label.");
+        m_aLogger.info("find certificate from label.");
 
         // now get the certificate with the same ID as the signature key
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
@@ -853,16 +861,16 @@ public class PKCS11Signer {
                 100);
         //maximum of 100 at once
         if (availableCertificates == null) {
-            log.println("null returned - no certificate found");
+            m_aLogger.info("null returned - no certificate found");
         } else {
-            log.println("found " + availableCertificates.length
+            m_aLogger.info("found " + availableCertificates.length
                         + " certificates with matching ID");
             for (int i = 0; i < availableCertificates.length; i++) {
                 if (i == 0) { // the first we find, we take as our certificate
                     certificateHandle = availableCertificates[i];
                     System.out.print("for verification we use ");
                 }
-                log.println("certificate " + i);
+                m_aLogger.info("certificate " + i);
             }
         }
         pkcs11Module.C_FindObjectsFinal(getSession());
@@ -890,7 +898,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("\nFind certificate from signature key handle: "
+        m_aLogger.info("\nFind certificate from signature key handle: "
                     + signatureKeyHandle);
 
         // first get the ID of the signature key
@@ -902,7 +910,7 @@ public class PKCS11Signer {
                                          attributeTemplateList);
 
         byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
-        log.println("ID of signature key: "
+        m_aLogger.info("ID of signature key: "
                     + Functions.toHexString(keyAndCertificateID));
 
         return findCertificateFromID(keyAndCertificateID);
@@ -929,7 +937,7 @@ public class PKCS11Signer {
             return -1L;
         }
 
-        log.println("\nFind signature key from certificate with handle: "
+        m_aLogger.info("\nFind signature key from certificate with handle: "
                     + certHandle);
 
         // first get the ID of the signature key
@@ -942,8 +950,7 @@ public class PKCS11Signer {
 
         byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
 
-        log
-                .println("ID of cert: "
+        m_aLogger.info("ID of cert: "
                          + Functions.toHexString(keyAndCertificateID));
 
         return findSignatureKeyFromID(keyAndCertificateID);
@@ -1126,10 +1133,10 @@ public class PKCS11Signer {
      * @throws Throwable
      */
     public void libFinalize() throws Throwable {
-        log.println("\nfinalizing PKCS11 module...");
+        m_aLogger.info("finalizing PKCS11 module...");
        // getPkcs11().finalize();
         pkcs11Module.C_Finalize(null);
-        log.println("finalized.\n");
+        m_aLogger.info("finalized.");
     }
 
     /**
@@ -1161,7 +1168,7 @@ public class PKCS11Signer {
         // log in as the normal user...
 
         pkcs11Module.C_Login(getSession(), PKCS11Constants.CKU_USER, pwd);
-        log.println("\nUser logged into session.");
+        m_aLogger.info("\nUser logged into session.");
     }
 
     /**
@@ -1175,7 +1182,7 @@ public class PKCS11Signer {
         }
         // log in as the normal user...
         pkcs11Module.C_Logout(getSession());
-        log.println("\nUser logged out.\n");
+        m_aLogger.info("\nUser logged out.\n");
     }
 
     /**
@@ -1184,9 +1191,9 @@ public class PKCS11Signer {
      * @throws PKCS11Exception
      */
     private void getModuleInfo() throws PKCS11Exception {
-        log.println("getting PKCS#11 module info");
+        m_aLogger.info("getting PKCS#11 module info");
         CK_INFO moduleInfo = pkcs11Module.C_GetInfo();
-        log.println(moduleInfo);
+        m_aLogger.info(moduleInfo.toString());
     }
 
     /**
@@ -1195,15 +1202,15 @@ public class PKCS11Signer {
      * @throws PKCS11Exception
      */
     private long[] getSlotList() throws PKCS11Exception {
-        log.println("getting slot list");
+        m_aLogger.info("getting slot list");
         long[] slotIDs = null;
         //get all slots
         slotIDs = pkcs11Module.C_GetSlotList(false);
         CK_SLOT_INFO slotInfo;
         for (int i = 0; i < slotIDs.length; i++) {
-            log.println("Slot Info: ");
+            m_aLogger.info("Slot Info: ");
             slotInfo = pkcs11Module.C_GetSlotInfo(slotIDs[i]);
-            log.println(slotInfo);
+            m_aLogger.info(slotInfo.toString());
         }
         return slotIDs;
     }
@@ -1216,25 +1223,25 @@ public class PKCS11Signer {
 
 
     public long[] getTokenList() {
-        log.println("\ngetting token list");
+        m_aLogger.info("\ngetting token list");
         long[] tokenIDs = null;
         //get only slots with a token present
         try {
             tokenIDs = pkcs11Module.C_GetSlotList(true);
         } catch (PKCS11Exception ex) {
-            log.println("PKCS11Exception: " + ex);
+            m_aLogger.severe(ex);
         }
         CK_TOKEN_INFO tokenInfo;
-        log.println(tokenIDs.length + " tokens found.");
+        m_aLogger.info(tokenIDs.length + " tokens found.");
         for (int i = 0; i < tokenIDs.length; i++) {
-            log.println(i + ") Info for token with handle: " + tokenIDs[i]);
+            m_aLogger.info(i + ") Info for token with handle: " + tokenIDs[i]);
             tokenInfo = null;
             try {
                 tokenInfo = pkcs11Module.C_GetTokenInfo(tokenIDs[i]);
             } catch (PKCS11Exception ex1) {
-                log.println("PKCS11Exception: " + ex1);
+                m_aLogger.severe(ex1);
             }
-            log.println(tokenInfo);
+            m_aLogger.info(tokenInfo.toString());
         }
 
         return tokenIDs;
@@ -1253,7 +1260,7 @@ public class PKCS11Signer {
         //get only slots with a token present
         tokenIDs = pkcs11Module.C_GetSlotList(true);
 
-        //log.println(tokenIDs.length + " tokens found.");
+        //m_aLogger.info(tokenIDs.length + " tokens found.");
 
         return tokenIDs;
     }
@@ -1267,19 +1274,19 @@ public class PKCS11Signer {
     public void getMechanismInfo() throws PKCS11Exception {
         CK_MECHANISM_INFO mechanismInfo;
 
-        log.println("\ngetting mechanism list...");
+        m_aLogger.info("\ngetting mechanism list...");
         long[] slotIDs = getTokenList();
         for (int i = 0; i < slotIDs.length; i++) {
-            log.println("getting mechanism list for slot " + slotIDs[i]);
+            m_aLogger.info("getting mechanism list for slot " + slotIDs[i]);
             long[] mechanismIDs = pkcs11Module.C_GetMechanismList(slotIDs[i]);
             for (int j = 0; j < mechanismIDs.length; j++) {
-                log.println("mechanism info for mechanism id "
+                m_aLogger.info("mechanism info for mechanism id "
                             + mechanismIDs[j] + "->"
                             + Functions.mechanismCodeToString(mechanismIDs[j])
                             + ": ");
                 mechanismInfo = pkcs11Module.C_GetMechanismInfo(slotIDs[i],
                         mechanismIDs[j]);
-                log.println(mechanismInfo);
+                m_aLogger.info(mechanismInfo.toString());
             }
         }
 
@@ -1292,7 +1299,7 @@ public class PKCS11Signer {
         String mechanismString = Functions.mechanismCodeToString(mechanismCode);
 
         if (tokenList == null) {
-            log.println("\nSorry, no Token supports the required mechanism "
+            m_aLogger.info("\nSorry, no Token supports the required mechanism "
                         + mechanismString + "!");
             return -1L;
         }
@@ -1301,7 +1308,7 @@ public class PKCS11Signer {
         long currToken = -1L;
         while (i.hasNext() && (token == -1L)) {
             currToken = ((Long) i.next()).longValue();
-            log.println("\nToken with handle " + currToken
+            m_aLogger.info("\nToken with handle " + currToken
                         + " supports required mechanism " + mechanismString +
                         ".");
             try {
@@ -1309,9 +1316,9 @@ public class PKCS11Signer {
                     token = currToken;
                 }
             } catch (CertificateException e) {
-                log.println(e);
+                m_aLogger.severe(e);
             } catch (TokenException e) {
-                log.println(e);
+                m_aLogger.severe(e);
             }
         }
 
@@ -1364,7 +1371,7 @@ public class PKCS11Signer {
             }
         }
 
-        log.println((token >= 0) ? "\nToken with handle " + token
+        m_aLogger.info((token >= 0) ? "\nToken with handle " + token
                     + " supports required mechanism " + mechanismString + "."
                     : "\nSorry, no Token supports the required mechanism "
                     + mechanismString + "!");
@@ -1390,9 +1397,9 @@ public class PKCS11Signer {
 
         long[] mechanismIDs = pkcs11Module.C_GetMechanismList(tokenID);
 
-        log.println("listing  mechanisms:");
+        m_aLogger.info("listing  mechanisms:");
         for (int i = 0; i < mechanismIDs.length; i++) {
-            log.println(mechanismIDs[i] + ": "
+            m_aLogger.info(mechanismIDs[i] + ": "
                         + Functions.mechanismCodeToString(mechanismIDs[i]));
         }
 
@@ -1416,7 +1423,7 @@ public class PKCS11Signer {
         sessionHandle = pkcs11Module.C_OpenSession(aTokenHandle,
                 PKCS11Constants.CKF_SERIAL_SESSION, null, null);
 
-        log.println("\nSession with handle: " + sessionHandle
+        m_aLogger.info("\nSession with handle: " + sessionHandle
                     + " opened on token with handle: " + aTokenHandle + " .");
 
         return sessionHandle;
@@ -1434,10 +1441,10 @@ public class PKCS11Signer {
                     PKCS11Constants.CKF_SERIAL_SESSION, null, null);
 
             setSession(sessionHandle);
-            log.println("\nSession opened.");
+            m_aLogger.info("Session opened.");
 
         } else {
-            log.println("No token found!");
+            m_aLogger.info("No token found!");
         }
     }
 
@@ -1488,4 +1495,19 @@ public class PKCS11Signer {
     public void setTokenHandle(long token) {
         this.tokenHandle = token;
     }
+    
+    /**
+	 * @param logger
+	 */
+	private void setLogger(IDynamicLogger aLogger) {
+    	if(aLogger == null)
+    		m_aLogger = new DynamicLazyLogger();
+    	else {
+    		if(aLogger instanceof DynamicLogger)
+    			m_aLogger = (DynamicLogger)aLogger;
+    		else if(aLogger instanceof DynamicLoggerDialog)
+        			m_aLogger = (DynamicLoggerDialog)aLogger;
+    	}
+    	m_aLogger.enableLogging();
+	}   
 }

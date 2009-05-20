@@ -753,8 +753,7 @@ public class CLITest {
                     mechanism = PKCS11Constants.CKM_RSA_PKCS;
 
             if (mechanism != -1L) {
-                PKCS11Signer signAgent = new PKCS11Signer(getCryptokiLib(),
-                        System.out);
+                PKCS11Signer signAgent = new PKCS11Signer("",getCryptokiLib());
 
                 System.out
                         .println("Finding a token supporting required mechanism and "

@@ -57,33 +57,32 @@ public class Helpers {
 	protected Helpers() {
 	}
 
-	public static CertificateState mapCertificateStateToEnum(int _theState) {
-		switch(_theState) {
-		default:
-		case CertificateState.NOT_VERIFIABLE_value:
-			return CertificateState.NOT_VERIFIABLE;
-		case CertificateState.NOT_YET_VERIFIED_value:
-			return CertificateState.NOT_YET_VERIFIED;
-		case CertificateState.OK_value:
-			return CertificateState.OK;
-		case CertificateState.EXPIRED_value:
-			return CertificateState.EXPIRED;
-		case CertificateState.REVOKED_value:
-			return CertificateState.REVOKED;
-		case CertificateState.NOT_ACTIVE_value:
-			return CertificateState.NOT_ACTIVE;
-		case CertificateState.NOT_COMPLIANT_value:
-			return CertificateState.NOT_COMPLIANT;
-		case CertificateState.ERROR_IN_EXTENSION_value:
-			return CertificateState.ERROR_IN_EXTENSION;
-		case CertificateState.MISSING_EXTENSION_value:
-			return CertificateState.MISSING_EXTENSION;
-		case CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value:
-			return CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID;
-		case CertificateState.MALFORMED_CERTIFICATE_value:
-			return CertificateState.MALFORMED_CERTIFICATE;
-		}
+	/**
+	 * Returns the complete path to the native binary library in the root extension directory
+	 * 
+	 * @param _xContext
+	 * @param _libName
+	 * @return
+	 * @throws IOException 
+	 * @throws URISyntaxException 
+	 * @throws Exception 
+	 */
+	public static String getLocalNativeLibraryPath(XComponentContext _xContext, String _libName)
+					throws URISyntaxException, IOException, java.lang.NullPointerException
+						{
+		String sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_xContext)+System.getProperty("file.separator");
+		//now add the library name depending on os
+        String osName = System.getProperty("os.name");
+        if(osName.toLowerCase().indexOf("windows") != -1){
+        	// Windows OS detected
+        	return sExtensionSystemPath+_libName+".dll";
+        } else if(osName.toLowerCase().indexOf("linux") != -1){
+            // Linux OS detected
+        	return sExtensionSystemPath+"lib"+_libName+".so";
+        } else //something else...
+        	throw(new java.lang.NullPointerException("Native libraries for '"+osName+"' not available! Giving up."));
 	}
+	
 	
 	public static int mapCertificateStateToValue(CertificateState _theState) {
 		if(_theState == CertificateState.NOT_VERIFIABLE)

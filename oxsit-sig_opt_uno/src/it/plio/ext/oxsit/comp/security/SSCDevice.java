@@ -71,8 +71,6 @@ public class SSCDevice extends ComponentBase
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[] m_sServiceNames = { GlobConstant.m_sSSCD_SERVICE };
 
-	protected String m_sExtensionSystemPath;
-
 	protected String m_sSSCDLibraryPath;
 	protected boolean m_bSSCDAutomaticDetection;
 	
@@ -99,15 +97,6 @@ public class SSCDevice extends ComponentBase
 		m_xCC = _ctx;
 		m_aLogger.enableLogging();
 		m_aLogger.ctor();
-		try {
-			m_sExtensionSystemPath = Helpers
-					.getExtensionInstallationSystemPath(_ctx);
-			m_aLogger.ctor("extension installed in: " + m_sExtensionSystemPath);
-		} catch (URISyntaxException e) {
-			m_aLogger.severe("ctor", "", e);
-		} catch (IOException e) {
-			m_aLogger.severe("ctor", "", e);
-		}
 
 		// grab the configuration information
 		OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(

@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit.comp.security;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
@@ -355,7 +356,7 @@ public class AvailableSSCDs extends ComponentBase
 		else
 			aLogger = new DynamicLogger(this,m_xCC);
 
-		PCSCHelper pcsc = new PCSCHelper(true, m_sExtensionSystemPath, aLogger);
+		PCSCHelper pcsc = new PCSCHelper(true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 //		PCSCHelper pcsc = new PCSCHelper(true, null);
 
 		m_aLogger.log("After 'new PCSCHelper'");
@@ -390,9 +391,14 @@ public class AvailableSSCDs extends ComponentBase
 					xSSCDevice.setATRcode(ci.getProperty("atr"));
 					xSSCDevice.setCryptoLibraryUsed(ci.getProperty("lib"));
 
-					m_aLogger.log("\n\tLettura certificati");
+					m_aLogger.log("\tLettura certificati");
 
-					ReadCertsTask rt = new ReadCertsTask(cIr);
+					// set the library to be used, locally
+					String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+					
+					m_aLogger.info(Pkcs11WrapperLocal);
+					
+					ReadCertsTask rt = new ReadCertsTask(aLogger, Pkcs11WrapperLocal, cIr);
 					Collection certsOnToken = rt.getCertsOnToken();
 					if (certsOnToken != null) {
 						Iterator certIt = certsOnToken.iterator();

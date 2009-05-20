@@ -28,6 +28,10 @@ import java.util.*;
 import iaik.pkcs.pkcs11.*;
 import iaik.pkcs.pkcs11.wrapper.*;
 import it.infocamere.freesigner.crl.*;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.trento.comune.j4sign.examples.SwingWorker;
 import it.trento.comune.j4sign.pcsc.*;
 import it.trento.comune.j4sign.pkcs11.*;
@@ -84,7 +88,9 @@ public class ReadCertsTask extends AbstractTask {
 
     private java.lang.String cryptokiLib = null;
 
-    private java.io.PrintStream log = null;
+//    private java.io.PrintStream log = null;
+    
+    private IDynamicLogger m_aLogger;
 
     public static final int SIGN_MAXIMUM = 4;
 
@@ -116,8 +122,11 @@ public class ReadCertsTask extends AbstractTask {
      */
 
     public ReadCertsTask() {
-
         this(0);
+    }
+
+    public ReadCertsTask(int indexToken) {
+    	this(null, "", indexToken);
     }
 
     /**
@@ -128,37 +137,38 @@ public class ReadCertsTask extends AbstractTask {
      * @param indexToken
      *            int
      */
-    public ReadCertsTask(int indexToken) {
+    public ReadCertsTask( IDynamicLogger aLogger, String pkcs11WrapLib, int indexToken) {
 
-        log = System.out;
+    	setLogger(aLogger);
+ 
         certsOnToken = new Hashtable();
         signersList = new ArrayList();
         pcsc = new PCSCHelper(true);
         setLibForToken(indexToken);
 
-        log.println("Accesso alla carta con indexToken " + indexToken
+        m_aLogger.info("Accesso alla carta con indexToken " + indexToken
                 + " con lib " + cryptokiLib);
 
         helper = null;
-        log.println("Helper Class Loader: "
+        m_aLogger.info("Helper Class Loader: "
                 + PKCS11Signer.class.getClassLoader());
         try {
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
-                log.println("SecurityManager: " + sm);
+            	m_aLogger.info("SecurityManager: " + sm);
             } else {
-                log.println("no SecurityManager.");
+                m_aLogger.info("no SecurityManager.");
             }
             // setStatus(SIGN_INIT_SESSION, "Accesso alla carta2...\n ");
-            helper = new PKCS11Signer(cryptokiLib, log);
+            helper = new PKCS11Signer(m_aLogger, pkcs11WrapLib, cryptokiLib);
 
             long[] tokens = helper.getTokens();
-            log.println(tokens.length + " token rilevati con la lib "
+            m_aLogger.info(tokens.length + " token rilevati con la lib "
                     + cryptokiLib);
             for (int i = 0; i < tokens.length; i++) {
-                log.println("indice " + i + " ha tokenHandle " + tokens[i]
+            	m_aLogger.info("indice " + i + " ha tokenHandle " + tokens[i]
                         + " su " + tokens.length + "token trovati");
-                log.println(helper.getSlotDescription((long) tokens[i]));
+            	m_aLogger.info(helper.getSlotDescription((long) tokens[i]));
             }
 
             // int indexToken = 0;
@@ -181,7 +191,7 @@ public class ReadCertsTask extends AbstractTask {
             // log.println(PKCS11Helper.decodeError(te.getCode()));
             // setStatus(ERROR, PKCS11Helper.decodeError(-1));
             setStatus(ERROR, "Errore");
-            log.println(te);
+            m_aLogger.severe(te);
 
             /*
              * catch (UnsatisfiedLinkError ule) { setStatus(ERROR, "Occorre
@@ -190,7 +200,7 @@ public class ReadCertsTask extends AbstractTask {
              */
         } catch (Exception e) {
             setStatus(ERROR, "Eccezione: " + e);
-            log.println(e);
+            m_aLogger.severe(e);
         }
 
     }
@@ -201,6 +211,11 @@ public class ReadCertsTask extends AbstractTask {
      * @param cIr :
      *            Object containing information about card in reader
      */
+
+    public ReadCertsTask(IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr) {
+        this(aLogger, pkcs11WrapLib, cIr, false);
+        detectTokens();
+    }
 
     public ReadCertsTask(CardInReaderInfo cIr) {
         this(cIr, false);
@@ -213,6 +228,10 @@ public class ReadCertsTask extends AbstractTask {
         this.rootsVerifier = rv;
     }
 
+    public ReadCertsTask(CardInReaderInfo cIr, boolean isDownloadCRLForced) {
+    	this(null,"",cIr,isDownloadCRLForced);
+    }
+    
     /**
      * Constructor
      * 
@@ -221,9 +240,9 @@ public class ReadCertsTask extends AbstractTask {
      * @param isDownloadCRLForced
      *            true if CRL is forced
      */
-    public ReadCertsTask(CardInReaderInfo cIr, boolean isDownloadCRLForced) {
+    public ReadCertsTask(IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr, boolean isDownloadCRLForced) {
 
-        log = System.out;
+    	setLogger(aLogger);
         this.isDownloadCRLForced = isDownloadCRLForced;
         certsOnToken = new Hashtable();
         signersList = new ArrayList();
@@ -233,19 +252,19 @@ public class ReadCertsTask extends AbstractTask {
 
         certs = null;
         helper = null;
-        log.println("Helper Class Loader: "
+        m_aLogger.info("Helper Class Loader: "
                 + PKCS11Signer.class.getClassLoader());
         try {
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
-                log.println("SecurityManager: " + sm);
+            	m_aLogger.info("SecurityManager: " + sm);
             } else {
-                log.println("no SecurityManager.");
+            	m_aLogger.info("no SecurityManager.");
             }
             // setStatus(SIGN_INIT_SESSION, "Accesso alla
             // carta...\n"+SIGN_INIT_SESSION+" "+
             // differentCerts);
-            helper = new PKCS11Signer(cryptokiLib, log);
+            helper = new PKCS11Signer(m_aLogger, pkcs11WrapLib, cryptokiLib);
 
             // int indexToken = 0;
             // if (tokens.length > 1) {
@@ -263,7 +282,7 @@ public class ReadCertsTask extends AbstractTask {
             // log.println(PKCS11Helper.decodeError(te.getCode()));
             // setStatus(ERROR, PKCS11Helper.decodeError(-1));
             setStatus(ERROR, "Errore");
-            log.println(te);
+            m_aLogger.severe(te);
 
             /*
              * catch (UnsatisfiedLinkError ule) { setStatus(ERROR, "Occorre
@@ -272,12 +291,28 @@ public class ReadCertsTask extends AbstractTask {
              */
         } catch (Exception e) {
             setStatus(ERROR, "Eccezione: " + e);
-            log.println(e);
+            m_aLogger.severe(e);
         }
 
     }
 
     /**
+	 * @param logger
+	 */
+	private void setLogger(IDynamicLogger aLogger) {
+    	if(aLogger == null)
+    		m_aLogger = new DynamicLazyLogger();
+    	else {
+    		if(aLogger instanceof DynamicLogger)
+    			m_aLogger = (DynamicLogger)aLogger;
+    		else if(aLogger instanceof DynamicLoggerDialog)
+        			m_aLogger = (DynamicLoggerDialog)aLogger;
+    	}
+
+    	m_aLogger.enableLogging();
+	}
+
+	/**
      * Set library for token<br>
      * <br>
      * Setta la libreria per il token
@@ -290,7 +325,7 @@ public class ReadCertsTask extends AbstractTask {
 
         String s = pcsc.findLibForIndexToken(indexToken);
         setCryptokiLib(s);
-        log.println("Setting library " + s + " for token with indexToken: "
+        m_aLogger.info("Setting library " + s + " for token with indexToken: "
                 + indexToken + "\n");
 
     }
@@ -309,12 +344,12 @@ public class ReadCertsTask extends AbstractTask {
     private boolean detectCardAndCriptoki(int indexToken) throws IOException {
         CardInfo ci = null;
         boolean cardPresent = false;
-        log.println("\n\n========= DETECTING CARD ===========");
+        m_aLogger.info("\n\n========= DETECTING CARD ===========");
 
-        log.println("Resetting cryptoki name");
+        m_aLogger.info("Resetting cryptoki name");
         setCryptokiLib(null);
 
-        log.println("Trying to detect card via PCSC ...");
+        m_aLogger.info("Trying to detect card via PCSC ...");
         // JNIUtils jni = new JNIUtils();
         // jni.loadLibrary("OCFPCSC1");
         // jni.loadLibrary("pkcs11wrapper");
@@ -324,16 +359,16 @@ public class ReadCertsTask extends AbstractTask {
         cardPresent = !cards.isEmpty();
         if (cardPresent) {
             ci = (CardInfo) cards.get(indexToken);
-            log.println("\n\n" + ci.getProperty("description"));
-            log.println("Setting library for token with indexToken: "
+            m_aLogger.info("\n\n" + ci.getProperty("description"));
+            m_aLogger.info("Setting library for token with indexToken: "
                     + indexToken + "\n");
             setCryptokiLib(ci.getProperty("lib"));
 
         } else {
-            log.println("Sorry, no card detected!");
+        	m_aLogger.info("Sorry, no card detected!");
         }
 
-        log.println("=================================");
+        m_aLogger.info("=================================");
 
         return (getCryptokiLib() != null);
     }
@@ -550,8 +585,7 @@ public class ReadCertsTask extends AbstractTask {
             tokens = helper.getTokens();
         } catch (PKCS11Exception ex3) {
         }
-        log
-                .println(tokens.length + " token rilevati con la lib "
+        m_aLogger.info(tokens.length + " token rilevati con la lib "
                         + cryptokiLib);
         // confronto tra la stringa reader di pcsc e quelle rilevate con la
         // libreria da helper
@@ -570,7 +604,7 @@ public class ReadCertsTask extends AbstractTask {
             if ((readerFromPKCS11.startsWith(readerFromCiR))
                     || (readerFromCiR2.endsWith(readerFromPKCS112))) {
 
-                log.println("Settato token "
+            	m_aLogger.info("Settato token "
                         + helper.getSlotDescription((long) tokens[i]));
                 helper.setTokenHandle(tokens[i]);
                 try {
@@ -634,7 +668,7 @@ public class ReadCertsTask extends AbstractTask {
      */
     class CertsFinder {
         CertsFinder() {
-            log.println("CertsFinder running...");
+        	m_aLogger.info("CertsFinder running...");
             byte[] certBytes = null;
 
             java.security.cert.X509Certificate javaCert = null;
@@ -646,7 +680,7 @@ public class ReadCertsTask extends AbstractTask {
             java.io.ByteArrayInputStream bais = null;
             for (int i = 0; (i < certs.length); i++) {
 
-                log.println("Generating certificate with handle: " + i + ") "
+            	m_aLogger.info("Generating certificate with handle: " + i + ") "
                         + certs[i]);
 
                 try {
@@ -661,7 +695,7 @@ public class ReadCertsTask extends AbstractTask {
                 }
                 setStatus(i + 1, "Lettura certificato\n"
                         + getCommonName(javaCert));
-                log.println(javaCert.getSubjectDN());
+                m_aLogger.info(javaCert.getSubjectDN().toString());
 
                 certsOnToken.put(new Integer(i), javaCert);
 
@@ -681,7 +715,7 @@ public class ReadCertsTask extends AbstractTask {
 
                 // helper.openSession(password);
                 // helper.login(String.valueOf(password));
-                log.println("User logged in.");
+            	m_aLogger.info("User logged in.");
 
                 long privateKeyHandle = -1L;
                 long certHandle = -1;
@@ -689,7 +723,7 @@ public class ReadCertsTask extends AbstractTask {
                 byte[] encDigestBytes = null;
                 byte[] certBytes = null;
 
-                log.println("Searching objects from certificate key usage ...");
+                m_aLogger.info("Searching objects from certificate key usage ...");
 
                 certHandle = helper.findCertificateWithNonRepudiationCritical();
 
@@ -717,34 +751,33 @@ public class ReadCertsTask extends AbstractTask {
                     // setCertificate(certBytes);
 
                 } else {
-                    log
-                            .println("\nNo private key corrisponding to certificate found on token!");
+                	m_aLogger.info("\nNo private key corrisponding to certificate found on token!");
                 }
 
             } catch (TokenException e) {
-                log.println("sign() Error: " + e);
+            	m_aLogger.info("sign() Error: " + e);
                 // log.println(PKCS11Helper.decodeError(e.getCode()));
                 // log.println(PKCS11Helper.decodeError(e.getCode()));
 
                 // } catch (IOException ioe) {
                 // log.println(ioe);
             } catch (UnsatisfiedLinkError ule) {
-                log.println(ule);
+            	m_aLogger.severe(ule);
             } finally {
                 if (helper != null) {
                     try {
                         helper.closeSession();
-                        log.println("Sign session Closed.");
+                        m_aLogger.info("Sign session Closed.");
                     } catch (PKCS11Exception e2) {
-                        log.println("Error closing session: " + e2);
+                    	m_aLogger.severe("","Error closing session: " + e2);
                     }
 
                     try {
                         helper.libFinalize();
-                        log.println("Lib finalized.");
+                        m_aLogger.info("Lib finalized.");
                     } catch (Throwable e1) {
                         // TODO Auto-generated catch block
-                        log.println("Error finalizing criptoki: " + e1);
+                    	m_aLogger.severe("","Error finalizing criptoki: ",e1);
                     }
 
                 }
@@ -841,7 +874,7 @@ public class ReadCertsTask extends AbstractTask {
         java.security.cert.X509Certificate javaCert = null;
         CertificateFactory cf = null;
 
-        log.println("getCertsOnToken running ...");
+        m_aLogger.info("getCertsOnToken running ...");
         try {
             cf = java.security.cert.CertificateFactory.getInstance("X.509");
         } catch (CertificateException ex) {
@@ -850,7 +883,7 @@ public class ReadCertsTask extends AbstractTask {
         if (certs != null) {
             for (int i = 0; (i < certs.length); i++) {
 
-                log.println("Generating certificate with handle: " + i + ") "
+            	m_aLogger.info("Generating certificate with handle: " + i + ") "
                         + certs[i]);
 
                 try {
@@ -863,7 +896,7 @@ public class ReadCertsTask extends AbstractTask {
                             .generateCertificate(bais);
                 } catch (CertificateException ex1) {
                 }
-                log.println(javaCert.getSubjectDN());
+                m_aLogger.info(javaCert.getSubjectDN().toString());
 
                 certsOnToken.put(new Integer(i), javaCert);
 
@@ -919,10 +952,10 @@ public class ReadCertsTask extends AbstractTask {
     public void libFinalize() {
         try {
             helper.libFinalize();
-            log.println("Lib finalized.");
+            m_aLogger.info("Lib finalized.");
         } catch (Throwable e1) {
             // TODO Auto-generated catch block
-            log.println("Error finalizing criptoki: " + e1);
+        	m_aLogger.info("Error finalizing criptoki: " + e1);
         }
         helper = null;
     }

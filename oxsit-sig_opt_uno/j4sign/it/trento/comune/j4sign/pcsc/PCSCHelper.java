@@ -90,9 +90,7 @@ public class PCSCHelper {
     	this(loadLib,null, null);
     }
 
-	public static String m_sLibPath = null;
-
-    public PCSCHelper(boolean loadLib, String aPath, IDynamicLogger aLogger) {
+    public PCSCHelper(boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
     	if(aLogger == null)
     		m_aLogger = new DynamicLazyLogger();
     	else {
@@ -111,8 +109,7 @@ public class PCSCHelper {
             if (loadLib) {
 //                OCFPCSC1.loadLib(aPath);
 	            try {
-	            	m_sLibPath = aPath;
-	                OCFPCSC1.loadLib(aPath);
+	                OCFPCSC1.loadLib(_PcscWrapperLib);
 	            } catch (NoSuchMethodError e) {
 	            // this can happen if the library is not the one we think
 	            	m_aLogger.info("Not found class OCFPCSC1 locally in jar file, trying the installed one from j4sign...");

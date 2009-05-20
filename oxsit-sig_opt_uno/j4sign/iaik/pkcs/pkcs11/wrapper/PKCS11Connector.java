@@ -74,9 +74,15 @@ public class PKCS11Connector {
    * @exception IOException If finding the module or connecting to it fails.
    */
   public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath)
+  throws IOException
+  {
+	    return new PKCS11Implementation(pkcs11ModulePath,"");
+  }
+
+  public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath, String libLocal)
       throws IOException
   {
-    return new PKCS11Implementation(pkcs11ModulePath);
+    return new PKCS11Implementation(pkcs11ModulePath,libLocal);
   }
 
 }

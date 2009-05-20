@@ -394,7 +394,7 @@ public class TestOnCertificates {
 				m_aLogger.log("\tATR:\t\t" + ci.getProperty("atr"));
 				m_aLogger.log("\tCriptoki:\t" + ci.getProperty("lib"));
 				
-				m_aLogger.log("\n\tLettura certificati");
+				m_aLogger.log("\tLettura certificati");
 				
 				ReadCertsTask rt = new ReadCertsTask(cIr);
 				Collection<?> certsOnToken = rt.getCertsOnToken();

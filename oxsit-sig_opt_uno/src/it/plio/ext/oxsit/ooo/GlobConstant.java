@@ -22,6 +22,8 @@
 
 package it.plio.ext.oxsit.ooo;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
+
 /**
  * this class contains the global variables needed by all this implemenatation
  * 
@@ -158,4 +160,9 @@ public class GlobConstant {
 	
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
+	
+	
+	public static final String m_sPKCS11_WRAPPER_NATIVE = PKCS11Implementation.getPKCS11_WRAPPER();
+	
+	public static final String m_sPCSC_WRAPPER_NATIVE = "OCFPCSC1";
 }

@@ -36,6 +36,8 @@
 
 package com.ibm.opencard.terminal.pcsc10;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
+
 //ROB: Commented out to eliminate dependencies from opencard.core.util.Tracer
 //import opencard.core.util.Tracer;
 
@@ -102,18 +104,15 @@ public class OCFPCSC1 {
 //	  String aPath = PCSCHelper.m_sLibPath;
 	  boolean ret = false;
     try {
-    	System.out.println("loading library...");
       //netscape.security.PrivilegeManager.enablePrivilege("UniversalLinkAccess");
       
       //ROB: Decommented (used instead of:
       //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary()
-    	if(aPath == null) {
-    		System.loadLibrary("OCFPCSC1");
+    	if(aPath == null || aPath.length() == 0) {
+    		System.loadLibrary(GlobConstant.m_sPCSC_WRAPPER_NATIVE);
     		ret = true;
     	}
     	else {
-    		aPath = aPath+System.getProperty("file.separator")+"libOCFPCSC1.so";
-    		System.out.println(aPath);
     		System.load(aPath);
     		ret = true;
     	}

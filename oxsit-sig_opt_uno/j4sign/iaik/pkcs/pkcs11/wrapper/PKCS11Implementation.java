@@ -67,7 +67,7 @@ public class PKCS11Implementation implements PKCS11 {
    * the extension (e.g. ".DLL" or ".so").
    */
   private static final String PKCS11_WRAPPER = "pkcs11wrapper";
-
+  
   /**
    * Indicates, if the static linking and initialization of the library is already done.
    */
@@ -104,14 +104,23 @@ public class PKCS11Implementation implements PKCS11 {
    *
    * @preconditions
    * @postconditions
+   * 
+   * beppec56 changed inti to use library local
    */
-  public static synchronized void ensureLinkedAndInitialized() {
+  public static synchronized void ensureLinkedAndInitialized(String localLib) {
     if (!linkedAndInitialized_) {
       /* We do not call loadLibrary in a static initializer to allow better use in
        * applets. Static initialization blocks have a differrent security context.
        */
-      System.loadLibrary(PKCS11_WRAPPER);
-      initializeLibrary();
+    	//beppec56 added for OOo local path
+    	try {
+    		//try locally first
+    		System.load(localLib);
+    	} catch (UnsatisfiedLinkError e) {
+    		//so shared library load try, now
+    		System.loadLibrary(PKCS11_WRAPPER);
+    	}
+    	initializeLibrary();
       linkedAndInitialized_ = true;
     }
   }
@@ -143,9 +152,15 @@ public class PKCS11Implementation implements PKCS11 {
    * @postconditions
    */
   PKCS11Implementation(String pkcs11ModulePath)
+  throws IOException
+  {
+	  this(pkcs11ModulePath,"");
+  }
+
+  PKCS11Implementation(String pkcs11ModulePath, String libLocal)
       throws IOException
   {
-    ensureLinkedAndInitialized();
+    ensureLinkedAndInitialized(libLocal);
     connect(pkcs11ModulePath);
     pkcs11ModulePath_ = pkcs11ModulePath;
   }
@@ -1522,5 +1537,12 @@ public class PKCS11Implementation implements PKCS11 {
     disconnect();
     super.finalize();
   }
+
+	/**
+	 * @return the pKCS11_WRAPPER
+	 */
+	public static String getPKCS11_WRAPPER() {
+		return PKCS11_WRAPPER;
+	}
 
 }
