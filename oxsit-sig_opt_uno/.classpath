@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="j4sign"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/juh.jar"/>
 	<classpathentry kind="var" path="OOO3_URE_LIBS/jurt.jar"/>
