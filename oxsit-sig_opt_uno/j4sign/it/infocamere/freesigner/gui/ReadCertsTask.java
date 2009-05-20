@@ -78,7 +78,7 @@ public class ReadCertsTask extends AbstractTask {
 
     private long[] certs;
 
-    private Hashtable certsOnToken;
+    private Hashtable<Integer, X509Certificate> certsOnToken;
 
     private PCSCHelper pcsc;
 
@@ -868,7 +868,7 @@ public class ReadCertsTask extends AbstractTask {
      * 
      * @return Collection
      */
-    public Collection getCertsOnToken() {
+    public Collection<X509Certificate> getCertsOnToken() {
         byte[] certBytes = null;
 
         java.security.cert.X509Certificate javaCert = null;

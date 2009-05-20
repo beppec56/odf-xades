@@ -26,7 +26,6 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -34,7 +33,6 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
@@ -275,65 +273,6 @@ public class AvailableSSCDs extends ComponentBase
 		return m_aSSCDList.size();
 	}
 
-	private class CertInfo {
-		public String certName;
-
-		public X509Certificate c;
-
-		/**
-		 * Constructor (null)
-		 * 
-		 */
-
-		public CertInfo() {
-			certName = null;
-			c = null;
-		}
-
-		/**
-		 * Constructor
-		 * 
-		 * @param x
-		 *            X509Certificate
-		 */
-		public CertInfo(X509Certificate x) {
-			certName = toCNNames("" + x.getSubjectDN());
-			c = x;
-		}
-
-		public String toString() {
-			return certName;
-		}
-
-		public X509Certificate getCertificate() {
-			return c;
-		}
-
-		public void setCertificate(X509Certificate x) {
-			c = x;
-		}
-
-		public void setName(String s) {
-			certName = s;
-		}
-
-	}
-
-	private String toCNNames(String DN) {
-
-		int offset = DN.indexOf("CN=");
-		int end = DN.indexOf(",", offset);
-		String CN;
-		if (end != -1) {
-			CN = DN.substring(offset + 3, end);
-		} else {
-			CN = DN.substring(offset + 3, DN.length());
-		}
-		CN = CN.substring(0, CN.length());
-		return CN;
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -361,7 +300,7 @@ public class AvailableSSCDs extends ComponentBase
 
 		m_aLogger.log("After 'new PCSCHelper'");
 
-		java.util.List infos = pcsc.findCardsAndReaders();
+		java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
 
 		CardInfo ci = null;
 		Iterator<CardInReaderInfo> it = infos.iterator();
@@ -399,9 +338,9 @@ public class AvailableSSCDs extends ComponentBase
 					m_aLogger.info(Pkcs11WrapperLocal);
 					
 					ReadCertsTask rt = new ReadCertsTask(aLogger, Pkcs11WrapperLocal, cIr);
-					Collection certsOnToken = rt.getCertsOnToken();
+					Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
 					if (certsOnToken != null) {
-						Iterator certIt = certsOnToken.iterator();
+						Iterator<X509Certificate> certIt = certsOnToken.iterator();
 						while (certIt.hasNext()) {
 	//add this certificate to our structure
 							X509Certificate cert = (X509Certificate) certIt.next();

@@ -55,6 +55,7 @@ import java.io.IOException;
  *
  * @author Karl Scheibelhofer <Karl.Scheibelhofer@iaik.at>
  * @author Martin Schläffer <schlaeff@sbox.tugraz.at>
+ * @author Giuseppe Castagno <beppec56@osor.eu>
  */
 public class PKCS11Connector {
 
@@ -68,21 +69,20 @@ public class PKCS11Connector {
 
   /**
    * Connect to a PKCS#11 module and get an interface to it.
+   * 
+   * beppec56: added parameter for library
    *
    * @param pkcs11ModulePath The path to the PKCS#11 library.
+   * @param pkcs11WrapLib full system path of the native wrapper library used 
    * @return The interface object to access the PKCS#11 module.
    * @exception IOException If finding the module or connecting to it fails.
    */
+  public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath, String pkcs11WrapLib)
+  			throws IOException  {
+    return new PKCS11Implementation(pkcs11ModulePath,pkcs11WrapLib);
+  }
   public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath)
-  throws IOException
-  {
-	    return new PKCS11Implementation(pkcs11ModulePath,"");
+	throws IOException  {
+	  return new PKCS11Implementation(pkcs11ModulePath,"");
   }
-
-  public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath, String libLocal)
-      throws IOException
-  {
-    return new PKCS11Implementation(pkcs11ModulePath,libLocal);
-  }
-
 }

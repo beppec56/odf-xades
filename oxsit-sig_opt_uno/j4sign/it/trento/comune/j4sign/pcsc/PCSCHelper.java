@@ -107,7 +107,6 @@ public class PCSCHelper {
 
             // load native library
             if (loadLib) {
-//                OCFPCSC1.loadLib(aPath);
 	            try {
 	                OCFPCSC1.loadLib(_PcscWrapperLib);
 	            } catch (NoSuchMethodError e) {
@@ -217,6 +216,7 @@ public class PCSCHelper {
 
     }
 
+    //a simple test method..
     public static void main(String[] args) {
 
         PCSCHelper a = new PCSCHelper(true);
@@ -271,7 +271,6 @@ public class PCSCHelper {
         }
         return cards;
     }
-
 
     public List<CardInReaderInfo> findCardsAndReaders() {
 

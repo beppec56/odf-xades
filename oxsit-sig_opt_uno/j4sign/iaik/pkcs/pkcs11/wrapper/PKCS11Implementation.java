@@ -110,7 +110,7 @@ public class PKCS11Implementation implements PKCS11 {
   public static synchronized void ensureLinkedAndInitialized(String localLib) {
     if (!linkedAndInitialized_) {
       /* We do not call loadLibrary in a static initializer to allow better use in
-       * applets. Static initialization blocks have a differrent security context.
+       * applets. Static initialization blocks have a different security context.
        */
     	//beppec56 added for OOo local path
     	try {
