@@ -53,7 +53,7 @@ public class DynamicLogger extends DynamicLoggerBase {
 		super(_theOwner,_ctx);
 	}
 
-	public void warning(String _theMethod, String _message, Exception ex) {
+	public void warning(String _theMethod, String _message, Throwable ex) {
 		if(m_bLogEnabled && m_bWarningEnabled)
 			log_exception(GlobConstant.m_nLOG_LEVEL_WARNING, _theMethod, _message, ex,false);
 	}
@@ -71,15 +71,15 @@ public class DynamicLogger extends DynamicLoggerBase {
 	 * @param _message
 	 * @param ex
 	 */
-	public void severe(Exception ex) {
+	public void severe(Throwable ex) {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, "", "", ex,false);
 	}
 
-	public void severe(String _theMethod, String _message, java.lang.Exception ex) {
+	public void severe(String _theMethod, String _message, java.lang.Throwable ex) {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, _message, ex,false);
 	}
 
-	public void severe(String _theMethod, java.lang.Exception ex) {
+	public void severe(String _theMethod, java.lang.Throwable ex) {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, _theMethod, "", ex,false);
 	}
 }

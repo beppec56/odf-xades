@@ -155,17 +155,17 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_WARNING, m_sOwnerClassHashHex+" "+ m_sOwnerClass, _theMethod, _message);
 	}
 
-	public abstract void warning(String _theMethod, String _message, java.lang.Exception ex);
+	public abstract void warning(String _theMethod, String _message, java.lang.Throwable ex);
 
 	public abstract void severe(String _theMethod, String _message);
 
-	public abstract void severe(java.lang.Exception ex);
+	public abstract void severe(java.lang.Throwable ex);
 
-	public abstract void severe(String _theMethod, String _message, java.lang.Exception ex);
+	public abstract void severe(String _theMethod, String _message, java.lang.Throwable ex);
 
-	public abstract void severe(String _theMethod, java.lang.Exception ex);
+	public abstract void severe(String _theMethod, java.lang.Throwable ex);
 
-	public static String getStackFromException(java.lang.Exception ex) {
+	public static String getStackFromException(java.lang.Throwable ex) {
 		String term = System.getProperty("line.separator");
 		String stack = term+ex.toString()+" ";
 
@@ -176,7 +176,7 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 		return stack;
 	}
 
-	public void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex, boolean usedialog) {
+	public void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Throwable ex, boolean usedialog) {
 		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
 					_theMethod +" "+_message,
 					DynamicLoggerBase.getStackFromException(ex));
@@ -184,8 +184,14 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 		if(usedialog && n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
 			try {
 			//Use the dialog
+				String _mex2 = "";
+				if(_message.length() >0) {
+					String term = System.getProperty("line.separator");
+					_mex2 = term+term+_message+term; //
+				}
+				
 				String theMex = m_sOwnerClassHashHex+" "+m_sOwnerClass+" "+_theMethod +
-									" "+_message+
+									" "+_mex2+
 									DynamicLoggerBase.getStackFromException(ex);			
 				DialogDisplayLog dlg = new DialogDisplayLog(null,m_xCC,m_xMCF,theMex);
 				dlg.initialize( 0, 0);

@@ -36,8 +36,6 @@
 
 package com.ibm.opencard.terminal.pcsc10;
 
-import it.trento.comune.j4sign.pcsc.PCSCHelper;
-
 //ROB: Commented out to eliminate dependencies from opencard.core.util.Tracer
 //import opencard.core.util.Tracer;
 
@@ -95,8 +93,8 @@ public class OCFPCSC1 {
   // 	return ret;
   }
   
-  static public boolean loadLib() {
-	  	return OCFPCSC1.loadLib(null);
+  static public void loadLib() {
+	  	OCFPCSC1.loadLib(null);
   }
 
   /* load the Wrapper-DLL */

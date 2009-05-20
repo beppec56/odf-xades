@@ -64,15 +64,15 @@ public interface IDynamicLogger {
 
 	abstract void warning(String _theMethod, String _message);
 
-	abstract void warning(String _theMethod, String _message, java.lang.Exception ex);
+	abstract void warning(String _theMethod, String _message, Throwable ex);
 
 	abstract void severe(String _theMethod, String _message);
 
-	abstract void severe(java.lang.Exception ex);
+	abstract void severe(Throwable ex);
 
-	abstract void severe(String _theMethod, String _message, java.lang.Exception ex);
+	abstract void severe(String _theMethod, String _message, Throwable ex);
 
-	abstract void severe(String _theMethod, java.lang.Exception ex);
+	abstract void severe(String _theMethod, Throwable ex);
 	
 	abstract void disableLogging();
 	
@@ -88,5 +88,5 @@ public interface IDynamicLogger {
 
 	abstract void stopLogging();
 	
-	abstract void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Exception ex, boolean useDialog);
+	abstract void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Throwable ex, boolean useDialog);
 }

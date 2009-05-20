@@ -25,7 +25,10 @@ package it.plio.ext.oxsit.comp.security;
 import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
@@ -92,7 +95,7 @@ public class AvailableSSCDs extends ComponentBase
 	//the list of available devices
 	protected Vector<XOX_SSCDevice>	m_aSSCDList; 
 	
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 
 	/**
 	 * 
@@ -101,7 +104,7 @@ public class AvailableSSCDs extends ComponentBase
 	 *            the UNO context
 	 */
 	public AvailableSSCDs(XComponentContext _ctx) {
-		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLoggerDialog(this, _ctx);
 		m_xCC = _ctx;
 		m_MCF = m_xCC.getServiceManager();
 		m_aLogger.enableLogging();
@@ -346,7 +349,13 @@ public class AvailableSSCDs extends ComponentBase
 		m_aLogger.log("java.library.path: \""+
 				System.getProperty("java.library.path")+"\"");
 
-		PCSCHelper pcsc = new PCSCHelper(true, m_sExtensionSystemPath);
+		IDynamicLogger aLogger = null;
+		if(_bUseGUI)
+			aLogger = new DynamicLoggerDialog(this,m_xCC);
+		else
+			aLogger = new DynamicLogger(this,m_xCC);
+
+		PCSCHelper pcsc = new PCSCHelper(true, m_sExtensionSystemPath, aLogger);
 //		PCSCHelper pcsc = new PCSCHelper(true, null);
 
 		m_aLogger.log("After 'new PCSCHelper'");
@@ -436,7 +445,7 @@ public class AvailableSSCDs extends ComponentBase
 			}
 			indexReader++;
 		}
-		} catch (java.lang.Exception e) {
+		} catch (Throwable e) {
 			m_aLogger.severe("scanDevices",e);
 		}
 	}
