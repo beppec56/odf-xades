@@ -43,6 +43,7 @@ import com.sun.star.io.IOException;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
@@ -109,8 +110,9 @@ public class SyncJob extends ComponentBase
 	public SyncJob(XComponentContext context) {
 
 		m_oSingleLogObj = context.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE);
-		if(m_oSingleLogObj == null)
+		if(m_oSingleLogObj == null) {
 			System.out.println("cannot build first singleton logger!");
+		}
 
 		m_aLogger = new DynamicLogger(this,context);
 //DEBUG  comment this if no logging needed
@@ -478,12 +480,17 @@ public class SyncJob extends ComponentBase
 	 * close all the log files
 	 */
 	protected void executeOnCloseApp() {
-		m_aLogger.stopLogging();
-		
 		//at this stage, remove cache used in running
 		//in Italian implementation this contains the CA list and the CRL used to control the 
 		// certificates
-
+//grab the singleton
+		
+		XComponent xSingle = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_oSingleLogObj);
+		if(xSingle != null)
+			xSingle.dispose();
+		else
+			m_aLogger.log("Singleton doesn't exists !");
+		m_aLogger.stopLogging();		
 	}
 
 	/*

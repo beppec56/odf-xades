@@ -216,15 +216,6 @@ public class PCSCHelper {
 
     }
 
-    //a simple test method..
-    public static void main(String[] args) {
-
-        PCSCHelper a = new PCSCHelper(true);
-        a.findCards();
-        System.exit(0);
-
-    }
-
     public List< CardInfo > findCards() {
 
         ArrayList<CardInfo> cards = new ArrayList<CardInfo>();

@@ -23,12 +23,16 @@
 #ifndef __it_plio_ext_oxsit_XOX_SingletonDataAccess_idl__
 #define __it_plio_ext_oxsit_XOX_SingletonDataAccess_idl__
 
+#include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/util/XChangesListener.idl>
+#include <com/sun/star/container/ElementExistException.idl>
+#include <com/sun/star/lang/IllegalArgumentException.idl>
 #include "XOX_DocumentSignatures.idl"
+
 
   module it { module plio { module ext { module oxsit {
 
-/** Interface to access the data global volatile extension data
+/** Interface to access the global volatile extension data
 
   */
 	interface XOX_SingletonDataAccess
@@ -58,6 +62,27 @@
 			the document signatures structure is removed 
 		*/
 		void removeDocumentSignatures( [in]  string DocumentId);
+
+		/** Get a UNO component object from the list of the singled UNO object
+			available until the signleton is disposed of.
+		*/
+		com::sun::star::lang::XComponent	getUNOComponent( [in] string UNOComponentName )
+											raises (com::sun::star::container::NoSuchElementException,
+													com::sun::star::lang::IllegalArgumentException);
+
+		/** Add a UNO component object to the list of the singled UNO object
+			available until the signleton is disposed of.
+		*/
+		void	addUNOComponent( [in] string UNOComponentName, [in] com::sun::star::lang::XComponent TheComponent )
+											raises (com::sun::star::container::ElementExistException,
+													com::sun::star::lang::IllegalArgumentException);
+
+		/** Remove a UNO component object from the list of the singled UNO object
+			available until the signleton is disposed of.
+		*/
+		void	removeUNOComponent( [in] string UNOComponentName )
+											raises (com::sun::star::container::NoSuchElementException,
+													com::sun::star::lang::IllegalArgumentException);
 	}; 
  
   }; }; }; };

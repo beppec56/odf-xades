@@ -70,8 +70,11 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 		m_xMCF = _ctx.getServiceManager();
 		m_xLogger = (XOX_Logger)UnoRuntime.queryInterface(XOX_Logger.class, 
 				_ctx.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
-		if(m_xLogger == null)
+		if(m_xLogger == null) {
 			System.out.println("no main logger!");
+			//FIXME prepare a default local logger, using the standard one of Java, no file, only console
+			//use it instead of the singleton one
+		}
 		m_sOwnerClassHashHex = String.format( "%8H", _theOwner );
 		m_sOwnerClass =  _theOwner.getClass().getName();		
 	}

@@ -106,7 +106,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
 
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 	
 	protected int m_nCAState;
 	protected int m_nCertificateState;
@@ -525,6 +525,33 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		}
 	}
 
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateComplianceControl()
+	 */
+	@Override
+	public XOX_CertificateComplianceControlProcedure getCertificateComplianceControl() {
+		return m_xoxCertificateComplianceControlProcedure;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateComplianceControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure)
+	 */
+	@Override
+	public void setCertificateComplianceControlObject(
+			XOX_CertificateComplianceControlProcedure arg0)
+			throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		XOX_CertificateComplianceControlProcedure xCert = (XOX_CertificateComplianceControlProcedure)
+		UnoRuntime.queryInterface(XOX_CertificateComplianceControlProcedure.class, arg0);
+		if(xCert == null)
+			throw(new com.sun.star.lang.IllegalArgumentException());
+		m_xoxCertificateComplianceControlProcedure = xCert;
+		
+	}	
+	
 	////////////////// internal functions
 	/**
 	 * 
@@ -885,29 +912,5 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		if(xCert == null)
 			throw(new com.sun.star.lang.IllegalArgumentException());
 		m_xoxCertificationPathControlProcedure = xCert;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateComplianceControl()
-	 */
-	@Override
-	public XOX_CertificateComplianceControlProcedure getCertificateComplianceControl() {
-		return m_xoxCertificateComplianceControlProcedure;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateComplianceControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure)
-	 */
-	@Override
-	public void setCertificateComplianceControlObject(
-			XOX_CertificateComplianceControlProcedure arg0)
-			throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
-		XOX_CertificateComplianceControlProcedure xCert = (XOX_CertificateComplianceControlProcedure)
-		UnoRuntime.queryInterface(XOX_CertificateComplianceControlProcedure.class, arg0);
-		if(xCert == null)
-			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificateComplianceControlProcedure = xCert;
-		
 	}
 }

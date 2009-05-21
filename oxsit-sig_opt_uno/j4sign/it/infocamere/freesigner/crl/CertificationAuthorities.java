@@ -241,7 +241,7 @@ public class CertificationAuthorities {
      * Carica i certificati delle CA da un file ZIP presente all'indirizzo
      * specificato
      * 
-     * @param url
+     * @param _CmsFileURL
      *            URL where you can fin ZIP file containg CA
      * @param debug
      *            if true, it shows debug messages during ZIP file downloading
@@ -251,12 +251,12 @@ public class CertificationAuthorities {
      * @throws IOException
      *             any error during ZIP file reading
      */
-    public CertificationAuthorities(URL url, boolean debug)
+    public CertificationAuthorities(URL _CmsFileURL, boolean debug)
             throws GeneralSecurityException, IOException {
         // da testare!!
         // this(new ZipInputStream(url.openStream()), debug);
 
-        this(getCmsInputStream(url), debug);
+        this(getCmsInputStream(_CmsFileURL), debug);
 
     }
 

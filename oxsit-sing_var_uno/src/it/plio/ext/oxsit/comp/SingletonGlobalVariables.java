@@ -29,7 +29,12 @@ import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
+import com.sun.star.container.ElementExistException;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
@@ -60,7 +65,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sSINGLETON_SERVICE };
 	
-	protected DynamicLogger			m_logger;
+	protected DynamicLogger			m_aLogger;
 	
 	protected	XComponentContext		m_xCtx;
 	protected	XMultiComponentFactory	m_MFC;
@@ -70,7 +75,9 @@ public class SingletonGlobalVariables extends ComponentBase
 		public	Object m_aDocumentSignaturesService;
 	};
 
-	private HashMap<String, DocumentDescriptor>	theDocumentList = new HashMap<String, DocumentDescriptor>(10);
+	private HashMap<String, DocumentDescriptor>	m_aDocumentList = new HashMap<String, DocumentDescriptor>(10);
+	
+	private HashMap<String,XComponent>		m_aComponentList	= new HashMap<String,XComponent>(10);
 	
 /*	public String	m_sDocumentId;   //the Id of this document
 	// these are the listener on changes of all the signatures related variables
@@ -82,12 +89,12 @@ public class SingletonGlobalVariables extends ComponentBase
 	 * @param _ctx
 	 */
 	public SingletonGlobalVariables(XComponentContext _ctx) {		
-		m_logger = new DynamicLogger(this,_ctx);
-		if(m_logger == null)
+		m_aLogger = new DynamicLogger(this,_ctx);
+		if(m_aLogger == null)
 			System.out.println("no DynamicLogger !");
 
-		m_logger.enableLogging();
-		m_logger.ctor();
+		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 		
 		m_xCtx = _ctx;
 		m_MFC = m_xCtx.getServiceManager();
@@ -95,7 +102,6 @@ public class SingletonGlobalVariables extends ComponentBase
 
 	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
 		return m_sImplementationName;
 	}
 
@@ -104,8 +110,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
-		m_logger.info("getSupportedServiceNames");
+		m_aLogger.info("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -124,25 +129,52 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		super.addEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+//cleanup all the things we have		
+		m_aComponentList.clear();
+		m_aDocumentList.clear();
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		super.removeEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
 	public XOX_DocumentSignatures getDocumentSignatures(String _aDocumentId) {
 		// TODO Auto-generated method stub
-		synchronized (theDocumentList) {				
+		synchronized (m_aDocumentList) {				
 			//see if the document already exists
-			if(theDocumentList.containsKey(_aDocumentId)) {
+			if(m_aDocumentList.containsKey(_aDocumentId)) {
 				//if exists, returns the document signatures element
-				m_logger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
+				m_aLogger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
 				XOX_DocumentSignatures aDoc = null;
-				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
+				Object aObj = m_aDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
 				if(aObj != null) {
 					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
 					if(aDoc == null) 
-						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");					
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");					
 				}
 				else
-					m_logger.severe("initDocumentAndListener", "aObj is null");					
+					m_aLogger.severe("initDocumentAndListener", "aObj is null");					
 				return aDoc;
 			}
 		}
@@ -156,9 +188,9 @@ public class SingletonGlobalVariables extends ComponentBase
 	 */
 	@Override
 	public XOX_DocumentSignatures initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
-		synchronized (theDocumentList) {				
+		synchronized (m_aDocumentList) {				
 			//see if the document already exists
-			if(!theDocumentList.containsKey(_aDocumentId)) {
+			if(!m_aDocumentList.containsKey(_aDocumentId)) {
 				DocumentDescriptor docuDescrip = new DocumentDescriptor();
 				docuDescrip.DocumentId = _aDocumentId;			
 				Object aObj;
@@ -167,45 +199,45 @@ public class SingletonGlobalVariables extends ComponentBase
 					//add it the list of available documents.
 					aObj = m_MFC.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE, m_xCtx);
 					docuDescrip.m_aDocumentSignaturesService = aObj;
-					theDocumentList.put(docuDescrip.DocumentId, docuDescrip);
+					m_aDocumentList.put(docuDescrip.DocumentId, docuDescrip);
 //need to add the listener to the doc, if needed
 					XChangesNotifier aNotif = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, aObj);
 					if(aNotif != null)
 						aNotif.addChangesListener(_aListener);
 					else
-						m_logger.severe("initDocumentAndListener", "XChangesNotifier missing.");
+						m_aLogger.severe("initDocumentAndListener", "XChangesNotifier missing.");
 						
 					XOX_DocumentSignatures aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
 					if(aDoc == null) 
-						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures missing.");
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures missing.");
 					else
 						aDoc.setDocumentId(_aDocumentId);
-					m_logger.exiting("initDocumentAndListener", _aDocumentId);
+					m_aLogger.exiting("initDocumentAndListener", _aDocumentId);
 					return aDoc;
 				}
 				catch (Exception e) {
-					m_logger.severe("initDocumentAndListener", "error instantionting a new DocumentSignatures service", e);
+					m_aLogger.severe("initDocumentAndListener", "error instantionting a new DocumentSignatures service", e);
 					return null;
 				}
 			}
 			else {
 				//if exists, returns the document signatures element
-				m_logger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
+				m_aLogger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
 				XOX_DocumentSignatures aDoc = null;
-				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
+				Object aObj = m_aDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
 				if(aObj != null) {
 					//need to add the listener to the doc, if needed
 					XChangesNotifier aNotif = (XChangesNotifier)UnoRuntime.queryInterface(XChangesNotifier.class, aObj);
 					if(aNotif != null)
 						aNotif.addChangesListener(_aListener);
 					else
-						m_logger.severe("initDocumentAndListener", "XChangesNotifier missing.");
+						m_aLogger.severe("initDocumentAndListener", "XChangesNotifier missing.");
 					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
 					if(aDoc == null) 
-						m_logger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");
 				}
 				else
-					m_logger.severe("initDocumentAndListener", "aObj is null");					
+					m_aLogger.severe("initDocumentAndListener", "aObj is null");					
 				return aDoc;
 			}
 		}
@@ -218,17 +250,57 @@ public class SingletonGlobalVariables extends ComponentBase
 	public void removeDocumentSignatures(String _aDocumentId) {
 		// TODO Auto-generated method stub
 		//remove the DocumentSignatures element whose id is the one on parameter
-		synchronized (theDocumentList) {
-			m_logger.log("removeDocumentSignatures","doc id: "+_aDocumentId);		
-			if(theDocumentList.containsKey(_aDocumentId)) {
-				Object aObj = theDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
-				theDocumentList.remove(_aDocumentId);
+		synchronized (m_aDocumentList) {
+			m_aLogger.log("removeDocumentSignatures","doc id: "+_aDocumentId);		
+			if(m_aDocumentList.containsKey(_aDocumentId)) {
+				Object aObj = m_aDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
+				m_aDocumentList.remove(_aDocumentId);
 				XComponent aComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, aObj);
 				if(aComp != null)
 					aComp.dispose(); //clean up the UNO object
 				else
-					m_logger.severe("removeDocumentSignatures", "XComponent missing.");
+					m_aLogger.severe("removeDocumentSignatures", "XComponent missing.");
 			}		
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#addUNOComponent(java.lang.String, com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public void addUNOComponent(String _UNOComponentName, XComponent _UNOComponent)
+			throws ElementExistException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		if(!m_aComponentList.containsKey(_UNOComponentName))
+			m_aComponentList.put(_UNOComponentName,_UNOComponent);
+		else
+			throw (new ElementExistException("\""+_UNOComponentName+"\" already exists in "+this.getClass().getName()));		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getUNOComponent(java.lang.String)
+	 */
+	@Override
+	public XComponent getUNOComponent(String _UNOComponentName)
+			throws NoSuchElementException, IllegalArgumentException {
+		if(m_aComponentList.containsKey(_UNOComponentName))
+			return m_aComponentList.get(_UNOComponentName);
+		else
+			throw (new NoSuchElementException("\""+_UNOComponentName+"\" doesn't exist in "+this.getClass().getName()));
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeUNOComponent(java.lang.String)
+	 * 
+	 * rerome a UNO component from the list
+	 */
+	@Override
+	public void removeUNOComponent(String _UNOComponentName) throws NoSuchElementException,
+			IllegalArgumentException {
+		if(m_aComponentList.containsKey(_UNOComponentName)) {
+			m_aComponentList.remove(_UNOComponentName);
+		}
+		else
+			throw (new NoSuchElementException("\""+_UNOComponentName+"\" doesn't exist in "+this.getClass().getName()));
 	}
 }
