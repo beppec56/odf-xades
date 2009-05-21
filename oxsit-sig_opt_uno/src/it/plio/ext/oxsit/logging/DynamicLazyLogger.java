@@ -20,7 +20,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#ctor()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#ctor()
 	 */
 	@Override
 	public void ctor() {
@@ -29,7 +29,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#ctor(java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#ctor(java.lang.String)
 	 */
 	@Override
 	public void ctor(String _message) {
@@ -38,7 +38,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#disableInfo()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#disableInfo()
 	 */
 	@Override
 	public void disableInfo() {
@@ -47,7 +47,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#disableLogging()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#disableLogging()
 	 */
 	@Override
 	public void disableLogging() {
@@ -56,7 +56,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#disableWarning()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#disableWarning()
 	 */
 	@Override
 	public void disableWarning() {
@@ -65,7 +65,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#enableInfo()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#enableInfo()
 	 */
 	@Override
 	public void enableInfo() {
@@ -74,7 +74,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#enableLogging()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#enableLogging()
 	 */
 	@Override
 	public void enableLogging() {
@@ -83,7 +83,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#enableWarning()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#enableWarning()
 	 */
 	@Override
 	public void enableWarning() {
@@ -92,7 +92,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#entering(java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#entering(java.lang.String)
 	 */
 	@Override
 	public void entering(String method) {
@@ -101,7 +101,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#entering(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#entering(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void entering(String method, String _message) {
@@ -110,7 +110,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#exiting(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#exiting(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void exiting(String method, String _message) {
@@ -119,7 +119,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#info(java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#info(java.lang.String)
 	 */
 	@Override
 	public void info(String method) {
@@ -128,7 +128,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#info(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#info(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void info(String method, String _message) {
@@ -137,7 +137,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#log(java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#log(java.lang.String)
 	 */
 	@Override
 	public void log(String _message) {
@@ -146,7 +146,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#log(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#log(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void log(String method, String _message) {
@@ -155,7 +155,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void severe(String method, String _message) {
@@ -164,7 +164,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.Exception)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.Exception)
 	 */
 	@Override
 	public void severe(Throwable ex) {
@@ -173,7 +173,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void severe(String method, String _message, Throwable ex) {
@@ -182,7 +182,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void severe(String method, Throwable ex) {
@@ -191,7 +191,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#stopLogging()
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#stopLogging()
 	 */
 	@Override
 	public void stopLogging() {
@@ -200,7 +200,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#warning(java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#warning(java.lang.String)
 	 */
 	@Override
 	public void warning(String method) {
@@ -209,7 +209,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#warning(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#warning(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void warning(String method, String _message) {
@@ -218,7 +218,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#warning(java.lang.String, java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#warning(java.lang.String, java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void warning(String method, String _message, Throwable ex) {
@@ -227,7 +227,7 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#log_exception(int, java.lang.String, java.lang.String, java.lang.Throwable, boolean)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#log_exception(int, java.lang.String, java.lang.String, java.lang.Throwable, boolean)
 	 */
 	@Override
 	public void log_exception(int theLevel, String method, String _message,

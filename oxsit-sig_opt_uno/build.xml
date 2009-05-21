@@ -203,7 +203,7 @@ the default target must be removed
 				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
-				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.test.RegisterServices" />
+				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
 				<!-- ROB: BC libs -->
 				<attribute name="Class-Path" value="./${extension_jar_file} ${bcmail_jar} ${bcprov_jar}"/> 
 			</manifest>

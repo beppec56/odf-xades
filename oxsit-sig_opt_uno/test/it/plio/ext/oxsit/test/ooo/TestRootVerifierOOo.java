@@ -77,6 +77,7 @@ import com.sun.star.uri.XUriReferenceFactory;
 import com.sun.star.uri.XVndSunStarPkgUrlReferenceFactory;
 
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.comp.security.ca.RootsVerifier;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,7 +112,9 @@ public class TestRootVerifierOOo {
             // get the remote service manager
             // query its XDesktop interface, we need the current component
 //to get a frame, for check                
-                
+                RootsVerifier aVerif = new RootsVerifier(null,xCC);
+//building it it's enough?
+
             }
         }
         catch(Exception e) {
