@@ -32,7 +32,7 @@ public class DynamicLoggerDialog extends DynamicLoggerBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.String)
+	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void severe(String _theMethod, String _message) {
@@ -54,14 +54,14 @@ public class DynamicLoggerDialog extends DynamicLoggerBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.Exception)
+	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.Exception)
 	 */
 	public void severe(java.lang.Throwable ex) {
 		log_exception(GlobConstant.m_nLOG_LEVEL_SEVERE, "", "", ex,true);		
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void severe(String _theMethod, String _message, java.lang.Throwable ex) {
@@ -69,7 +69,7 @@ public class DynamicLoggerDialog extends DynamicLoggerBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#severe(java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#severe(java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void severe(String _theMethod, java.lang.Throwable ex) {
@@ -77,7 +77,7 @@ public class DynamicLoggerDialog extends DynamicLoggerBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#warning(java.lang.String, java.lang.String, java.lang.Exception)
+	 * @see it.plio.ext.oxsit.test.logging.IDynamicLogger#warning(java.lang.String, java.lang.String, java.lang.Exception)
 	 */
 	@Override
 	public void warning(String method, String _message, java.lang.Throwable ex) {

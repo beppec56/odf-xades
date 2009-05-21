@@ -202,7 +202,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}	
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentCertificates()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#getDocumentCertificates()
 	 */
 	@Override
 	public XOX_QualifiedCertificate[] getDocumentCertificates() {
@@ -211,7 +211,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentStorage()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#getDocumentStorage()
 	 * 
 	 * IMPORTANT the manipulation of storage variable is Sync Job only responsability!
 	 */
@@ -223,7 +223,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentStorage(com.sun.star.embed.XStorage)
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#setDocumentStorage(com.sun.star.embed.XStorage)
 	 * IMPORTANT the manipulation of storage variable is Sync Job only responsability!
 	 */
 	@Override
@@ -234,7 +234,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentSignatureState()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#getDocumentSignatureState()
 	 */
 	@Override
 	public int getDocumentSignatureState() {
@@ -246,7 +246,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentSignatureState(int)
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#setDocumentSignatureState(int)
 	 * when this method is called, the signature state is notified to all the m_aListeners
 	 * 
 	 */
@@ -262,7 +262,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentId()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#getDocumentId()
 	 */
 	@Override
 	public String getDocumentId() {
@@ -272,7 +272,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#setDocumentId(java.lang.String)
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_DocumentSignatures#setDocumentId(java.lang.String)
 	 */
 	@Override
 	public void setDocumentId(String arg0) {

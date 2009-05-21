@@ -162,7 +162,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 *		aArguments[3] = new Boolean(true or false);
 	 * 
 	 * Object aExt = m_xMCF.createInstanceWithArgumentsAndContext(
-	 *				"it.plio.ext.oxsit.security.cert.CertificateExtension", aArguments, m_xContext);
+	 *				"it.plio.ext.oxsit.test.security.cert.CertificateExtension", aArguments, m_xContext);
 	 *
 	 * @param _eValue array of ? object:
 	 * <p>_eValue[0] string ??</p>
@@ -203,7 +203,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -212,7 +212,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
@@ -220,7 +220,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificateState verifyCertificateCertificateCompliance(

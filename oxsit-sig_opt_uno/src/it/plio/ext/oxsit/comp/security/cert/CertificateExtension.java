@@ -156,7 +156,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	 *		aArguments[3] = new Boolean(true or false);
 	 * 
 	 * Object aExt = m_xMCF.createInstanceWithArgumentsAndContext(
-	 *				"it.plio.ext.oxsit.security.cert.CertificateExtension", aArguments, m_xContext);
+	 *				"it.plio.ext.oxsit.test.security.cert.CertificateExtension", aArguments, m_xContext);
 	 *
 	 * @param _eValue array of 4 object:
 	 * <p>_eValue[0] string OID</p>
@@ -178,7 +178,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionId()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateExtension#getExtensionId()
 	 */
 	@Override
 	public String getExtensionOID() {
@@ -186,7 +186,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringName()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateExtension#getExtensionStringName()
 	 */
 	@Override
 	public String getExtensionLocalizedName() {
@@ -194,7 +194,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#getExtensionStringValue()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateExtension#getExtensionStringValue()
 	 */
 	@Override
 	public String getExtensionStringValue() {
@@ -202,7 +202,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateExtension#isCritical()
+	 * @see it.plio.ext.oxsit.test.security.cert.XOX_CertificateExtension#isCritical()
 	 */
 	@Override
 	public boolean isCritical() {

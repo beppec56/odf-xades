@@ -227,7 +227,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addAQualifiedCertificate(it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate)
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#addAQualifiedCertificate(it.plio.ext.oxsit.test.security.cert.XOX_QualifiedCertificate)
 	 * 
 	 * To be called for every qualified certificate that will be added
 	 * 
@@ -238,7 +238,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getQualifiedCertificates()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getQualifiedCertificates()
 	 */
 	@Override
 	public XOX_QualifiedCertificate[] getQualifiedCertificates() {
@@ -260,7 +260,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getHasQualifiedCertificates()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getHasQualifiedCertificates()
 	 */
 	@Override
 	public int getHasQualifiedCertificates() {
@@ -268,7 +268,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getATRcode()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getATRcode()
 	 */
 	@Override
 	public String getATRcode() {
@@ -276,7 +276,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setATRcode(java.lang.String)
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#setATRcode(java.lang.String)
 	 */
 	@Override
 	public void setATRcode(String _sArg) {
@@ -284,7 +284,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getCryptoLibraryUsed()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getCryptoLibraryUsed()
 	 */
 	@Override
 	public String getCryptoLibraryUsed() {
@@ -292,7 +292,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setCryptoLibraryUsed(java.lang.String)
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#setCryptoLibraryUsed(java.lang.String)
 	 */
 	@Override
 	public void setCryptoLibraryUsed(String _sArg) {
@@ -300,7 +300,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getDescription()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -308,7 +308,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setDescription(java.lang.String)
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#setDescription(java.lang.String)
 	 */
 	@Override
 	public void setDescription(String _sArg) {
@@ -316,7 +316,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getManufacturer()
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#getManufacturer()
 	 */
 	@Override
 	public String getManufacturer() {
@@ -324,7 +324,7 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setManufacturer(java.lang.String)
+	 * @see it.plio.ext.oxsit.test.security.XOX_SSCDevice#setManufacturer(java.lang.String)
 	 */
 	@Override
 	public void setManufacturer(String _sArg) {

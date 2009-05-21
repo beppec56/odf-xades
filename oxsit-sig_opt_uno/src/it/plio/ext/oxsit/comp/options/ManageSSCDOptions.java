@@ -60,7 +60,7 @@ import com.sun.star.uno.XComponentContext;
 public class ManageSSCDOptions extends ManageOptions  {
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageSSCDOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageSSCDOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.test.options.ManageSSCDOptions" };
 
     private int m_nBrowseSystemPath1PB = 0;
     private int m_nBrowseSystemPath1ET = 0;

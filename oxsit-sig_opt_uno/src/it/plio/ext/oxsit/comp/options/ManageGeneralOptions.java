@@ -45,7 +45,7 @@ public class ManageGeneralOptions extends ManageOptions  {
 
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageGeneralOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageGeneralOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.test.options.ManageGeneralOptions" };
 
     private int m_nAboutButton = 0;
     private int m_nBrowseInternetButton = 0;

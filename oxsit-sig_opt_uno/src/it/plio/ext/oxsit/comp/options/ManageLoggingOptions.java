@@ -58,7 +58,7 @@ import com.sun.star.uno.XComponentContext;
 public class ManageLoggingOptions extends ManageOptions  implements XItemListener {
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageLoggingOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageLoggingOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.test.options.ManageLoggingOptions" };
 
     private int m_nBrowseSystemPathPB = 0;
 	private int m_nEnableFileCtl; // the file enable/disable check box

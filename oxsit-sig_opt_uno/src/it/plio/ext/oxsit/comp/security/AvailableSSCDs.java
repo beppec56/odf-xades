@@ -244,7 +244,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getAvailableSSCDevices()
+	 * @see it.plio.ext.oxsit.test.security.XOX_AvailableSSCDs#getAvailableSSCDevices()
 	 */
 	@Override
 	public XOX_SSCDevice[] getAvailableSSCDevices() {
@@ -266,7 +266,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getHasSSCDevices()
+	 * @see it.plio.ext.oxsit.test.security.XOX_AvailableSSCDs#getHasSSCDevices()
 	 */
 	@Override
 	public int getHasSSCDevices() {
@@ -276,7 +276,7 @@ public class AvailableSSCDs extends ComponentBase
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSscdDevices#scanDevices()
+	 * @see it.plio.ext.oxsit.test.security.XOX_AvailableSscdDevices#scanDevices()
 	 * called to initiated a scan of the devices available on system.
 	 */
 	@Override
@@ -401,7 +401,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#addSSCDevice(it.plio.ext.oxsit.security.XOX_SSCDevice)
+	 * @see it.plio.ext.oxsit.test.security.XOX_AvailableSSCDs#addSSCDevice(it.plio.ext.oxsit.test.security.XOX_SSCDevice)
 	 * 
 	 * add the single parameter device
 	 */

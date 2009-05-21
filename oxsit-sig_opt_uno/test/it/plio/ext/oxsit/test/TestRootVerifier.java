@@ -1,7 +1,7 @@
 /**
  * 
  */
-package it.plio.ext.oxsit;
+package it.plio.ext.oxsit.test;
 
 import it.infocamere.freesigner.gui.RootsVerifier;
 
