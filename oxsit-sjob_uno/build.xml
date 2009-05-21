@@ -195,24 +195,8 @@ the default target must be removed
 				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
-				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.test.RegisterServices" />
+				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.RegisterServices" />
 				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${project_friendly_name}-sing_var_uno.uno.jar ${project_friendly_name}-sig_uno.uno.jar" />
-				<!--
-					the following is needed to start via java -jar namefile.jar
-					the main class load a loader to start the user class correctly in OOo
-					environment.
-					See
-					Documentation/DevGuide/ProUNO/Java/Transparent_Use_of_Office_UNO_Components
-					on OOo wiki for details
-
-					Disable the whole section if the stand alone capability is not needed
-				-->
-				<attribute name="Main-Class" value="com.sun.star.lib.loader.Loader" />
-				<section name="com/sun/star/lib/loader/Loader.class">
-					<!-- this attribute is the real user start class -->
-					<attribute name="Application-Class" value="it.plio.ext.oxsit.test.MainStandAloneDebug" />
-				</section>
-				<!-- end of section to start via java -jar namefile.jar -->
 			</manifest>
 		</jar>
 	</target>

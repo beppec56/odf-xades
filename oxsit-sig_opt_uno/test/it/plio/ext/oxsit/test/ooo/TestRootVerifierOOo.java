@@ -37,50 +37,14 @@
 
 package it.plio.ext.oxsit.test.ooo;
 
-import com.sun.star.beans.Property;
-import com.sun.star.container.XHierarchicalNameAccess;
-import com.sun.star.drawing.XDrawPagesSupplier;
-import com.sun.star.io.BufferSizeExceededException;
-import com.sun.star.io.IOException;
-import com.sun.star.io.NotConnectedException;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiServiceFactory;
-import com.sun.star.sheet.XSpreadsheetDocument;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.ucb.Command;
-import com.sun.star.ucb.XCommandProcessor;
-import com.sun.star.ucb.XContent;
-import com.sun.star.ucb.XContentIdentifier;
-import com.sun.star.ucb.XContentIdentifierFactory;
-import com.sun.star.ucb.XContentProvider;
-import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
-import com.sun.star.frame.XDesktop;
-import com.sun.star.frame.XModel;
-import com.sun.star.io.XActiveDataSink;
-import com.sun.star.io.XInputStream;
-import com.sun.star.lang.*;
-import com.sun.star.packages.*;
-import com.sun.star.packages.manifest.XManifestReader;
-import com.sun.star.sdbc.XResultSet;
-import com.sun.star.sdbc.XRow;
-import com.sun.star.ucb.OpenCommandArgument2;
-import com.sun.star.ucb.OpenMode;
-import com.sun.star.ucb.XContentAccess;
-import com.sun.star.ucb.XDynamicResultSet;
-import com.sun.star.uno.AnyConverter;
-import com.sun.star.uno.Type;
-import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
-import com.sun.star.uri.XUriReference;
-import com.sun.star.uri.XUriReferenceFactory;
-import com.sun.star.uri.XVndSunStarPkgUrlReferenceFactory;
-
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.comp.security.ca.RootsVerifier;
+import it.plio.ext.oxsit.test.ooo.OOoServerInfo;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.ucb.XContent;
+import com.sun.star.uno.Exception;
+import com.sun.star.uno.XComponentContext;
 
 /**
  *
@@ -111,24 +75,60 @@ public class TestRootVerifierOOo {
                 Object desktop = SvrInfo.getFactory().createInstanceWithContext("com.sun.star.frame.Desktop", xCC);
             // get the remote service manager
             // query its XDesktop interface, we need the current component
+ /*               XDesktop xDesktop = (XDesktop)UnoRuntime.queryInterface(XDesktop.class, desktop);
+                // retrieve the current component and access the controller
+                    xComponent = xDesktop.getCurrentComponent();
+                //check to see if a writer component is ready
+                    if(xComponent == null) {
+                        System.out.println("WARNING: there is no open document on Open Office !\nJob aborted");
+                    }
+                    else {
+                    // we query the interface XSpreadsheetDocument from xComponent
+                        XSpreadsheetDocument xSpreadsheetDocument =
+                                (XSpreadsheetDocument)UnoRuntime.queryInterface(XSpreadsheetDocument.class,
+                                    xComponent);
+                    // we query the interface XTextDocument from xComponent
+                        XTextDocument xTextDocument =
+                                (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, xComponent); 
+                    // we query the interface XDrawPagesSupplier from xComponent
+                        XDrawPagesSupplier xDrawDocument =
+                                (XDrawPagesSupplier)UnoRuntime.queryInterface(XDrawPagesSupplier.class, xComponent); 
+                        if(xSpreadsheetDocument != null) {
+                            System.out.println("The document is a calc document");
+                        }
+                        else if(xTextDocument != null) {
+                            System.out.println("The document is a writer document");
+                        }
+                        else if(xDrawDocument != null) {
+                            System.out.println("The document is a Draw or Impress document");
+                        }
+                        else {
+                            System.out.println("The document is NOT a known type or a signable one");
+                            return;
+                        }                */
+                
 //to get a frame, for check                
                 RootsVerifier aVerif = new RootsVerifier(null,xCC);
 //building it it's enough?
 
+                
+                
             }
         }
         catch(Exception e) {
             System.out.println("WARNING: exception thrown !\nJob aborted:\n"+e.toString());
-        }
+        } catch (java.lang.Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-            theInstance = new TestRootVerifierOOo();
+    	theInstance = new TestRootVerifierOOo();
             theInstance.run();
-            theInstance.SvrInfo.CloseConnection();            
+            theInstance.SvrInfo.CloseConnection();
     }
 }
-

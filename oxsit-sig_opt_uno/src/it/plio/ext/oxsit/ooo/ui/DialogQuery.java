@@ -28,6 +28,7 @@ import com.sun.star.awt.XMessageBoxFactory;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XFramesSupplier;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.UnoRuntime;
@@ -51,6 +52,19 @@ public class DialogQuery {
 		try {
 			Object oToolkit = m_axMCF.createInstanceWithContext("com.sun.star.awt.Toolkit", m_xCC);
 			XMessageBoxFactory xMessageBoxFactory = (XMessageBoxFactory) UnoRuntime.queryInterface(XMessageBoxFactory.class, oToolkit);
+			if (m_xFrame == null) {
+				Object oDesktop = null;
+				try {
+					oDesktop = m_axMCF.createInstanceWithContext(
+							"com.sun.star.frame.Desktop", m_xCC );
+					XFramesSupplier xFramesSupplier = (XFramesSupplier) UnoRuntime
+							.queryInterface( XFramesSupplier.class, oDesktop );
+					m_xFrame = (XFrame) xFramesSupplier.getActiveFrame();
+					// println("default Frame...");
+				} catch (com.sun.star.uno.Exception oException) {
+					oException.printStackTrace();
+				}
+			}
 			XWindow xWindow = m_xFrame.getContainerWindow();
 			XWindowPeer xWPeer = (XWindowPeer) UnoRuntime.queryInterface(XWindowPeer.class, xWindow);
 			if(xWPeer != null) {

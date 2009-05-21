@@ -236,13 +236,14 @@ public class OOoServerInfo extends java.lang.Object
         xRemoteServiceManager = null;
     }
 
-    public boolean InitConnection()  {
+    public boolean InitConnection() throws Exception  {
         try {
             xRemoteServiceManager = getMultiComponentFactory();
             if(xRemoteServiceManager == null)
                 return false;
         } catch (Exception ex) {
             Logger.getLogger(OOoServerInfo.class.getName()).log(Level.SEVERE, null, ex);
+            throw (ex);
         }
         return true;
     }

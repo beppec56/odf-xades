@@ -590,7 +590,10 @@ public class Main {
         }
         catch(Exception e) {
             System.out.println("WARNING: exception thrown !\nJob aborted");
-        }
+        } catch (java.lang.Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     /**
      * @param args the command line arguments

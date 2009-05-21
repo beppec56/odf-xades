@@ -258,7 +258,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#getEnableConsoleOutput()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableConsoleOutput()
 	 */
 	@Override
 	public boolean getEnableConsoleOutput() {
@@ -266,7 +266,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#getEnableFileOutput()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableFileOutput()
 	 */
 	@Override
 	public boolean getEnableFileOutput() {
@@ -274,7 +274,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#getEnableInfoLevel()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableInfoLevel()
 	 */
 	@Override
 	public boolean getEnableInfoLevel() {
@@ -282,7 +282,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#getEnableLogging()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableLogging()
 	 */
 	@Override
 	public boolean getEnableLogging() {
@@ -290,7 +290,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#getEnableWarningLevel()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableWarningLevel()
 	 */
 	@Override
 	public boolean getEnableWarningLevel() {
@@ -298,7 +298,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#localConfigurationChanged()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#localConfigurationChanged()
 	 */
 	@Override
 	public void localConfigurationChanged() {
@@ -306,7 +306,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#optionsConfigurationChanged()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#optionsConfigurationChanged()
 	 */
 	@Override
 	public void optionsConfigurationChanged() {
@@ -321,7 +321,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#setEnableConsoleOutput(boolean)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableConsoleOutput(boolean)
 	 */
 	@Override
 	public void setEnableConsoleOutput(boolean _bNewVal) {
@@ -331,7 +331,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#setEnableFileOutput(boolean)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableFileOutput(boolean)
 	 */
 	@Override
 	public void setEnableFileOutput(boolean _bNewVal) {
@@ -341,7 +341,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#setEnableInfoLevel(boolean)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableInfoLevel(boolean)
 	 */
 	@Override
 	public void setEnableInfoLevel(boolean _bNewVal) {
@@ -351,7 +351,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#setEnableLogging(boolean)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableLogging(boolean)
 	 */
 	@Override
 	public void setEnableLogging(boolean _bNewVal) {
@@ -371,7 +371,7 @@ public class GlobalLogger extends ComponentBase
 	 *  configuration parameters.
 	 *  
 	 *  The event is fired when the parameters change.
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#setEnableWarningLevel(boolean)
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableWarningLevel(boolean)
 	 */
 	@Override
 	public void setEnableWarningLevel(boolean _bNewVal) {
@@ -381,7 +381,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.logging.XOX_Logger#stopLogging()
+	 * @see it.plio.ext.oxsit.logging.XOX_Logger#stopLogging()
 	 */
 	@Override
 	public void stopLogging() {

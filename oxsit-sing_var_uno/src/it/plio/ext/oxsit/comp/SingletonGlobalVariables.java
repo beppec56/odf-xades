@@ -156,7 +156,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
 	public XOX_DocumentSignatures getDocumentSignatures(String _aDocumentId) {
@@ -182,7 +182,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
 	 * 
 	 * FIXME set exception
 	 */
@@ -244,7 +244,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#removeDocumentSignatures(java.lang.String)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeDocumentSignatures(java.lang.String)
 	 */
 	@Override
 	public void removeDocumentSignatures(String _aDocumentId) {
@@ -265,7 +265,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#addUNOComponent(java.lang.String, com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#addUNOComponent(java.lang.String, com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public void addUNOComponent(String _UNOComponentName, XComponent _UNOComponent)
@@ -278,7 +278,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#getUNOComponent(java.lang.String)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getUNOComponent(java.lang.String)
 	 */
 	@Override
 	public XComponent getUNOComponent(String _UNOComponentName)
@@ -290,7 +290,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.test.XOX_SingletonDataAccess#removeUNOComponent(java.lang.String)
+	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeUNOComponent(java.lang.String)
 	 * 
 	 * rerome a UNO component from the list
 	 */

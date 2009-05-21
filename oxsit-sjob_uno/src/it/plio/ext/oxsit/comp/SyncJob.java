@@ -313,13 +313,13 @@ public class SyncJob extends ComponentBase
 	protected void executeOnStartApp() {
 		//we'll need to initialize the security stuff, done once on init.
 		
-		m_aLogger.log("os.name: \""+System.getProperty("os.name")+"\"");
+/*		m_aLogger.log("os.name: \""+System.getProperty("os.name")+"\"");
 		m_aLogger.log("os.arch: \""+System.getProperty("os.arch")+"\"");
 		m_aLogger.log("os.version: \""+System.getProperty("os.version")+"\"");
 
 		m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
 		m_aLogger.log("java.library.path: \""+
-				System.getProperty("java.library.path")+"\"");
+				System.getProperty("java.library.path")+"\"");*/
 		
 		//try to change the java.library.path
 /*		try {

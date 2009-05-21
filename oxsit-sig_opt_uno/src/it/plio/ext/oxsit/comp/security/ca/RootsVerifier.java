@@ -89,6 +89,7 @@ public class RootsVerifier {
     	m_xFrame = _xFrame;
     	m_xMCF = m_xCC.getServiceManager();
     	m_aLogger = new DynamicLoggerDialog(this,_xContext);
+    	m_aLogger.enableLogging();
         init();
         userApprovedFingerprint = getFingerprint();
     }
@@ -203,34 +204,24 @@ public class RootsVerifier {
 		}
 		m_aRegAcc.dispose();
 
-        
-        //instantiate a dialog box, a message box, actually,
+        String theFingerprint = ((fingerprint == null) ? _no_fp : formatAsGUString(fingerprint));
 		
-		String _mex = String.format(_format, 
-						((fingerprint == null) ? 
-								_no_fp :
-								formatAsGUString(fingerprint)));
-		
-		DialogQuery aDlg = new DialogQuery(m_xFrame, m_xMCF, m_xCC);		
-		short ret = aDlg.executeDialog(_title, _mex,
-				MessageBoxButtons.BUTTONS_YES_NO, //message box type
-				MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
-		// ret = 3: NO
-		// ret = 2: Yes
-		
-//        
-        // ROB commentato per ora per evitare problemi di visualizzazione.
-//FIXME add the dialog box to config in OOo env.
- /*       if (JOptionPane.YES_OPTION == JOptionPane
-                .showConfirmDialog(
-                        null,
-                        conf.getAcceptCAmsg()
-                                + ((fingerprint == null) ? "impossibile calcolare l'impronta"
-                                        : formatAsGUString(fingerprint)) + "\n",
-                        "Impronta Certificato Presidente CNIPA",
-                        JOptionPane.YES_NO_OPTION))
-            return fingerprint;*/
-
+		/*if(m_xFrame != null) */{
+	        //instantiate a dialog box, a message box, actually,
+			String _mex = String.format(_format, theFingerprint);
+			
+			DialogQuery aDlg = new DialogQuery(m_xFrame, m_xMCF, m_xCC);		
+			short ret = aDlg.executeDialog(_title, _mex,
+					MessageBoxButtons.BUTTONS_YES_NO, //message box type
+					MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
+			// ret = 3: NO
+			// ret = 2: Yes
+			if(ret == 2) {
+				m_aLogger.info("getFingerprint, confirmed: "+theFingerprint);
+				return fingerprint;
+			}
+		}
+		m_aLogger.info("getFingerprint, not confirmed: "+theFingerprint);
         return null;
     }
 
