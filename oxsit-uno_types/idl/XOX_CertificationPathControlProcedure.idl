@@ -51,7 +51,7 @@ XOX_AvailableSSCDs interface or</p>
 			for executing the function. 
 		  */
 		it::plio::ext::oxsit::security::cert::CertificateAuthorityState
-			verifyCertificateCertificationPath([in] com::sun::star::lang::XComponent xCertificate)
+			verifyCertificationPath([in] com::sun::star::lang::XComponent xCertificate)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/**

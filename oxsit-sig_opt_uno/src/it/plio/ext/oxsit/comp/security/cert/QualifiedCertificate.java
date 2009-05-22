@@ -108,9 +108,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	protected IDynamicLogger m_aLogger;
 	
-	protected int m_nCAState;
-	protected int m_nCertificateState;
+	private int m_nCertificateState;
+	private int m_nCertificateStateConditions;
 	
+	private int m_nCAState;
+	private int m_nCAStateConditions;
+
 	protected boolean	m_bDisplayOID;
 
 	//the certificate representation
@@ -384,20 +387,18 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCAForCertificate()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCertificate()
 	 */
 	@Override
-	public boolean verifyCertificateCertificationPath() {
+	public boolean verifyCertificate() {
 		// TODO Auto-generated method stub
-		return false;
-	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCRLForCertificate()
-	 */
-	@Override
-	public boolean verifyCRLForCertificate() {
-		// TODO Auto-generated method stub
+		//check and fill the certification path
+		verifyCertificationPath();
+		//check the crl of the certificate
+
+		//check the certificate for the compliance
+		verifyCompliance();
 		return false;
 	}
 
@@ -414,7 +415,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public int getCertificateStateConditions() {
-		return 0;
+		return m_nCertificateStateConditions;
 	}
 	
 	/* (non-Javadoc)
@@ -423,6 +424,15 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public int getCertificationAuthorityState() {
 		return m_nCAState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityStateConditions()
+	 */
+	@Override
+	public int getCertificationAuthorityStateConditions() {
+		// TODO Auto-generated method stub
+		return m_nCAStateConditions;
 	}
 
 	/* (non-Javadoc)
@@ -518,8 +528,6 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					m_aNotCriticalExtensions.put(aTheOID, aext);					
 			}
 			m_aRegAcc.dispose();
-//now check the certificate for the compliance
-			verifyCertificatCompliance();
 		} catch (IOException e) {
 			m_aLogger.severe("setDEREncoded", e);
 		}
@@ -557,7 +565,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * 
 	 */
 	
-	protected void verifyCertificatCompliance() {
+	protected void verifyCompliance() {
 		if(m_xoxCertificateComplianceControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
@@ -578,6 +586,26 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		}
 	}
 	
+	protected void verifyCertificationPath() {
+		if(m_xoxCertificationPathControlProcedure != null) {
+			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
+			if(xCtl != null) {
+				try {
+					//FIXME
+					//add the result to the certificate status
+					m_xoxCertificationPathControlProcedure.verifyCertificationPath(xCtl);
+/*					m_aLogger.log("State: "+
+							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState()));
+					m_nCertificateState = 
+							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState());*/
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
+		}
+	}
 	protected void initThumbPrints() {
 		//obtain a byte block of the entire certificate data
 		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();

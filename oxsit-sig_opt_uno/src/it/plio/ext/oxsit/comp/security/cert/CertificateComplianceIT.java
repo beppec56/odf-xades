@@ -75,7 +75,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the CertificateComplianceIT service, used to check the
+ *  This service implements the CertificationPathIT service, used to check the
  *  certificate for compliance on Italian law.
  *  
  *  The conformance will be checked for the certificate dates, certificate configuration
@@ -239,7 +239,9 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             //check for version, if version is not 3, exits, certificate cannot be used
             if(m_JavaCert.getVersion() != 3) {
-    			m_xQc.setCertificateElementErrorState("Version", CertificateElementState.INVALID_value);			
+    			m_xQc.setCertificateElementErrorState(
+    					GlobConstant.m_sQUALIFIED_CERTIFICATE_VERSION,
+    					CertificateElementState.INVALID_value);			
     			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
             	return m_aCertificateState;
             }
@@ -253,10 +255,14 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 				m_JavaCert.checkValidity(aCal.getTime());*/
 				m_JavaCert.checkValidity();
 			} catch (CertificateExpiredException e) {
-				m_xQc.setCertificateElementErrorState("NotValidAfter", CertificateElementState.INVALID_value);
+				m_xQc.setCertificateElementErrorState(
+						GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_AFTER,
+						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
 			} catch (CertificateNotYetValidException e) {
-				m_xQc.setCertificateElementErrorState("NotValidBefore", CertificateElementState.INVALID_value);
+				m_xQc.setCertificateElementErrorState(
+						GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_BEFORE,
+						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
 			}
 

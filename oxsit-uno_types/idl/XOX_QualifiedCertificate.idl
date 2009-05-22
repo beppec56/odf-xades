@@ -60,6 +60,9 @@ XOX_AvailableSSCDs interface or</p>
 		/** the state of the CA (certificate Authority) control.
 	 	*/
 		[attribute, readonly] long CertificationAuthorityState;
+		/** the conditions of the CA (certificate Authority) control.
+	 	*/
+		[attribute, readonly] long CertificationAuthorityStateConditions;
 		/** the object used to control the certification path of this certificate
 		*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificateCertificationPathControl;
@@ -176,23 +179,19 @@ XOX_AvailableSSCDs interface or</p>
 		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
-		/** verify the Certificate Revocation List state of this 
-		 certificate. Returns false if not OK, true if OK.
-		 <p>Either cases, the CertificateState field will have the result.</p>
-		 <p>The CertificateGraficStateValue field will have the result as well</p>
-		*/
-		boolean verifyCRLForCertificate( );
 
 		/** Sets the interface object used to check for the certificate certification path.
 		*/
 		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
-		/** verify the Certification Path (e.g. the Certificate Authority) of this certificate. Returns false if not OK, true if OK.
-		 <p>Either cases, the CertificationAuthorityState field will have the result.</p>
+
+		/** verify the state of this certificate. Returns false if not OK, true if OK.
+		 <p>Either cases, the CertificateState and CertificateAutority fields will have the result.</p>
 		 <p>The CertificateGraficStateValue field will have the result as well</p>
-		  */
-		boolean verifyCertificateCertificationPath( );
+		*/
+		boolean verifyCertificate( );
+
 	} ;
 
   }; }; }; }; };  };

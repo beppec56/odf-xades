@@ -571,18 +571,18 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//now add the rest of the data
 		//add the version
 		addVariablePitchTreeElementAndState(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion(),
-				_aCertif.getCertificateElementErrorState("Version"));		
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_VERSION));		
 		//add the serial number
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,_aCertif.getSerialNumber());
 		//add the issuer full description		
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName(),
-				_aCertif.getCertificateElementErrorState("IssuerName"));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_ISSUER));
 		//add the not valid before
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore(),
-				_aCertif.getCertificateElementErrorState("NotValidBefore"));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_BEFORE));
 		//add the not valid after
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter(),
-				_aCertif.getCertificateElementErrorState("NotValidAfter"));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_AFTER));
 		//add the subject
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,_aCertif.getSubjectName());
 		//add the subject signature algorithm

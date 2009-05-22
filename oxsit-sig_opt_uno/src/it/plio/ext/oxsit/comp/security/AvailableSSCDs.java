@@ -78,7 +78,7 @@ public class AvailableSSCDs extends ComponentBase
 		XOX_AvailableSSCDs {
 
 	protected XComponentContext m_xCC;
-	protected XMultiComponentFactory m_MCF;
+	protected XMultiComponentFactory m_xMCF;
 	
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = AvailableSSCDs.class
@@ -105,7 +105,7 @@ public class AvailableSSCDs extends ComponentBase
 	public AvailableSSCDs(XComponentContext _ctx) {
 		m_aLogger = new DynamicLoggerDialog(this, _ctx);
 		m_xCC = _ctx;
-		m_MCF = m_xCC.getServiceManager();
+		m_xMCF = m_xCC.getServiceManager();
 		m_aLogger.enableLogging();
 		try {
 			m_sExtensionSystemPath = Helpers
@@ -322,7 +322,7 @@ public class AvailableSSCDs extends ComponentBase
 				Object oAnSSCD = null;
 				XOX_SSCDevice xSSCDevice = null;
 				try {
-					oAnSSCD = m_MCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
+					oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
 					xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
 					xSSCDevice.setDescription(ci.getProperty("description"));
@@ -352,17 +352,21 @@ public class AvailableSSCDs extends ComponentBase
 								//now create the Certificate Control UNO objects
 								//first the certificate compliance control
 								//
-								Object oACCObj = m_MCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+								Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+								Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 
+								//now the certification path control
+								
 								//prepare objects for subordinate service
-								Object[] aArguments = new Object[3];
+								Object[] aArguments = new Object[4];
 //								byte[] aCert = cert.getEncoded();
 								//set the certificate raw value
 								aArguments[0] = cert.getEncoded();//aCert;
 								aArguments[1] = new Boolean(_bUseGUI);//FIXME change according to UI (true) or not UI (false)
 								aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+								aArguments[3] = oCertPath;
 
-								Object oACertificate = m_MCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
+								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
 										aArguments, m_xCC);
 								//get the main interface
 								XOX_QualifiedCertificate xQualCert = 

@@ -544,7 +544,7 @@ public class X509CertRL {
                             fos.flush();
                             fos.close();
                         } catch (Exception e) {
-                            ;
+                            System.out.println(e);;
                         }
                     }
                     break;
