@@ -22,18 +22,15 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
-import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;
-import com.sun.star.awt.XControl;
-import com.sun.star.awt.XControlModel;
 import com.sun.star.awt.XDialog;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XFrame;
-import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
@@ -54,11 +51,10 @@ public class DialogRootVerify extends BasicDialog {
 	private String				m_sBtnNoLabel = "id_pb_no";
 	private String 				m_sNO_PB = "theNoPb";
 	private String 				m_sYES_PB = "theYesPb";
-	private short 				m_nRetValue = 0;	
 
 	public DialogRootVerify(XFrame _xFrame, XComponentContext context,
 			XMultiComponentFactory _xmcf, String _Message) {
-		super( _xFrame, context, _xmcf );
+		super ( _xFrame, context, _xmcf );
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 		m_sMessage = _Message;				
@@ -71,56 +67,6 @@ public class DialogRootVerify extends BasicDialog {
 			m_logger.severe("", "", e);
 		}
 		m_aRegAcc.dispose();
-	}
-
-	/**
-	 * static function: non thread safe, to be called only once per application 
-	 * @param _xFrame
-	 * @param _xCC
-	 * @param _axMCF
-	 * @return
-	 */
-	public static short showDialog( XFrame _xFrame, XComponentContext _xCC,
-					XMultiComponentFactory _axMCF, String _Message) {
-		DialogRootVerify aDialog1 =
-			new DialogRootVerify( _xFrame, _xCC, _axMCF,_Message );
-		try {
-			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
-			//get the parent window data
-			//the problem is that we get the pixel, but we need the logical pixel, so for now it doesn't work...
-//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
-//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
-			int BiasX = 100;
-			int BiasY = 30;
-//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
-//			XWindow xWindow = m_xFrame.getContainerWindow();
-//			XWindowPeer xPeer = xWindow.
-			aDialog1.initialize(BiasX,BiasY);
-//center the dialog
-			return aDialog1.executeDialog();
-		}
-		catch (com.sun.star.uno.RuntimeException e) {
-			e.printStackTrace();
-		} catch (BasicErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	public short executeDialog() throws com.sun.star.script.BasicErrorException {
-		if (m_xWindowPeer == null) {
-			createWindowPeer();
-		}
-		xDialog = (XDialog) UnoRuntime.queryInterface( XDialog.class, m_xDialogControl );
-		m_xComponent = (XComponent) UnoRuntime.queryInterface( XComponent.class,
-				m_xDialogControl );
-		short Ret = xDialog.execute();
-		m_xComponent.dispose();
-		return Ret;
 	}
 
 	public void initialize(int _nPosX, int _nPosY) throws Exception {
@@ -200,49 +146,6 @@ public class DialogRootVerify extends BasicDialog {
 		// center the dialog, using physical coordinates, MUST be called after
 		// CreateWindowPeer
 		center();
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent rEvent) {
-		try {
-			// get the control that fired the event,
-			XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
-					rEvent.Source);
-			XControlModel xControlModel = xControl.getModel();
-			XPropertySet xPSet = (XPropertySet) UnoRuntime.queryInterface(
-					XPropertySet.class, xControlModel);
-			String sName = (String) xPSet.getPropertyValue("Name");
-			// just in case the listener has been added to several controls,
-			// we make sure we refer to the right one
-			// ret = 0: NO
-			// ret = 1: Yes
-			
-			m_logger.log(""+sName);
-
-			if (sName.equals(m_sNO_PB)) {
-				//return a NO
-				m_nRetValue = (short)3;
-				xDialog = (XDialog) UnoRuntime.queryInterface( XDialog.class, m_xDialogControl );
-				xDialog.endExecute();
-				m_logger.log(""+m_sNO_PB);
-			}
-			else
-				if (sName.equals(m_sYES_PB)) {
-					//return a YES
-					m_nRetValue = (short)2;
-					xDialog = (XDialog) UnoRuntime.queryInterface( XDialog.class, m_xDialogControl );
-					xDialog.endExecute();
-					m_logger.log(""+m_sYES_PB);
-				}
-		} catch (com.sun.star.uno.Exception ex) {
-			/*
-			 * perform individual exception handling here. Possible exception
-			 * types are: com.sun.star.lang.WrappedTargetException,
-			 * com.sun.star.beans.UnknownPropertyException,
-			 * com.sun.star.uno.Exception
-			 */
-			ex.printStackTrace();
-		}
 	}
 }
 

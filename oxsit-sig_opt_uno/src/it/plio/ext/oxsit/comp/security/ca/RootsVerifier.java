@@ -4,6 +4,7 @@
  *  Copyright 2009 by Roberto Resoli resoli@osor.eu
  *  This code in partly derived from
  *  it.infocamere.freesigner.gui.RootsVerifier class in freesigner
+ *  adapted to be unsed in OOo UNO environment
  *  
  *  The Contents of this file are made available subject to
  *  the terms of European Union Public License (EUPL) version 1.1
@@ -64,6 +65,7 @@ import org.bouncycastle.cms.SignerInformationStore;
 import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 
@@ -90,6 +92,7 @@ public class RootsVerifier {
     	m_xFrame = _xFrame;
     	m_xMCF = m_xCC.getServiceManager();
     	m_aLogger = new DynamicLoggerDialog(this,_xContext);
+//
     	m_aLogger.enableLogging();
         init();
         userApprovedFingerprint = getFingerprint();
@@ -102,15 +105,14 @@ public class RootsVerifier {
          return instance;
     }*/
 
+    //beppec56:
+    //FIXME needs some adjusting on the  location where the
+    //file will be, or automatic determination of the file present there.
     private void init() {
-        File dir1 = new File(".");
-        String curDir = null;
-        try {
-            curDir = dir1.getCanonicalPath();
-        } catch (IOException ex1) {
-        	m_aLogger.severe(ex1);
-        }
         //grab the extension internal path
+    	//the file is in a special directory
+    	// when checking for update, the file will be copied in a local user directory
+    	//we need to know what to do when the file doesn't exist or we need to update it from Internet
         //for the type being is absolute, will be given from configuration ? Or
         //do we devise a method to get it automatically?
         
@@ -201,31 +203,40 @@ public class RootsVerifier {
 			_format = m_aRegAcc.getStringFromRegistry( _format );
 			_no_fp = m_aRegAcc.getStringFromRegistry( _no_fp );
 		} catch (Exception e) {
-			e.printStackTrace();
+			m_aLogger.severe(e);
 		}
 		m_aRegAcc.dispose();
 
         String theFingerprint = ((fingerprint == null) ? _no_fp : formatAsGUString(fingerprint));
-		
-		/*if(m_xFrame != null) */{
-	        //instantiate a dialog box, a message box, actually,
-			String _mex = String.format(_format, theFingerprint);
-			
-/*			DialogQuery aDlg = new DialogQuery(m_xFrame, m_xMCF, m_xCC);		
-			short ret = aDlg.executeDialog(_title, _mex,
-					MessageBoxButtons.BUTTONS_YES_NO, //message box type
-					MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
-*/			
-			short ret = DialogRootVerify.showDialog( m_xFrame, m_xCC, m_xMCF, _mex );
-			m_aLogger.info( "getFingerprint, returned: " + ret );
-			// ret = 3: NO
-			// ret = 2: Yes
-			if(ret == 2) {
-				m_aLogger.info( "getFingerprint, confirmed: " + theFingerprint );
-				return fingerprint;
-			}
+        String _mex = String.format(_format, theFingerprint);
+        
+		DialogRootVerify aDialog1 = new DialogRootVerify( m_xFrame, m_xCC, m_xMCF,_mex );
+		//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
+		//get the parent window data
+		//the problem is that we get the pixel, but we need the logical pixel, so for now it doesn't work...
+//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
+//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
+		int BiasX = 100;
+		int BiasY = 30;
+//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
+//			XWindow xWindow = m_xFrame.getContainerWindow();
+//			XWindowPeer xPeer = xWindow.
+//center the dialog
+
+        short ret;
+		try {
+			aDialog1.initialize(BiasX,BiasY);
+			ret = aDialog1.executeDialog();
+	        // ret = 0: NO
+	        // ret = 1: Yes
+	        if (ret == 1) {
+	        	return fingerprint;
+	        }
+		} catch (BasicErrorException e) {
+			m_aLogger.severe(e);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
 		}
-		m_aLogger.info( "getFingerprint, not confirmed: " + theFingerprint );
         return null;
     }
 
