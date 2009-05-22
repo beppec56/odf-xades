@@ -59,12 +59,30 @@
 			</prop>
 		</node>
 		<!--
+		    general id for No button
+		-->
+		<node oor:name="id_pb_no" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">No</value>
+				<value xml:lang="it">No</value>
+			</prop>
+		</node>
+		<!--
 		    general id for OK button
 		-->
 		<node oor:name="id_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Ok</value>
 				<value xml:lang="it">Ok</value>
+			</prop>
+		</node>
+		<!--
+		    general id for Yes button
+		-->
+		<node oor:name="id_pb_yes" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Yes</value>
+				<value xml:lang="it">Sì</value>
 			</prop>
 		</node>
 		<!--

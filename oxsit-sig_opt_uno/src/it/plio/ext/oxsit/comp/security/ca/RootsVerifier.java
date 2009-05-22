@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
+import it.plio.ext.oxsit.ooo.ui.DialogRootVerify;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -210,18 +211,21 @@ public class RootsVerifier {
 	        //instantiate a dialog box, a message box, actually,
 			String _mex = String.format(_format, theFingerprint);
 			
-			DialogQuery aDlg = new DialogQuery(m_xFrame, m_xMCF, m_xCC);		
+/*			DialogQuery aDlg = new DialogQuery(m_xFrame, m_xMCF, m_xCC);		
 			short ret = aDlg.executeDialog(_title, _mex,
 					MessageBoxButtons.BUTTONS_YES_NO, //message box type
 					MessageBoxButtons.DEFAULT_BUTTON_NO);//default button
+*/			
+			short ret = DialogRootVerify.showDialog( m_xFrame, m_xCC, m_xMCF, _mex );
+			m_aLogger.info( "getFingerprint, returned: " + ret );
 			// ret = 3: NO
 			// ret = 2: Yes
 			if(ret == 2) {
-				m_aLogger.info("getFingerprint, confirmed: "+theFingerprint);
+				m_aLogger.info( "getFingerprint, confirmed: " + theFingerprint );
 				return fingerprint;
 			}
 		}
-		m_aLogger.info("getFingerprint, not confirmed: "+theFingerprint);
+		m_aLogger.info( "getFingerprint, not confirmed: " + theFingerprint );
         return null;
     }
 
