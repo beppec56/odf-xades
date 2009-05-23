@@ -24,7 +24,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.ca;
+package it.plio.ext.oxsit.security.crl;
 
 import it.infocamere.freesigner.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.Helpers;
