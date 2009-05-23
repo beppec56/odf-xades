@@ -27,44 +27,13 @@
 
 package it.plio.ext.oxsit.comp.security.ca;
 
-import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
-import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Set;
-import java.util.Vector;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DERString;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.asn1.x509.X509Extension;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
-import org.bouncycastle.asn1.x509.qualified.QCStatement;
-import org.bouncycastle.i18n.filter.TrustedInput;
-
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
@@ -73,7 +42,6 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**

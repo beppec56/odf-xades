@@ -1,10 +1,13 @@
 /*************************************************************************
- * 
+ *
+ *  This code in partly derived from
+ *  it.infocamere.freesigner.crl.CertificationAuthorities class in freesigner
+ *  adapted to be used in OOo UNO environment
+ *  Copyright (c) 2005 Francesco Cendron - Infocamere
+ *
+ *  For OOo UNO adaptation:
  *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
  *  Copyright 2009 by Roberto Resoli resoli@osor.eu
- *  This code in partly derived from
- *  it.infocamere.freesigner.gui.RootsVerifier class in freesigner
- *  adapted to be unsed in OOo UNO environment
  *  
  *  The Contents of this file are made available subject to
  *  the terms of European Union Public License (EUPL) version 1.1

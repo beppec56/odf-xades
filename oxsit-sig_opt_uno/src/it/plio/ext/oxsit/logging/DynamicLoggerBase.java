@@ -67,13 +67,15 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	public DynamicLoggerBase(Object _theOwner, XComponentContext _ctx) {
 		//compute the parent class ID hex hash
 		m_xCC = _ctx;
-		m_xMCF = _ctx.getServiceManager();
-		m_xLogger = (XOX_Logger)UnoRuntime.queryInterface(XOX_Logger.class, 
-				_ctx.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
-		if(m_xLogger == null) {
-			System.out.println("no main logger!");
-			//FIXME prepare a default local logger, using the standard one of Java, no file, only console
-			//use it instead of the singleton one
+		if(_ctx != null ) {
+			m_xMCF = _ctx.getServiceManager();
+			m_xLogger = (XOX_Logger)UnoRuntime.queryInterface(XOX_Logger.class, 
+					_ctx.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
+			if(m_xLogger == null) {
+				System.out.println("no main logger!");
+				//FIXME prepare a default local logger, using the standard one of Java, no file, only console
+				//use it instead of the singleton one
+			}
 		}
 		m_sOwnerClassHashHex = String.format( "%8H", _theOwner );
 		m_sOwnerClass =  _theOwner.getClass().getName();		
@@ -180,11 +182,12 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	}
 
 	public void log_exception(int n_TheLevel, String _theMethod, String _message, java.lang.Throwable ex, boolean usedialog) {
-		m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
+		if(m_xLogger != null)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_SEVERE, m_sOwnerClassHashHex+" "+m_sOwnerClass,
 					_theMethod +" "+_message,
 					DynamicLoggerBase.getStackFromException(ex));
 
-		if(usedialog && n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
+		if(m_xCC != null && usedialog && n_TheLevel == GlobConstant.m_nLOG_LEVEL_SEVERE) {
 			try {
 			//Use the dialog
 				String _mex2 = "";
@@ -218,7 +221,8 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 * enable all logging
 	 */
 	public void enableLogging() {
-		m_bLogEnabled = true;
+		if(m_xCC != null && m_xLogger != null)
+			m_bLogEnabled = true;
 	}
 	
 	/**

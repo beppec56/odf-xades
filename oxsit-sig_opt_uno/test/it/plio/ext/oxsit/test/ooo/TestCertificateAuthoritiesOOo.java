@@ -20,9 +20,12 @@
  *
  ************************************************************************/
 
-
 package it.plio.ext.oxsit.test.ooo;
 
+import java.net.URL;
+
+import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.test.ooo.OOoServerInfo;
 
@@ -36,16 +39,16 @@ import com.sun.star.uno.XComponentContext;
  *
  * @author __USER__
  */
-public class TestRootVerifierOOo {
+public class TestCertificateAuthoritiesOOo {
     
     public OOoServerInfo SvrInfo = new OOoServerInfo();
-    private static TestRootVerifierOOo theInstance = null;
+    private static TestCertificateAuthoritiesOOo theInstance = null;
     public XComponent xComponent = null;
     private XContent xContent = null;
     private Object XActiveDataSink;
 
     /** Creates a new instance of __NAME__ */
-    public TestRootVerifierOOo() {
+    public TestCertificateAuthoritiesOOo() {
     }
 
     private XMultiComponentFactory xMCF = null;
@@ -93,11 +96,19 @@ public class TestRootVerifierOOo {
                             return;
                         }                */
                 
-//to get a frame, for check                
-                RootsVerifier aVerif = new RootsVerifier(null,xCC);
 //building it it's enough?
-
+                	//prepare the file URL
+                	String position = Helpers.getExtensionInstallationPath(xCC);
+                	
+                	URL aURL = new URL(
+                			position+System.getProperty("file.separator") + 
+							"ca-list-signed-p7m-it"+ //fixed path, the directory containing the current root zip file
+							System.getProperty("file.separator")+
+							"LISTACER_20090303.zip.p7m"
+                			);
                 
+                	CertificationAuthorities aCert = new CertificationAuthorities(xCC,aURL,true);
+
                 
             }
         }
@@ -113,7 +124,8 @@ public class TestRootVerifierOOo {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-    	theInstance = new TestRootVerifierOOo();
+
+    	theInstance = new TestCertificateAuthoritiesOOo();
             theInstance.run();
             theInstance.SvrInfo.CloseConnection();
     }
