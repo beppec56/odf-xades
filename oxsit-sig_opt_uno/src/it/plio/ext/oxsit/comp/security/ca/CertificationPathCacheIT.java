@@ -40,6 +40,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
@@ -218,7 +219,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateAuthorityState verifyCertificationPath(XComponent arg0)
+	public CertificateAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
 //check for certificate		
@@ -226,7 +227,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		
-		initializeCADataBase(false);
+		initializeCADataBase(_aFrame);
 		isPathValid();
 		return null;
 	}
@@ -235,11 +236,11 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
 	 */
 	@Override
-	public void initializeCADataBase(boolean _bUseGui) {
+	public void initializeCADataBase(XFrame _aFrame) {
 		//here:
 		//init the root authority elements,
 		if( m_aRootVerifier == null)
-			m_aRootVerifier = new RootsVerifier(null,m_xCC);
+			m_aRootVerifier = new RootsVerifier(_aFrame,m_xCC);
 /* the following needs implementation, do we need it?
  * 		else
 			if(m_aRootVerifier.getUserApprovedFingerprint() == null)
@@ -289,17 +290,26 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
                     certChild.
                     getSubjectDN())) {
                 //until CA is self signed
+	            boolean isInCA = false;
 
                 try {
-                    certParent = m_aCADbData.getCACertificate(
-                            certChild.getIssuerX500Principal());
+                    certParent = m_aCADbData.getCACertificate(certChild.getIssuerX500Principal());
+//                    certParent = m_aCADbData.getIssuerCertificate(certChild);
+                    isInCA = true;
                 } catch (GeneralSecurityException ex) {
                     //la CA non � presente nella root
                 	//set 'CA unknown to Italian PA'
                 	//set the current XOX_QualifiedCertificate state as well
+                	//this can be an intermediate certificate, it's the last one that should be ok
+                	//we need to set the certificate path of the current
+                	//main XOX_QualifiedCertificate as invalid for italian signature
+                	m_xQc.setCertificateElementErrorState(
+        					GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH,
+        					CertificateElementState.INVALID_value);			
+                	
+                	//set the CA state as not credited to Italian CNIPA structure
 
-                    isPathValid = false;
-                    return isPathValid;
+                	return isPathValid;
                 }
                 certChild = certParent;
 //instantiate a qualified certificate to represent the parent,
@@ -333,6 +343,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 //set the status flags of the new certificate as correct for a CA certificate
                 qCertChild.setCertificationPath(xQualCert);
                 qCertChild = xQualCert;
+                m_aLogger.info("added a certificate");
             }
             ;
             return isPathValid;

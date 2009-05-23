@@ -54,14 +54,21 @@ XOX_AvailableSSCDs interface or</p>
 		using a XComponentContext where it's legal to call OpenOffice.org GUI components.</p>
 		<p>For example if you use the interface from a synchronous job service, you can't use a GUI.</p>
 		*/
-		void initializeCADataBase( [in] boolean bUseGui );
+		void initializeCADataBase( [in] com::sun::star::frame::XFrame xFrame );
 
 		/** control the certification path of the UNO component passed as a parameter.
 			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
 			for executing the function.
+		 <p>
+
+		 @param xFrame the frame used for GUI if needed in the procedures<br>
+		 		if the parameter is null, there will be no GUI
+		@param xCertificate the certificate to be verified		 		
+		 </p>
 		*/
 		it::plio::ext::oxsit::security::cert::CertificateAuthorityState
-			verifyCertificationPath([in] com::sun::star::lang::XComponent xCertificate )
+			verifyCertificationPath( [in] com::sun::star::frame::XFrame xFrame, 
+							[in] com::sun::star::lang::XComponent xCertificate )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/**
@@ -71,8 +78,8 @@ XOX_AvailableSSCDs interface or</p>
 		<p>the passed frame and context are the one of the calling object, that is the ones to
 		be used to instantiate the dialog boxes needed for parameter editing</p>
 		*/
-		void	configureOptions([in] com::sun::star::frame::XFrame arg0, 
-							[in] com::sun::star::uno::XComponentContext arg1);
+		void	configureOptions([in] com::sun::star::frame::XFrame xFrame, 
+							[in] com::sun::star::uno::XComponentContext xContext);
 	} ;
 
   }; }; }; }; };  };

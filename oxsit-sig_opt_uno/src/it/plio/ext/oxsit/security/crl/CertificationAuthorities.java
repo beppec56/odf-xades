@@ -70,7 +70,7 @@ public class CertificationAuthorities {
 
     private String auth = null;
 
-    private HashMap<Principal, X509Certificate> authorities;
+    private HashMap authorities;
 
     private X509CertRL crls;
 
@@ -95,7 +95,7 @@ public class CertificationAuthorities {
      * le CA volute.
      */
     public CertificationAuthorities(XComponentContext _cc) {
-        authorities = new HashMap<Principal, X509Certificate>();
+        authorities = new HashMap();
         debug = false;
         // debug = true;
         alwaysCrlUpdate = false;
@@ -254,7 +254,7 @@ public class CertificationAuthorities {
             caCert = (X509Certificate) readCert(cert);
 
 //            trace("Verifico " + caCert.getSubjectDN());
-            if (authorities.containsKey((caCert.getIssuerX500Principal()))) {
+            if (authorities.containsKey(caCert.getIssuerX500Principal())) {
                 trace("Gia' inserito nella lista delle CA: "+ caCert.getIssuerDN().getName());
                 return;
             }
@@ -276,7 +276,7 @@ public class CertificationAuthorities {
                 
             if (caCert.getIssuerDN().equals(caCert.getSubjectDN())) {
                 caCert.verify(caCert.getPublicKey());
-                authorities.put((caCert.getIssuerX500Principal()), caCert);
+                authorities.put(caCert.getIssuerX500Principal(), caCert);
                 trace("Inserita CA: " + caCert.getIssuerX500Principal().getName()+ " "+caCert.getIssuerX500Principal());
             } else {
                 throw new CertificateException("Non self-signed: "+caCert.getSubjectX500Principal().getName());
@@ -352,6 +352,10 @@ public class CertificationAuthorities {
         }
     }
 
+    public X509Certificate getIssuerCertificate(X509Certificate aCert)
+    throws GeneralSecurityException {
+    	return getCACertificate(aCert.getIssuerX500Principal()); 
+    }
     
     /** ****************** PRIVATE PART****************************************** */
 

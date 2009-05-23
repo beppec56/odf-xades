@@ -158,6 +158,7 @@ public class GlobConstant {
 	public static final String m_sQUALIFIED_CERTIFICATE_NOT_AFTER = "NotValidAfter";	
 	public static final String m_sQUALIFIED_CERTIFICATE_CEXT = "CritExt";	
 	public static final String m_sQUALIFIED_CERTIFICATE_NCEXT = "NotCritExt";	
+	public static final String m_sQUALIFIED_CERTIFICATE_CERTPATH = "CertifPath";	
 	
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";

@@ -223,7 +223,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateState verifyCertificateCertificateCompliance(
+	public CertificateState verifyCertificateCertificateCompliance(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);

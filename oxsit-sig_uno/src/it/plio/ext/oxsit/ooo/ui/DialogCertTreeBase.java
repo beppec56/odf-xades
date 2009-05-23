@@ -533,6 +533,34 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
+	protected void addCACertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
+
+    //this adds the starting point of the certification path, from now on we have only CA certificates
+		//grab its state
+		//add the certificate path
+		//first see if there is a path
+		String sPathGraph = "";
+		XOX_QualifiedCertificate xCPath = _aCertif.getCertificationPath();
+
+		int aState = _aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH);
+		sPathGraph = m_sCertificateElementGraphicName[aState];
+
+		XMutableTreeNode xNode;
+		//check if the certification path is available
+		if(xCPath != null) {
+			xNode = addEmptyDataTreeElement(_aParentNode, TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath, 
+				sPathGraph);
+		
+			//call the certificate adder...
+			addQualifiedCertificateToTree(xNode, xCPath);
+		}
+		else {//add the empty node only if there is an error
+			if( aState != CertificateElementState.OK_value)
+				addEmptyDataTreeElement(_aParentNode, TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath, 
+						sPathGraph);				
+		}
+	}
+
 	////// methods to manage the certificate display
 	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
 		//instantiate a certificate node
@@ -661,19 +689,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		//add the certificate path
 		//first see if there is a path
-		String sPathGraph = "";
-		XOX_QualifiedCertificate xCPath = _aCertif.getCertificationPath();
-		if(xCPath == null)
-			sPathGraph = m_sCertificateElementGraphicName[CertificateElementState.INVALID_value];
-		else {
-			//set to the value of the certificate found
-			sPathGraph = "";//m_sCertificateValidityGraphicName[xCPath.getCertificateGraficStateValue()];			
-		}
-
-		XMutableTreeNode xNode = addEmptyDataTreeElement(xaCNode,
-				TreeNodeType.CERTIFICATION_PATH,m_sLabelCertPath, 
-				""/*sPathGraph*/);
-		
+		addCACertificateToTree(xaCNode, _aCertif);
 	}
 
 	//test function, remove when ready!

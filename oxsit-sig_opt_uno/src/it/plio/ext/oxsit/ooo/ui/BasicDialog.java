@@ -115,7 +115,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 				m_xParentFrame = (XFrame) xFramesSupplier.getActiveFrame();
 				// println("default Frame...");
 			} catch (com.sun.star.uno.Exception oException) {
-				oException.printStackTrace();
+				m_logger.severe(oException);
 			}
 		}
 		if (m_xParentFrame != null) {

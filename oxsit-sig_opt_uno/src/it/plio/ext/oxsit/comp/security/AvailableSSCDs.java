@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
+import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
@@ -79,6 +80,7 @@ public class AvailableSSCDs extends ComponentBase
 
 	protected XComponentContext m_xCC;
 	protected XMultiComponentFactory m_xMCF;
+	protected XFrame				m_xFrame;
 	
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = AvailableSSCDs.class
@@ -190,8 +192,11 @@ public class AvailableSSCDs extends ComponentBase
 	 * (non-Javadoc)
 	 * 
 	 * @see com.sun.star.lang.XInitialization#initialize(java.lang.Object[])
-	 * when instantiated, _oObj[0] first argument document URL _oObj[1]
+	 * when instantiated, 
+	 * _oObj[0] a frame if a frame is needed for the interface
+	 * _oObj[1]
 	 * corresponding XStorage object
+	 * _oObj 
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {

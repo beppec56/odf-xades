@@ -233,7 +233,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 							XOX_QualifiedCertificate[] oCertifs = oSSCDev.getQualifiedCertificates();
 							for(int idx1=0; idx1<oCertifs.length;idx1++) {
 								//perform certificate verification
-								oCertifs[idx1].verifyCertificate();
+								oCertifs[idx1].verifyCertificate(m_xParentFrame);
 								//then add to the tree control
 								addQualifiedCertificateToTree(xCertifNode, oCertifs[idx1]);
 							}

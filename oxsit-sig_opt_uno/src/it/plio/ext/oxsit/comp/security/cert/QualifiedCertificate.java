@@ -63,6 +63,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
+import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -389,18 +390,18 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCertificate()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCertificate(com.sun.star.frame.XFrame)
 	 */
 	@Override
-	public boolean verifyCertificate() {
+	public boolean verifyCertificate(XFrame _aFrame) {
 		// TODO Auto-generated method stub
 
 		//check and fill the certification path
-		verifyCertificationPath();
+		verifyCertificationPath(_aFrame);
 		//check the crl of the certificate
 
 		//check the certificate for the compliance
-		verifyCompliance();
+		verifyCompliance(_aFrame);
 		return false;
 	}
 
@@ -571,17 +572,18 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	
 	////////////////// internal functions
 	/**
+	 * @param arg0 
 	 * 
 	 */
 	
-	protected void verifyCompliance() {
+	protected void verifyCompliance(XFrame arg0) {
 		if(m_xoxCertificateComplianceControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
 					//FIXME
 					//add the result to the certificate status
-					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(xCtl);
+					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(arg0,xCtl);
 					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
 					m_nCertificateState = 
@@ -595,14 +597,14 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		}
 	}
 	
-	protected void verifyCertificationPath() {
+	protected void verifyCertificationPath(XFrame _aFrame) {
 		if(m_xoxCertificationPathControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
 					//FIXME
 					//add the result to the certificate status
-					m_xoxCertificationPathControlProcedure.verifyCertificationPath(xCtl);
+					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
 /*					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState()));
 					m_nCertificateState = 

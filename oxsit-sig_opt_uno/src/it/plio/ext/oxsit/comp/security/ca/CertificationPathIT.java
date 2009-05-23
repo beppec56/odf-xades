@@ -84,6 +84,8 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	
     private XOX_CertificationPathControlProcedure m_axoxChildProc;
 
+	private XFrame m_xFrame;
+
 	/**
 	 * 
 	 * 
@@ -203,7 +205,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateAuthorityState verifyCertificationPath(XComponent arg0)
+	public CertificateAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		m_aLogger.log("verifyCertificationPath");
@@ -249,7 +251,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 			if(m_axoxChildProc != null) {
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
 				if(xComp != null)
-					return m_axoxChildProc.verifyCertificationPath(xComp);
+					return m_axoxChildProc.verifyCertificationPath(_xFrame,xComp);
 			}
 			else
 				m_aLogger.info("CANNOT execute child");
@@ -270,7 +272,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeCADataBase(boolean)
 	 */
 	@Override
-	public void initializeCADataBase(boolean arg0) {
+	public void initializeCADataBase(XFrame _aFrame) {
 		// TODO Auto-generated method stub
 		
 	}

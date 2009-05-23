@@ -32,7 +32,9 @@ package it.plio.ext.oxsit.security.crl;
 import it.infocamere.freesigner.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.ControlDims;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
 import it.plio.ext.oxsit.ooo.ui.DialogRootVerify;
 
@@ -214,18 +216,12 @@ public class RootsVerifier {
         String _mex = String.format(_format, theFingerprint);
         
 		DialogRootVerify aDialog1 = new DialogRootVerify( m_xFrame, m_xCC, m_xMCF,_mex );
+//		DialogRootVerify aDialog1 = new DialogRootVerify( null, m_xCC, m_xMCF,_mex );
 		//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
 		//get the parent window data
 		//the problem is that we get the pixel, but we need the logical pixel, so for now it doesn't work...
-//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
-//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
-		int BiasX = 100;
-		int BiasY = 30;
-//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
-//			XWindow xWindow = m_xFrame.getContainerWindow();
-//			XWindowPeer xPeer = xWindow.
-//center the dialog
-
+		int BiasX = ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
+		int BiasY = ControlDims.RSC_SP_DLG_INNERBORDER_TOP;
         short ret;
 		try {
 			aDialog1.initialize(BiasX,BiasY);
@@ -264,28 +260,6 @@ public class RootsVerifier {
         return s;
     }
 
-/*    private byte[] getBytesFromPath(String fileName) throws IOException {
-
-        byte[] risultato = null;
-
-        try {
-            byte[] buffer = new byte[1024];
-            FileInputStream fis = new FileInputStream(fileName);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int bytesRead = 0;
-            while ((bytesRead = fis.read(buffer, 0, buffer.length)) >= 0) {
-                baos.write(buffer, 0, bytesRead);
-            }
-            fis.close();
-            risultato = baos.toByteArray();
-
-        } catch (IOException ioe) {
-
-            throw ioe;
-        }
-        return risultato;
-    }*/
-
     private CMSSignedData getCNIPA_CMS() throws CMSException,
             FileNotFoundException {
 
@@ -295,128 +269,6 @@ public class RootsVerifier {
 
         return new CMSSignedData(is);
     }
-
-/*public CertificationAuthorities getRoots(AbstractTask task) throws GeneralSecurityException, IOException {
-
-        CertificationAuthorities roots = null;
-        boolean rootsOk = false;
-        String error = null;
-
-        try {
-
-            CertificationAuthorities CNIPARoot = new CertificationAuthorities();
-            try {
-                CNIPARoot.addCertificateAuthority(CNIPARoot
-                        .getBytesFromPath(this.CNIPACACertFilePath));
-            } catch (GeneralSecurityException e) {
-                log(task, "Errore nell'inizializzazione della CA CNIPA: "
-                                + e);
-            }
-
-            X509Certificate cert = null;
-            CertStore certs = null;
-
-            CMSSignedData CNIPA_CMS = null;
-            try {
-
-                CNIPA_CMS = getCNIPA_CMS();
-
-            } catch (FileNotFoundException ex) {
-                log(task, "Errore nell'acquisizione del file: " + ex);
-            }
-
-            Provider p = new org.bouncycastle.jce.provider.BouncyCastleProvider();
-            if (Security.getProvider(p.getName()) == null)
-                Security.addProvider(p);
-
-            try {
-                certs = CNIPA_CMS.getCertificatesAndCRLs("Collection", "BC");
-            } catch (CMSException ex2) {
-                log(task, "Errore nel CMS delle RootCA");
-            } catch (NoSuchProviderException ex2) {
-                log(task, "Non esiste il provider del servizio");
-            } catch (NoSuchAlgorithmException ex2) {
-                log(task, "Errore nell'algoritmo");
-            }
-
-            if (certs != null) {
-                SignerInformationStore signers = CNIPA_CMS.getSignerInfos();
-                Collection c = signers.getSigners();
-
-                System.out.println(c.size() + " signers found.");
-
-                Iterator it = c.iterator();
-
-                // ciclo tra tutti i firmatari
-                int i = 0;
-                while (it.hasNext()) {
-                    SignerInformation signer = (SignerInformation) it.next();
-                    Collection certCollection = null;
-                    try {
-                        certCollection = certs.getCertificates(signer.getSID());
-                    } catch (CertStoreException ex1) {
-                        log(task, "Errore nel CertStore");
-                    }
-
-                    if (certCollection.size() == 1) {
-
-                        // task.setStatus(++current,
-                        // "Verifica delle CA firmate dal CNIPA...");
-
-                        byte[] signerFingerprint = getCertFingerprint((X509Certificate) certCollection
-                                .toArray()[0]);
-
-                        System.out.println("Signer fingerprint: "
-                                + formatAsGUString(signerFingerprint));
-
-                        if (Arrays.equals(signerFingerprint,
-                                this.userApprovedFingerprint)) {
-
-                            VerifyResult vr = new VerifyResult(
-                                    (X509Certificate) certCollection.toArray()[0],
-                                    CNIPA_CMS, CNIPARoot, signer, true);
-                            rootsOk = vr.getPassed();
-                            error = vr.getCRLerror();
-                        } else
-                            log(task, "Signer certs has wrong fingerprint!");
-                    } else
-                        log(task, "There is not exactly one certificate for this signer!");
-
-                    i++;
-                }
-
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (CMSException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        if (rootsOk) {
-
-
-                roots = new CertificationAuthorities(
-                        getCmsInputStream(this.CAFilePath), true);
-
-            
-
-        } else {
-
-            log(task, "Verifica del file CNIPA delle root CA fallita!");
-            
-        }
-
-        return roots;
-
-    }    
-
-    private void log(AbstractTask task, String msg) {
-        System.out.println("Verifica del file CNIPA delle root CA fallita!");
-        if (task != null)
-            task.setCanceled("Errore nella validazione delle root CA!");
-    }*/
 
     private byte[] getCertFingerprint(X509Certificate cert) {
         MessageDigest md;
@@ -441,31 +293,5 @@ public class RootsVerifier {
 
     public byte[] getUserApprovedFingerprint() {
         return userApprovedFingerprint;
-    }
-
-    // ROB duplicato del metodo in VerifyTask ...
-    private InputStream getCmsInputStream(String path) {
-
-        FileInputStream is = null;
-        try {
-            is = new FileInputStream(path);
-        } catch (FileNotFoundException ex) {
-            System.out.println("Errore nell'acquisizione del file: " + ex);
-        }
-        ByteArrayInputStream bais = null;
-        try {
-            CMSSignedData cms = new CMSSignedData(is);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            cms.getSignedContent().write(baos);
-            bais = new ByteArrayInputStream(baos.toByteArray());
-        } catch (CMSException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return bais;
     }
 }

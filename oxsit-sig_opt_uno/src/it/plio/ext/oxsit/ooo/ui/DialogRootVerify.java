@@ -51,10 +51,13 @@ public class DialogRootVerify extends BasicDialog {
 	private String				m_sBtnNoLabel = "id_pb_no";
 	private String 				m_sNO_PB = "theNoPb";
 	private String 				m_sYES_PB = "theYesPb";
+	private	XFrame				m_xReceivedFrame;
 
 	public DialogRootVerify(XFrame _xFrame, XComponentContext context,
 			XMultiComponentFactory _xmcf, String _Message) {
 		super ( _xFrame, context, _xmcf );
+		m_logger.enableLogging();
+		m_xReceivedFrame = _xFrame;
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 		m_sMessage = _Message;				
@@ -145,7 +148,8 @@ public class DialogRootVerify extends BasicDialog {
 		createWindowPeer();
 		// center the dialog, using physical coordinates, MUST be called after
 		// CreateWindowPeer
-		center();
+		if(m_xReceivedFrame == null)
+			center();
 	}
 }
 

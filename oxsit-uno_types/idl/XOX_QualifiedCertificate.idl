@@ -26,6 +26,7 @@
 #include <com/sun/star/util/DateTime.idl>
 #include <com/sun/star/uno/Exception.idl>
 #include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/frame/XFrame.idl>
 #include "XOX_CertificateExtension.idl"
 #include "CertificateState.idl"
 #include "CertificateAuthorityState.idl"
@@ -189,8 +190,12 @@ XOX_AvailableSSCDs interface or</p>
 		/** verify the state of this certificate. Returns false if not OK, true if OK.
 		 <p>Either cases, the CertificateState and CertificateAutority fields will have the result.</p>
 		 <p>The CertificateGraficStateValue field will have the result as well</p>
+		 <p>
+		 @param aFrame the frame used for GUI if needed in the procedures<br>
+		 		if the parameter is null, there will be no GUI
+		 </p>
 		*/
-		boolean verifyCertificate( );
+		boolean verifyCertificate( [in] com::sun::star::frame::XFrame aFrame);
 
 	} ;
 
