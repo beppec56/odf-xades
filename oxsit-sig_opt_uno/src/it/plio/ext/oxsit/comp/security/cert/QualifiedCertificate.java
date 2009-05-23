@@ -168,6 +168,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private XOX_CertificateComplianceControlProcedure m_xoxCertificateComplianceControlProcedure;
 
+	private XOX_QualifiedCertificate m_xoxCertificationPath;
+
 	/**
 	 * 
 	 * 
@@ -440,10 +442,17 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public XOX_QualifiedCertificate getCertificationPath() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_xoxCertificationPath;
 	}
 
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificationPath(it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate)
+	 */
+	@Override
+	public void setCertificationPath(XOX_QualifiedCertificate arg0) {
+		m_xoxCertificationPath = arg0;
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getDEREncoded()
 	 */

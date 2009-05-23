@@ -46,12 +46,22 @@ XOX_AvailableSSCDs interface or</p>
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificationAuthorityState;
 
+		/** Use this to initialize the service implementing this interface, 
+		for the part related to the interface.
+		<p>It loads into memory the CA autority list from the signed file distributed by CNIPA.</p>
+		@param bUseGui set to true if called from a GUI aware service, else set to false.
+		<p>GUI aware component means a component that instantiated the service implementing this interface<br>
+		using a XComponentContext where it's legal to call OpenOffice.org GUI components.</p>
+		<p>For example if you use the interface from a synchronous job service, you can't use a GUI.</p>
+		*/
+		void initializeCADataBase( [in] boolean bUseGui );
+
 		/** control the certification path of the UNO component passed as a parameter.
 			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
-			for executing the function. 
-		  */
+			for executing the function.
+		*/
 		it::plio::ext::oxsit::security::cert::CertificateAuthorityState
-			verifyCertificationPath([in] com::sun::star::lang::XComponent xCertificate)
+			verifyCertificationPath([in] com::sun::star::lang::XComponent xCertificate )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/**

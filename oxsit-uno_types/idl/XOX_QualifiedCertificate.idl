@@ -133,7 +133,7 @@ XOX_AvailableSSCDs interface or</p>
 		/** The first certificate in the certification path, this is the start of the certification path
 		tree.
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate CertificationPath ;
+		[attribute] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate CertificationPath ;
 
 		/** Returns all the critical extensions.
 		<p></p>

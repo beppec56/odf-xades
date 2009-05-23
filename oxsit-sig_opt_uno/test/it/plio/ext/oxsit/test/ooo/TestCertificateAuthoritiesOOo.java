@@ -108,8 +108,6 @@ public class TestCertificateAuthoritiesOOo {
                 			);
                 
                 	CertificationAuthorities aCert = new CertificationAuthorities(xCC,aURL,true);
-
-                
             }
         }
         catch(Exception e) {
@@ -127,6 +125,7 @@ public class TestCertificateAuthoritiesOOo {
 
     	theInstance = new TestCertificateAuthoritiesOOo();
             theInstance.run();
+
             theInstance.SvrInfo.CloseConnection();
     }
 }

@@ -27,21 +27,35 @@
 
 package it.plio.ext.oxsit.comp.security.ca;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import org.bouncycastle.cms.CMSException;
+
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
+import it.plio.ext.oxsit.security.crl.RootsVerifier;
 
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -72,12 +86,19 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT };
 
+	private XComponentContext			m_xCC;
+	private	XMultiComponentFactory		m_xMCF;
 	protected DynamicLogger m_aLogger;
 
 	protected XOX_QualifiedCertificate m_xQc;
 
 	private CertificateState m_aCertificateState;
-    private java.security.cert.X509Certificate m_JavaCert = null;
+    
+    private 	RootsVerifier	m_aRootVerifier;
+    
+    private		CertificationAuthorities	m_aCADbData;
+
+	private String m_bUseGUI;
 
 	/**
 	 * 
@@ -85,8 +106,9 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @param _ctx
 	 */
 	public CertificationPathCacheIT(XComponentContext _ctx) {
+		m_xCC = _ctx;
+		m_xMCF = m_xCC.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
@@ -198,11 +220,129 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	@Override
 	public CertificateAuthorityState verifyCertificationPath(XComponent arg0)
 			throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
 		m_aLogger.log("verifyCertificationPath");
-//here:
-		//init the root authority elements,
-		//fill the list of certificate autority available
+//check for certificate		
+		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
+		
+		initializeCADataBase(false);
+		isPathValid();
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
+	 */
+	@Override
+	public void initializeCADataBase(boolean _bUseGui) {
+		//here:
+		//init the root authority elements,
+		if( m_aRootVerifier == null)
+			m_aRootVerifier = new RootsVerifier(null,m_xCC);
+/* the following needs implementation, do we need it?
+ * 		else
+			if(m_aRootVerifier.getUserApprovedFingerprint() == null)
+*/		
+		//fill the list of certificate authorities available
+		if(m_aCADbData == null) {
+//prepare file path
+			URL aURL;
+			try {
+				aURL = new URL(
+						Helpers.getExtensionInstallationPath(m_xCC)+
+						System.getProperty("file.separator") + 
+						"ca-list-signed-p7m-it"+ //fixed path, the directory containing the current root zip file
+						System.getProperty("file.separator")+
+						"LISTACER_20090303.zip.p7m"
+						);
+				m_aCADbData = new CertificationAuthorities(m_xCC, aURL, true);
+			} catch (MalformedURLException e) {
+				m_aLogger.severe(e);
+			} catch (GeneralSecurityException e) {
+				m_aLogger.severe(e);
+			} catch (IOException e) {
+				m_aLogger.severe(e);
+			} catch (CMSException e) {
+				m_aLogger.severe(e);
+			}
+		}
+	}
+
+	//FIXME: a big one, needs to set state for certificate in graphic...
+	//FIXME: another one, see behavior of this with a longer certification path
+	//FIXME: check with cert path problem
+	public boolean isPathValid() {
+		//convert the certificate to java internal representation
+        java.security.cert.CertificateFactory cf;
+		try {
+			cf = java.security.cert.CertificateFactory.getInstance("X.509");
+			java.io.ByteArrayInputStream bais = null;
+            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
+            XOX_QualifiedCertificate qCertChild = m_xQc;
+
+//now loop, and add the certificate path to the current path, actually empty            
+            X509Certificate certParent = null;
+            boolean isPathValid = false;
+			while (!certChild.getIssuerDN().equals(
+                    certChild.
+                    getSubjectDN())) {
+                //until CA is self signed
+
+                try {
+                    certParent = m_aCADbData.getCACertificate(
+                            certChild.getIssuerX500Principal());
+                } catch (GeneralSecurityException ex) {
+                    //la CA non � presente nella root
+                	//set 'CA unknown to Italian PA'
+                	//set the current XOX_QualifiedCertificate state as well
+
+                    isPathValid = false;
+                    return isPathValid;
+                }
+                certChild = certParent;
+//instantiate a qualified certificate to represent the parent,
+                certParent.getEncoded();
+				//all seems right, instantiate the certificate service
+				//now create the Certificate Control UNO objects
+				//first the certificate compliance control
+				//FIXME, may be we can change this to a better behavior, moving the tests currently carried out in
+                //CertificationAuthorities to here
+				//Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+				//Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+
+				//now the certification path control
+				
+				//prepare objects for subordinate service
+				Object[] aArguments = new Object[2];
+//												byte[] aCert = cert.getEncoded();
+				//set the certificate raw value
+				aArguments[0] = certParent.getEncoded();//aCert;
+				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
+//				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+//				aArguments[3] = oCertPath;
+
+				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
+						aArguments, m_xCC);
+				//get the main interface
+				XOX_QualifiedCertificate xQualCert = 
+					(XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oACertificate);
+
+//set it to the current child certificate, and put it as a new qualified certificate
+//set the status flags of the new certificate as correct for a CA certificate
+                qCertChild.setCertificationPath(xQualCert);
+                qCertChild = xQualCert;
+            }
+            ;
+            return isPathValid;
+		} catch (CertificateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

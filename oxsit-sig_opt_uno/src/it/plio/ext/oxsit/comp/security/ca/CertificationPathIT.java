@@ -265,4 +265,13 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeCADataBase(boolean)
+	 */
+	@Override
+	public void initializeCADataBase(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

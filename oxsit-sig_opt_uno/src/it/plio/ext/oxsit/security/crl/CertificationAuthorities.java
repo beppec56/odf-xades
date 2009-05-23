@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.Principal;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -48,6 +49,8 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
@@ -67,7 +70,7 @@ public class CertificationAuthorities {
 
     private String auth = null;
 
-    private HashMap authorities;
+    private HashMap<Principal, X509Certificate> authorities;
 
     private X509CertRL crls;
 
@@ -92,7 +95,7 @@ public class CertificationAuthorities {
      * le CA volute.
      */
     public CertificationAuthorities(XComponentContext _cc) {
-        authorities = new HashMap();
+        authorities = new HashMap<Principal, X509Certificate>();
         debug = false;
         // debug = true;
         alwaysCrlUpdate = false;
@@ -127,7 +130,7 @@ public class CertificationAuthorities {
         ByteArrayOutputStream bais = null;
         try {
             zis = new ZipInputStream(is);
-            trace("Lettura ZIP stream");
+//            trace("Lettura ZIP stream");
             while ((ze = zis.getNextEntry()) != null) {
                 // lettura singola entry dello zip
                 trace("Lettura ZIP entry " + ze.getName());
@@ -143,7 +146,7 @@ public class CertificationAuthorities {
                         addCertificateAuthority(bais.toByteArray());
                     } catch (GeneralSecurityException ge) {
                         trace("Certificato CA non valido: " + ze.getName()
-                                + " - ",ge);
+                                + " - "+ge.getMessage());
                     }
                     bais.close();
                 }
@@ -250,41 +253,35 @@ public class CertificationAuthorities {
         try { // Estrazione certificato da sequenza byte
             caCert = (X509Certificate) readCert(cert);
 
-            trace("Verifico " + caCert.getSubjectDN());
-            if (authorities.containsKey((caCert.getIssuerDN()))) {
-                trace(caCert.getIssuerDN().getName()
-                        + " gia' inserito nella lista delle CA");
+//            trace("Verifico " + caCert.getSubjectDN());
+            if (authorities.containsKey((caCert.getIssuerX500Principal()))) {
+                trace("Gia' inserito nella lista delle CA: "+ caCert.getIssuerDN().getName());
                 return;
             }
 
             int ext = caCert.getBasicConstraints();
             if (ext == -1) {
-                throw new CertificateException(caCert.getSubjectDN().getName()
-                        + ": flag CA uguale a false");
+                throw new CertificateException("Flag CA uguale a false: "+
+                		caCert.getSubjectX500Principal().getName());
             }
             
             try {
                 caCert.checkValidity();
             } catch (CertificateExpiredException cee) {
-                throw new CertificateException(caCert.getSubjectDN().getName()
-                        + ": certificato CA scaduto");
+                throw new CertificateException("certificato CA scaduto: "+caCert.getSubjectX500Principal().getName());
             }
             catch (CertificateNotYetValidException cnyve) {
-                throw new CertificateException(caCert.getSubjectDN().getName()
-                        + ": certificato CA non ancora valido");
+                throw new CertificateException("Certificato CA non ancora valido: "+caCert.getSubjectX500Principal().getName());
             }
-                
                 
             if (caCert.getIssuerDN().equals(caCert.getSubjectDN())) {
                 caCert.verify(caCert.getPublicKey());
                 authorities.put((caCert.getIssuerX500Principal()), caCert);
-                trace("Inserita CA: " + caCert.getIssuerDN());
+                trace("Inserita CA: " + caCert.getIssuerX500Principal().getName()+ " "+caCert.getIssuerX500Principal());
             } else {
-                throw new CertificateException(caCert.getSubjectDN().getName()
-                        + ": non self-signed");
+                throw new CertificateException("Non self-signed: "+caCert.getSubjectX500Principal().getName());
             }
         } catch (GeneralSecurityException ge) {
-            trace(ge);
             //trace(ge);
             throw ge;
         }
@@ -332,6 +329,30 @@ public class CertificationAuthorities {
         this.debug = debug;
     }
 
+    /**
+     * Return the CA certificate specified as caName
+     * 
+     * Restituisce il certificato della CA specificata da <CODE>caName</CODE>
+     * se presente nelle CA di root.
+     * 
+     * @param caName
+     *            Principal DN of CA
+     * @return certificate CA X.509 , null if CA is not present
+     * @throws GeneralSecurityException
+     */
+    public X509Certificate getCACertificate(Principal caName)
+            throws GeneralSecurityException {
+
+        if (authorities.containsKey(caName)) {
+            return (X509Certificate) authorities.get(caName);
+        } else {
+            String errMsg = "CA non presente nella root: " + caName;
+            trace(errMsg);
+            throw new GeneralSecurityException(errMsg);
+        }
+    }
+
+    
     /** ****************** PRIVATE PART****************************************** */
 
     private void trace(String s) {
