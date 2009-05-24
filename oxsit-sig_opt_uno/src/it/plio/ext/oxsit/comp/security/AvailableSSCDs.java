@@ -23,7 +23,7 @@
 package it.plio.ext.oxsit.comp.security;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
-import it.infocamere.freesigner.gui.ReadCertsTask;
+import it.plio.ext.oxsit.comp.security.cert.ReadCerts;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
 import it.plio.ext.oxsit.logging.DynamicLogger;
@@ -342,7 +342,7 @@ public class AvailableSSCDs extends ComponentBase
 					
 					m_aLogger.info(Pkcs11WrapperLocal);
 					
-					ReadCertsTask rt = new ReadCertsTask(aLogger, Pkcs11WrapperLocal, cIr);
+					ReadCerts rt = new ReadCerts(aLogger, Pkcs11WrapperLocal, cIr);
 					Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
 					if (certsOnToken != null) {
 						Iterator<X509Certificate> certIt = certsOnToken.iterator();

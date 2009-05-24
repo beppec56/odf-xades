@@ -75,6 +75,9 @@ import org.bouncycastle.util.encoders.Base64;
 
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.task.XStatusIndicator;
+import com.sun.star.task.XStatusIndicatorFactory;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -91,6 +94,7 @@ public class X509CertRL {
 	private XComponentContext m_xCC;
 	private XMultiComponentFactory	m_xMCF;
 	private XFrame	m_xFrame;
+	private	XStatusIndicator	m_xStatusIndicator;
 	
 	private IDynamicLogger	m_aLogger;
 	private IDynamicLogger	m_aLoggerDialog;
@@ -136,8 +140,8 @@ public class X509CertRL {
      * @param userCert certificate to verify
      * @return true if certificate is not revoked
      */
-	public boolean isNotRevoked(X509Certificate userCert) {
-        return isNotRevoked(userCert, new Date());
+	public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert) {
+        return isNotRevoked(_aStatus,userCert, new Date());
 	}
 
     /**
@@ -149,9 +153,12 @@ public class X509CertRL {
      * @param date Date
      * @return true if certificate is not revoked
      */
-    public boolean isNotRevoked(X509Certificate userCert, Date date) {
+    public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
 
         X509CRL crl = null;
+        //check if we have a status indicator
+        m_xStatusIndicator = _aStatus;
+        
         try {
             // devo fare l'update per compatibilita' all'indietro!
             if (!update(userCert, date, false)) {
@@ -549,6 +556,7 @@ public class X509CertRL {
             try {
                 trace("Tentativo di accesso al CRL Distribution Point = " +
                       dp[i]);
+                traceStatus("Tentativo di accesso al CRL Distribution Point = "+dp[i]);
                 crl = download(dp[i], userCert.getIssuerDN());
                 // il primo protocollo che dia esiti positivi interrompe il ciclo
                 if (crl != null) {
@@ -644,7 +652,6 @@ public class X509CertRL {
             return null;
         }
     }
-
 
     private X509CRL ricercaCrlByLDAP(String dp, Principal CADName) {
         trace("ricercaCrlByLDAP - Inizio Metodo");
@@ -833,6 +840,11 @@ public class X509CertRL {
         }
     }
 
+    private void traceStatus(String _mex) {
+    	if(m_xStatusIndicator != null) {
+    		m_xStatusIndicator.setText(_mex);
+    	}
+    }
 	/**
 	 * @param m_aCertificateState the m_aCertificateState to set
 	 */

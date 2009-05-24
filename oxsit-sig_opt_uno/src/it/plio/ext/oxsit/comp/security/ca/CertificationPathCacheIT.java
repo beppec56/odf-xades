@@ -65,6 +65,8 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.task.XStatusIndicator;
+import com.sun.star.task.XStatusIndicatorFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -261,6 +263,20 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
 	 */
 	private void initializeCADataBase(XFrame _aFrame) {
+        XStatusIndicator xStatusIndicator = null;
+        if (_aFrame != null) {
+        	//check interface
+        	//
+        	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,_aFrame);
+        	if(xFact != null) {
+        		xStatusIndicator = xFact.createStatusIndicator();
+        		if(xStatusIndicator != null)
+        			xStatusIndicator.start("", 0);
+        	}
+        }
+
+		if(xStatusIndicator != null)
+			xStatusIndicator.setText("Verify and confirm root signature");
 		//here:
 		//init the root authority elements,
 		if( m_aRootVerifier == null)
@@ -269,6 +285,8 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
  * 		else
 			if(m_aRootVerifier.getUserApprovedFingerprint() == null)
 */		
+		if(xStatusIndicator != null)
+			xStatusIndicator.setText("Read CA root Data base");
 		//fill the list of certificate authorities available
 		if(m_aCADbData == null) {
 //prepare file path
@@ -292,6 +310,8 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 				m_aLogger.severe(e);
 			}
 		}
+		if(xStatusIndicator != null)
+			xStatusIndicator.end();
 	}
 
 	//FIXME: a big one, needs to set state for certificate in graphic...
@@ -331,7 +351,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
         					GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH,
         					CertificateElementState.INVALID_value);			
                 	
-                	//set the CA state as not credited to Italian CNIPA structure
+                	//set the CA state of m_xQc as not credited to Italian CNIPA structure
 
                 	return isPathValid;
                 }
@@ -432,7 +452,21 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			java.io.ByteArrayInputStream bais = null;
             bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
-            CRL.isNotRevoked(m_JavaCert);
+            XStatusIndicator xStatusIndicator = null;
+            if (_aFrame != null) {
+            	//check interface
+            	//
+            	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,_aFrame);
+            	if(xFact != null) {
+            		xStatusIndicator = xFact.createStatusIndicator();
+            		if(xStatusIndicator != null)
+            			xStatusIndicator.start("Control CRL", 0);
+            	}
+            }
+            
+            CRL.isNotRevoked(xStatusIndicator,m_JavaCert);
+            xStatusIndicator.end();
+
     		//grab certificate state and conditions
     		m_aCertificateState = CRL.getCertificateState();
     		m_aCertificateStateConditions = CRL.getCertificateStateConditions();

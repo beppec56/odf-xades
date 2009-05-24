@@ -65,7 +65,6 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 * @param _ctx the UNO context
 	 */
 	public DynamicLoggerBase(Object _theOwner, XComponentContext _ctx) {
-		//compute the parent class ID hex hash
 		m_xCC = _ctx;
 		if(_ctx != null ) {
 			m_xMCF = _ctx.getServiceManager();
