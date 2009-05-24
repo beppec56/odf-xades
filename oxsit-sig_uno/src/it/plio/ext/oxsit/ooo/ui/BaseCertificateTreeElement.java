@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 
 import java.util.Hashtable;
 import com.sun.star.awt.FontDescriptor;
@@ -98,27 +99,20 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE.put(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID, "err_txt_cert_ko_core");
 		m_aCERTIFICATE_STATE.put(CertificateState.MALFORMED_CERTIFICATE, "err_txt_cert_no_read");
 	};
-
-	/**
-	 * some constant for certificate validation conditions
-	 */
-	public static final int m_nCERTIFICATE_STATE_CONDT_ENABLED = 0;
-	public static final int m_nCERTIFICATE_STATE_CONDT_DISABLED = 1;
-	public static final int m_nCERTIFICATE_STATE_CONDT_CRL_KO = 2;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH_ROOT = 3;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH_MIDDLE = 4;
-	public static final int m_nCERTIFICATE_STATE_CONDT_NO_PATH = 5;
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sCERTIFICATE_STATE_CONDT =  { 
-									"err_txt_crl_ok",
-									"err_txt_crl_dis",
-									"err_txt_crl_cannot",
-									"err_txt_crl_noroot",
-									"err_txt_crl_noint",
-									"err_txt_crl_noclo"
-						};
+	
+	//hash table to convert the enum of the certificate state conditions to the id string in resources
+	public static Hashtable<CertificateStateConditions,String>	m_aCERTIFICATE_STATE_CONDITIONS = new Hashtable<CertificateStateConditions, String>(15);
+	
+	static {		
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED,"revocation_not_yet_controlled");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_CONTROLLED_OK,"revocation_controlled_ok");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED,"revocation_control_not_enabled");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.CRL_CANNOT_BE_ACCESSED,"crl_cannot_be_accessed");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.CRL_CANNOT_BE_VERIFIED,"crl_cannot_be_verified");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.OCSP_CANNOT_BE_ACCESSED,"ocsp_cannot_be_accessed");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.INET_ACCESS_NOT_ENABLED,"inet_access_not_enabled");
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.INET_ACCESS_ERROR,"inet_access_error");
+	};
 	
 	/**
 	 * some constant for certificate validation state
@@ -173,7 +167,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
 		setCertificateState(CertificateState.NOT_YET_VERIFIED_value);
-		setCertificateStateConditions(m_nCERTIFICATE_STATE_CONDT_DISABLED);
+		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value);
 		setIssuerState(m_nISSUER_STATE_NO_CTRL);
 		setNodeGraphic(null);
 		m_sStringList = new String[CertifTreeDlgDims.m_nMAXIMUM_FIELDS];
@@ -204,7 +198,10 @@ public class BaseCertificateTreeElement extends TreeElement {
 									CertificateState.fromInt(getCertificateState())
 											));
 			m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
-				m_aRegAcc.getStringFromRegistry( m_sCERTIFICATE_STATE_CONDT[getCertificateStateConditions()] );
+				m_aRegAcc.getStringFromRegistry(
+						m_aCERTIFICATE_STATE_CONDITIONS.get(
+								CertificateStateConditions.fromInt(getCertificateStateConditions())
+										));
 
 			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
 				m_aRegAcc.getStringFromRegistry( m_sISSUER_STATE[getIssuerState()] );

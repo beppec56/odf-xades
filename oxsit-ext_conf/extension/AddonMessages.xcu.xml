@@ -406,38 +406,44 @@ Roberto Resoli, developer
 		<!--
 		    CRL control state
 		-->
-		<node oor:name="err_txt_crl_ok" oor:op="replace">
+		<node oor:name="revocation_not_yet_controlled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">rControl with CRL enabled</value>
-				<value xml:lang="it">rControllo con CRL abilitato</value>
+				<value xml:lang="en">eThe certificate revocation state is not yet verified</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_crl_dis" oor:op="replace">
+		<node oor:name="revocation_controlled_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">wControl with CRL not enabled (options)</value>
-				<value xml:lang="it">wControllo con CRL non abilitato (opzioni)</value>
+				<value xml:lang="en">rThe certificate revocation state was verified</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_crl_cannot" oor:op="replace">
+		<node oor:name="revocation_control_not_enabled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">eCRL not available</value>
-				<value xml:lang="it">eCRL non accessibile</value>
+				<value xml:lang="en">wThe certificate revocation state control is not enabled</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_crl_noroot" oor:op="replace">
+		<node oor:name="crl_cannot_be_accessed" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">eCertification path: missing root</value>
-				<value xml:lang="it">ePercorso di certificazione: manca root</value>
+				<value xml:lang="en">eCRL cannot be accessed/verified (CA state ?)</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_crl_noint" oor:op="replace">
+		<node oor:name="crl_cannot_be_verified" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">ePercorso di certificazione: manca intermedio</value>
+				<value xml:lang="en">eCRL cannot be verified</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_crl_noclo" oor:op="replace">
+		<node oor:name="ocsp_cannot_be_accessed" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">ePercorso di certificazione: non chiuso</value>
+				<value xml:lang="en">eOCSP server cannot be accessed</value>
+			</prop>
+		</node>
+		<node oor:name="inet_access_not_enabled" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">wInternet access is not enabled</value>
+			</prop>
+		</node>
+		<node oor:name="inet_access_error" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eInternet cannot be accessed (error).</value>
 			</prop>
 		</node>
 		<!--

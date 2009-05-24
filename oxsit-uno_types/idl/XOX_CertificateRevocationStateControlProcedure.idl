@@ -29,6 +29,7 @@
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/frame/XFrame.idl>
 #include "CertificateState.idl"
+#include "CertificateStateConditions.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -47,6 +48,11 @@ XOX_AvailableSSCDs interface or</p>
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState;
 
+		/** the state conditions of the certificate.
+		<p>This in in the form of an enumeration, the one defined for Certification state</p>
+		It can be read to asses the certificate state at the end of control
+	 	*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateStateConditions CertificateStateConditions;
 
 		/** Use this to initialize the service implementing this interface, 
 		for the part related to the interface.
@@ -57,8 +63,7 @@ XOX_AvailableSSCDs interface or</p>
 		using a XComponentContext where it's legal to call OpenOffice.org GUI components.</p>
 		<p>For example if you use the interface from a synchronous job service, you can't use a GUI.</p>
 		*/
-		void initializeProcedure( [in] com::sun::star::frame::XFrame xFrame, 
-							[in] com::sun::star::uno::XComponentContext xContext );
+		void initializeProcedure( [in] com::sun::star::frame::XFrame xFrame);
 
 		/** Control the certification revocation state, may be implemented using CRL control or using OCSP
 		(Online Certificate Status Protocol).

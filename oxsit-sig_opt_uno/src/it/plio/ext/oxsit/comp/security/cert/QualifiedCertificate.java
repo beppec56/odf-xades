@@ -32,8 +32,10 @@ import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
@@ -171,6 +173,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private XOX_QualifiedCertificate m_xoxCertificationPath;
 
+	private XOX_CertificateRevocationStateControlProcedure m_xoxCertificateRevocationControlProcedure;
+
 	/**
 	 * 
 	 * 
@@ -249,6 +253,16 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				m_xoxCertificateComplianceControlProcedure = xCert1;
 				return;
 			}
+			else {
+				XOX_CertificateRevocationStateControlProcedure xCert2 =
+					(XOX_CertificateRevocationStateControlProcedure)UnoRuntime.queryInterface(
+							XOX_CertificateRevocationStateControlProcedure.class, _arg);
+				
+				if(xCert2 != null) {
+					m_xoxCertificateRevocationControlProcedure = xCert2;
+					return;
+				}
+			}
 		}
 		throw(new com.sun.star.lang.IllegalArgumentException());
 	}
@@ -259,7 +273,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * _arg[1] Boolean(true if from UI, else false), mandatory
 	 * _arg[2] the interface object to control the Certification Path (e.g. the CA), optional 
 	 * _arg[3] the interface object to control the CRL, optional
-	 * _arg[4] the interface object to control the certificate compliance to the implmentation
+	 * _arg[4] the interface object to control the certificate compliance to the implementation
 	 */
 	@Override
 	public void initialize(Object[] _arg) throws Exception {
@@ -394,15 +408,45 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	@Override
 	public boolean verifyCertificate(XFrame _aFrame) {
-		// TODO Auto-generated method stub
-		//check the certificate for the compliance
-		verifyCompliance(_aFrame);
+		//FIXME add the reset of states: certificate, CA, and the respective  state conditions
+		m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
+		m_nCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
 
+		
+		//check the certificate for the compliance
+		verifyCompliance(_aFrame);		
 		//check and fill the certification path
 		verifyCertificationPath(_aFrame);
 		//check the crl of the certificate
+		verifyCertificateCRL(_aFrame);
 
 		return false;
+	}
+
+	/**
+	 * @param frame
+	 */
+	private void verifyCertificateCRL(XFrame frame) {
+		if(m_xoxCertificateRevocationControlProcedure != null) {
+			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
+			if(xCtl != null) {
+				try {
+					//FIXME add the result to the certificate status
+					m_xoxCertificateRevocationControlProcedure.initializeProcedure(frame);
+					m_xoxCertificateRevocationControlProcedure.verifyCertificateRevocationState(frame,xCtl);
+					m_aLogger.log("State: "+
+							Helpers.mapCertificateStateToValue(m_xoxCertificateRevocationControlProcedure.getCertificateState())+
+							" conditions: "+
+							Helpers.mapCertificateStateConditionToValue(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions()));
+					setCertificateStateHelper(m_xoxCertificateRevocationControlProcedure.getCertificateState());
+					setCertificateStateConditionsHelper(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions());
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -542,15 +586,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			m_aLogger.severe("setDEREncoded", e);
 		}
 	}
-
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateComplianceControl()
 	 */
 	@Override
-	public XOX_CertificateComplianceControlProcedure getCertificateComplianceControl() {
+	public XOX_CertificateComplianceControlProcedure getComplianceControlObj() {
 		return m_xoxCertificateComplianceControlProcedure;
 	}
 
@@ -587,8 +628,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(arg0,xCtl);
 					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
-					m_nCertificateState = 
-							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState());
+					setCertificateStateHelper(m_xoxCertificateComplianceControlProcedure.getCertificateState());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
@@ -935,7 +975,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateCertificationPathControl()
 	 */
 	@Override
-	public XOX_CertificationPathControlProcedure getCertificateCertificationPathControl() {
+	public XOX_CertificationPathControlProcedure getCertificationPathControlObj() {
 		// TODO Auto-generated method stub
 		return m_xoxCertificationPathControlProcedure;
 	}
@@ -954,4 +994,45 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			throw(new com.sun.star.lang.IllegalArgumentException());
 		m_xoxCertificationPathControlProcedure = xCert;
 	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateRevocationControlObj()
+	 */
+	@Override
+	public XOX_CertificateRevocationStateControlProcedure getRevocationControlObj() {
+		return m_xoxCertificateRevocationControlProcedure;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setRevocationStateControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure)
+	 */
+	@Override
+	public void setRevocationStateControlObject(
+			XOX_CertificateRevocationStateControlProcedure arg0)
+			throws IllegalArgumentException, Exception {
+		m_xoxCertificateRevocationControlProcedure = arg0;
+	}
+	
+	/**
+	 * set the certificate state according to the new value, as enum,
+	 * mapped to numerical
+	 */
+	private void setCertificateStateHelper(CertificateState _newState) {
+		int _nNewState;
+		if((_nNewState = Helpers.mapCertificateStateToValue(_newState))
+				> m_nCertificateState)
+			m_nCertificateState = _nNewState;
+	}
+
+	/**
+	 * set the certificate state according to the new value, as enum,
+	 * mapped to numerical
+	 */
+	private void setCertificateStateConditionsHelper(CertificateStateConditions _newState) {
+		int _nNewState;
+		if((_nNewState = Helpers.mapCertificateStateConditionToValue(_newState))
+				> m_nCertificateStateConditions)
+			m_nCertificateStateConditions = _nNewState;
+	}
+	
 }

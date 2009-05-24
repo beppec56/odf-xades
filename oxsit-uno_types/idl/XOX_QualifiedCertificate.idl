@@ -32,6 +32,7 @@
 #include "CertificateAuthorityState.idl"
 #include "XOX_CertificationPathControlProcedure.idl"
 #include "XOX_CertificateComplianceControlProcedure.idl"
+#include "XOX_CertificateRevocationStateControlProcedure.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -66,11 +67,15 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute, readonly] long CertificationAuthorityStateConditions;
 		/** the object used to control the certification path of this certificate
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificateCertificationPathControl;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificationPathControlObj;
+
+		/** the object used to control the certificate revocation state, CRL or OCSP
+		*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateControlProcedure RevocationControlObj;
 
 		/** the object used to control the certificate compliance
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure CertificateComplianceControl;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure ComplianceControlObj;
 
 		/** the human readable rapresentation of the holder (subject) of this certificate.
 		<p>This string is formed from the SubjectDN certificate field in the following way:</p>
@@ -178,6 +183,12 @@ XOX_AvailableSSCDs interface or</p>
 		</p>
 		*/
 		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
+		/** Sets the interface object used to check for the certificate certification path.
+		*/
+		void setRevocationStateControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 

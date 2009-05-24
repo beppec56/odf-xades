@@ -28,13 +28,16 @@
 package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
@@ -65,13 +68,17 @@ import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.i18n.filter.TrustedInput;
 
 import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
+import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -109,6 +116,15 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 
     private java.security.cert.X509Certificate m_JavaCert = null;
 
+	private XComponentContext m_xCC;
+
+	private XMultiComponentFactory m_xMCF;
+
+	private XOX_CertificateRevocationStateControlProcedure m_axoxChildProc;
+
+	private CertificateState m_aCertificateState;
+	private CertificateStateConditions	m_aCertificateStateConditions;
+	
 	/**
 	 * 
 	 * 
@@ -116,7 +132,10 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 	 */
 	public CertificateRevocationIT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+		m_xCC = _ctx;
+		m_xMCF = m_xCC.getServiceManager();
+//
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
 
@@ -204,25 +223,31 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#initializeProcedure(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
-	 */
-	@Override
-	public void initializeProcedure(XFrame arg0, XComponentContext arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_aCertificateState;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 */
+	@Override
+	public CertificateStateConditions getCertificateStateConditions() {
+		return m_aCertificateStateConditions;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#initializeProcedure(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 */
+	@Override
+	public void initializeProcedure(XFrame arg0) {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -231,60 +256,72 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 * 
 	 * currently only the crl is controlled
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
 		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
 		if(m_xQc == null)
-			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
-//		m_aCertificateState = CertificateState.OK;
-		//convert the certificate to java internal representation
-        java.security.cert.CertificateFactory cf;
-		try {
-			cf = java.security.cert.CertificateFactory.getInstance("X.509");
-			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
-            m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
-		} catch (CertificateException e) {
-			m_aLogger.severe(e);
-			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
-			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
-		}
+			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
 
-//convert to Bouncy Castle representation		
-		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
-		ASN1InputStream aderin = new ASN1InputStream(as);
-		DERObject ado = null;
+		// FIXME check if revocation control is enabled or not
+		m_aLogger.log("verifyCertificateRevocationState");
 		try {
-			ado = aderin.readObject();
-			X509CertificateStructure x509Str = new X509CertificateStructure((ASN1Sequence) ado);
-			//check issuer field for conformance
-			TBSCertificateStructure xTBSCert = x509Str.getTBSCertificate();
-		} catch (java.io.IOException e) {
-			m_aLogger.severe(e);
-			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
-			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
-		} catch (java.lang.Exception e) {
-			m_aLogger.severe(e);
-			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
-			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
+			m_axoxChildProc = null;
+			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
+
+			try {
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				//yes, grab it and set our component internally
+				m_aLogger.info("Cache found!");
+				m_axoxChildProc = 
+					(XOX_CertificateRevocationStateControlProcedure)
+					UnoRuntime.queryInterface(
+							XOX_CertificateRevocationStateControlProcedure.class, xComp);
+			} catch (NoSuchElementException ex ) {
+				//no, instantiate it and add to the singleton 
+				m_aLogger.info("Cache NOT found!");
+				//create the object
+				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				//add it the singleton
+				//now use it
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
+				if(xComp != null) {
+					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					m_axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
+								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
+				}
+				else
+					throw (new IllegalArgumentException());
+			} catch (IllegalArgumentException ex ) {
+				m_aLogger.severe(ex);
+			} catch (Throwable ex ) { 
+				m_aLogger.severe(ex);
+			}
+
+			if(m_axoxChildProc != null) {
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
+				if(xComp != null)
+					m_axoxChildProc.verifyCertificateRevocationState(_xFrame,xComp);
+					m_aCertificateState = m_axoxChildProc.getCertificateState();
+					m_aCertificateStateConditions = m_axoxChildProc.getCertificateStateConditions();
+					return m_aCertificateState;
+			}
+			else
+				m_aLogger.info("CANNOT execute child");
+			//instantiate the cache, init it and add it
+		} catch (ClassCastException ex) {
+			m_aLogger.severe(ex);
+		} catch (ServiceNotFoundException ex) {
+			m_aLogger.severe(ex);
+		} catch (NoSuchMethodException ex) {
+			m_aLogger.severe(ex);
+		} catch (Throwable ex ) { 
+			m_aLogger.severe(ex);
 		}
-//		return m_aCertificateState;
 		return null;
-	}
-
-	/**
-	 * check for priority of certificate state and set it accordingly
-	 * @param _newState
-	 */
-	private void setCertificateStateHelper(CertificateState _newState) {
-/*		if(Helpers.mapCertificateStateToValue(_newState) >
-		Helpers.mapCertificateStateToValue(m_aCertificateState))
-			m_aCertificateState = _newState;*/
 	}
 }

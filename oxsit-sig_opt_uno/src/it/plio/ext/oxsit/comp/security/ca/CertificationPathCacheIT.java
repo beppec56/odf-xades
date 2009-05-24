@@ -27,6 +27,7 @@
 
 package it.plio.ext.oxsit.comp.security.ca;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,14 +35,23 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.x509.TBSCertificateStructure;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.cms.CMSException;
 
+import it.plio.ext.oxsit.security.crl.X509CertRL;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
@@ -78,7 +88,8 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificationPathControlProcedure
+			XOX_CertificationPathControlProcedure,
+			XOX_CertificateRevocationStateControlProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -89,17 +100,21 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 
 	private XComponentContext			m_xCC;
 	private	XMultiComponentFactory		m_xMCF;
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 
 	protected XOX_QualifiedCertificate m_xQc;
 
 	private CertificateState m_aCertificateState;
+	private CertificateStateConditions	m_aCertificateStateConditions;
     
     private 	RootsVerifier	m_aRootVerifier;
     
     private		CertificationAuthorities	m_aCADbData;
 
 	private String m_bUseGUI;
+
+	private X509CertRL 					CRL;
+
 
 	/**
 	 * 
@@ -111,7 +126,9 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 		m_xMCF = m_xCC.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_aLogger.enableLogging();
-    	m_aLogger.ctor();    	
+    	m_aLogger.ctor();
+    	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
+    	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
 	}
 
 	@Override
@@ -222,7 +239,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	public CertificateAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
-//check for certificate		
+//check for certificate
 		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
@@ -280,7 +297,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	//FIXME: a big one, needs to set state for certificate in graphic...
 	//FIXME: another one, see behavior of this with a longer certification path
 	//FIXME: check with cert path problem
-	public boolean isPathValid() {
+	private boolean isPathValid() {
 		//convert the certificate to java internal representation
         java.security.cert.CertificateFactory cf;
 		try {
@@ -330,7 +347,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 				//Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 
 				//now the certification path control
-				
+
 				//prepare objects for subordinate service
 				Object[] aArguments = new Object[2];
 //												byte[] aCert = cert.getEncoded();
@@ -362,5 +379,78 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificateState()
+	 */
+	@Override
+	public CertificateState getCertificateState() {
+		return m_aCertificateState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 */
+	@Override
+	public CertificateStateConditions getCertificateStateConditions() {
+		// TODO Auto-generated method stub
+		return m_aCertificateStateConditions;
+	}
+
+	////////////////////// verify revocation state functions
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public CertificateState verifyCertificateRevocationState(XFrame _aFrame,
+			XComponent arg1) throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		m_aLogger.log("verifyCertificateRevocationState");
+    	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
+    	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
+		
+		//check for certificate
+		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg1);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
+
+		initializeCADataBase(_aFrame);
+
+		if(CRL == null) {
+	        CRL = new X509CertRL(_aFrame,m_xCC,m_aCADbData);
+		}
+		//now check the revocation state using the crl
+		//		m_aCertificateState = CertificateState.OK;
+		//convert the certificate to java internal representation
+	    java.security.cert.X509Certificate m_JavaCert = null;
+
+        java.security.cert.CertificateFactory cf;
+		try {
+			cf = java.security.cert.CertificateFactory.getInstance("X.509");
+			java.io.ByteArrayInputStream bais = null;
+            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
+            CRL.isNotRevoked(m_JavaCert);
+    		//grab certificate state and conditions
+    		m_aCertificateState = CRL.getCertificateState();
+    		m_aCertificateStateConditions = CRL.getCertificateStateConditions();
+		} catch (CertificateException e) {
+			m_aLogger.severe(e);
+			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
+		}
+		return m_aCertificateState;
+	}
+	
+	/**
+	 * check for priority of certificate state and set it accordingly
+	 * @param _newState
+	 */
+	private void setCertificateStateHelper(CertificateState _newState) {
+		if(Helpers.mapCertificateStateToValue(_newState) >
+		Helpers.mapCertificateStateToValue(m_aCertificateState))
+			m_aCertificateState = _newState;
 	}
 }
