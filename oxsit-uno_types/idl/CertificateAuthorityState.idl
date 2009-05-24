@@ -29,22 +29,34 @@
  */
 	enum CertificateAuthorityState
 	{
-		/** the Certificate Authority was verified, it's reliable (accredited).
+		/** the Certificate Authority still to be checked.
 		 */
-		RELIABLE,
-		/** the root certificate not checked.
-		 */
-		NO_CA_ROOT_CHECKED,
+		NOT_YET_CHECKED,
+
 		/** the Certificate Authority it's nonreliable (not accredited).
 		 */
 		UNRELIABLE,
-		/** the CA DB was not updated.
+
+		/** the Certificate Authority was verified, it's reliable (accredited).
 		 */
-		CA_LIST_DB_NOT_UPDATED,
+		CREDITED,
+
+		/**
+		*/
+		CA_NOT_CHECKED,
+
 		/** The CA DB thumbprint was not checked.
 		 */
 		CA_LIST_DB_THUMBP_NOT_CHECKED, 
  
+		/** the CA DB was not updated.
+		 */
+		CA_LIST_DB_NOT_UPDATED,
+
+		/** the root certificate not checked.
+		 */
+		NO_CA_ROOT_CHECKED,
+
 		/** 
 		 */
 		CA_LIST_DB_UPDATE_DISABLED,

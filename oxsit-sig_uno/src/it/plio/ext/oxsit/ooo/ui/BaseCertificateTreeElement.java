@@ -92,6 +92,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE.put(CertificateState.OK, "err_txt_cert_ok");
 		m_aCERTIFICATE_STATE.put(CertificateState.EXPIRED, "err_txt_cert_exp");
 		m_aCERTIFICATE_STATE.put(CertificateState.REVOKED, "err_txt_cert_rev");
+		m_aCERTIFICATE_STATE.put(CertificateState.SUSPENDED, "err_txt_cert_suspen");
 		m_aCERTIFICATE_STATE.put(CertificateState.NOT_ACTIVE, "err_txt_cert_noact");
 		m_aCERTIFICATE_STATE.put(CertificateState.NOT_COMPLIANT, "err_txt_cert_noconf");
 		m_aCERTIFICATE_STATE.put(CertificateState.ERROR_IN_EXTENSION, "err_txt_cert_ko_extension");
@@ -99,7 +100,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE.put(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID, "err_txt_cert_ko_core");
 		m_aCERTIFICATE_STATE.put(CertificateState.MALFORMED_CERTIFICATE, "err_txt_cert_no_read");
 	};
-	
+
 	//hash table to convert the enum of the certificate state conditions to the id string in resources
 	public static Hashtable<CertificateStateConditions,String>	m_aCERTIFICATE_STATE_CONDITIONS = new Hashtable<CertificateStateConditions, String>(15);
 	

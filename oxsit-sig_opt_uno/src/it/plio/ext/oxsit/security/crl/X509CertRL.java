@@ -229,7 +229,7 @@ public class X509CertRL {
                                         "data revoca " + revDate +
                                         " e data di controllo " + date;
                                 setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROLLED_OK);
-                                setCertificateState(CertificateState.NOT_ACTIVE);
+                                setCertificateState(CertificateState.SUSPENDED);
                                 return true; // o false da decidere
                             } else {
                                 trace(
@@ -240,7 +240,7 @@ public class X509CertRL {
                                         revDate;
                                 traceDialog(reasonCode);
                                 setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROLLED_OK);
-                                setCertificateState(CertificateState.NOT_ACTIVE);
+                                setCertificateState(CertificateState.SUSPENDED);
                                 return false;
                             }
                         }

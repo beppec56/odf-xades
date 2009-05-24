@@ -186,7 +186,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_nCAState = CertificateAuthorityState.UNCHECKED_value;
-    	m_nCertificateState = CertificateState.NOT_VERIFIABLE_value;
+    	m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
     	m_bDisplayOID = false;
@@ -434,10 +434,9 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					//FIXME add the result to the certificate status
 					m_xoxCertificateRevocationControlProcedure.initializeProcedure(frame);
 					m_xoxCertificateRevocationControlProcedure.verifyCertificateRevocationState(frame,xCtl);
-					m_aLogger.log("State: "+
-							Helpers.mapCertificateStateToValue(m_xoxCertificateRevocationControlProcedure.getCertificateState())+
+					m_aLogger.log("State: "+m_xoxCertificateRevocationControlProcedure.getCertificateState().getValue()+
 							" conditions: "+
-							Helpers.mapCertificateStateConditionToValue(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions()));
+							m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions().getValue());
 					setCertificateStateHelper(m_xoxCertificateRevocationControlProcedure.getCertificateState());
 					setCertificateStateConditionsHelper(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions());
 				} catch (IllegalArgumentException e) {
@@ -626,8 +625,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 					//add the result to the certificate status
 					m_xoxCertificateComplianceControlProcedure.initializeProcedure(arg0);
 					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(arg0,xCtl);
-					m_aLogger.log("State: "+
-							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
+					m_aLogger.log("State: "+m_xoxCertificateComplianceControlProcedure.getCertificateState().getValue());
 					setCertificateStateHelper(m_xoxCertificateComplianceControlProcedure.getCertificateState());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
@@ -1019,8 +1017,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	private void setCertificateStateHelper(CertificateState _newState) {
 		int _nNewState;
-		if((_nNewState = Helpers.mapCertificateStateToValue(_newState))
-				> m_nCertificateState)
+		if((_nNewState = _newState.getValue()) > m_nCertificateState)
 			m_nCertificateState = _nNewState;
 	}
 
@@ -1030,9 +1027,8 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 */
 	private void setCertificateStateConditionsHelper(CertificateStateConditions _newState) {
 		int _nNewState;
-		if((_nNewState = Helpers.mapCertificateStateConditionToValue(_newState))
+		if((_nNewState = _newState.getValue())
 				> m_nCertificateStateConditions)
 			m_nCertificateStateConditions = _nNewState;
 	}
-	
 }

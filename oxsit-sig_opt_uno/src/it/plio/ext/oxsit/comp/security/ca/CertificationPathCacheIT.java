@@ -449,8 +449,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @param _newState
 	 */
 	private void setCertificateStateHelper(CertificateState _newState) {
-		if(Helpers.mapCertificateStateToValue(_newState) >
-		Helpers.mapCertificateStateToValue(m_aCertificateState))
+		if(_newState.getValue() > m_aCertificateState.getValue())
 			m_aCertificateState = _newState;
 	}
 }

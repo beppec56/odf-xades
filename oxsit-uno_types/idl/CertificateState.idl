@@ -29,10 +29,6 @@
  */
 	enum CertificateState
 	{
-		/** The certificate cannot be verified.
-		 */
-		NOT_VERIFIABLE, 
- 
 		/** The certificate was not verified.
 		 */
 		NOT_YET_VERIFIED,
@@ -48,6 +44,10 @@
 		/** The certificate was revoked.
 		 */
 		REVOKED, 
+
+		/** The certificate was revoked.
+		 */
+		SUSPENDED, 
 
 		/** The certificate is not yet active.
 		 */
@@ -69,6 +69,10 @@
 		/** The certificate is malformed, internal does not conform to the requests.
 		*/
 		CORE_CERTIFICATE_ELEMENT_INVALID,
+
+		/** The certificate cannot be verified.
+		 */
+		NOT_VERIFIABLE, 
 
 		/** The certificate is malformed, internal structure seems broken.
 		*/

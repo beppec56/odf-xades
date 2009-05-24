@@ -84,52 +84,6 @@ public class Helpers {
         	throw(new java.lang.NullPointerException("Native libraries for '"+osName+"' not available! Giving up."));
 	}
 
-	public static int mapCertificateStateToValue(CertificateState _theState) {
-		if(_theState == CertificateState.NOT_VERIFIABLE)
-			return CertificateState.NOT_VERIFIABLE_value;
-		if(_theState == CertificateState.NOT_YET_VERIFIED)
-			return CertificateState.NOT_YET_VERIFIED_value;
-		if(_theState == CertificateState.OK)
-			return CertificateState.OK_value;
-		if(_theState == CertificateState.EXPIRED)
-			return CertificateState.EXPIRED_value;
-		if(_theState == CertificateState.REVOKED)
-			return CertificateState.REVOKED_value;
-		if(_theState == CertificateState.NOT_ACTIVE)
-			return CertificateState.NOT_ACTIVE_value;
-		if(_theState == CertificateState.NOT_COMPLIANT)
-			return CertificateState.NOT_COMPLIANT_value;
-		if(_theState == CertificateState.ERROR_IN_EXTENSION)
-			return CertificateState.ERROR_IN_EXTENSION_value;
-		if(_theState == CertificateState.MISSING_EXTENSION)
-			return CertificateState.MISSING_EXTENSION_value;
-		if(_theState == CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID)
-			return CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value;
-		if(_theState == CertificateState.MALFORMED_CERTIFICATE)
-			return CertificateState.MALFORMED_CERTIFICATE_value;
-		return -1;
-	}
-
-	public static int mapCertificateStateConditionToValue(CertificateStateConditions _theState) {
-		if(_theState == CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED)
-			return CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
-		if(_theState == CertificateStateConditions.REVOCATION_CONTROLLED_OK)
-			return CertificateStateConditions.REVOCATION_CONTROLLED_OK_value;
-		if(_theState == CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED)
-			return CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED_value;
-		if(_theState == CertificateStateConditions.CRL_CANNOT_BE_ACCESSED)
-			return CertificateStateConditions.CRL_CANNOT_BE_ACCESSED_value;
-		if(_theState == CertificateStateConditions.CRL_CANNOT_BE_VERIFIED)
-			return CertificateStateConditions.CRL_CANNOT_BE_VERIFIED_value;
-		if(_theState == CertificateStateConditions.OCSP_CANNOT_BE_ACCESSED)
-			return CertificateStateConditions.OCSP_CANNOT_BE_ACCESSED_value;
-		if(_theState == CertificateStateConditions.INET_ACCESS_NOT_ENABLED)
-			return CertificateStateConditions.INET_ACCESS_NOT_ENABLED_value;
-		if(_theState == CertificateStateConditions.INET_ACCESS_ERROR)
-			return CertificateStateConditions.INET_ACCESS_ERROR_value;
-		return -1;
-	}
-
 	/** Return the hex hash code of an object.
 	 * 
 	 * @param _oObj the object to be examined

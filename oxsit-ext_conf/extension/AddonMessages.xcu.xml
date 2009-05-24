@@ -342,6 +342,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">eCertificato non attivo</value>
 			</prop>
 		</node>
+		<node oor:name="err_txt_cert_suspen" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertificate suspended</value>
+				<value xml:lang="it">eCertificato sospeso</value>
+			</prop>
+		</node>
 		<node oor:name="err_txt_cert_noconf" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eCertificate non consistent (see 'Report')</value>
@@ -409,11 +415,13 @@ Roberto Resoli, developer
 		<node oor:name="revocation_not_yet_controlled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eThe certificate revocation state is not yet verified</value>
+				<value xml:lang="it">eLo stato di revoca non è ancora verificato</value>
 			</prop>
 		</node>
 		<node oor:name="revocation_controlled_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">rThe certificate revocation state was verified</value>
+				<value xml:lang="it">rLo stato di revoca è verificato</value>
 			</prop>
 		</node>
 		<node oor:name="revocation_control_not_enabled" oor:op="replace">
@@ -424,26 +432,31 @@ Roberto Resoli, developer
 		<node oor:name="crl_cannot_be_accessed" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eCRL cannot be accessed/verified (CA state ?)</value>
+				<value xml:lang="it">eLa CRL non è accessibile/verificabile (stato CA?)</value>
 			</prop>
 		</node>
 		<node oor:name="crl_cannot_be_verified" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eCRL cannot be verified</value>
+				<value xml:lang="it">eNon è possibile verificare la CRL</value>
 			</prop>
 		</node>
 		<node oor:name="ocsp_cannot_be_accessed" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eOCSP server cannot be accessed</value>
+				<value xml:lang="it">eIl server OCSP non è accessibile</value>
 			</prop>
 		</node>
 		<node oor:name="inet_access_not_enabled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">wInternet access is not enabled</value>
+				<value xml:lang="it">wL'accesso a Internet non è abilitato</value>
 			</prop>
 		</node>
 		<node oor:name="inet_access_error" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eInternet cannot be accessed (error).</value>
+				<value xml:lang="it">eNon è possibile accedere a Internet</value>
 			</prop>
 		</node>
 		<!--

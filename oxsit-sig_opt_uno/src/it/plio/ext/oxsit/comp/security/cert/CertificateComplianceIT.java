@@ -348,11 +348,10 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 * @param _newState
 	 */
 	private void setCertificateStateHelper(CertificateState _newState) {
-		if(Helpers.mapCertificateStateToValue(_newState) >
-		Helpers.mapCertificateStateToValue(m_aCertificateState))
+		if(_newState.getValue() >m_aCertificateState.getValue())
 			m_aCertificateState = _newState;
 	}
-  
+ 
     /**
 	 * @param _TbsC 
      * @return
