@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import com.sun.star.task.XStatusIndicator;
+
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import it.plio.ext.oxsit.logging.DynamicLazyLogger;
@@ -65,7 +67,8 @@ public class ReadCerts {
     public static final int ERROR = -1;
     private int differentCerts;
 
-
+    private XStatusIndicator m_aStatus;
+    
 	/**
      * Constructor
      * 
@@ -73,10 +76,11 @@ public class ReadCerts {
      *            Object containing information about card in reader
      */
 
-    public ReadCerts(IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr) {
-        this(aLogger, pkcs11WrapLib, cIr, false);
+    public ReadCerts(XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr) {
+        this(xStatus, aLogger, pkcs11WrapLib, cIr, false);
         detectTokens();
-    }	
+    }
+
     /**
      * Constructor
      * 
@@ -85,7 +89,7 @@ public class ReadCerts {
      * @param isDownloadCRLForced
      *            true if CRL is forced
      */
-    public ReadCerts(IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr, boolean isDownloadCRLForced) {
+    public ReadCerts(XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr, boolean isDownloadCRLForced) {
 
     	setLogger(aLogger);
         this.isDownloadCRLForced = isDownloadCRLForced;
@@ -174,7 +178,11 @@ public class ReadCerts {
 
             	m_aLogger.info("Settato token "
                         + helper.getSlotDescription((long) tokens[i]));
-                helper.setTokenHandle(tokens[i]);
+            	
+            	statusText("Settato token "
+                        + helper.getSlotDescription((long) tokens[i]));
+
+            	helper.setTokenHandle(tokens[i]);
                 try {
                     helper.openSession();
                 } catch (TokenException ex1) {
@@ -296,5 +304,15 @@ public class ReadCerts {
     void setStatus(int status, String message) {
         this.current = status;
         this.statMessage = message;
+    }
+
+    void statusValue(int x) {
+    	if ( m_aStatus != null)
+    		m_aStatus.setValue(x);
+    }
+    
+    void statusText(String s) {
+    	if ( m_aStatus != null)
+    		m_aStatus.setText(s);    	
     }
 }

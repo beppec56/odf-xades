@@ -271,7 +271,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
         	if(xFact != null) {
         		xStatusIndicator = xFact.createStatusIndicator();
         		if(xStatusIndicator != null)
-        			xStatusIndicator.start("", 0);
+        			xStatusIndicator.start("", 100); //meaning 100%
         	}
         }
 
@@ -285,8 +285,10 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
  * 		else
 			if(m_aRootVerifier.getUserApprovedFingerprint() == null)
 */		
-		if(xStatusIndicator != null)
+		if(xStatusIndicator != null) {
 			xStatusIndicator.setText("Read CA root Data base");
+			xStatusIndicator.setValue(5);
+		}
 		//fill the list of certificate authorities available
 		if(m_aCADbData == null) {
 //prepare file path
@@ -460,7 +462,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
             	if(xFact != null) {
             		xStatusIndicator = xFact.createStatusIndicator();
             		if(xStatusIndicator != null)
-            			xStatusIndicator.start("Control CRL", 0);
+            			xStatusIndicator.start("Control CRL", 100);
             	}
             }
             

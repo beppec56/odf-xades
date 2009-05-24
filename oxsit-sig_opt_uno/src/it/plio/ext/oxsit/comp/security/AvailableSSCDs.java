@@ -53,6 +53,8 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.task.XStatusIndicator;
+import com.sun.star.task.XStatusIndicatorFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -284,9 +286,13 @@ public class AvailableSSCDs extends ComponentBase
 	 * @see it.plio.ext.oxsit.security.XOX_AvailableSscdDevices#scanDevices()
 	 * called to initiated a scan of the devices available on system.
 	 */
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#scanDevices(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 */
 	@Override
-	public void scanDevices(boolean _bUseGUI) {
+	public void scanDevices(XFrame _aFrame, XComponentContext arg1) throws Exception {
 		m_aLogger.entering("scanDevices");
+        XStatusIndicator xStatusIndicator = null;
 		try {
 		//get the library path property
 		//
@@ -295,11 +301,21 @@ public class AvailableSSCDs extends ComponentBase
 				System.getProperty("java.library.path")+"\"");
 
 		IDynamicLogger aLogger = null;
-		if(_bUseGUI)
+		if(_aFrame != null)
 			aLogger = new DynamicLoggerDialog(this,m_xCC);
 		else
 			aLogger = new DynamicLogger(this,m_xCC);
-
+        if (_aFrame != null) {
+        	//check interface
+        	//
+        	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,_aFrame);
+        	if(xFact != null) {
+        		xStatusIndicator = xFact.createStatusIndicator();
+        		if(xStatusIndicator != null)
+        			xStatusIndicator.start("", 100); //meaning 100%
+        	}
+        }
+        
 		PCSCHelper pcsc = new PCSCHelper(true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 //		PCSCHelper pcsc = new PCSCHelper(true, null);
 
@@ -336,13 +352,17 @@ public class AvailableSSCDs extends ComponentBase
 					xSSCDevice.setCryptoLibraryUsed(ci.getProperty("lib"));
 
 					m_aLogger.log("\tLettura certificati");
+					if(xStatusIndicator != null) {
+						xStatusIndicator.setText("Lettura certificati");
+						xStatusIndicator.setValue(5);
+					}
 
 					// set the library to be used, locally
 					String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
 					
 					m_aLogger.info(Pkcs11WrapperLocal);
 					
-					ReadCerts rt = new ReadCerts(aLogger, Pkcs11WrapperLocal, cIr);
+					ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
 					Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
 					if (certsOnToken != null) {
 						Iterator<X509Certificate> certIt = certsOnToken.iterator();
@@ -368,7 +388,7 @@ public class AvailableSSCDs extends ComponentBase
 //								byte[] aCert = cert.getEncoded();
 								//set the certificate raw value
 								aArguments[0] = cert.getEncoded();//aCert;
-								aArguments[1] = new Boolean(_bUseGUI);//FIXME change according to UI (true) or not UI (false)
+								aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
 								aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 								aArguments[3] = oCertPath;
 								aArguments[4] = oCertRev;								
@@ -404,6 +424,9 @@ public class AvailableSSCDs extends ComponentBase
 		} catch (Throwable e) {
 			m_aLogger.severe("scanDevices",e);
 		}
+		if(xStatusIndicator != null)
+			xStatusIndicator.end();
+
 	}
 
 	public void testCertificateDisplay() {

@@ -220,7 +220,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				// scan finished?
 				//empy the tree, then add the new certificates
 				removeAllTreeNodes();
-				m_axoxAvailableSSCDs.scanDevices(true);//true because we are calling from a GUI interface
+				m_axoxAvailableSSCDs.scanDevices(m_xParentFrame,m_xContext);//true because we are calling from a GUI interface
 				m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				if(xDevices != null) {

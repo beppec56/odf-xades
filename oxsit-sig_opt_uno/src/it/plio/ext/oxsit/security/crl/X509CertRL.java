@@ -73,6 +73,7 @@ import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.util.encoders.Base64;
 
+import com.sun.jmx.snmp.daemon.CommunicationException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.task.XStatusIndicator;
@@ -556,7 +557,7 @@ public class X509CertRL {
             try {
                 trace("Tentativo di accesso al CRL Distribution Point = " +
                       dp[i]);
-                traceStatus("Tentativo di accesso al CRL Distribution Point = "+dp[i]);
+                statusText("Tentativo di accesso al CRL Distribution Point");
                 crl = download(dp[i], userCert.getIssuerDN());
                 // il primo protocollo che dia esiti positivi interrompe il ciclo
                 if (crl != null) {
@@ -633,6 +634,7 @@ public class X509CertRL {
     public X509CRL download(String crlDP, Principal issuer) throws
             CertificateException, MalformedURLException {
         String protocol="";
+        statusValue(5);
         protocol=crlDP.substring(0,crlDP.indexOf("://"));
         if (protocol.equalsIgnoreCase("ldap")) {
             return ricercaCrlByLDAP(crlDP, issuer);
@@ -666,6 +668,7 @@ public class X509CertRL {
             }
             trace("CRL Distribution Point: " + ldapUrl);
 
+            statusValue(10);
             DirContext ctx = new InitialDirContext();
             // impostazione un timeout...
             // int timeout = 5000; //5 s
@@ -673,12 +676,14 @@ public class X509CertRL {
             // ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             //ctls.setTimeLimit(timeout); //
 
+            statusValue(20);
             NamingEnumeration ne = ctx.search(ldapUrl, "", null);
             if (!ne.hasMore()) {
                 trace("CRL entry non trovata in base all'url ldap: " + ldapUrl);
                 return null;
             }
             ctx.close();
+            statusValue(30);
             Attributes attribs = ((SearchResult) ne.next()).getAttributes();
             Attribute a = null;
 
@@ -699,8 +704,11 @@ public class X509CertRL {
         //  System.out.println("time limit exceeded: "+e);
         //  return null;
         //  }
-
-        catch (Exception e) {
+        catch (CommunicationException e) {
+        	// set the error to the CRL control
+        	
+        	return null;
+        }  catch (Exception e) {
             trace(e);
             trace("ricercaCrlByLDAP -> " + e.toString());
             return null;
@@ -840,12 +848,19 @@ public class X509CertRL {
         }
     }
 
-    private void traceStatus(String _mex) {
+    private void statusText(String _mex) {
     	if(m_xStatusIndicator != null) {
     		m_xStatusIndicator.setText(_mex);
     	}
     }
-	/**
+
+    private void statusValue(int x) {
+    	if(m_xStatusIndicator != null) {
+    		m_xStatusIndicator.setValue(x);
+    	}
+    }
+
+    /**
 	 * @param m_aCertificateState the m_aCertificateState to set
 	 */
 	private void setCertificateState(CertificateState m_aCertificateState) {

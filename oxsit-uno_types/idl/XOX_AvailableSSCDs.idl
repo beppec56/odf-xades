@@ -23,6 +23,9 @@
 #ifndef __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
 #define __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
 
+#include <com/sun/star/uno/XComponentContext.idl> 
+#include <com/sun/star/uno/Exception.idl>
+#include <com/sun/star/frame/XFrame.idl>
 #include "XOX_SSCDevice.idl"
 
   module it { module plio { module ext { module oxsit { module security {
@@ -45,7 +48,9 @@
 		@param bCalledFromGUI set to true if a GUI exception error dialog is needed, else set to false.
 		<p>Important: do not set it to true if there is no GUI (for example from headless mode) because a crash may happen.</p> 
 		*/
-		void scanDevices( [in] boolean bCalledFromGUI);
+		void scanDevices([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::uno::XComponentContext xContext)
+						raises( ::com::sun::star::uno::Exception );
 		/** Add a new device to the list of available devices.
 		*/
 		void addSSCDevice( [in] it::plio::ext::oxsit::security::XOX_SSCDevice SSCDevice );
