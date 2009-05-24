@@ -41,7 +41,7 @@ XOX_AvailableSSCDs interface or</p>
  */
 	interface XOX_CertificationPathControlProcedure 
 	{
-		/** the state of the CA (certificate Authority) control.
+		/** the state of the CA (Certification Authority) control.
 		This in in the form of an enumeration, the one defined for Certification autority state
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificationAuthorityState;

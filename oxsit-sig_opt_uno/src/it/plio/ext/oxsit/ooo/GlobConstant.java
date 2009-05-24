@@ -167,6 +167,8 @@ public class GlobConstant {
 	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceIT";
 	//service to hold a certification path checker 
 	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathIT";
+	//service to hold a certification revocation state checker 
+	public static final String m_sCERTIFICATE_REVOCATION_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationRevocationIT";
 	//service to hold a certification path checker cache 
 	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCacheIT";
 	
