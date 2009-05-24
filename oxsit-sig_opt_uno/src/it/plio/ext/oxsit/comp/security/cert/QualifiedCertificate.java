@@ -395,13 +395,13 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	@Override
 	public boolean verifyCertificate(XFrame _aFrame) {
 		// TODO Auto-generated method stub
+		//check the certificate for the compliance
+		verifyCompliance(_aFrame);
 
 		//check and fill the certification path
 		verifyCertificationPath(_aFrame);
 		//check the crl of the certificate
 
-		//check the certificate for the compliance
-		verifyCompliance(_aFrame);
 		return false;
 	}
 
@@ -583,6 +583,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				try {
 					//FIXME
 					//add the result to the certificate status
+					m_xoxCertificateComplianceControlProcedure.initializeProcedure(arg0);
 					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(arg0,xCtl);
 					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificateComplianceControlProcedure.getCertificateState()));
@@ -596,7 +597,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 			}
 		}
 	}
-	
+
 	protected void verifyCertificationPath(XFrame _aFrame) {
 		if(m_xoxCertificationPathControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
@@ -604,6 +605,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				try {
 					//FIXME
 					//add the result to the certificate status
+//					m_xoxCertificationPathControlProcedure.initializeCADataBase(_aFrame);
 					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
 /*					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState()));

@@ -203,6 +203,15 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
+	 */
+	@Override
+	public void initializeProcedure(XFrame arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
@@ -414,7 +423,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
      *         repudiation' (OID: 2.5.29.15) marked as critical.
      * @see PKCS11Signer#findCertificateWithNonRepudiationCritical()
      */
-    boolean isKeyUsageNonRepudiationCritical(
+    private boolean isKeyUsageNonRepudiationCritical(
             java.security.cert.X509Certificate javaCert) {
 
         boolean isNonRepudiationPresent = false;

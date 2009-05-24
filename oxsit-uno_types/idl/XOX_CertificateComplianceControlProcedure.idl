@@ -47,7 +47,18 @@ XOX_AvailableSSCDs interface or</p>
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState;
 
-		/** control the certification path of the UNO component passed as a parameter.
+		/** Use this to initialize the service implementing this interface, 
+		for the part related to the interface.
+		<p>It loads into memory the CA autority list from the signed file distributed by CNIPA.</p>
+		@param xFrame contains a FRame used as a reference if this is run from a GUI.<br>
+		It will be null if GUI interface is not available.
+		<p>GUI aware component means a component that instantiated the service implementing this interface<br>
+		using a XComponentContext where it's legal to call OpenOffice.org GUI components.</p>
+		<p>For example if you use the interface from a synchronous job service, you can't use a GUI.</p>
+		*/
+		void initializeProcedure( [in] com::sun::star::frame::XFrame xFrame);
+
+		/** control the certificate compiance of the UNO component passed as a parameter.
 			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
 			for executing the function. 
 		 <p>

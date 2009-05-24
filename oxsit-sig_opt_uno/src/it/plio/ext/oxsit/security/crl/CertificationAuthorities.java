@@ -1,6 +1,6 @@
 /*************************************************************************
  * 
- *  This code in partly derived from
+ *  This code is partly derived from
  *  it.infocamere.freesigner.crl.CertificationAuthorities class in freesigner
  *  adapted to be used in OOo UNO environment
  *  Copyright (c) 2005 Francesco Cendron - Infocamere

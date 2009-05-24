@@ -233,10 +233,17 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
 	 */
 	@Override
-	public void initializeCADataBase(XFrame _aFrame) {
+	public void initializeProcedure(XFrame arg0) {
+		initializeCADataBase(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
+	 */
+	private void initializeCADataBase(XFrame _aFrame) {
 		//here:
 		//init the root authority elements,
 		if( m_aRootVerifier == null)

@@ -188,10 +188,17 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
-		// TODO Auto-generated method stub
-		
+		// not used in this component
 	}
 
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
+	 */
+	@Override
+	public void initializeProcedure(XFrame arg0) {
+		// not used in this component		
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
 	 */
@@ -214,7 +221,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
-		
+
 		try {
 			m_axoxChildProc = null;
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
@@ -266,14 +273,5 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 			m_aLogger.severe(ex);
 		}
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeCADataBase(boolean)
-	 */
-	@Override
-	public void initializeCADataBase(XFrame _aFrame) {
-		// TODO Auto-generated method stub
-		
 	}
 }
