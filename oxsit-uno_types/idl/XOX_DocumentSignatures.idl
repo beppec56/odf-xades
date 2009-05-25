@@ -24,7 +24,7 @@
 #define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
 
 #include <com/sun/star/embed/XStorage.idl>
-#include "XOX_QualifiedCertificate.idl"
+#include "XOX_X509Certificate.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -48,7 +48,7 @@
 
 		/** The certificates contained in the document.
 		*/
-		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate > DocumentCertificates ;
+		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
   };
  
   }; }; }; }; };  };

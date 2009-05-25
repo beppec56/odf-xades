@@ -23,7 +23,7 @@
 #ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 #define __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 
-#include "XOX_QualifiedCertificate.idl"
+#include "XOX_X509Certificate.idl"
 
   module it { module plio { module ext { module oxsit { module security {
 
@@ -53,15 +53,15 @@
 
 		/** The number of available certificate on the token
 		*/
-		[attribute,readonly]  long HasQualifiedCertificates;
+		[attribute,readonly]  long HasX509Certificates;
 
 		/** The certificates this device holds.
 		*/
-		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate> QualifiedCertificates;
+		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
 
 		/** Adds a certificate to the list of certificates available on this token.
 		*/
-		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate aCertificate);
+		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
   };
  
   }; }; }; }; };

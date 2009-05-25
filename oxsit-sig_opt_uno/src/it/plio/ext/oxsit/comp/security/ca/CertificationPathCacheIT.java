@@ -27,22 +27,6 @@
 
 package it.plio.ext.oxsit.comp.security.ca;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.cms.CMSException;
-
-import it.plio.ext.oxsit.security.crl.X509CertRL;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -53,9 +37,19 @@ import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.security.crl.RootsVerifier;
+import it.plio.ext.oxsit.security.crl.X509CertRL;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import org.bouncycastle.cms.CMSException;
 
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
@@ -104,7 +98,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	private	XMultiComponentFactory		m_xMCF;
 	protected IDynamicLogger m_aLogger;
 
-	protected XOX_QualifiedCertificate m_xQc;
+	protected XOX_X509Certificate m_xQc;
 
 	private CertificateState m_aCertificateState;
 	private CertificateStateConditions	m_aCertificateStateConditions;
@@ -242,7 +236,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
 //check for certificate
-		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		
@@ -327,7 +321,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			java.io.ByteArrayInputStream bais = null;
             bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
             X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
-            XOX_QualifiedCertificate qCertChild = m_xQc;
+            XOX_X509Certificate qCertChild = m_xQc;
 
 //now loop, and add the certificate path to the current path, actually empty            
             X509Certificate certParent = null;
@@ -345,10 +339,10 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
                 } catch (GeneralSecurityException ex) {
                     //la CA non � presente nella root
                 	//set 'CA unknown to Italian PA'
-                	//set the current XOX_QualifiedCertificate state as well
+                	//set the current XOX_X509Certificate state as well
                 	//this can be an intermediate certificate, it's the last one that should be ok
                 	//we need to set the certificate path of the current
-                	//main XOX_QualifiedCertificate as invalid for italian signature
+                	//main XOX_X509Certificate as invalid for italian signature
                 	m_xQc.setCertificateElementErrorState(
         					GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH,
         					CertificateElementState.INVALID_value);			
@@ -382,8 +376,8 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
 						aArguments, m_xCC);
 				//get the main interface
-				XOX_QualifiedCertificate xQualCert = 
-					(XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oACertificate);
+				XOX_X509Certificate xQualCert = 
+					(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
 //set it to the current child certificate, and put it as a new qualified certificate
 //set the status flags of the new certificate as correct for a CA certificate
@@ -434,7 +428,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
     	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
 		
 		//check for certificate
-		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg1);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg1);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
 

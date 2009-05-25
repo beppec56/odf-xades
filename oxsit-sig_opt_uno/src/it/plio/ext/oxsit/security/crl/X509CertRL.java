@@ -56,12 +56,15 @@ import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -669,23 +672,39 @@ public class X509CertRL {
             trace("CRL Distribution Point: " + ldapUrl);
 
             statusValue(10);
-            DirContext ctx = new InitialDirContext();
-            // impostazione un timeout...
-            // int timeout = 5000; //5 s
-            //SearchControls ctls = new SearchControls();
-            // ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            //ctls.setTimeLimit(timeout); //
+         // Set up environment for creating initial context
+/*            Hashtable env = new Hashtable(11);
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+//            env.put(Context.PROVIDER_URL, "ldap://localhost:389/o=JNDITutorial");
+            env.put(Context.PROVIDER_URL, ldapUrl);
 
+            // Specify timeout to be 5 seconds
+            env.put("com.sun.jndi.ldap.connect.timeout", "15000");
+
+            // Create initial context
+            DirContext ctx = new InitialDirContext(env);*/
+            DirContext ctx = new InitialDirContext();
             statusValue(20);
+
+            //FIXME why was this doesn't run?
+            // impostazione un timeout...
+/*            int timeout = 5000; //5 s
+            SearchControls ctls = new SearchControls();
+            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            ctls.setTimeLimit(timeout); //
+
+            NamingEnumeration ne = ctx.search(ldapUrl, "", ctls);*/
             NamingEnumeration ne = ctx.search(ldapUrl, "", null);
             if (!ne.hasMore()) {
                 trace("CRL entry non trovata in base all'url ldap: " + ldapUrl);
                 return null;
             }
             ctx.close();
-            statusValue(30);
+            statusValue(40);
+            
             Attributes attribs = ((SearchResult) ne.next()).getAttributes();
             Attribute a = null;
+            statusValue(60);
 
             for (NamingEnumeration ae = attribs.getAll(); ae.hasMore(); ) {
                 a = (Attribute) ae.next();

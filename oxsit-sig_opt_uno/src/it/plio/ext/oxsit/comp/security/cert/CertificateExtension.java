@@ -24,51 +24,14 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
-import org.bouncycastle.asn1.x509.X509Extension;
-
-import com.sun.star.beans.Property;
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XProperty;
-import com.sun.star.beans.XPropertyAccess;
-import com.sun.star.beans.XPropertySetInfo;
-import com.sun.star.container.ElementExistException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameContainer;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
-import com.sun.star.lang.XTypeProvider;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.lib.uno.helper.WeakAdapter;
-import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.uno.Any;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.Type;
-import com.sun.star.uno.XAdapter;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
-import com.sun.star.uno.XWeak;
-import com.sun.star.util.DateTime;
-import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XChangesNotifier;
 
 /**
  *  This service implements the CertificateExtension service.

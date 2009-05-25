@@ -23,18 +23,18 @@
 #ifndef __it_plio_ext_oxsit_security_cert_QualifiedCertificate_idl__
 #define __it_plio_ext_oxsit_security_cert_QualifiedCertificate_idl__
 
-#include "XOX_QualifiedCertificate.idl"
+#include "XOX_X509Certificate.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** QualifiedCertificate service can be used to access a Qualified X509 Certificate.
 	<p>Besides the interfaces documented here, it exports the interfaces needed to interact with OpenOffice.org API, they are not shown here.</p>
  */
-	service QualifiedCertificate 
+	service X509Certificate 
 	{
 		/** This interface gives access to the X509 qualified certificate this service represents.
 		*/
-		interface it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate;
+		interface it::plio::ext::oxsit::security::cert::XOX_X509Certificate;
 	} ;
 
   }; }; }; }; };  };

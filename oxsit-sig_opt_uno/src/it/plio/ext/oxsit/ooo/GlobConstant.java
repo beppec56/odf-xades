@@ -150,8 +150,8 @@ public class GlobConstant {
 	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
 	
 	//service to hold a single certificate
-	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.QualifiedCertificate";
-	//names used for exchange extensions state
+	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.X509Certificate";
+	//names used to exchange extensions state
 	public static final String m_sQUALIFIED_CERTIFICATE_VERSION = "Version";		
 	public static final String m_sQUALIFIED_CERTIFICATE_ISSUER = "IssuerName";
 	public static final String m_sQUALIFIED_CERTIFICATE_NOT_BEFORE = "NotValidBefore";

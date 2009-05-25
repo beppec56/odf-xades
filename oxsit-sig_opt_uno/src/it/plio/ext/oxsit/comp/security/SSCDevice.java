@@ -27,7 +27,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -74,7 +74,7 @@ public class SSCDevice extends ComponentBase
 	protected String m_sSSCDLibraryPath;
 	protected boolean m_bSSCDAutomaticDetection;
 	
-	protected Vector<XOX_QualifiedCertificate>	m_xQualCertList;
+	protected Vector<XOX_X509Certificate>	m_xQualCertList;
 	
 	protected DynamicLogger m_aLogger;
 
@@ -106,7 +106,7 @@ public class SSCDevice extends ComponentBase
 		m_sSSCDLibraryPath = xOptionsConfigAccess.getText("SSCDFilePath1");
 		xOptionsConfigAccess.dispose();
 
-		m_xQualCertList = new Vector<XOX_QualifiedCertificate>(10,1);
+		m_xQualCertList = new Vector<XOX_X509Certificate>(10,1);
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class SSCDevice extends ComponentBase
 	 * 
 	 */
 	@Override
-	public void addAQualifiedCertificate(XOX_QualifiedCertificate _aCertif) {
+	public void addAQualifiedCertificate(XOX_X509Certificate _aCertif) {
 		m_xQualCertList.add(_aCertif);
 	}
 
@@ -241,11 +241,11 @@ public class SSCDevice extends ComponentBase
 	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getQualifiedCertificates()
 	 */
 	@Override
-	public XOX_QualifiedCertificate[] getQualifiedCertificates() {
-		XOX_QualifiedCertificate[] ret = null;
+	public XOX_X509Certificate[] getX509Certificates() {
+		XOX_X509Certificate[] ret = null;
 		//detect the number of vector present
 		if(!m_xQualCertList.isEmpty()) {
-			ret = new XOX_QualifiedCertificate[m_xQualCertList.size()];
+			ret = new XOX_X509Certificate[m_xQualCertList.size()];
 			try {
 				m_xQualCertList.copyInto(ret);
 			} catch(NullPointerException ex) {
@@ -263,7 +263,7 @@ public class SSCDevice extends ComponentBase
 	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getHasQualifiedCertificates()
 	 */
 	@Override
-	public int getHasQualifiedCertificates() {
+	public int getHasX509Certificates() {
 		return m_xQualCertList.size();
 	}
 

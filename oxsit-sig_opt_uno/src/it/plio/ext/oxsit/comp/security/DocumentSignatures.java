@@ -23,11 +23,10 @@
 package it.plio.ext.oxsit.comp.security;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ import com.sun.star.util.XChangesNotifier;
 
 /**
  * THis is a specification, it may change!
- * This service implements the QualifiedCertificate service.
+ * This service implements the X509Certificate service.
  * receives the doc information from the task  
  *  
  * This objects has properties, they are set by the calling UNO objects.
@@ -205,7 +204,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * @see it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures#getDocumentCertificates()
 	 */
 	@Override
-	public XOX_QualifiedCertificate[] getDocumentCertificates() {
+	public XOX_X509Certificate[] getDocumentCertificates() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -29,7 +29,7 @@ import com.sun.star.uno.XComponentContext;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.
@@ -97,7 +97,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	 * 
 	 * @param _aCertif
 	 */
-	public void setCertificateData(XOX_QualifiedCertificate _aCertif) {
+	public void setCertificateData(XOX_X509Certificate _aCertif) {
 //set the node name		
 		setNodeName(_aCertif.getSubjectDisplayName());
 //FIXME		setCertificateGraficStateValue(_aCertif.getCertificateGraficStateValue());
@@ -115,7 +115,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	/**
 	 * @param m_nCertificateGraficStateValue the m_nCertificateGraficStateValue to set
 	 * value MUST be in the range of it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState.
-	 * this value is normally driven from the XOX_QualifiedCertificated interface object.
+	 * this value is normally driven from the XOX_X509Certificated interface object.
 	 */
 	public void setCertificateGraficStateValue(
 			int m_nCertificateGraficStateValue) {

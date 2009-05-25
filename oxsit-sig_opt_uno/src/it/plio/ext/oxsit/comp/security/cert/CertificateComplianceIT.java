@@ -33,7 +33,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
@@ -103,7 +103,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 
 	protected DynamicLogger m_aLogger;
 
-	protected XOX_QualifiedCertificate m_xQc;
+	protected XOX_X509Certificate m_xQc;
 
 	private CertificateState m_aCertificateState;
     private java.security.cert.X509Certificate m_JavaCert = null;
@@ -235,7 +235,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	public CertificateState verifyCertificateCertificateCompliance(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
-		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		m_aCertificateState = CertificateState.OK;

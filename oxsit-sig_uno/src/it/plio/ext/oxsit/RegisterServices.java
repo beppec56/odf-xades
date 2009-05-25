@@ -49,7 +49,7 @@ public class RegisterServices {
 		if (sImplementationName.equals(	SignatureHandler.m_sImplementationName))
 			xFactory = Factory.createComponentFactory(SignatureHandler.class,
 					SignatureHandler.m_sServiceNames);
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		else if ( sImplementationName.equals( DispatchIntercept.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( 
 					DispatchIntercept.class,

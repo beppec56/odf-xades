@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_QualifiedCertificate_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_QualifiedCertificate_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_X509Certificate_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_X509Certificate_idl__
 
 #include <com/sun/star/util/DateTime.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -43,7 +43,7 @@ XOX_AvailableSSCDs interface or</p>
 <p>by opening an ODF document that contains one it it in its XAdES signature.</p>
 <p>See service QualifiedCertificate for details.</p>
  */
-	interface XOX_QualifiedCertificate 
+	interface XOX_X509Certificate
 	{
 		/** the DER encoded form of the certificate.
 		 */
@@ -139,7 +139,7 @@ XOX_AvailableSSCDs interface or</p>
 		/** The first certificate in the certification path, this is the start of the certification path
 		tree.
 		*/
-		[attribute] it::plio::ext::oxsit::security::cert::XOX_QualifiedCertificate CertificationPath ;
+		[attribute] it::plio::ext::oxsit::security::cert::XOX_X509Certificate CertificationPath ;
 
 		/** Returns all the critical extensions.
 		<p></p>
@@ -175,7 +175,7 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		void setCertificateElementErrorState( [in] string oid, [in] long newState) ;
 
-		/** Set the interface objects used for the certificate compliance controlo procedure.
+		/** Set the interface objects used for the certificate compliance control procedure.
 		<p>This interface is used internally at the end of the certificate preparation, inside setter method setDEREncoded().</p>
 		<p>
 		@see it::plio::oxsit::ext::security::cert::QualifiedCertificate
@@ -186,7 +186,7 @@ XOX_AvailableSSCDs interface or</p>
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
-		/** Sets the interface object used to check for the certificate certification path.
+		/** Sets the interface object used to check for the certificate revocation state (CRL, OSP).
 		*/
 		void setRevocationStateControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateControlProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,

@@ -11,10 +11,9 @@ import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.ActionEvent;
-import com.sun.star.awt.FocusEvent;
 import com.sun.star.awt.KeyEvent;
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XControl;
@@ -504,7 +503,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 * @param _aCertif
 	 * @return
 	 */
-	protected String setCertificateNodeGraficStringHelper(XOX_QualifiedCertificate _aCertif) {
+	protected String setCertificateNodeGraficStringHelper(XOX_X509Certificate _aCertif) {
 		//get the certificate state
 		int nCertState = _aCertif.getCertificateState();
 		//get the certificate state check conditions
@@ -533,14 +532,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
-	protected void addCACertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
+	protected void addCACertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
 
     //this adds the starting point of the certification path, from now on we have only CA certificates
 		//grab its state
 		//add the certificate path
 		//first see if there is a path
 		String sPathGraph = "";
-		XOX_QualifiedCertificate xCPath = _aCertif.getCertificationPath();
+		XOX_X509Certificate xCPath = _aCertif.getCertificationPath();
 
 		int aState = _aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH);
 		sPathGraph = m_sCertificateElementGraphicName[aState];
@@ -562,7 +561,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	////// methods to manage the certificate display
-	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_QualifiedCertificate _aCertif) {
+	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
 		//now set the certificate graphic state

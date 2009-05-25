@@ -33,7 +33,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
 import it.trento.comune.j4sign.pcsc.PCSCHelper;
@@ -396,8 +396,8 @@ public class AvailableSSCDs extends ComponentBase
 								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
 										aArguments, m_xCC);
 								//get the main interface
-								XOX_QualifiedCertificate xQualCert = 
-									(XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, oACertificate);
+								XOX_X509Certificate xQualCert = 
+									(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
 //								xQualCert.setDEREncoded(cert.getEncoded());
 								//add it to this token collection

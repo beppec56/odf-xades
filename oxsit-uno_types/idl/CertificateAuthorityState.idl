@@ -33,6 +33,10 @@
 		 */
 		NOT_YET_CHECKED,
 
+		/** the Certificate Authority status cannot be checked.
+		 */
+		CANNOT_BE_CHECKED,
+
 		/** the Certificate Authority it's nonreliable (not accredited).
 		 */
 		UNRELIABLE,
@@ -41,42 +45,22 @@
 		 */
 		CREDITED,
 
-		/**
-		*/
-		CA_NOT_CHECKED,
+		/** the Certificate Authority was verified, it's accredited but there are errors.
+		 */
+		CREDITED_WITH_WARNING,
 
 		/** The CA DB thumbprint was not checked.
 		 */
 		CA_LIST_DB_THUMBP_NOT_CHECKED, 
  
-		/** the CA DB was not updated.
+		/** The CA certificate is not consistent with the requested standard.
 		 */
-		CA_LIST_DB_NOT_UPDATED,
-
-		/** the root certificate not checked.
-		 */
-		NO_CA_ROOT_CHECKED,
-
-		/** 
-		 */
-		CA_LIST_DB_UPDATE_DISABLED,
+		NOT_COMPLIANT, 
  
 		/** The root certificate is missing
 		 */
-		MISSING_ROOT_CA,
+		CA_LIST_DB_MISSING,
  
-		/** The CA is reliable, but the CA certificate is expired
-		 */
-		RELIABLE_EXPIRED,
-
-		/** The CA is not reliable, and the CA certificate is expired
-		 */
-		UNRELIABLE_EXPIRED,
-
-		/** certification path and CA not checked
-		*/
-		UNCHECKED,
-
 		/** Last state (maximum state).
 		*/
 		LAST_STATE

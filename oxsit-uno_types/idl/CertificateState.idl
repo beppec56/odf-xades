@@ -62,9 +62,9 @@
 		*/
 		MISSING_EXTENSION,
 
-		/** The certificate is not consistent with the Italian standard.
+		/** The certificate is not consistent with the requested standard.
 		 */
-		NOT_COMPLIANT, 
+		NOT_COMPLIANT,
  
 		/** The certificate is malformed, internal does not conform to the requests.
 		*/

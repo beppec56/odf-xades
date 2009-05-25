@@ -30,7 +30,7 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -229,8 +229,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 						XOX_SSCDevice oSSCDev = xDevices[idx];
 // add this node to the tree
 						XMutableTreeNode xCertifNode = addSSCDToTreeRootHelper(oSSCDev);
-						if(oSSCDev.getHasQualifiedCertificates() > 0) {
-							XOX_QualifiedCertificate[] oCertifs = oSSCDev.getQualifiedCertificates();
+						if(oSSCDev.getHasX509Certificates() > 0) {
+							XOX_X509Certificate[] oCertifs = oSSCDev.getX509Certificates();
 							for(int idx1=0; idx1<oCertifs.length;idx1++) {
 								//perform certificate verification
 								oCertifs[idx1].verifyCertificate(m_xParentFrame);

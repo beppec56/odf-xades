@@ -34,7 +34,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;
@@ -77,7 +77,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 
 	private DynamicLogger m_aLogger;
 
-	private XOX_QualifiedCertificate m_xQc;
+	private XOX_X509Certificate m_xQc;
 	
 	private CertificateState m_aCertificateState;
     private java.security.cert.X509Certificate m_JavaCert = null;
@@ -218,7 +218,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 		m_aLogger.log("verifyCertificationPath");
 		//see if our singleton has the object
 		// grab the certificate and save it
-		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 

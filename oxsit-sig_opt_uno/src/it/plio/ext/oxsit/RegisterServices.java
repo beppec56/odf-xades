@@ -33,7 +33,7 @@ import it.plio.ext.oxsit.comp.security.ca.CertificationPathIT;
 import it.plio.ext.oxsit.comp.security.cert.CertificateComplianceIT;
 import it.plio.ext.oxsit.comp.security.cert.CertificateExtension;
 import it.plio.ext.oxsit.comp.security.cert.CertificateRevocationIT;
-import it.plio.ext.oxsit.comp.security.cert.QualifiedCertificate;
+import it.plio.ext.oxsit.comp.security.cert.X509Certificate;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
@@ -71,27 +71,27 @@ public class RegisterServices {
 		}
 		else if ( sImplementationName.equals( CertificateComplianceIT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateComplianceIT.class, CertificateComplianceIT.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateRevocationIT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateRevocationIT.class, CertificateRevocationIT.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 	}
 		else if ( sImplementationName.equals( CertificationPathIT.m_sImplementationName ) ) {
 				xFactory = Factory.createComponentFactory( CertificationPathIT.class, CertificationPathIT.m_sServiceNames );
-	//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+	//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificationPathCacheIT.m_sImplementationName ) ) {
 					xFactory = Factory.createComponentFactory( CertificationPathCacheIT.class, CertificationPathCacheIT.m_sServiceNames );
-		//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+		//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateExtension.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateExtension.class, CertificateExtension.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
-		else if ( sImplementationName.equals( QualifiedCertificate.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( QualifiedCertificate.class, QualifiedCertificate.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+QualifiedCertificate.m_sImplementationName);
+		else if ( sImplementationName.equals( X509Certificate.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( X509Certificate.class, X509Certificate.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( SSCDevice.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( SSCDevice.class, SSCDevice.m_sServiceNames );
@@ -141,7 +141,7 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( CertificateExtension.m_sImplementationName, CertificateExtension.m_sServiceNames, xRegistryKey );
 
 		boolean retQualCertif = 
-			Factory.writeRegistryServiceInfo( QualifiedCertificate.m_sImplementationName, QualifiedCertificate.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( X509Certificate.m_sImplementationName, X509Certificate.m_sServiceNames, xRegistryKey );
 
 		boolean retSSCDevice = 
 			Factory.writeRegistryServiceInfo( SSCDevice.m_sImplementationName, SSCDevice.m_sServiceNames, xRegistryKey );
@@ -177,7 +177,7 @@ public class RegisterServices {
 			System.out.println("__writeRegistryServiceInfo: "+CertificateExtension.m_sImplementationName + "failed");		
 
 		if (!retQualCertif)
-			System.out.println("__writeRegistryServiceInfo: "+QualifiedCertificate.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+X509Certificate.m_sImplementationName + "failed");		
 
 		if (!retSSCDevice)
 			System.out.println("__writeRegistryServiceInfo: "+SSCDevice.m_sImplementationName + "failed");		

@@ -37,7 +37,7 @@ import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,7 +79,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the QualifiedCertificate service.
+ *  This service implements the X509Certificate service.
  * receives the doc information from the task  
  *  
  * This objects has properties, they are set by the calling UNO objects.
@@ -91,15 +91,15 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class QualifiedCertificate extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class X509Certificate extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_QualifiedCertificate
+			XOX_X509Certificate
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= QualifiedCertificate.class.getName();
+	public static final String			m_sImplementationName	= X509Certificate.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
@@ -171,7 +171,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	private XOX_CertificateComplianceControlProcedure m_xoxCertificateComplianceControlProcedure;
 
-	private XOX_QualifiedCertificate m_xoxCertificationPath;
+	private XOX_X509Certificate m_xoxCertificationPath;
 
 	private XOX_CertificateRevocationStateControlProcedure m_xoxCertificateRevocationControlProcedure;
 
@@ -180,12 +180,12 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	 * 
 	 * @param _ctx
 	 */
-	public QualifiedCertificate(XComponentContext _ctx) {
+	public X509Certificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 //
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
-    	m_nCAState = CertificateAuthorityState.UNCHECKED_value;
+    	m_nCAState = CertificateAuthorityState.NOT_YET_CHECKED_value;
     	m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
@@ -295,11 +295,11 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 				return;
 			}
 		}
-		throw(new com.sun.star.lang.IllegalArgumentException("QualifiedCertificate#initialize: missing arguments"));
+		throw(new com.sun.star.lang.IllegalArgumentException("X509Certificate#initialize: missing arguments"));
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectDisplayName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectDisplayName()
 	 */
 	@Override
 	public String getSubjectDisplayName() {
@@ -307,7 +307,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getVersion()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getVersion()
 	 */
 	@Override
 	public String getVersion() {
@@ -315,7 +315,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidAfter()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotValidAfter()
 	 */
 	@Override
 	public String getNotValidAfter() {
@@ -323,7 +323,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotValidBefore()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotValidBefore()
 	 */
 	@Override
 	public String getNotValidBefore() {
@@ -331,7 +331,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerDisplayName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getIssuerDisplayName()
 	 */
 	@Override
 	public String getIssuerDisplayName() {
@@ -340,7 +340,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 
 	/* (non-Javadoc)
 
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getIssuerName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getIssuerName()
 	 */
 	@Override
 	public String getIssuerName() {
@@ -348,7 +348,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getMD5Thumbprint()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getMD5Thumbprint()
 	 */
 	@Override
 	public String getMD5Thumbprint() {
@@ -356,7 +356,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSHA1Thumbprint()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSHA1Thumbprint()
 	 */
 	@Override
 	public String getSHA1Thumbprint() {
@@ -364,7 +364,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSerialNumber()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSerialNumber()
 	 */
 	@Override
 	public String getSerialNumber() {
@@ -372,7 +372,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSignatureAlgorithm()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSignatureAlgorithm()
 	 */
 	@Override
 	public String getSignatureAlgorithm() {
@@ -380,7 +380,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectName()
 	 */
 	@Override
 	public String getSubjectName() {
@@ -388,7 +388,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectPublicKeyAlgorithm()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectPublicKeyAlgorithm()
 	 */
 	@Override
 	public String getSubjectPublicKeyAlgorithm() {
@@ -396,7 +396,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getSubjectPublicKeyValue()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectPublicKeyValue()
 	 */
 	@Override
 	public String getSubjectPublicKeyValue() {
@@ -404,7 +404,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#verifyCertificate(com.sun.star.frame.XFrame)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificate(com.sun.star.frame.XFrame)
 	 */
 	@Override
 	public boolean verifyCertificate(XFrame _aFrame) {
@@ -449,7 +449,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateState()
 	 */
 	@Override
 	public int getCertificateState() {
@@ -457,7 +457,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateStateConditions()
 	 */
 	@Override
 	public int getCertificateStateConditions() {
@@ -465,7 +465,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificationAuthorityState()
 	 */
 	@Override
 	public int getCertificationAuthorityState() {
@@ -473,7 +473,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationAuthorityStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificationAuthorityStateConditions()
 	 */
 	@Override
 	public int getCertificationAuthorityStateConditions() {
@@ -482,23 +482,23 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificationPath()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificationPath()
 	 */
 	@Override
-	public XOX_QualifiedCertificate getCertificationPath() {
+	public XOX_X509Certificate getCertificationPath() {
 		return m_xoxCertificationPath;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificationPath(it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificationPath(it.plio.ext.oxsit.security.cert.XOX_X509Certificate)
 	 */
 	@Override
-	public void setCertificationPath(XOX_QualifiedCertificate arg0) {
+	public void setCertificationPath(XOX_X509Certificate arg0) {
 		m_xoxCertificationPath = arg0;
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getDEREncoded()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getDEREncoded()
 	 */
 	@Override
 	public byte[] getDEREncoded() {
@@ -508,7 +508,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setDEREncoded(byte[])
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setDEREncoded(byte[])
 	 * 
 	 * When this method is called, the DER image passed will be used as the new certificate representation
 	 * and the certificate extensions will be evaluated again. 
@@ -587,7 +587,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateComplianceControl()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateComplianceControl()
 	 */
 	@Override
 	public XOX_CertificateComplianceControlProcedure getComplianceControlObj() {
@@ -595,7 +595,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateComplianceControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificateComplianceControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure)
 	 */
 	@Override
 	public void setCertificateComplianceControlObject(
@@ -806,7 +806,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	///////////////// area for extension display management
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateElementErrorState(java.lang.String)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateElementErrorState(java.lang.String)
 	 */
 	@Override
 	public int getCertificateElementErrorState(String _oid) {
@@ -817,7 +817,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificateExtensionErrorState(java.lang.String, int)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificateExtensionErrorState(java.lang.String, int)
 	 */
 	@Override
 	public void setCertificateElementErrorState(String _oid, int arg1) {
@@ -825,7 +825,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionName(java.lang.String)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionName(java.lang.String)
 	 */
 	@Override
 	public String getCertificateExtensionName(String _oid) {
@@ -833,14 +833,14 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionStringValue(java.lang.String)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionStringValue(java.lang.String)
 	 */
 	@Override
 	public String getCertificateExtensionStringValue(String _oid) {
 		return m_aExtensionDisplayValues.get(_oid);
 	}
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getCertificateExtensionOIDs() {
@@ -852,7 +852,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCriticalCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getCriticalCertificateExtensionOIDs() {
@@ -864,7 +864,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotCriticalCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotCriticalCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getNotCriticalCertificateExtensionOIDs() {
@@ -901,7 +901,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCriticalExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCriticalExtensions()
 	 */
 	@Override
 	public XOX_CertificateExtension[] getCriticalExtensions() {
@@ -914,7 +914,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getNotCriticalExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotCriticalExtensions()
 	 */
 	@Override
 	public XOX_CertificateExtension[] getNotCriticalExtensions() {
@@ -970,7 +970,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateCertificationPathControl()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateCertificationPathControl()
 	 */
 	@Override
 	public XOX_CertificationPathControlProcedure getCertificationPathControlObj() {
@@ -979,7 +979,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setCertificationPathControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificationPathControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
 	 */
 	@Override
 	public void setCertificationPathControlObject(
@@ -994,7 +994,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#getCertificateRevocationControlObj()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateRevocationControlObj()
 	 */
 	@Override
 	public XOX_CertificateRevocationStateControlProcedure getRevocationControlObj() {
@@ -1002,7 +1002,7 @@ public class QualifiedCertificate extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate#setRevocationStateControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setRevocationStateControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure)
 	 */
 	@Override
 	public void setRevocationStateControlObject(

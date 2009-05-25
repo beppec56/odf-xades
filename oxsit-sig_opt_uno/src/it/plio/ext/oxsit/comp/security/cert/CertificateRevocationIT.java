@@ -31,43 +31,11 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate;
-import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Set;
-import java.util.Vector;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DERString;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.asn1.x509.X509Extension;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
-import org.bouncycastle.asn1.x509.qualified.QCStatement;
-import org.bouncycastle.i18n.filter.TrustedInput;
-
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
@@ -112,9 +80,7 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 
 	protected DynamicLogger m_aLogger;
 
-	protected XOX_QualifiedCertificate m_xQc;
-
-    private java.security.cert.X509Certificate m_JavaCert = null;
+	protected XOX_X509Certificate m_xQc;
 
 	private XComponentContext m_xCC;
 
@@ -263,7 +229,7 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
-		m_xQc = (XOX_QualifiedCertificate)UnoRuntime.queryInterface(XOX_QualifiedCertificate.class, arg0);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
 
