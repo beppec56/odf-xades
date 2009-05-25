@@ -25,9 +25,11 @@ package it.plio.ext.oxsit.ooo.ui;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /** This class describes the node representing a certificate obtained from
@@ -96,19 +98,21 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	 * @param _aCertif
 	 */
 	public void setCertificateData(XOX_X509Certificate _aCertif) {
-//set the node name		
-		setNodeName(_aCertif.getSubjectDisplayName());
+//set the node name
+		XOX_X509CertificateDisplay aCertDisplay = 
+			(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, _aCertif);
+		setNodeName(aCertDisplay.getSubjectDisplayName());
 //FIXME		setCertificateGraficStateValue(_aCertif.getCertificateGraficStateValue());
 		setCertificateState(_aCertif.getCertificateState());
 		setCertificateStateConditions(_aCertif.getCertificateStateConditions());
 		setCertificationAutorityState(_aCertif.getCertificationAuthorityState());
 		initialize();
 		//init it correctly		
-		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ _aCertif.getNotValidBefore();
-		m_sStringList[m_nFIELD_DATE_VALID_TO] = "r"+_aCertif.getNotValidAfter();
+		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ aCertDisplay.getNotValidBefore();
+		m_sStringList[m_nFIELD_DATE_VALID_TO] = "r"+aCertDisplay.getNotValidAfter();
 		//next should be set to the right certificate string to display
 		m_sStringList[m_nFIELD_OWNER_NAME] = "b"+getNodeName();  // will got it from the certificate raw data		
-		m_sStringList[m_nFIELD_ISSUER] = "r"+_aCertif.getIssuerDisplayName();
+		m_sStringList[m_nFIELD_ISSUER] = "r"+aCertDisplay.getIssuerDisplayName();
 	}
 
 	/**

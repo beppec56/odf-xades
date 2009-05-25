@@ -12,6 +12,7 @@ import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.KeyEvent;
@@ -603,37 +604,41 @@ public class DialogCertTreeBase extends BasicDialog implements
 			// TODO Auto-generated catch block
 			m_logger.severe("addQualifiedCertificateToTree", e);
 		}
+		
+		//grab the display interface of the certificate
+		XOX_X509CertificateDisplay certDisp = (XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, _aCertif);
+		
 		//now add the rest of the data
 		//add the version
-		addVariablePitchTreeElementAndState(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion(),
+		addVariablePitchTreeElementAndState(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, certDisp.getVersion(),
 				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_VERSION));		
 		//add the serial number
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,_aCertif.getSerialNumber());
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,certDisp.getSerialNumber());
 		//add the issuer full description		
-		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName(),
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,certDisp.getIssuerName(),
 				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_ISSUER));
 		//add the not valid before
-		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore(),
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,certDisp.getNotValidBefore(),
 				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE));
 		//add the not valid after
-		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter(),
+		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,certDisp.getNotValidAfter(),
 				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER));
 		//add the subject
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,_aCertif.getSubjectName());
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,certDisp.getSubjectName());
 		//add the subject signature algorithm
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT_ALGORITHM,m_sLabelSubjAlgor,_aCertif.getSubjectPublicKeyAlgorithm());
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT_ALGORITHM,m_sLabelSubjAlgor,certDisp.getSubjectPublicKeyAlgorithm());
 		//add the subject public key (multiline, fixed pitch)
-		addFixedPitchTreeElement(xaCNode,TreeNodeType.PUBLIC_KEY,m_sLabelSubjectPublicKey,_aCertif.getSubjectPublicKeyValue());
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.PUBLIC_KEY,m_sLabelSubjectPublicKey,certDisp.getSubjectPublicKeyValue());
 		//add the thumbprint signature algorithm
-		addVariablePitchTreeElement(xaCNode,TreeNodeType.SIGNATURE_ALGORITHM,m_sLabelThumbAlgor,_aCertif.getSignatureAlgorithm());
+		addVariablePitchTreeElement(xaCNode,TreeNodeType.SIGNATURE_ALGORITHM,m_sLabelThumbAlgor,certDisp.getSignatureAlgorithm());
 		//add the SHA1 thumbprint 
-		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_SHA1,m_sLabelThumbSHA1,_aCertif.getSHA1Thumbprint());
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_SHA1,m_sLabelThumbSHA1,certDisp.getSHA1Thumbprint());
 		//add the MDA5 thumbprint
-		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_MD5,m_sLabelThumbMDA5,_aCertif.getMD5Thumbprint());
+		addFixedPitchTreeElement(xaCNode,TreeNodeType.THUMBPRINT_MD5,m_sLabelThumbMDA5,certDisp.getMD5Thumbprint());
 
 		//add the critical extensions
 		try {
-			String[] aCtritExt = _aCertif.getCriticalCertificateExtensionOIDs();
+			String[] aCtritExt = certDisp.getCriticalCertificateExtensionOIDs();
 			if(aCtritExt != null) {
 				//then there are extension marked critical
 				//add the main node
@@ -650,8 +655,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 							m_sCertificateElementGraphicName[aggregateState]);
 				for(int i=0; i<aCtritExt.length;i++) {
 					addVariablePitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
-							_aCertif.getCertificateExtensionName(aCtritExt[i]),
-							_aCertif.getCertificateExtensionStringValue(aCtritExt[i]),
+							certDisp.getCertificateExtensionName(aCtritExt[i]),
+							certDisp.getCertificateExtensionStringValue(aCtritExt[i]),
 							_aCertif.getCertificateElementErrorState(aCtritExt[i]));
 				}
 			}
@@ -661,7 +666,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 		//add the non critical extensions
 		try {
-			String[] aNotCtritExt = _aCertif.getNotCriticalCertificateExtensionOIDs();
+			String[] aNotCtritExt = certDisp.getNotCriticalCertificateExtensionOIDs();
 			if(aNotCtritExt != null) {
 			//then there are extension NOT marked critical
 			//add the main node
@@ -681,14 +686,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 					if(aNotCtritExt[i].equalsIgnoreCase("2.5.29.14") ||
 							aNotCtritExt[i].equalsIgnoreCase("2.5.29.35")) 
 						addFixedPitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
-								_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
-								_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
+								certDisp.getCertificateExtensionName(aNotCtritExt[i]),
+								certDisp.getCertificateExtensionStringValue(aNotCtritExt[i]),
 								_aCertif.getCertificateElementErrorState(aNotCtritExt[i]));
 					else
 						addVariablePitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_NON_CRITICAL,
-							_aCertif.getCertificateExtensionName(aNotCtritExt[i]),
-							_aCertif.getCertificateExtensionStringValue(aNotCtritExt[i]),
-							_aCertif.getCertificateElementErrorState(aNotCtritExt[i]));
+								certDisp.getCertificateExtensionName(aNotCtritExt[i]),
+								certDisp.getCertificateExtensionStringValue(aNotCtritExt[i]),
+								_aCertif.getCertificateElementErrorState(aNotCtritExt[i]));
 				}
 			}
 		} catch (Exception e) {

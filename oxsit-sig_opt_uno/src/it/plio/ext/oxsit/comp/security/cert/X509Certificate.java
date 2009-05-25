@@ -38,6 +38,7 @@ import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -95,7 +96,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_X509Certificate
+			XOX_X509Certificate,
+			XOX_X509CertificateDisplay
 			 {
 
 	// the name of the class implementing this object
@@ -591,9 +593,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		UnoRuntime.queryInterface(XOX_CertificateComplianceControlProcedure.class, arg0);
 		if(xCert == null)
 			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificateComplianceControlProcedure = xCert;
-		
-	}	
+		m_xoxCertificateComplianceControlProcedure = xCert;	
+	}
 
 	////////////////// internal functions
 	/**
@@ -663,7 +664,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_sMD5Thumbprint = Helpers.printHexBytes(hashmd5);
 		} catch (IOException e) {
 			m_aLogger.severe("initThumbPrints", e);
-		}		
+		}
 	}
 
 	protected String initSignatureAlgorithm() {
@@ -1016,5 +1017,14 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		if((_nNewState = _newState.getValue())
 				> m_nCertificateStateConditions)
 			m_nCertificateStateConditions = _nNewState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#prepareDisplayStrings(byte[])
+	 */
+	@Override
+	public boolean prepareDisplayStrings(byte[] arg0) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
