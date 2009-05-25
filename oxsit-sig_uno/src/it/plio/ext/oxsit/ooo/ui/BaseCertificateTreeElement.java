@@ -27,8 +27,14 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
+import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 
+import java.security.Principal;
+import java.security.cert.X509Certificate;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+
 import com.sun.star.awt.FontDescriptor;
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.XControl;
@@ -84,8 +90,14 @@ public class BaseCertificateTreeElement extends TreeElement {
 						};
 
 	//hash table to convert the enum of the certificate state to the id string in resources
-	public static Hashtable<CertificateState,String>	m_aCERTIFICATE_STATE = new Hashtable<CertificateState, String>(15);
-	
+	/* the mapping from strings to emun state is:
+	 * 1) the enum is edited/changed in the IDL file
+	 * 2) the corresponding string plus id is added to the localization file
+	 * 3) change this hashmap to connect the enum to the id of the string
+	 * 
+	 *   the code will take care of the rest
+	 */
+	public static Hashtable<CertificateState,String>	m_aCERTIFICATE_STATE = new Hashtable<CertificateState, String>(15);	
 	static {
 		m_aCERTIFICATE_STATE.put(CertificateState.NOT_VERIFIABLE, "err_txt_cert_nover");
 		m_aCERTIFICATE_STATE.put(CertificateState.NOT_YET_VERIFIED, "err_txt_cert_noyver");
@@ -100,6 +112,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE.put(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID, "err_txt_cert_ko_core");
 		m_aCERTIFICATE_STATE.put(CertificateState.MALFORMED_CERTIFICATE, "err_txt_cert_no_read");
 	};
+	//hash table to convert the enum of the certificate state to the actual strings in resources
+	public static Hashtable<CertificateState,String>	m_aCERTIFICATE_STATE_STRINGS;	
 
 	//hash table to convert the enum of the certificate state conditions to the id string in resources
 	public static Hashtable<CertificateStateConditions,String>	m_aCERTIFICATE_STATE_CONDITIONS = new Hashtable<CertificateStateConditions, String>(15);
@@ -114,36 +128,23 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.INET_ACCESS_NOT_ENABLED,"inet_access_not_enabled");
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.INET_ACCESS_ERROR,"inet_access_error");
 	};
+	//hash table to convert the enum of the certificate state conditions to the actual strings in resources
+	public static Hashtable<CertificateStateConditions,String>	m_aCERTIFICATE_STATE_CONDITIONS_STRINGS;	
 	
-	/**
-	 * some constant for certificate validation state
-	 */
-	public static final int m_nISSUER_STATE_VALID = 0;
-	public static final int m_nISSUER_STATE_NO_CTRL = 1;
-	public static final int m_nISSUER_STATE_KO = 2;
-	public static final int m_nISSUER_STATE_DB_NO_UPDT = 3;
-	public static final int m_nISSUER_STATE_NO_THUMB = 4;
-	public static final int m_nISSUER_STATE_DB_UPDT_KO = 5;
-	public static final int m_nISSUER_STATE_DB_KO_CERT = 6;
-	public static final int m_nISSUER_STATE_EXPIRED = 7;
-	public static final int m_nISSUER_STATE_KO_EXPIRED = 8;
-	public static final int m_nISSUER_STATE_UNKNOWN = 9;
-
-	/**
-	 * the corresponding strings identifier, to retrieve the string from resources.
-	 */
-	public static final String[]  m_sISSUER_STATE =  { 
-							"err_txt_ca_ok",
-							"err_txt_ca_noctrl",
-							"err_txt_ca_ko",
-							"err_txt_ca_stale",
-							"err_txt_ca_nover",
-							"err_txt_ca_noact",
-							"err_txt_ca_noroot",
-							"err_txt_ca_exp",
-							"err_txt_ca_ko_exp",
-							"err_txt_ca_unkn",
-						};
+	//hash table to convert the enum of the certification authority state to the id string in resources
+	public static Hashtable<CertificationAuthorityState,String>	m_aCA_STATE_CONDITIONS = new Hashtable<CertificationAuthorityState, String>(15);	
+	static {		
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.NOT_YET_CHECKED,"ca_not_yet_checked");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.CANNOT_BE_CHECKED,"ca_cannot_be_checked");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.NOT_TRUSTED,"ca_not_trusted");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.TRUSTED,"ca_trusted");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.TRUSTED_WITH_WARNING,"ca_trusted_with_warning");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.CA_LIST_DB_THUMBP_NOT_CHECKED,"ca_list_db_thumbp_not_checked");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.NOT_COMPLIANT,"ca_not_compliant");
+		m_aCA_STATE_CONDITIONS.put(CertificationAuthorityState.CA_LIST_DB_MISSING,"ca_list_db_missing");
+	};
+	//hash table to convert the enum of the certification authority state to the actual strings in resources
+	public static Hashtable<CertificationAuthorityState,String>	m_aCA_STATE_CONDITIONS_STRINGS;	
 
 	/**
 	 * the string list showed on the left, allocated, according to global constants.
@@ -165,14 +166,110 @@ public class BaseCertificateTreeElement extends TreeElement {
 	public BaseCertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		setNodeType(TreeNodeType.CERTIFICATE);
 		setLogger(new DynamicLogger(this,_xContext));
+//
+		getLogger().enableLogging();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
 		setCertificateState(CertificateState.NOT_YET_VERIFIED_value);
 		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value);
-		setIssuerState(m_nISSUER_STATE_NO_CTRL);
+		setCertificationAutorityState(CertificationAuthorityState.NOT_YET_CHECKED_value);
 		setNodeGraphic(null);
 		m_sStringList = new String[CertifTreeDlgDims.m_nMAXIMUM_FIELDS];
 		m_xControlLines = new Object[CertifTreeDlgDims.m_nMAXIMUM_FIELDS];
+		initStaticCertificateStrings();
+		initStaticCertificateConditionStrings();
+		initStaticCertificationAuthorityStrings();
+		if(m_aRegAcc != null) {
+			m_aRegAcc.dispose();
+			m_aRegAcc = null;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void initStaticCertificationAuthorityStrings() {
+		if(m_aCA_STATE_CONDITIONS_STRINGS == null) {
+			//init it once per element
+			m_aCA_STATE_CONDITIONS_STRINGS = new Hashtable<CertificationAuthorityState, String>(10);
+			if(m_aRegAcc == null)
+				m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
+			if(m_aRegAcc != null) {
+				Set<CertificationAuthorityState> aKeySet = m_aCA_STATE_CONDITIONS.keySet();
+				Iterator<CertificationAuthorityState> it = aKeySet.iterator();
+		        while (it.hasNext()) {
+					try {
+						CertificationAuthorityState cs = it.next();
+						m_aCA_STATE_CONDITIONS_STRINGS.put(cs, 
+								m_aRegAcc.getStringFromRegistry(
+										m_aCA_STATE_CONDITIONS.get(cs
+																)
+																)
+														);
+					} catch (com.sun.star.uno.Exception e) {
+						getLogger().severe(e);
+					}
+		        }
+			}
+		}		
+	}
+
+	/**
+	 * 
+	 */
+	private void initStaticCertificateConditionStrings() {
+		if(m_aCERTIFICATE_STATE_CONDITIONS_STRINGS == null) {
+			//init it once per element
+			m_aCERTIFICATE_STATE_CONDITIONS_STRINGS = new Hashtable<CertificateStateConditions, String>(10);
+			if(m_aRegAcc == null)
+				m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
+			if(m_aRegAcc != null) {
+				Set<CertificateStateConditions> aKeySet = m_aCERTIFICATE_STATE_CONDITIONS.keySet();
+				Iterator<CertificateStateConditions> it = aKeySet.iterator();
+		        while (it.hasNext()) {
+					try {
+						CertificateStateConditions cs = it.next();
+						m_aCERTIFICATE_STATE_CONDITIONS_STRINGS.put(cs, 
+								m_aRegAcc.getStringFromRegistry(
+										m_aCERTIFICATE_STATE_CONDITIONS.get(cs
+																)
+																)
+														);
+					} catch (com.sun.star.uno.Exception e) {
+						getLogger().severe(e);
+					}
+		        }
+			}
+		}		
+	}
+
+	/**
+	 * 
+	 */
+	private void initStaticCertificateStrings() {
+		if(m_aCERTIFICATE_STATE_STRINGS == null) {
+			//init it once per element
+			m_aCERTIFICATE_STATE_STRINGS = new Hashtable<CertificateState, String>(10);
+			if(m_aRegAcc == null)
+				m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
+			if(m_aRegAcc != null) {
+				Set<CertificateState> aKeySet = m_aCERTIFICATE_STATE.keySet();
+				Iterator<CertificateState> it = aKeySet.iterator();
+		        while (it.hasNext()) {
+					try {
+						CertificateState cs = it.next();
+						m_aCERTIFICATE_STATE_STRINGS.put(cs, 
+								m_aRegAcc.getStringFromRegistry(
+										m_aCERTIFICATE_STATE.get(cs
+																)
+																)
+														);
+					} catch (com.sun.star.uno.Exception e) {
+						getLogger().severe(e);
+					}
+		        }
+			}
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -192,20 +289,22 @@ public class BaseCertificateTreeElement extends TreeElement {
 			m_sStringList[m_nFIELD_TITLE_ISSUER] = m_aRegAcc.getStringFromRegistry("cert_title_issuer" );
 
 			//grab the string for certificate status
+			//FIXME: a better solution would be to substitute the id in the Hashmap with the
+			// corresponding string, to be done once when element is instantiated
 			try {
 			m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
-					m_aRegAcc.getStringFromRegistry(
-							m_aCERTIFICATE_STATE.get(
+							m_aCERTIFICATE_STATE_STRINGS.get(
 									CertificateState.fromInt(getCertificateState())
-											));
+											);
 			m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
-				m_aRegAcc.getStringFromRegistry(
-						m_aCERTIFICATE_STATE_CONDITIONS.get(
+						m_aCERTIFICATE_STATE_CONDITIONS_STRINGS.get(
 								CertificateStateConditions.fromInt(getCertificateStateConditions())
-										));
+										);
 
 			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
-				m_aRegAcc.getStringFromRegistry( m_sISSUER_STATE[getIssuerState()] );
+						m_aCA_STATE_CONDITIONS_STRINGS.get(
+								CertificationAuthorityState.fromInt(getCertificationAutorityState())
+										);
 			} catch (java.lang.Exception e) {
 				getLogger().severe("initialize", e);
 			}

@@ -150,8 +150,7 @@ public abstract class TreeElement
 	
 	private	int				m_nCertificateState;
 	private int				m_nCertificateStateConditions;
-	
-	private int				m_nIssuerState;
+	private int				m_nCertificationAutorityState;
 
 	private int				m_nSignatureState;
 	private int				m_nSignatureAndDocumentStateConditions;
@@ -254,21 +253,6 @@ public abstract class TreeElement
 	}
 
 	/**
-	 * @param m_nIssuerState the m_nIssuerState to set
-	 */
-	public void setIssuerState(
-			int m_nCertificationAuthorityState) {
-		this.m_nIssuerState = m_nCertificationAuthorityState;
-	}
-
-	/**
-	 * @return the m_nIssuerState
-	 */
-	public int getIssuerState() {
-		return m_nIssuerState;
-	}
-
-	/**
 	 * @param m_nSignatureState the m_nSignatureState to set
 	 */
 	public void setSignatureState(int m_nSignatureState) {
@@ -352,6 +336,20 @@ public abstract class TreeElement
 	 */
 	public int getSignatureDateMode() {
 		return m_nSignatureDateMode;
+	}
+
+	/**
+	 * @param m_nCertificationAutorityState the m_nCertificationAutorityState to set
+	 */
+	public void setCertificationAutorityState(int m_nCertificationAutorityState) {
+		this.m_nCertificationAutorityState = m_nCertificationAutorityState;
+	}
+
+	/**
+	 * @return the m_nCertificationAutorityState
+	 */
+	public int getCertificationAutorityState() {
+		return m_nCertificationAutorityState;
 	}
 
 }

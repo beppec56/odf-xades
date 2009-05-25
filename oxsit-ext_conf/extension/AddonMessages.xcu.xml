@@ -247,6 +247,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">Rapporto</value>
 			</prop>
 		</node>
+		<node oor:name="id_pd_list_ca" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">List CA</value>
+				<value xml:lang="it">Lista CA</value>
+			</prop>
+		</node>
 		<node oor:name="id_title_cert_tree" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Qualified digital signatures (XadES IT)</value>
@@ -415,18 +421,19 @@ Roberto Resoli, developer
 		<node oor:name="revocation_not_yet_controlled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">eThe certificate revocation state is not yet verified</value>
-				<value xml:lang="it">eLo stato di revoca non è ancora verificato</value>
+				<value xml:lang="it">eLo stato di revoca non è ancora stato verificato</value>
 			</prop>
 		</node>
 		<node oor:name="revocation_controlled_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">rThe certificate revocation state was verified</value>
-				<value xml:lang="it">rLo stato di revoca è verificato</value>
+				<value xml:lang="it">rLo stato di revoca è stato verificato</value>
 			</prop>
 		</node>
 		<node oor:name="revocation_control_not_enabled" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">wThe certificate revocation state control is not enabled</value>
+				<value xml:lang="it">wIl controllo dello stato di revoca non è abilitato</value>
 			</prop>
 		</node>
 		<node oor:name="crl_cannot_be_accessed" oor:op="replace">
@@ -527,56 +534,57 @@ Roberto Resoli, developer
 		<!--
 		    CA control state
 		-->
-		<node oor:name="err_txt_ca_ok" oor:op="replace">
+		<node oor:name="ca_not_yet_checked" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertification Authority still to be checked.</value>
+				<value xml:lang="it">eCA ancora da controllare</value>
+			</prop>
+		</node>
+		<node oor:name="ca_cannot_be_checked" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertification Authority status cannot be checked.</value>
+				<value xml:lang="it">eLo stato della CA non è verificabile</value>
+			</prop>
+		</node>
+		<node oor:name="ca_not_trusted" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eCertification Authority not trusted.</value>
+				<value xml:lang="it">eCA NON accreditata</value>
+			</prop>
+		</node>
+		<node oor:name="ca_trusted" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">rCertification Authority trusted.</value>
 				<value xml:lang="it">rCA accreditata</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_ca_noctrl" oor:op="replace">
+		<node oor:name="ca_trusted_with_warning" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">wControllo certificato CNIPA non eseguito</value>
+				<value xml:lang="en">wCertification Authority trusted but with warnings.</value>
+				<value xml:lang="it">eCA accreditata, ma con problemi (vedi certificato CA)</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_ca_ko" oor:op="replace">
+		<node oor:name="ca_list_db_thumbp_not_checked" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">eCA non accreditata</value>
+				<value xml:lang="en">wThe CA DB thumbprint was not checked.</value>
+				<value xml:lang="it">wL'impronta del DB CA non è stata verificata</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_ca_stale" oor:op="replace">
+		<node oor:name="ca_not_compliant" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">wDB CA non aggiornato</value>
+				<value xml:lang="en">eThe CA certificate is not consistent with the requested standard.</value>
+				<value xml:lang="it">eCertificato CA non conforme (vedi certificato CA)</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_ca_nover" oor:op="replace">
+		<node oor:name="ca_list_db_missing" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">wImpronta DB CA non verificata</value>
+				<value xml:lang="en">eThe root certificate database is missing</value>
+				<value xml:lang="it">eIl data base CA manca.</value>
 			</prop>
 		</node>
-		<node oor:name="err_txt_ca_noact" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">wAggiornamento DB CA non attivo (opzioni)</value>
-			</prop>
-		</node>
-		<node oor:name="err_txt_ca_noroot" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">eManca certificato root CNIPA</value>
-			</prop>
-		</node>
-		<node oor:name="err_txt_ca_exp" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">eCA accreditata, certificato CA scaduto</value>
-			</prop>
-		</node>
-		<node oor:name="err_txt_ca_ko_exp" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">eCA non accreditata, certificato CA scaduto</value>
-			</prop>
-		</node>
-		<node oor:name="err_txt_ca_unkn" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">eCA non controllata (opzioni)</value>
-			</prop>
-		</node>
+		<!--
+		    Document signature state
+		-->
 		<node oor:name="err_txt_sign_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">rFirma valida</value>

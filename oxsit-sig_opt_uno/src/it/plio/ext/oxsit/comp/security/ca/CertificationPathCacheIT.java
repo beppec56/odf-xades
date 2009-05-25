@@ -295,7 +295,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 						System.getProperty("file.separator")+
 						"LISTACER_20090303.zip.p7m"
 						);
-				m_aCADbData = new CertificationAuthorities(m_xCC, aURL, true);
+				m_aCADbData = new CertificationAuthorities(m_xCC, aURL, false);
 			} catch (MalformedURLException e) {
 				m_aLogger.severe(e);
 			} catch (GeneralSecurityException e) {
