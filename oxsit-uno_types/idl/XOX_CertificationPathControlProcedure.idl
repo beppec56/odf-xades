@@ -73,7 +73,7 @@
 		<p>the passed frame and context are the one of the calling object, that is the ones to
 		be used to instantiate the dialog boxes needed for parameter editing</p>
 		*/
-		void	configureOptions([in] com::sun::star::frame::XFrame xFrame, 
+		void	configureOptions(	[in] com::sun::star::frame::XFrame xFrame, 
 							[in] com::sun::star::uno::XComponentContext xContext);
 
 		/** Returns a sequence of the Certification Autority certificates used for the<br>
@@ -83,7 +83,8 @@
 			the XOX_X509Certificate interface that can be used to retrieve the relevant<br>
 			Certification Autority data.</p> 
 		*/
-		sequence < com::sun::star::lang::XComponent > getCertificationAuthorities();
+		sequence < com::sun::star::lang::XComponent > getCertificationAuthorities(
+									[in] com::sun::star::frame::XFrame xFrame);
 
 	} ;
 
