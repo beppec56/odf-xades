@@ -249,7 +249,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
             //check for version, if version is not 3, exits, certificate cannot be used
             if(m_JavaCert.getVersion() != 3) {
     			m_xQc.setCertificateElementErrorState(
-    					GlobConstant.m_sQUALIFIED_CERTIFICATE_VERSION,
+    					GlobConstant.m_sX509_CERTIFICATE_VERSION,
     					CertificateElementState.INVALID_value);			
     			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
             	return m_aCertificateState;
@@ -265,12 +265,12 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 				m_JavaCert.checkValidity();
 			} catch (CertificateExpiredException e) {
 				m_xQc.setCertificateElementErrorState(
-						GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_AFTER,
+						GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
 			} catch (CertificateNotYetValidException e) {
 				m_xQc.setCertificateElementErrorState(
-						GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_BEFORE,
+						GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
 			}

@@ -150,20 +150,20 @@ public class GlobConstant {
 	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
 	
 	//service to hold a single certificate
-	public static final String m_sQUALIFIED_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.X509Certificate";
+	public static final String m_sX509_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.X509Certificate";
 	//names used to exchange extensions state
-	public static final String m_sQUALIFIED_CERTIFICATE_VERSION = "Version";		
-	public static final String m_sQUALIFIED_CERTIFICATE_ISSUER = "IssuerName";
-	public static final String m_sQUALIFIED_CERTIFICATE_NOT_BEFORE = "NotValidBefore";
-	public static final String m_sQUALIFIED_CERTIFICATE_NOT_AFTER = "NotValidAfter";	
-	public static final String m_sQUALIFIED_CERTIFICATE_CEXT = "CritExt";	
-	public static final String m_sQUALIFIED_CERTIFICATE_NCEXT = "NotCritExt";	
-	public static final String m_sQUALIFIED_CERTIFICATE_CERTPATH = "CertifPath";	
+	public static final String m_sX509_CERTIFICATE_VERSION = "Version";		
+	public static final String m_sX509_CERTIFICATE_ISSUER = "IssuerName";
+	public static final String m_sX509_CERTIFICATE_NOT_BEFORE = "NotValidBefore";
+	public static final String m_sX509_CERTIFICATE_NOT_AFTER = "NotValidAfter";	
+	public static final String m_sX509_CERTIFICATE_CEXT = "CritExt";	
+	public static final String m_sX509_CERTIFICATE_NCEXT = "NotCritExt";	
+	public static final String m_sX509_CERTIFICATE_CERTPATH = "CertifPath";	
 	
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 	
-	//service to hold a certificate compliance checker 
+	//service to hold a certificate compliance checker, for user certificate
 	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceIT";
 	//service to hold a certification path checker 
 	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathIT";

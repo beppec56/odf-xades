@@ -102,7 +102,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	public static final String			m_sImplementationName	= X509Certificate.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE };
+	public static final String[]		m_sServiceNames			= { GlobConstant.m_sX509_CERTIFICATE_SERVICE };
 	private XComponentContext m_xContext;
 	private XMultiComponentFactory m_xMCF;
 

@@ -344,7 +344,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
                 	//we need to set the certificate path of the current
                 	//main XOX_X509Certificate as invalid for italian signature
                 	m_xQc.setCertificateElementErrorState(
-        					GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH,
+        					GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
         					CertificateElementState.INVALID_value);			
                 	
                 	//set the CA state of m_xQc as not credited to Italian CNIPA structure
@@ -373,7 +373,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 //				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 //				aArguments[3] = oCertPath;
 
-				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
+				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 						aArguments, m_xCC);
 				//get the main interface
 				XOX_X509Certificate xQualCert = 
@@ -488,7 +488,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 */
 	@Override
 	public XComponent[] getCertificationAuthorities() {
-		// TODO Auto-generated method stub
+		initializeCADataBase(null);
 		return null;
 	}
 }

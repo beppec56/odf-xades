@@ -247,7 +247,7 @@ Roberto Resoli, developer
 				<value xml:lang="it">Rapporto</value>
 			</prop>
 		</node>
-		<node oor:name="id_pd_list_ca" oor:op="replace">
+		<node oor:name="id_pb_list_ca" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">List CA</value>
 				<value xml:lang="it">Lista CA</value>
@@ -281,6 +281,12 @@ Roberto Resoli, developer
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">The following certificates are available:</value>
 				<value xml:lang="it">Sono disponibili I seguenti certificati:</value>
+			</prop>
+		</node>
+		<node oor:name="id_title_mod_ca_cert" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Known Certification Authorities</value>
+				<value xml:lang="it">Autorità di Certificazione conosciute</value>
 			</prop>
 		</node>
 		<node oor:name="id_pb_sel_device" oor:op="replace">

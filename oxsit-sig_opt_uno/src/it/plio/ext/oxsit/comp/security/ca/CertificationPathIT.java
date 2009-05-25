@@ -87,6 +87,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	private XFrame m_xFrame;
 
 	private CertificationAuthorityState m_aLastCAState;
+	private	XComponent		m_xaCertificationAutorities;
 
 	/**
 	 * 
@@ -209,6 +210,52 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 		return m_aLastCAState;
 	}
 
+	private boolean checkSubComponent() {
+		try {
+			m_axoxChildProc = null;
+			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
+
+			try {
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				//yes, grab it and set our component internally
+				m_aLogger.info("Cache found!");
+				m_axoxChildProc = 
+					(XOX_CertificationPathControlProcedure)
+					UnoRuntime.queryInterface(
+							XOX_CertificationPathControlProcedure.class, xComp);
+			} catch (NoSuchElementException ex ) {
+				//no, instantiate it and add to the singleton 
+				m_aLogger.info("Cache NOT found!");
+				//create the object
+				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				//add it the singleton
+				//now use it
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
+				if(xComp != null) {
+					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					m_axoxChildProc = (XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, xComp);
+					return true;
+				}
+				else
+					throw (new IllegalArgumentException());
+			} catch (IllegalArgumentException ex ) {
+				m_aLogger.severe(ex);
+			} catch (Throwable ex ) { 
+				m_aLogger.severe(ex);
+			}
+		} catch (ClassCastException ex) {
+			m_aLogger.severe(ex);
+		} catch (ServiceNotFoundException ex) {
+			m_aLogger.severe(ex);
+		} catch (NoSuchMethodException ex) {
+			m_aLogger.severe(ex);
+		} catch (Throwable ex ) { 
+			m_aLogger.severe(ex);
+		}
+
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
@@ -284,7 +331,16 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 */
 	@Override
 	public XComponent[] getCertificationAuthorities() {
-		// TODO Auto-generated method stub
+		//check if already done
+		if(checkSubComponent())
+			if(m_axoxChildProc != null) {
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
+				if(xComp != null) {
+					return m_axoxChildProc.getCertificationAuthorities();
+				}
+			}
+			else
+				m_aLogger.info("CANNOT execute child");
 		return null;
 	}
 }
