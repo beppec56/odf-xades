@@ -62,9 +62,6 @@ XOX_AvailableSSCDs interface or</p>
 		/** the state of the CA (Certification Authority) control.
 	 	*/
 		[attribute, readonly] long CertificationAuthorityState;
-		/** the conditions of the CA (Certification Authority) control.
-	 	*/
-		[attribute, readonly] long CertificationAuthorityStateConditions;
 		/** the object used to control the certification path of this certificate
 		*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificationPathControlObj;

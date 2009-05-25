@@ -32,12 +32,7 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** Interface of a Qualified X509 Certificate
-<p>The certificate accessed through this interface can only be created in two ways:</p>
-<p>by instantiating an AvailableSSCDs service and callig the scanDevices() method of its
-XOX_AvailableSSCDs interface or</p>
-<p>by opening an ODF document that contains one it it in its XAdES signature.</p>
-<p>See service QualifiedCertificate for details.</p>
+/** Interface of checker to verify the certification path of a X509 Certificate.
  */
 	interface XOX_CertificationPathControlProcedure 
 	{
@@ -80,6 +75,16 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		void	configureOptions([in] com::sun::star::frame::XFrame xFrame, 
 							[in] com::sun::star::uno::XComponentContext xContext);
+
+		/** Returns a sequence of the Certification Autority certificates used for the<br>
+			control this interface implements, e.g. the ones unsed to search for the<br>
+			certification path.
+			<p>The returned XComponent object sequence is a sequence of object implementing<br>
+			the XOX_X509Certificate interface that can be used to retrieve the relevant<br>
+			Certification Autority data.</p> 
+		*/
+		sequence < com::sun::star::lang::XComponent > getCertificationAuthorities();
+
 	} ;
 
   }; }; }; }; };  };

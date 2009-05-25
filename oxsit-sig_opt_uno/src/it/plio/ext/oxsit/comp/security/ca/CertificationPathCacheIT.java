@@ -482,4 +482,13 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 		if(_newState.getValue() > m_aCertificateState.getValue())
 			m_aCertificateState = _newState;
 	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
+	 */
+	@Override
+	public XComponent[] getCertificationAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

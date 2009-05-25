@@ -551,7 +551,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				sPathGraph);
 		
 			//call the certificate adder...
-			addQualifiedCertificateToTree(xNode, xCPath);
+			addX509CertificateToTree(xNode, xCPath);
 		}
 		else {//add the empty node only if there is an error
 			if( aState != CertificateElementState.OK_value)
@@ -561,15 +561,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	////// methods to manage the certificate display
-	protected void addQualifiedCertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
+	protected void addX509CertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
 		//now set the certificate graphic state
 
-
 		//and then sets the strings, according to the state from the certificate itself
 //		aNewNode.m_sStringList[CertificateTreeElement.] = m_sCertificateState[_aCertif.getCertificateState()]; 
-		
+
 		aNewNode.setCertificateData(_aCertif);
 		//connect it to the right dialog pane
 		aNewNode.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));

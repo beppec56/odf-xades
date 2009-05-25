@@ -115,7 +115,6 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	private int m_nCertificateStateConditions;
 	
 	private int m_nCAState;
-	private int m_nCAStateConditions;
 
 	protected boolean	m_bDisplayOID;
 
@@ -463,22 +462,13 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	public int getCertificateStateConditions() {
 		return m_nCertificateStateConditions;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificationAuthorityState()
 	 */
 	@Override
 	public int getCertificationAuthorityState() {
 		return m_nCAState;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificationAuthorityStateConditions()
-	 */
-	@Override
-	public int getCertificationAuthorityStateConditions() {
-		// TODO Auto-generated method stub
-		return m_nCAStateConditions;
 	}
 
 	/* (non-Javadoc)
@@ -496,7 +486,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	public void setCertificationPath(XOX_X509Certificate arg0) {
 		m_xoxCertificationPath = arg0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getDEREncoded()
 	 */
@@ -585,7 +575,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_aLogger.severe("setDEREncoded", e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateComplianceControl()
 	 */
@@ -609,13 +599,12 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		m_xoxCertificateComplianceControlProcedure = xCert;
 		
 	}	
-	
+
 	////////////////// internal functions
 	/**
 	 * @param arg0 
 	 * 
 	 */
-	
 	protected void verifyCompliance(XFrame arg0) {
 		if(m_xoxCertificateComplianceControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
@@ -657,6 +646,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			}
 		}
 	}
+
 	protected void initThumbPrints() {
 		//obtain a byte block of the entire certificate data
 		ByteArrayOutputStream   bOut = new ByteArrayOutputStream();

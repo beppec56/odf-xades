@@ -103,6 +103,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 //FIXME		setCertificateGraficStateValue(_aCertif.getCertificateGraficStateValue());
 		setCertificateState(_aCertif.getCertificateState());
 		setCertificateStateConditions(_aCertif.getCertificateStateConditions());
+		setCertificationAutorityState(_aCertif.getCertificationAuthorityState());
 		initialize();
 		//init it correctly		
 		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ _aCertif.getNotValidBefore();

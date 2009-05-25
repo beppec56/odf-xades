@@ -235,7 +235,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 								//perform certificate verification
 								oCertifs[idx1].verifyCertificate(m_xParentFrame);
 								//then add to the tree control
-								addQualifiedCertificateToTree(xCertifNode, oCertifs[idx1]);
+								addX509CertificateToTree(xCertifNode, oCertifs[idx1]);
 							}
 						}
 					}
