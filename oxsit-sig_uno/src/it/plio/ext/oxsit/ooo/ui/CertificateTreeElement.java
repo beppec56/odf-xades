@@ -22,14 +22,13 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.uno.Exception;
-import com.sun.star.uno.XComponentContext;
-
-import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.Exception;
+import com.sun.star.uno.XComponentContext;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.
@@ -60,8 +59,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
 		setNodeType(TreeNodeType.CERTIFICATE);
-//
-		getLogger().enableLogging();
+//		getLogger().enableLogging();
 		getLogger().ctor();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);

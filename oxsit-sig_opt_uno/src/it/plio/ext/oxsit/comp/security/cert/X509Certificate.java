@@ -542,12 +542,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 //FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
 			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
 			IDynamicLogger aDlgH = null;
-			if(m_bIsFromUI)
-				aDlgH = new DynamicLoggerDialog(this,m_xContext);
-			else
-				aDlgH = new DynamicLogger(this,m_xContext);				
-			aDlgH.enableLogging();
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, aDlgH);
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, m_aLogger);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();
@@ -764,16 +759,17 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_sIssuerName = m_sIssuerName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
 			((m_bDisplayOID) ? (" (OID: "+oidv.elementAt(i).toString()+")" ): "") +" \n";
 			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
-		}		
+		}
 		//look for givename (=nome di battesimo)
 		m_sIssuerDisplayName = "";			
 		//see BC source code for details about DefaultLookUp behaviour
-		DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
-		if(hm.containsKey(oix)) {
-			String tmpName = hm.get(oix).toString();
-			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
-			if(hm.containsKey(oix))
-				m_sIssuerDisplayName = tmpName +" "+hm.get(oix).toString();
+		DERObjectIdentifier oix; 
+		if(m_sIssuerDisplayName.length() == 0) {
+			//check for O
+			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("o")); 
+			if(hm.containsKey(oix)) {
+				m_sIssuerDisplayName = hm.get(oix).toString();
+			}
 		}
 		if(m_sIssuerDisplayName.length() == 0) {
 			//check for CN

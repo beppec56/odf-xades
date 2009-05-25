@@ -50,7 +50,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		XKeyListener,
 		XTreeExpansionListener, 
 		XSelectionChangeListener {
-
+	protected String 				m_sListCABtn = "listcab"; //lists the available CA
 	protected String 				m_sVerifyBtn = "verifyb"; //verify a signature
 	protected String 				m_sRemoveBtn = "remob";  //remove a signature
 //	protected String 				sCountSig = "countsigb";	//countersign (not yet implemented) 
@@ -81,11 +81,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 	protected String 			m_sBtn_AddCertLabel = "id_pb_add_cert";
 	protected String 			m_sBtn_RemoveCertLabel = "id_pb_rem_cert";
 	protected String 			m_sBtn_SelDevice = "id_pb_sel_device";
+	protected String 			m_sBtn_ListCA = "id_pb_list_ca";
 
 	//title for dialog and tree structure root element
 	protected String 			m_sDlgListCertTitle = "id_title_mod_cert_tree";	
 	protected String 			m_sFt_Hint_Doc = "id_title_mod_cert_treew";
-	
+	protected String 			m_sDlgListCACertTitle = "id_title_mod_ca_cert";
+
 	//Strings used for certificate elements
 	private String				m_sLabelVersion = "id_cert_version";
 	private String				m_sLabelSerialNumer = "id_cert_ser_numb";
@@ -201,6 +203,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sBtn_SelDevice = m_aRegAcc.getStringFromRegistry( m_sBtn_SelDevice );
 			m_sBtn_AddCertLabel = m_aRegAcc.getStringFromRegistry( m_sBtn_AddCertLabel );
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( m_sFt_Hint_Doc );
+			m_sBtn_ListCA = m_aRegAcc.getStringFromRegistry( m_sBtn_ListCA );
+			m_sDlgListCACertTitle = m_aRegAcc.getStringFromRegistry( m_sDlgListCACertTitle );
 
 //strings for certificate tre control display
 			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );
@@ -488,6 +492,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
+	protected XMutableTreeNode addToTreeRootHelper() {		
+		//add the device to the dialog, a single node, with the device as a description
+		return 		m_xTreeDataModel.createNode("Elenco CA", true);
+	}
+	
 	protected XMutableTreeNode addSSCDToTreeRootHelper(XOX_SSCDevice _aSSCDev) {		
 		//add the device to the dialog, a single node, with the device as a description
 		SSCDTreeElement aSSCDnode = new SSCDTreeElement(m_xContext,m_xMCF);
@@ -541,7 +550,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		String sPathGraph = "";
 		XOX_X509Certificate xCPath = _aCertif.getCertificationPath();
 
-		int aState = _aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_CERTPATH);
+		int aState = _aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_CERTPATH);
 		sPathGraph = m_sCertificateElementGraphicName[aState];
 
 		XMutableTreeNode xNode;
@@ -597,18 +606,18 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//now add the rest of the data
 		//add the version
 		addVariablePitchTreeElementAndState(xaCNode, TreeNodeType.VERSION, m_sLabelVersion, _aCertif.getVersion(),
-				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_VERSION));		
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_VERSION));		
 		//add the serial number
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SERIAL_NUMBER,m_sLabelSerialNumer,_aCertif.getSerialNumber());
 		//add the issuer full description		
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.ISSUER,m_sLabelIssuer,_aCertif.getIssuerName(),
-				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_ISSUER));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_ISSUER));
 		//add the not valid before
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_FROM,m_sLabelNotValidBefore,_aCertif.getNotValidBefore(),
-				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_BEFORE));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE));
 		//add the not valid after
 		addVariablePitchTreeElementAndState(xaCNode,TreeNodeType.VALID_TO,m_sLabelNotValidAfter,_aCertif.getNotValidAfter(),
-				_aCertif.getCertificateElementErrorState(GlobConstant.m_sQUALIFIED_CERTIFICATE_NOT_AFTER));
+				_aCertif.getCertificateElementErrorState(GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER));
 		//add the subject
 		addVariablePitchTreeElement(xaCNode,TreeNodeType.SUBJECT,m_sLabelSubject,_aCertif.getSubjectName());
 		//add the subject signature algorithm

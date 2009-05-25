@@ -22,15 +22,12 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 
-import java.security.Principal;
-import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,7 +44,6 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
-import java.lang.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -166,8 +162,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 	public BaseCertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		setNodeType(TreeNodeType.CERTIFICATE);
 		setLogger(new DynamicLogger(this,_xContext));
-//
-		getLogger().enableLogging();
+//		getLogger().enableLogging();
 		setMultiComponentFactory(_xMCF);
 		setComponentContext(_xContext);
 		setCertificateState(CertificateState.NOT_YET_VERIFIED_value);

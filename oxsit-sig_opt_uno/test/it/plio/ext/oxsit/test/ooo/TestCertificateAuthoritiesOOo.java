@@ -107,7 +107,7 @@ public class TestCertificateAuthoritiesOOo {
 							"LISTACER_20090303.zip.p7m"
                 			);
                 
-                	CertificationAuthorities aCert = new CertificationAuthorities(xCC,aURL,true);
+                	CertificationAuthorities aCert = new CertificationAuthorities(null,xCC,aURL,true);
             }
         }
         catch(Exception e) {

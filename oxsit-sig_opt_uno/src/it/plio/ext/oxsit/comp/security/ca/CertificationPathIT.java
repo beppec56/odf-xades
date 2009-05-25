@@ -210,7 +210,8 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 		return m_aLastCAState;
 	}
 
-	private boolean checkSubComponent() {
+	private boolean checkSubComponent() throws 
+			ClassCastException, Exception {
 		try {
 			m_axoxChildProc = null;
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
@@ -223,6 +224,7 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 					(XOX_CertificationPathControlProcedure)
 					UnoRuntime.queryInterface(
 							XOX_CertificationPathControlProcedure.class, xComp);
+				return true;
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
@@ -239,21 +241,19 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 				else
 					throw (new IllegalArgumentException());
 			} catch (IllegalArgumentException ex ) {
-				m_aLogger.severe(ex);
-			} catch (Throwable ex ) { 
-				m_aLogger.severe(ex);
+//				m_aLogger.severe(ex);
+				throw (ex);
 			}
 		} catch (ClassCastException ex) {
-			m_aLogger.severe(ex);
+//			m_aLogger.severe(ex);
+			throw (ex);
 		} catch (ServiceNotFoundException ex) {
-			m_aLogger.severe(ex);
+//			m_aLogger.severe(ex);
+			throw (ex);
 		} catch (NoSuchMethodException ex) {
-			m_aLogger.severe(ex);
-		} catch (Throwable ex ) { 
-			m_aLogger.severe(ex);
+//			m_aLogger.severe(ex);
+			throw (ex);
 		}
-
-		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -330,17 +330,20 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
 	 */
 	@Override
-	public XComponent[] getCertificationAuthorities() {
+	public XComponent[] getCertificationAuthorities(XFrame _aFrame) {
 		//check if already done
-		if(checkSubComponent())
-			if(m_axoxChildProc != null) {
-				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
-				if(xComp != null) {
-					return m_axoxChildProc.getCertificationAuthorities();
+		try {
+			if(checkSubComponent())
+				if(m_axoxChildProc != null) {
+					return m_axoxChildProc.getCertificationAuthorities(_aFrame);
 				}
-			}
-			else
-				m_aLogger.info("CANNOT execute child");
+				else
+					m_aLogger.info("CANNOT execute child");
+		} catch (ClassCastException e) {
+			m_aLogger.severe(e);
+		} catch (Throwable e) {
+			m_aLogger.severe(e);
+		}
 		return null;
 	}
 }

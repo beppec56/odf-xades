@@ -149,7 +149,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void addButtonPressed() {
-		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
 		DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs( m_xParentFrame, m_xContext, m_xMCF );
 		try {

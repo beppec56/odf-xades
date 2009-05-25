@@ -393,7 +393,7 @@ public class AvailableSSCDs extends ComponentBase
 								aArguments[3] = oCertPath;
 								aArguments[4] = oCertRev;								
 
-								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sQUALIFIED_CERTIFICATE_SERVICE,
+								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 										aArguments, m_xCC);
 								//get the main interface
 								XOX_X509Certificate xQualCert = 

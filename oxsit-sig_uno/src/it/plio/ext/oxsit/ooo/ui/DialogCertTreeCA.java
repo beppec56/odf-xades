@@ -22,14 +22,9 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import java.net.URISyntaxException;
-
-import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
-import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
@@ -41,7 +36,6 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
-import com.sun.star.io.IOException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
@@ -51,18 +45,19 @@ import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
 
 /**
+ * lists the CA certificates available
  * @author beppec56
  *
  */
-public class DialogCertTreeSSCDs extends DialogCertTreeBase 
+public class DialogCertTreeCA extends DialogCertTreeBase 
 		implements	IDialogCertTreeBase,
 		XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
 		{
 
-	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
+	private static final String DLG_CERT_TREE = "DialogCertTreeCA";
 
 	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
-
+	
 	/**
 	 * Note on the display:
 	 * two ways on right pane:
@@ -78,7 +73,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 * @param context
 	 * @param _xmcf
 	 */
-	public DialogCertTreeSSCDs(XFrame frame, XComponentContext context,
+	public DialogCertTreeCA(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
 		// TODO Auto-generated constructor stub
@@ -99,15 +94,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
 		m_logger.entering("initialize");
-		insertButton(this,
-				CertifTreeDlgDims.DS_COL_PB2(),
-//				CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
-				CertifTreeDlgDims.DS_ROW_4(),
-				CertifTreeDlgDims.dsBtnWidthCertTree(),
-				m_sVerifyBtn,		//use the verify, so we'll end up in similar function
-				m_sBtn_ListCA,
-				(short) PushButtonType.STANDARD_value);
-
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB3(),
 					CertifTreeDlgDims.DS_ROW_4(),
@@ -128,13 +114,38 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 					CertifTreeDlgDims.dsWidth(), "");
 
 			//must be called AFTER the local init
-			super.initializeLocal(DLG_CERT_TREE, m_sDlgListCertTitle, posX, posY);
+			super.initializeLocal(DLG_CERT_TREE, m_sDlgListCACertTitle, posX, posY);
 
 //			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
 //					super.m_xDialogControl );
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
+			//instantiate the control to get the certificate list
+			try {
+				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xContext);
+//object created, we can procced
+				XOX_CertificationPathControlProcedure aCtl =
+					(XOX_CertificationPathControlProcedure)
+					UnoRuntime.queryInterface(
+							XOX_CertificationPathControlProcedure.class, oCertPath);
+				XComponent[] aList = aCtl.getCertificationAuthorities(m_xParentFrame);
+				if(aList != null) {
+					XMutableTreeNode xCertifNode = addToTreeRootHelper();
+					//iterate through the list and set the element in the tree, before display
+					for(int idx1=0; idx1<aList.length;idx1++) {
+						XOX_X509Certificate xoxCert = (XOX_X509Certificate)
+									UnoRuntime.queryInterface(XOX_X509Certificate.class, aList[idx1]);
+						//perform certificate verification
+						xoxCert.verifyCertificate(m_xParentFrame);
+						//then add to the tree control
+						addX509CertificateToTree(xCertifNode, xoxCert);
+					}
+
+				}
+			} catch (Throwable e) {
+				m_logger.severe(e);
+			}
 	}
 
 	@Override
@@ -161,17 +172,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
 		m_logger.info("cambio stato certificato");
-		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
-		Object aObj = xAnode.getDataValue();
-		if(aObj instanceof CertificateTreeElement) {
-			CertificateTreeElement ct = (CertificateTreeElement)aObj;
-			int avl = ct.getCertificateGraficStateValue();
-			avl++;
-			if(avl >= CertificateGraphicDisplayState.LAST_STATE_value)
-				avl = CertificateGraphicDisplayState.NOT_VERIFIED_value;
-			ct.setCertificateGraficStateValue(avl);
-			xAnode.setNodeGraphicURL(m_sCertificateValidityGraphicName[avl]);
-		}
 //		addOneSignature();		
 	}
 
@@ -189,21 +189,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
-		String m_sExtensionSystemPath;
 		//not implemented here, next code is for test only:
-		try {
-			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xContext);
-			m_logger.ctor("extension installed in: "+m_sExtensionSystemPath);
-			String libPath=System.getProperty("java.library.path");
-			//first the current extension path into the library path
-			libPath = m_sExtensionSystemPath + System.getProperty("path.separator") + libPath;
-			System.setProperty("java.library.path", libPath);
-			m_logger.log("library path is: "+ System.getProperty("java.library.path"));		
-		} catch (URISyntaxException e) {
-			m_logger.severe("ctor", "", e);
-		} catch (java.io.IOException e) {
-			m_logger.severe("ctor", "", e);
-		}		
+		m_logger.log("list Ca available");
 	}
 
 	/* (non-Javadoc)
@@ -212,47 +199,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
-		m_logger.info("Seleziona dispositivo");
-//		addOneCertificate();
-		//instantiate the SSCDs service
-		if(m_axoxAvailableSSCDs != null) {
-			XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
-			if(xComp != null)
-				xComp.dispose();
-		}
-		m_axoxAvailableSSCDs = null;
-		try {
-			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
-			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
-			if(m_axoxAvailableSSCDs != null) {
-				//FIXME: may be we should remove the element from the tree only when new device
-				// scan finished?
-				//empy the tree, then add the new certificates
-				removeAllTreeNodes();
-				m_axoxAvailableSSCDs.scanDevices(m_xParentFrame,m_xContext);//true because we are calling from a GUI interface
-				m_axoxAvailableSSCDs.getAvailableSSCDevices();
-				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
-				if(xDevices != null) {
-					//add the new available certificates
-					for(int idx = 0; idx < xDevices.length; idx++) {
-						XOX_SSCDevice oSSCDev = xDevices[idx];
-// add this node to the tree
-						XMutableTreeNode xCertifNode = addSSCDToTreeRootHelper(oSSCDev);
-						if(oSSCDev.getHasX509Certificates() > 0) {
-							XOX_X509Certificate[] oCertifs = oSSCDev.getX509Certificates();
-							for(int idx1=0; idx1<oCertifs.length;idx1++) {
-								//perform certificate verification
-								oCertifs[idx1].verifyCertificate(m_xParentFrame);
-								//then add to the tree control
-								addX509CertificateToTree(xCertifNode, oCertifs[idx1]);
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			m_logger.severe("selectButtonPressed", e);
-		}
+		m_logger.info("do operation on selected CA");
 	}
 
 	/* (non-Javadoc)
@@ -260,26 +207,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 */
 	@Override
 	public void verifyButtonPressed() {
-		//call the dialog to show the CA tree list
-		DialogCertTreeCA aDialog1 = new DialogCertTreeCA( m_xParentFrame, m_xContext, m_xMCF );
-		try {
-			int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
-			int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT;//to see the underlying certificates already in the document
-			aDialog1.initialize( BiasX, BiasY);
-			aDialog1.executeDialog();
-			aDialog1.disposeElements();
-		} catch (BasicErrorException e) {
-			m_logger.severe("actionPerformed", "", e);
-		}
-		try {
-			aDialog1.executeDialog();
-			return;
-		} catch (BasicErrorException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("actionPerformed", "", e);
-			return;
-		}
-		
+		//not implemented here
+		//execute a verification of the CA certificate, using the available filters 
 	}	
 
 	/**

@@ -46,8 +46,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.bouncycastle.cms.CMSException;
 
@@ -110,6 +113,8 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	private String m_bUseGUI;
 
 	private X509CertRL 					CRL;
+
+	private XComponent[] 				m_aCAList;
 
 
 	/**
@@ -295,7 +300,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 						System.getProperty("file.separator")+
 						"LISTACER_20090303.zip.p7m"
 						);
-				m_aCADbData = new CertificationAuthorities(m_xCC, aURL, false);
+				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, false);
 			} catch (MalformedURLException e) {
 				m_aLogger.severe(e);
 			} catch (GeneralSecurityException e) {
@@ -487,8 +492,56 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
 	 */
 	@Override
-	public XComponent[] getCertificationAuthorities() {
-		initializeCADataBase(null);
+	public XComponent[] getCertificationAuthorities(XFrame _aFrame) {
+		initializeCADataBase(_aFrame);
+		if(m_aCADbData != null) {
+			if(m_aCAList != null)
+				return m_aCAList;
+
+			int numCA = m_aCADbData.getCANumber();
+			if(numCA > 0) {
+				m_aCAList = new XComponent[numCA];
+
+				Collection<X509Certificate> c = m_aCADbData.getCA();
+				Iterator<X509Certificate> i = c.iterator();
+				int idx = 0;
+				while(i.hasNext()) {
+					X509Certificate cert = i.next();
+					//prepare objects for subordinate service
+					Object[] aArguments = new Object[2];
+	//				byte[] aCert = cert.getEncoded();
+					//set the certificate raw value
+					try {
+						//this are supposed to be CA, so we'll add the 
+						//ca test functions known by this component
+						aArguments[0] = cert.getEncoded();
+						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
+	/*				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+					aArguments[3] = oCertPath;
+					aArguments[4] = oCertRev;*/
+
+						Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
+								aArguments, m_xCC);
+						//get the main interface
+						XOX_X509Certificate xQualCert = 
+							(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
+						if(xQualCert != null) {
+							XComponent com = 
+								(XComponent)UnoRuntime.queryInterface(XComponent.class, xQualCert);
+							m_aCAList[idx++] = com;
+						}
+					} catch (CertificateEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}//aCert;				
+					catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return m_aCAList;
+			}
+		}
 		return null;
 	}
 }

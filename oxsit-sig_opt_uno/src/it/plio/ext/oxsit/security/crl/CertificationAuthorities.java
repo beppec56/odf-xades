@@ -46,7 +46,9 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -55,6 +57,7 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
+import com.sun.star.task.XStatusIndicator;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -70,7 +73,7 @@ public class CertificationAuthorities {
 
     private String auth = null;
 
-    private HashMap authorities;
+    private HashMap<X500Principal, X509Certificate> authorities;
 
     private X509CertRL crls;
 
@@ -79,6 +82,8 @@ public class CertificationAuthorities {
     private	IDynamicLogger	m_aLogger;
 
 	private XComponentContext m_xCC;
+	
+	private XStatusIndicator m_xStatus;
 
     static {
         Security
@@ -94,7 +99,7 @@ public class CertificationAuthorities {
      * esplicitamente il metodo addCertificateAuthority per inserire nella lista
      * le CA volute.
      */
-    public CertificationAuthorities(XComponentContext _cc) {
+    public CertificationAuthorities(XStatusIndicator _xStatus, XComponentContext _cc) {
         authorities = new HashMap();
         debug = false;
         // debug = true;
@@ -102,7 +107,7 @@ public class CertificationAuthorities {
         m_xCC = _cc;
         m_aLogger = new DynamicLogger(this,m_xCC);
         m_aLogger.enableLogging();
-        
+        m_xStatus = _xStatus;
     }
 
     /**
@@ -120,9 +125,9 @@ public class CertificationAuthorities {
      * @throws IOException
      *             any error during ZIP file reading
      */
-    public CertificationAuthorities(XComponentContext _cc, InputStream is, boolean debug)
+    public CertificationAuthorities(XStatusIndicator _xStatus, XComponentContext _cc, InputStream is, boolean debug)
             throws GeneralSecurityException, IOException {
-        this(_cc);
+        this(_xStatus,_cc);
         this.setDebug(debug);
         byte[] bcer = new byte[4096];
         ZipEntry ze = null;
@@ -173,9 +178,11 @@ public class CertificationAuthorities {
      * Carica i certificati delle CA da un file ZIP presente all'indirizzo
      * specificato. <br>
      * Non vengono visualizzati i messaggi di debug
+     * @param statusIndicator 
      * 
      * @param url
      *            URL where you can fin ZIP file containg CA
+     * @param b 
      * @throws GeneralSecurityException
      *             if no CA is loaded
      * @throws IOException
@@ -183,9 +190,9 @@ public class CertificationAuthorities {
      * @throws CMSException 
      * 
      */
-    public CertificationAuthorities(XComponentContext _cc,URL url) throws GeneralSecurityException,
+    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc,URL url) throws GeneralSecurityException,
             IOException, CMSException {
-        this(_cc,url, false);
+        this(statusIndicator, _cc,url, false);
     }
 
     /**
@@ -193,6 +200,7 @@ public class CertificationAuthorities {
      * No debug message is shown.<BR>
      * Carica i certificati delle CA da un file ZIP presente all'indirizzo
      * specificato
+     * @param statusIndicator 
      * 
      * @param _CmsFileURL
      *            URL where you can fin ZIP file containg CA
@@ -204,12 +212,12 @@ public class CertificationAuthorities {
      * @throws IOException
      *             any error during ZIP file reading
      */
-    public CertificationAuthorities(XComponentContext _cc, URL _CmsFileURL, boolean debug)
+    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc, URL _CmsFileURL, boolean debug)
             throws GeneralSecurityException, IOException, CMSException {
         // da testare!!
         // this(new ZipInputStream(url.openStream()), debug);
 
-        this(_cc,getCmsInputStream(_CmsFileURL), debug);
+        this(statusIndicator, _cc,getCmsInputStream(_CmsFileURL), debug);
     }
 
     //ROB duplicato del metodo in VerifyTask, da fattorizzare
@@ -277,7 +285,8 @@ public class CertificationAuthorities {
             if (caCert.getIssuerDN().equals(caCert.getSubjectDN())) {
                 caCert.verify(caCert.getPublicKey());
                 authorities.put(caCert.getIssuerX500Principal(), caCert);
-                trace("Inserita CA: " + caCert.getIssuerX500Principal().getName()+ " "+caCert.getIssuerX500Principal());
+                trace("Inserita CA: " + caCert.getIssuerX500Principal().getName("CANONICAL")+ " "+caCert.getIssuerX500Principal());
+                statusText(""+caCert.getIssuerX500Principal().getName("CANONICAL"));
             } else {
                 throw new CertificateException("Non self-signed: "+caCert.getSubjectX500Principal().getName());
             }
@@ -310,7 +319,6 @@ public class CertificationAuthorities {
                 cert = cf.generateCertificate(bis);
             }
         } catch (GeneralSecurityException ge) {
-            // trace(ge);
             throw ge;
         }
 
@@ -357,6 +365,36 @@ public class CertificationAuthorities {
     	return getCACertificate(aCert.getIssuerX500Principal()); 
     }
     
+
+    /**
+     * Returns the number of CA Restituisce il numero delle CA riconosciute
+     * dall'applicazione
+     * 
+     * @return the number of CA
+     */
+    public int getCANumber() {
+        return authorities.size();
+    }
+
+    /**
+     * Returns the CA list as a Set of String Fornisce la lista delle CA
+     * riconosciute sotto forma di Set di stringhe
+     * 
+     * @return the list of CA
+     */
+    public Set<X500Principal> getCANames() {
+        return authorities.keySet();
+    }
+
+    /**
+     * Returns a Collection of CA Fornisce una Collection delle CA riconosciute
+     * 
+     * @return Collection of CA
+     */
+    public Collection<X509Certificate> getCA() {
+        return authorities.values();
+    }
+    
     /** ****************** PRIVATE PART****************************************** */
 
     private void trace(String s) {
@@ -375,5 +413,10 @@ public class CertificationAuthorities {
         if (debug && t != null) {
         	m_aLogger.severe(_mex,t);
         }
+    }
+    
+    private void statusText(String _mex) {
+    	if(m_xStatus != null)
+    		m_xStatus.setText(_mex);
     }
 }
