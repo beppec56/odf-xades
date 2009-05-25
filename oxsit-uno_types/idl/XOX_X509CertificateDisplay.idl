@@ -36,18 +36,10 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** Interface of a Qualified X509 Certificate
-<p>The certificate accessed through this interface can only be created in two ways:</p>
-<p>by instantiating an AvailableSSCDs service and callig the scanDevices() method of its
-XOX_AvailableSSCDs interface or</p>
-<p>by opening an ODF document that contains one it it in its XAdES signature.</p>
-<p>See service QualifiedCertificate for details.</p>
+/** Interface of a X509 Certificate display data.
  */
 	interface XOX_X509CertificateDisplay
 	{
-		/** the DER encoded form of the certificate.
-		 */
-		[attribute, readonly] sequence< byte > DEREncoded ;
 		/** the human readable rapresentation of the holder (subject) of this certificate.
 		<p>This string is formed from the SubjectDN certificate field in the following way:</p>
 		<p>If givenName and surname both exist, they are used togeter to form a string in the form of
@@ -130,7 +122,7 @@ XOX_AvailableSSCDs interface or</p>
 		/**
 		@param DEREncoded the DER byte stream of the certificate to render in text.
 		*/
-		boolean prepareDisplayData( [in] sequence< byte > DEREncoded );
+		boolean prepareDisplayStrings( [in] sequence< byte > DEREncoded );
 
 	} ;
 

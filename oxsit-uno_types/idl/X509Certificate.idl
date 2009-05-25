@@ -41,6 +41,10 @@
 		/** This interface gives access to the X509 qualified certificate this service represents.
 		*/
 		interface it::plio::ext::oxsit::security::cert::XOX_X509Certificate;
+		/** This interface is used in this service as a connection to the
+		real XOX_X509CertificateDisplay, that is added at instantiation time. 
+		*/
+		interface it::plio::ext::oxsit::security::cert::XOX_X509CertificateDisplay;
 	} ;
 
   }; }; }; }; };  };
