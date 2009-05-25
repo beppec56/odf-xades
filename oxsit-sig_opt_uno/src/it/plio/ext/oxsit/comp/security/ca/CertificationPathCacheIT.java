@@ -31,7 +31,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -223,7 +223,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
 	 */
 	@Override
-	public CertificateAuthorityState getCertificationAuthorityState() {
+	public CertificationAuthorityState getCertificationAuthorityState() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -232,7 +232,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
+	public CertificationAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
 //check for certificate

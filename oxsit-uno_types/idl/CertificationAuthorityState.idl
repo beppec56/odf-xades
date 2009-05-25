@@ -20,14 +20,14 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_CertificateAuthorityState_idl__
-#define __it_plio_ext_oxsit_security_cert_CertificateAuthorityState_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_CertificationAuthorityState_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificationAuthorityState_idl__
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** State of a Certificate Authority (after control)
  */
-	enum CertificateAuthorityState
+	enum CertificationAuthorityState
 	{
 		/** the Certificate Authority still to be checked.
 		 */

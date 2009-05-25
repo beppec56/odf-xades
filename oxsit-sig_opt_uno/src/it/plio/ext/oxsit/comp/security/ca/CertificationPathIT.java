@@ -31,7 +31,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -85,6 +85,8 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
     private XOX_CertificationPathControlProcedure m_axoxChildProc;
 
 	private XFrame m_xFrame;
+
+	private CertificationAuthorityState m_aLastCAState;
 
 	/**
 	 * 
@@ -203,16 +205,15 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
 	 */
 	@Override
-	public CertificateAuthorityState getCertificationAuthorityState() {
-		// TODO Auto-generated method stub
-		return null;
+	public CertificationAuthorityState getCertificationAuthorityState() {
+		return m_aLastCAState;
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
+	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		m_aLogger.log("verifyCertificationPath");
@@ -257,8 +258,11 @@ public class CertificationPathIT extends ComponentBase //help class, implements 
 
 			if(m_axoxChildProc != null) {
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
-				if(xComp != null)
-					return m_axoxChildProc.verifyCertificationPath(_xFrame,xComp);
+				if(xComp != null) {
+					m_axoxChildProc.verifyCertificationPath(_xFrame,xComp);
+					m_aLastCAState = m_axoxChildProc.getCertificationAuthorityState();
+				}
+				 return m_aLastCAState;
 			}
 			else
 				m_aLogger.info("CANNOT execute child");

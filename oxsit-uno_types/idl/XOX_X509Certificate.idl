@@ -29,7 +29,7 @@
 #include <com/sun/star/frame/XFrame.idl>
 #include "XOX_CertificateExtension.idl"
 #include "CertificateState.idl"
-#include "CertificateAuthorityState.idl"
+#include "CertificationAuthorityState.idl"
 #include "XOX_CertificationPathControlProcedure.idl"
 #include "XOX_CertificateComplianceControlProcedure.idl"
 #include "XOX_CertificateRevocationStateControlProcedure.idl"
@@ -59,10 +59,10 @@ XOX_AvailableSSCDs interface or</p>
 		/** conditions observed in checking the certificate state
 		*/
 		[attribute, readonly] long CertificateStateConditions;
-		/** the state of the CA (certificate Authority) control.
+		/** the state of the CA (Certification Authority) control.
 	 	*/
 		[attribute, readonly] long CertificationAuthorityState;
-		/** the conditions of the CA (certificate Authority) control.
+		/** the conditions of the CA (Certification Authority) control.
 	 	*/
 		[attribute, readonly] long CertificationAuthorityStateConditions;
 		/** the object used to control the certification path of this certificate

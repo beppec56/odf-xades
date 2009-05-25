@@ -177,7 +177,7 @@ the default target must be removed
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">
-			<param name="parm1" value="CertificateAuthorityState"/>
+			<param name="parm1" value="CertificationAuthorityState"/>
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">

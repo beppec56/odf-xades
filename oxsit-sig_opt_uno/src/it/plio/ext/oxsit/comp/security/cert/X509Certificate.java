@@ -28,7 +28,7 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.security.cert.CertificateAuthorityState;
+import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -185,7 +185,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 //
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
-    	m_nCAState = CertificateAuthorityState.NOT_YET_CHECKED_value;
+    	m_nCAState = CertificationAuthorityState.NOT_YET_CHECKED_value;
     	m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();

@@ -28,7 +28,7 @@
 #include <com/sun/star/lang/IllegalArgumentException.idl>
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/frame/XFrame.idl>
-#include "CertificateAuthorityState.idl"
+#include "CertificationAuthorityState.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -44,7 +44,7 @@ XOX_AvailableSSCDs interface or</p>
 		/** the state of the CA (Certification Authority) control.
 		This in in the form of an enumeration, the one defined for Certification autority state
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateAuthorityState CertificationAuthorityState;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificationAuthorityState CertificationAuthorityState;
 
 		/** Use this to initialize the service implementing this interface, 
 		for the part related to the interface.
@@ -66,7 +66,7 @@ XOX_AvailableSSCDs interface or</p>
 		@param xCertificate the certificate to be verified		 		
 		 </p>
 		*/
-		it::plio::ext::oxsit::security::cert::CertificateAuthorityState
+		it::plio::ext::oxsit::security::cert::CertificationAuthorityState
 			verifyCertificationPath( [in] com::sun::star::frame::XFrame xFrame, 
 							[in] com::sun::star::lang::XComponent xCertificate )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
