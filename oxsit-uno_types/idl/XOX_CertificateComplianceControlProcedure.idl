@@ -29,6 +29,7 @@
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/frame/XFrame.idl>
 #include "CertificateState.idl"
+#include "CertificateStateConditions.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -47,6 +48,12 @@ XOX_AvailableSSCDs interface or</p>
 	 	*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState;
 
+		/** the state conditions of the certificate.
+		<p>This in in the form of an enumeration, the one defined for Certification state</p>
+		It can be read to asses the certificate state at the end of control
+	 	*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateStateConditions CertificateStateConditions;
+
 		/** Use this to initialize the service implementing this interface, 
 		for the part related to the interface.
 		<p>It loads into memory the CA autority list from the signed file distributed by CNIPA.</p>
@@ -62,14 +69,13 @@ XOX_AvailableSSCDs interface or</p>
 			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
 			for executing the function. 
 		 <p>
-
 		 @param aFrame the frame used for GUI if needed in the procedures<br>
 		 		if the parameter is null, there will be no GUI
 		@param xCertificate the certificate to be verified		 		
 		 </p>
 		  */
 		it::plio::ext::oxsit::security::cert::CertificateState
-			verifyCertificateCertificateCompliance([in] com::sun::star::frame::XFrame xFrame,
+			verifyCertificateCompliance([in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::lang::XComponent xCertificate)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );

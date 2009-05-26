@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -154,17 +155,19 @@ public abstract class TreeElement
 
 	private int				m_nSignatureState;
 	private int				m_nSignatureAndDocumentStateConditions;
-	
+
 	private int				m_nDocumentVerificationState;
-	
+
 	private int				m_nSignatureDateMode;
-	
+
 	private String			m_sNodeGraphic;
 	
+	private XOX_X509Certificate		m_aCertificate;
+
 	private XComponentContext		m_xCC;
-	
+
 	private XMultiComponentFactory	m_xMCF;
-	
+
 	/**
 	 * @param m_nType the m_nType to set
 	 */
@@ -350,6 +353,20 @@ public abstract class TreeElement
 	 */
 	public int getCertificationAutorityState() {
 		return m_nCertificationAutorityState;
+	}
+
+	/**
+	 * @param m_aCertificate the m_aCertificate to set
+	 */
+	public void setCertificate(XOX_X509Certificate m_aCertificate) {
+		this.m_aCertificate = m_aCertificate;
+	}
+
+	/**
+	 * @return the m_aCertificate
+	 */
+	public XOX_X509Certificate getCertificate() {
+		return m_aCertificate;
 	}
 
 }

@@ -29,6 +29,7 @@
 #include <com/sun/star/frame/XFrame.idl>
 #include "XOX_CertificateExtension.idl"
 #include "CertificateState.idl"
+#include "CertificateStateConditions.idl"
 #include "CertificationAuthorityState.idl"
 #include "XOX_CertificationPathControlProcedure.idl"
 #include "XOX_CertificateComplianceControlProcedure.idl"
@@ -125,8 +126,44 @@ XOX_AvailableSSCDs interface or</p>
 		 		if the parameter is null, there will be no GUI
 		 </p>
 		*/
-		boolean verifyCertificate( [in] com::sun::star::frame::XFrame aFrame);
+		void verifyCertificate( [in] com::sun::star::frame::XFrame aFrame);
 
+		/** control the certificate compiance of the UNO component passed as a parameter.
+			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
+			for executing the function. 
+		 <p>
+		 @param aFrame the frame used for GUI if needed in the procedures<br>
+		 		if the parameter is null, there will be no GUI
+		@param xCertificate the certificate to be verified		 		
+		 </p>
+		  */
+		void verifyCertificateCompliance([in] com::sun::star::frame::XFrame xFrame )
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
+		/** Control the certification revocation state, may be implemented using CRL control or using OCSP
+		(Online Certificate Status Protocol).
+		 <p>
+		 @param xFrame the frame used for GUI if needed in the procedures<br>
+		 		if the parameter is null, there will be no GUI
+		@param xCertificate the certificate to be verified		 		
+		 </p>
+		*/
+		void verifyCertificateRevocationState( [in] com::sun::star::frame::XFrame xFrame)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+		/** control the certification path of the UNO component passed as a parameter.
+			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
+			for executing the function.
+		 <p>
+		 @param xFrame the frame used for GUI if needed in the procedures<br>
+		 		if the parameter is null, there will be no GUI
+		@param xCertificate the certificate to be verified		 		
+		 </p>
+		*/
+		void verifyCertificationPath( [in] com::sun::star::frame::XFrame xFrame )
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
 	} ;
 
   }; }; }; }; };  };

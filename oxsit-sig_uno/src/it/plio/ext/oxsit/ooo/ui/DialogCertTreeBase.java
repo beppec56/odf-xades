@@ -841,6 +841,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	public void selectButtonPressed() {
 		// TODO Auto-generated method stub
 		m_logger.log("selectButtonPressed");
+		//very crl status of the selected element
 	}
 
 	/* (non-Javadoc)

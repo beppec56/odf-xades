@@ -28,12 +28,15 @@
 package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
@@ -65,13 +68,16 @@ import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.i18n.filter.TrustedInput;
 
 import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
+import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -95,7 +101,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			XServiceInfo,
 			XInitialization,
 			XOX_CertificateComplianceControlProcedure,
-			XOX_CertificationPathControlProcedure
+			XOX_CertificationPathControlProcedure,
+			XOX_CertificateRevocationStateControlProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -109,9 +116,12 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	protected XOX_X509Certificate m_xQc;
 
 	private CertificateState m_aCertificateState;
+	private CertificateStateConditions m_aCertStateConds;
 	private	CertificationAuthorityState m_aCAState;
     private java.security.cert.X509Certificate m_JavaCert = null;
-
+    private XComponentContext m_xCC;
+    private XMultiComponentFactory	m_xMCF;
+    private XFrame	m_xFrame;
 	/**
 	 * 
 	 * 
@@ -120,8 +130,12 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	public CertificateComplianceCA_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 //		m_aLogger.enableLogging();
+		m_xCC = _ctx;
+		m_xMCF = m_xCC.getServiceManager();
     	m_aLogger.ctor();
     	m_aCAState = CertificationAuthorityState.NOT_YET_CHECKED;
+    	m_aCertStateConds = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
+    	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
 	}
 
 	@Override
@@ -237,8 +251,9 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateState verifyCertificateCertificateCompliance(XFrame _xFrame,
+	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
+		m_xFrame = _xFrame;
 		// TODO Auto-generated method stub
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
@@ -264,19 +279,23 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
             }
 			//check for validity date
 			try {
-/*				//test for date information
-				//not yet valid
-				GregorianCalendar aCal = new GregorianCalendar(2008,12,12);
-				//expired
-				GregorianCalendar aCal = new GregorianCalendar(2019,12,12);
+/*				// test for date information
+				// not yet valid: 
+				// GregorianCalendar aCal = new GregorianCalendar(2008,12,12);
+				// expired:
+				// GregorianCalendar aCal = new GregorianCalendar(2019,12,12);
 				m_JavaCert.checkValidity(aCal.getTime());*/
 				m_JavaCert.checkValidity();
+				//valid, set no CRL needed
+				m_aCertStateConds = CertificateStateConditions.REVOCATION_CONTROL_NOT_NEEDED;
 			} catch (CertificateExpiredException e) {
 				m_xQc.setCertificateElementErrorState(
 						GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
 				m_aCAState = CertificationAuthorityState.TRUSTED_WITH_WARNING;
+//check CRL of this certificate
+//commented due to excessive time out			verifyCertifRevocHelper();
 			} catch (CertificateNotYetValidException e) {
 				m_xQc.setCertificateElementErrorState(
 						GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE,
@@ -299,7 +318,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 		}
 
 //convert to Bouncy Castle representation		
-/*		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
+		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado = null;
 		try {
@@ -320,11 +339,11 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
 			}
 
-			//check if qcStatements are present
+/*			//check if qcStatements are present
 			//the function set the error itself
 			if(!hasQcStatements(xTBSCert)) {
 				return m_aCertificateState;
-			}
+			}*/
 
 		} catch (java.io.IOException e) {
 			m_aLogger.severe(e);
@@ -334,7 +353,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			m_aLogger.severe(e);
 			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
 			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
-		}*/
+		}
 		return m_aCertificateState;
 	}
 
@@ -497,7 +516,77 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame arg0,
 			XComponent arg1) throws IllegalArgumentException, Exception {
-		verifyCertificateCertificateCompliance(arg0,arg1);
+		verifyCertificateCompliance(arg0,arg1);
 		return m_aCAState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 */
+	@Override
+	public CertificateStateConditions getCertificateStateConditions() {
+		return m_aCertStateConds;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public CertificateState verifyCertificateRevocationState(XFrame arg0,
+			XComponent arg1) throws IllegalArgumentException, Exception {
+		verifyCertificateCompliance(arg0, arg1);
+		// FIXME check if revocation control is enabled or not
+		m_aLogger.log("verifyCertificateRevocationState");
+		try {
+			XOX_CertificateRevocationStateControlProcedure axoxChildProc = null;
+			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
+
+			try {
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				//yes, grab it and set our component internally
+				m_aLogger.info("Cache found!");
+				axoxChildProc = 
+					(XOX_CertificateRevocationStateControlProcedure)
+					UnoRuntime.queryInterface(
+							XOX_CertificateRevocationStateControlProcedure.class, xComp);
+			} catch (NoSuchElementException ex ) {
+				//no, instantiate it and add to the singleton 
+				m_aLogger.info("Cache NOT found!");
+				//create the object
+				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				//add it the singleton
+				//now use it
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
+				if(xComp != null) {
+					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
+								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
+				}
+				else
+					throw (new IllegalArgumentException());
+			} catch (IllegalArgumentException ex ) {
+				m_aLogger.severe(ex);
+			} catch (Throwable ex ) { 
+				m_aLogger.severe(ex);
+			}
+
+			if(axoxChildProc != null) {
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xQc); 
+				if(xComp != null)
+					axoxChildProc.verifyCertificateRevocationState(m_xFrame,xComp);
+					m_aCertificateState = axoxChildProc.getCertificateState();
+					m_aCertStateConds = axoxChildProc.getCertificateStateConditions();
+			}
+			else
+				m_aLogger.info("CANNOT execute child");
+			//instantiate the cache, init it and add it
+		} catch (ClassCastException ex) {
+			m_aLogger.severe(ex);
+		} catch (ServiceNotFoundException ex) {
+			m_aLogger.severe(ex);
+		} catch (Throwable ex ) { 
+			m_aLogger.severe(ex);
+		}
+		return m_aCertificateState;
 	}
 }

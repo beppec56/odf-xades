@@ -453,41 +453,68 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificate(com.sun.star.frame.XFrame)
 	 */
 	@Override
-	public boolean verifyCertificate(XFrame _aFrame) {
+	public void verifyCertificate(XFrame _aFrame) {
 		//FIXME add the reset of states: certificate, CA, and the respective  state conditions
 		m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
 		m_nCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
 
-		
 		//check the certificate for the compliance
-		verifyCompliance(_aFrame);		
+		try {
+			verifyCertificateCompliance(_aFrame);
 		//check and fill the certification path
-		verifyCertificationPath(_aFrame);
+			verifyCertificationPath(_aFrame);
 		//check the crl of the certificate
-		verifyCertificateCRL(_aFrame);
-
-		return false;
+			verifyCertificateRevocationState(_aFrame);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 
-	/**
-	 * @param frame
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificationPath(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
-	private void verifyCertificateCRL(XFrame frame) {
+	@Override
+	public void verifyCertificationPath(XFrame _aFrame) throws IllegalArgumentException, Exception {
+		if(m_xoxCertificationPathControlProcedure != null) {
+			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
+			if(xCtl != null) {
+				try {
+					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
+					setCertifPathStateHelper(m_xoxCertificationPathControlProcedure.getCertificationAuthorityState());
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Throwable e) {
+					m_aLogger.severe(e);
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public void verifyCertificateRevocationState(
+			XFrame frame) throws IllegalArgumentException,
+			Exception {
 		if(m_xoxCertificateRevocationControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
-					//FIXME add the result to the certificate status
 					m_xoxCertificateRevocationControlProcedure.initializeProcedure(frame);
 					m_xoxCertificateRevocationControlProcedure.verifyCertificateRevocationState(frame,xCtl);
-					m_aLogger.log("State: "+m_xoxCertificateRevocationControlProcedure.getCertificateState().getValue()+
+/*					m_aLogger.log("State: "+m_xoxCertificateRevocationControlProcedure.getCertificateState().getValue()+
 							" conditions: "+
-							m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions().getValue());
+							m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions().getValue());*/
 					setCertificateStateHelper(m_xoxCertificateRevocationControlProcedure.getCertificateState());
 					setCertificateStateConditionsHelper(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					m_aLogger.severe(e);
 				}
 			}
@@ -595,52 +622,34 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		m_xoxCertificateComplianceControlProcedure = xCert;	
 	}
 
-	////////////////// internal functions
-	/**
-	 * @param arg0 
-	 * 
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificateCompliance(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
-	protected void verifyCompliance(XFrame arg0) {
+	@Override
+	public void verifyCertificateCompliance(XFrame arg0)
+				throws IllegalArgumentException, Exception {
+		XOX_X509Certificate m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, this);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		if(m_xoxCertificateComplianceControlProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
-					//FIXME
-					//add the result to the certificate status
 					m_xoxCertificateComplianceControlProcedure.initializeProcedure(arg0);
-					m_xoxCertificateComplianceControlProcedure.verifyCertificateCertificateCompliance(arg0,xCtl);
-					m_aLogger.log("State: "+m_xoxCertificateComplianceControlProcedure.getCertificateState().getValue());
+					m_xoxCertificateComplianceControlProcedure.verifyCertificateCompliance(arg0,xCtl);
+	//					m_aLogger.log("State: "+m_xoxCertificateComplianceControlProcedure.getCertificateState().getValue());
 					setCertificateStateHelper(m_xoxCertificateComplianceControlProcedure.getCertificateState());
+					setCertificateStateConditionsHelper(m_xoxCertificateComplianceControlProcedure.getCertificateStateConditions());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					m_aLogger.severe(e);
 				}
 			}
 		}
 	}
-
-	protected void verifyCertificationPath(XFrame _aFrame) {
-		if(m_xoxCertificationPathControlProcedure != null) {
-			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
-			if(xCtl != null) {
-				try {
-					//FIXME
-					//add the result to the certificate status
-					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
-					setCAStateHelper(m_xoxCertificationPathControlProcedure.getCertificationAuthorityState());
-/*					m_aLogger.log("State: "+
-							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState()));
-					m_nCertificateState = 
-							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState());*/
-				} catch (IllegalArgumentException e) {
-					m_aLogger.severe(e);
-				} catch (Exception e) {
-					m_aLogger.severe(e);
-				}
-			}
-		}
-	}
+	
+	////////////////// internal functions
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateElementErrorState(java.lang.String)
@@ -847,7 +856,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 * set the certificate state according to the new value, as enum,
 	 * mapped to numerical
 	 */
-	private void setCAStateHelper(CertificationAuthorityState _newState) {
+	private void setCertifPathStateHelper(CertificationAuthorityState _newState) {
 		int _nNewState;
 		if((_nNewState = _newState.getValue()) > m_nCAState)
 			m_nCAState = _nNewState;
@@ -883,4 +892,5 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		// TODO Auto-generated method stub
 //call the subcomponent method?	
 	}
+
 }

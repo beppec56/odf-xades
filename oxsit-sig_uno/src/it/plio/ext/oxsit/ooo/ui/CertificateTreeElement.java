@@ -93,19 +93,26 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 		super.initialize();
 	}
 
+	public void updateCertificateStates() {
+		if(getCertificate() != null) {
+			setCertificateState(getCertificate().getCertificateState());
+			setCertificateStateConditions(getCertificate().getCertificateStateConditions());
+			setCertificationAutorityState(getCertificate().getCertificationAuthorityState());			
+		}
+	}
 	/** specific initialization for certificate
 	 * 
 	 * @param _aCertif
 	 */
 	public void setCertificateData(XOX_X509Certificate _aCertif) {
+		//Set the certificate
+		setCertificate(_aCertif);
+		updateCertificateStates();
 //set the node name
 		XOX_X509CertificateDisplay aCertDisplay = 
 			(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, _aCertif);
 		setNodeName(aCertDisplay.getSubjectDisplayName());
 //FIXME		setCertificateGraficStateValue(_aCertif.getCertificateGraficStateValue());
-		setCertificateState(_aCertif.getCertificateState());
-		setCertificateStateConditions(_aCertif.getCertificateStateConditions());
-		setCertificationAutorityState(_aCertif.getCertificationAuthorityState());
 		initialize();
 		//init it correctly		
 		m_sStringList[m_nFIELD_DATE_VALID_FROM] ="r"+ aCertDisplay.getNotValidBefore();

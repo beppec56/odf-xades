@@ -117,6 +117,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 	
 	static {		
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED,"revocation_not_yet_controlled");
+		//the following element will print an empty line
+		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_CONTROL_NOT_NEEDED,"r  ");
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_CONTROLLED_OK,"revocation_controlled_ok");
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED,"revocation_control_not_enabled");
 		m_aCERTIFICATE_STATE_CONDITIONS.put(CertificateStateConditions.CRL_CANNOT_BE_ACCESSED,"crl_cannot_be_accessed");
@@ -284,38 +286,36 @@ public class BaseCertificateTreeElement extends TreeElement {
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_ISSUER] = m_aRegAcc.getStringFromRegistry("cert_title_issuer" );
 
-			//grab the string for certificate status
-			//FIXME: a better solution would be to substitute the id in the Hashmap with the
-			// corresponding string, to be done once when element is instantiated
-			try {
-			m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
-							m_aCERTIFICATE_STATE_STRINGS.get(
-									CertificateState.fromInt(getCertificateState())
-											);
-			m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
-						m_aCERTIFICATE_STATE_CONDITIONS_STRINGS.get(
-								CertificateStateConditions.fromInt(getCertificateStateConditions())
-										);
-
-			m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
-						m_aCA_STATE_CONDITIONS_STRINGS.get(
-								CertificationAuthorityState.fromInt(getCertificationAutorityState())
-										);
-			} catch (java.lang.Exception e) {
-				getLogger().severe("initialize", e);
-			}
-		} catch (java.lang.Exception e) {
+			updateString();
+		} catch (java.lang.Throwable e) {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
 	}
 
+	
+	public void updateString() {
+		//grab the string for certificate status
+		m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
+						m_aCERTIFICATE_STATE_STRINGS.get(
+								CertificateState.fromInt(getCertificateState())
+										);
+		m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
+					m_aCERTIFICATE_STATE_CONDITIONS_STRINGS.get(
+							CertificateStateConditions.fromInt(getCertificateStateConditions())
+									);
+
+		m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
+					m_aCA_STATE_CONDITIONS_STRINGS.get(
+							CertificationAuthorityState.fromInt(getCertificationAutorityState())
+									);		
+	}
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.ooo.ui.TreeElement#EnableDisplay(boolean)
 	 * this methods simply enabled/disable the display of the controls
 	 */
 	@Override
-	void EnableDisplay(boolean bWhat) {
+	public void EnableDisplay(boolean bWhat) {
 //		getLogger().log("EnableDisplay "+bWhat);
 		XWindow xaWNode = (XWindow)UnoRuntime.queryInterface( XWindow.class, getBackgroundControl() );
 		if(xaWNode != null )					

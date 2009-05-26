@@ -382,9 +382,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				aArguments[0] = certParent.getEncoded();//aCert;
 				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
 				aArguments[2] = oCertDisp; //the display object
-				aArguments[3] = oCertCompl; //the display object
-//				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
-//				aArguments[3] = oCertPath;
+				aArguments[3] = oCertCompl; //the checker object, in this case implements all
 
 				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 						aArguments, m_xCC);
@@ -392,7 +390,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				XOX_X509Certificate xQualCert = 
 					(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
-				xQualCert.verifyCertificate(null);
+				xQualCert.verifyCertificateCompliance(null);
 //set it to the current child certificate, and put it as a new qualified certificate
 //set the status flags of the new certificate as correct for a CA certificate
                 qCertChild.setCertificationPath(xQualCert);

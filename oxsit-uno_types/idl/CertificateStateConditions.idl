@@ -33,6 +33,11 @@
 		 */
 		REVOCATION_NOT_YET_CONTROLLED,
  
+		/** The certificate revocation is not needed at this time.
+		In case the certificate is implicitly valid due to special CA root data base distributions.
+		 */
+		REVOCATION_CONTROL_NOT_NEEDED,
+
 		/** The certificate revocation was verified.
 		 */
 		REVOCATION_CONTROLLED_OK,

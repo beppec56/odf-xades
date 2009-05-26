@@ -36,6 +36,7 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
@@ -57,6 +58,8 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	private static final String DLG_CERT_TREE = "DialogCertTreeCA";
 
 	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
+	
+	protected String	m_sVerCRLBtn = "vercrlbtn";
 	
 	/**
 	 * Note on the display:
@@ -95,19 +98,19 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
 		m_logger.entering("initialize");
 			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB3(),
+					CertifTreeDlgDims.DS_COL_PB2(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					m_sSelectBtn,
-					m_sBtn_SelDevice,
+					m_sVerifyBtn,
+					"Verifica revoca",
 					(short) PushButtonType.STANDARD_value, 6);
-			insertButton(this,
+/*			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
 					CertifTreeDlgDims.dsBtnWidthCertTree(),
 					m_sAddBtn,
 					m_sBtn_AddCertLabel,
-					(short) PushButtonType.STANDARD_value, 7);
+					(short) PushButtonType.STANDARD_value, 7);*/
 			insertHorizontalFixedLine(
 					0, 
 					CertifTreeDlgDims.DLGS_BOTTOM_FL_Y(CertifTreeDlgDims.dsHeigh()), 
@@ -137,7 +140,9 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 						XOX_X509Certificate xoxCert = (XOX_X509Certificate)
 									UnoRuntime.queryInterface(XOX_X509Certificate.class, aList[idx1]);
 						//perform certificate verification
-						xoxCert.verifyCertificate(m_xParentFrame);
+						//only conformance and path verification
+						xoxCert.verifyCertificateCompliance(m_xParentFrame);
+						xoxCert.verifyCertificationPath(m_xParentFrame);
 						//then add to the tree control
 						addX509CertificateToTree(xCertifNode, xoxCert);
 					}
@@ -208,6 +213,32 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	public void verifyButtonPressed() {
 		//not implemented here
 		//execute a verification of the CA certificate, using the available filters 
+		if(m_aTheCurrentlySelectedTreeNode != null) {
+			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
+			if(oTreeNodeObject != null) {
+				if(oTreeNodeObject instanceof CertificateTreeElement) {
+					CertificateTreeElement aCurrentNode = (CertificateTreeElement)oTreeNodeObject;					
+//					aCurrentNode.EnableDisplay(false);
+//duplicate the certificate, then simply do the check for revocation list					
+					XOX_X509Certificate aCert = aCurrentNode.getCertificate();
+					if(aCert != null) {
+						try {
+							aCert.verifyCertificateRevocationState(m_xParentFrame);
+							//now update the string and the text on screen
+							aCurrentNode.updateCertificateStates();
+							aCurrentNode.updateString();
+							aCurrentNode.EnableDisplay(true);
+						} catch (IllegalArgumentException e) {
+							m_logger.severe(e);
+						} catch (Throwable e) {
+							m_logger.severe(e);
+						}
+					}
+				}
+				else
+					m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+			}			
+		}		
 	}	
 
 	/**

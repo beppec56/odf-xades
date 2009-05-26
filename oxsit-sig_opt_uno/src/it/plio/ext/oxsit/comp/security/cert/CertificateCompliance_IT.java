@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -233,7 +234,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificateState verifyCertificateCertificateCompliance(XFrame _xFrame,
+	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
@@ -462,4 +463,16 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
         }
         return (isKeyUsageCritical && isNonRepudiationPresent);
     }
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateStateConditions()
+	 */
+	@Override
+	public CertificateStateConditions getCertificateStateConditions() {
+		// TODO Auto-generated method stub
+		//default, not implemented here, due to the
+		//way the level are handled in XOX_X509Certificate
+		//the state should not change
+		return CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
+	}
 }
