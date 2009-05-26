@@ -3,22 +3,27 @@
  */
 package it.plio.ext.oxsit.comp.security.cert;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Vector;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERGeneralizedTime;
-import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -28,6 +33,7 @@ import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
@@ -94,8 +100,15 @@ public class CertificateExtensionDisplayHelper {
 
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
+	
+	private Locale m_lTheLocale;
+	
+	private String m_sTimeLocaleString;
 
-	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID, IDynamicLogger _aLogger ) {
+	public CertificateExtensionDisplayHelper(XComponentContext _context, Locale _aLocale, 
+						String _timeloc, boolean _bDisplayOID, IDynamicLogger _aLogger ) {
+		m_lTheLocale = _aLocale;
+		m_sTimeLocaleString = _timeloc;
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
 		if(_aLogger != null)
@@ -105,7 +118,10 @@ public class CertificateExtensionDisplayHelper {
 //		m_aLogger.enableLogging();
 	}
 
-	public CertificateExtensionDisplayHelper(XComponentContext _context, boolean _bDisplayOID) {
+	public CertificateExtensionDisplayHelper(XComponentContext _context, Locale _aLocale, 
+						String _timeloc,  boolean _bDisplayOID) {
+		m_sTimeLocaleString = _timeloc;
+		m_lTheLocale = _aLocale;
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
 		m_aLogger = new DynamicLogger(this,_context);
@@ -143,6 +159,10 @@ public class CertificateExtensionDisplayHelper {
 				return examineCRLDistributionPoints(aext);
 			else if(_aOID.equals(X509Extensions.ExtendedKeyUsage))
 				return examineExtendedKeyUsage(aext);
+			else if(_aOID.equals(X509Extensions.BasicConstraints))
+				return examineBasicConstraints(aext);
+			else if(_aOID.equals(X509Extensions.PolicyConstraints))
+				return examinePolicyConstraints(aext);
 			else {
 				throw (new java.lang.NoSuchMethodException(term+"While processing OID: " + _aOID.getId() +":"+term+
 						Helpers.printHexBytes(aext.getValue().getOctets())));
@@ -153,8 +173,29 @@ public class CertificateExtensionDisplayHelper {
 			return ret;
 		}
 	}
+
 	/*
-    public static final DERObjectIdentifier BasicConstraints = new DERObjectIdentifier("2.5.29.19");
+still to be implemented: 1.2.840.113533.7.65.0 - entrust version extension
+
+OID description:
+certificate extension for entrust version
+
+entrustVersInfo EXTENSION ::= {
+	SYNTAX EntrustVersInfoSyntax
+	IDENTIFIED BY { id-nsn-ext 0}
+}
+
+EntrustVersInfoSyntax ::= OCTET STRING
+ 
+Superior references
+
+    * 1.2.840.113533.7.65 - Secure Networks Certificate Extensions
+    * 1.2.840.113533.7 - Entrust Technologies
+    * 1.2.840.113533 - Nortel Networks
+    * 1.2.840 - USA
+    * 1.2 - ISO member body
+    * 1 - ISO assigned OIDs 
+
     public static final DERObjectIdentifier CRLNumber = new DERObjectIdentifier("2.5.29.20");
     public static final DERObjectIdentifier ReasonCode = new DERObjectIdentifier("2.5.29.21");
     public static final DERObjectIdentifier InstructionCode = new DERObjectIdentifier("2.5.29.23");
@@ -164,7 +205,6 @@ public class CertificateExtensionDisplayHelper {
     public static final DERObjectIdentifier CertificateIssuer = new DERObjectIdentifier("2.5.29.29");
     public static final DERObjectIdentifier NameConstraints = new DERObjectIdentifier("2.5.29.30");
     public static final DERObjectIdentifier PolicyMappings = new DERObjectIdentifier("2.5.29.33");
-    public static final DERObjectIdentifier PolicyConstraints = new DERObjectIdentifier("2.5.29.36");
     public static final DERObjectIdentifier FreshestCRL = new DERObjectIdentifier("2.5.29.46");
     public static final DERObjectIdentifier InhibitAnyPolicy = new DERObjectIdentifier("2.5.29.54");
     public static final DERObjectIdentifier SubjectInfoAccess = new DERObjectIdentifier("1.3.6.1.5.5.7.1.11");
@@ -174,6 +214,45 @@ public class CertificateExtensionDisplayHelper {
     public static final DERObjectIdentifier NoRevAvail = new DERObjectIdentifier("2.5.29.56");
     public static final DERObjectIdentifier TargetInformation = new DERObjectIdentifier("2.5.29.55");
  */
+
+	/**
+	 * @param aext
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private String examinePolicyConstraints(X509Extension aext) {
+		String stx = "";
+		try {
+			ASN1Sequence pc = (ASN1Sequence) 
+					X509Extension.convertValueToObject(aext);
+			if (pc != null) {
+				Enumeration policyConstraints = pc.getObjects();
+				while (policyConstraints.hasMoreElements()) {
+					ASN1TaggedObject constraint = (ASN1TaggedObject)
+							policyConstraints.nextElement();
+					int tmpInt;
+
+					switch (constraint.getTagNo()) {
+					case 0:
+						tmpInt = DERInteger.getInstance(constraint).getValue()
+								.intValue();
+						stx = stx + " requireExplicitPolicy: " + tmpInt;
+						break;
+					case 1:
+						tmpInt = DERInteger.getInstance(constraint).getValue()
+								.intValue();
+						stx = stx + " inhibitPolicyMapping: " + tmpInt;
+						break;
+					}
+				}
+			}
+		} catch (Throwable ae) {
+			m_aLogger.severe(ae);
+		}
+		return stx;
+	}
+
+	
 	/**
 	 * @param aext
 	 * @return
@@ -227,11 +306,33 @@ public class CertificateExtensionDisplayHelper {
 	 * @return
 	 */
 	private String examinePrivateKeyUsagePeriod(X509Extension aext) {
-		// TODO Auto-generated method stub
 		PrivateKeyUsagePeriod pku = PrivateKeyUsagePeriod.getInstance(aext);
-		return "to be written..."+Helpers.printHexBytes(aext.getValue().getOctets());
+		DERGeneralizedTime from = pku.getNotBefore();
+		DERGeneralizedTime to = pku.getNotAfter();
+		String stx = "";
+		
+		try {
+			stx = stx+" Not Before: "+getDateStringHelper(from.getDate())+term;
+			stx = stx+" Not After: "+getDateStringHelper(to.getDate());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stx;
 	}
 
+	private String getDateStringHelper(Date _aTime) {
+		//force UTC time
+		TimeZone gmt = TimeZone.getTimeZone("UTC");
+		GregorianCalendar calendar = new GregorianCalendar(gmt,m_lTheLocale);
+		calendar.setTime(_aTime);	
+//string with time only
+//the locale should be the one of the extension not the Java one.
+		String time = String.format(m_lTheLocale,m_sTimeLocaleString, calendar);
+		return time;
+	}	
+
+	
 	private String decodeAGeneralName(GeneralName genName) throws IOException {
 		String stx ="";
         switch (genName.getTagNo())
@@ -282,6 +383,28 @@ public class CertificateExtensionDisplayHelper {
             GeneralName genName = GeneralName.getInstance(it.nextElement());
             stx = stx + decodeAGeneralName(genName); 
         }		
+		return stx;
+	}
+
+	/**
+	 * @param aext
+	 * @return
+	 */
+	private String examineBasicConstraints(X509Extension aext) {
+		BasicConstraints bc = BasicConstraints.getInstance(aext);
+		String stx = " cA = ";
+		if(bc.isCA())
+			stx = stx + "true";
+		else
+			stx = stx + "false";
+		stx = stx + term+ " pathLenConstraints: ";
+		BigInteger pathLen = bc.getPathLenConstraint();
+		if(pathLen != null) {
+			stx = stx + pathLen;
+		}
+		else
+			stx = stx +"'no limit'";
+
 		return stx;
 	}
 

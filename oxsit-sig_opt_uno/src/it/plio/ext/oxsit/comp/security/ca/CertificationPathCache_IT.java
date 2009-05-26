@@ -303,7 +303,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 						"LISTACER_20090303.zip.p7m"
 						);
 				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, 
-						true //to display debug data
+						false //to display debug data
 						);
 			} catch (MalformedURLException e) {
 				m_aLogger.severe(e);

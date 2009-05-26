@@ -102,9 +102,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	private XMultiComponentFactory m_xMCF;
 
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
-	protected static String m_sTimeLocaleStringValue;
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
-	protected static String m_sLocaleLanguageValue; //"it";
 
 	protected IDynamicLogger m_aLogger;
 
@@ -165,8 +163,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 */
 	public X509CertDisplayBase_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
@@ -353,7 +350,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 //FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
 			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
 			IDynamicLogger aDlgH = null;
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, m_aLogger);
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_lTheLocale,
+									m_sTimeLocaleString, m_bDisplayOID, m_aLogger);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();
@@ -595,7 +593,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 //FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
 			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
 			IDynamicLogger aDlgH = null;
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, m_aLogger);
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext, m_lTheLocale,
+										m_sTimeLocaleString,m_bDisplayOID, m_aLogger);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();

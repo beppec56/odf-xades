@@ -124,8 +124,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	public X509Certificate(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_nCAState = CertificationAuthorityState.NOT_YET_CHECKED_value;
     	m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;

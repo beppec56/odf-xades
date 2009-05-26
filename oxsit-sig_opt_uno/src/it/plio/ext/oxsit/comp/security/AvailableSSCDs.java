@@ -23,7 +23,6 @@
 package it.plio.ext.oxsit.comp.security;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
-import it.plio.ext.oxsit.comp.security.cert.ReadCerts;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
 import it.plio.ext.oxsit.logging.DynamicLogger;
@@ -31,12 +30,14 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
+import it.plio.ext.oxsit.pcsc.PCSCHelper;
+import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pcsc.CardInfo;
-import it.trento.comune.j4sign.pcsc.PCSCHelper;
+//import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

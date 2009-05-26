@@ -1,6 +1,6 @@
 /*************************************************************************
  * 
- *  This code is partly derived from
+ *  This code is derived from
  *  it.infocamere.freesigner.gui.ReadCertstask class in freesigner
  *  adapted to be used in OOo UNO environment
  *  Copyright (c) 2005 Francesco Cendron - Infocamere
@@ -27,7 +27,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.cert;
+package it.plio.ext.oxsit.security;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;

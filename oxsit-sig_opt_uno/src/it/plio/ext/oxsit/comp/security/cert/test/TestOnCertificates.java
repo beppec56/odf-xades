@@ -45,6 +45,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 
@@ -294,7 +295,7 @@ public class TestOnCertificates {
 			for(Enumeration<DERObjectIdentifier> enume = xc509Ext.oids(); enume.hasMoreElements();) {
 				extoid.add(enume.nextElement());
 			}			
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xCC,true,
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xCC,new Locale("it"), "", true,
 					new DynamicLoggerDialog(this,m_xCC));
 			MessageConfigurationAccess m_aRegAcc = null;
 			m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_xCC.getServiceManager() );

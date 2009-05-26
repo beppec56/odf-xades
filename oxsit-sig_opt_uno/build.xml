@@ -157,6 +157,15 @@ the default target must be removed
 			</fileset>
 		</copy>
 
+		<!-- beppec56: copy the properties file into the build destination, temporary, to be removed
+		when this properties are passed to OOo standard parameter management -->
+		<copy todir="${build}" failonerror="false">
+			<fileset dir="${src}">
+				  <include name="**/*.properties"/>
+				  <exclude name="**/*.html"/>
+			</fileset>
+		</copy>
+
 		<!--
 			copy helper classes from OOo SDK
 			Disable the whole section if the stand alone capability is not needed
