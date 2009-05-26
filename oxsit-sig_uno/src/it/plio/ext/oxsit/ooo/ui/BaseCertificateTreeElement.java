@@ -63,7 +63,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 	protected  int m_nFIELD_CERTIFICATE_VERF_CONDITIONS	= 2;
 	protected  int m_nFIELD_TITLE_ISSUER	 			= 7;
 	protected  int m_nFIELD_ISSUER 						= 8;
-	protected  int m_nFIELD_ISSUER_VERF_CONDITIONS		= 9;
+	protected  int m_nFIELD_ISSUER_CN					= 9;
+	protected  int m_nFIELD_ISSUER_VERF_CONDITIONS		= 10;
 
 	/**
 	 * constants for signature and document verification state conditions

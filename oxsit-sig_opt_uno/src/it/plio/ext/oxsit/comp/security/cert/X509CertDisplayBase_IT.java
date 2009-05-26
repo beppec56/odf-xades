@@ -125,6 +125,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	protected String m_sIssuerDisplayName = "";
 	protected String m_sIssuerName = "";
+	protected String m_sIssuerCommonName = "";
 
 	private String m_sNotValidAfter = "";
 
@@ -242,6 +243,14 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	@Override
 	public String getIssuerName() {
 		return m_sIssuerName;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getIssuerCommonName()
+	 */
+	@Override
+	public String getIssuerCommonName() {
+		return m_sIssuerCommonName;
 	}
 
 	/* (non-Javadoc)

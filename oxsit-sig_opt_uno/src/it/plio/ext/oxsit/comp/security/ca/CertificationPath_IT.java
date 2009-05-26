@@ -81,7 +81,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	
 	private CertificateState m_aCertificateState;
     private java.security.cert.X509Certificate m_JavaCert = null;
-	
+
     private XOX_CertificationPathControlProcedure m_axoxChildProc;
 
 	private XFrame m_xFrame;

@@ -113,6 +113,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 		//next should be set to the right certificate string to display
 		m_sStringList[m_nFIELD_OWNER_NAME] = "b"+getNodeName();  // will got it from the certificate raw data		
 		m_sStringList[m_nFIELD_ISSUER] = "r"+aCertDisplay.getIssuerDisplayName();
+		m_sStringList[m_nFIELD_ISSUER_CN] = "r"+aCertDisplay.getIssuerCommonName();
 	}
 
 	/**

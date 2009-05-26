@@ -137,6 +137,7 @@ public class X509CertDisplayCA_IT extends X509CertDisplayBase_IT //help class, i
 			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
 			if(hm.containsKey(oix)) {
 				m_sIssuerDisplayName = hm.get(oix).toString();
+				m_sIssuerCommonName = m_sIssuerDisplayName;
 			}
 		}
 		if(m_sIssuerDisplayName.length() == 0) {
@@ -147,5 +148,10 @@ public class X509CertDisplayCA_IT extends X509CertDisplayBase_IT //help class, i
 		}
 		if(m_sIssuerDisplayName.length() == 0)
 			m_sIssuerDisplayName = m_sIssuerName;
+		//check for CN
+		oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+		if(hm.containsKey(oix)) {
+			m_sIssuerCommonName = hm.get(oix).toString();
+		}
 	}
 }

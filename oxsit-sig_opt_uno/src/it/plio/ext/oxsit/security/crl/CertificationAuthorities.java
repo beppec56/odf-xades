@@ -171,7 +171,7 @@ public class CertificationAuthorities {
         }
         trace("Inseriti " + authorities.size() + " certificati CA");
     }
-    
+
     /**
      * This loads CA certificates from a ZIP file present at the specified URL.<BR>
      * No debug message is shown.<BR>
@@ -276,10 +276,12 @@ public class CertificationAuthorities {
             try {
                 caCert.checkValidity();
             } catch (CertificateExpiredException cee) {
-                throw new CertificateException("certificato CA scaduto: "+caCert.getSubjectX500Principal().getName());
+//                throw new CertificateException("certificato CA scaduto: "+caCert.getSubjectX500Principal().getName());
+            	//the expired state will be displayed to the user in the GUI
             }
             catch (CertificateNotYetValidException cnyve) {
-                throw new CertificateException("Certificato CA non ancora valido: "+caCert.getSubjectX500Principal().getName());
+//                throw new CertificateException("Certificato CA non ancora valido: "+caCert.getSubjectX500Principal().getName());
+            	//the non yet valid state will be displayed to the user in the GUI
             }
                 
             if (caCert.getIssuerDN().equals(caCert.getSubjectDN())) {

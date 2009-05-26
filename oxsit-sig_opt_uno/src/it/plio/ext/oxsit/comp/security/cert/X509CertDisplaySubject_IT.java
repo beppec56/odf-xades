@@ -183,5 +183,10 @@ public class X509CertDisplaySubject_IT extends X509CertDisplayBase_IT //help cla
 		}
 		if(m_sIssuerDisplayName.length() == 0)
 			m_sIssuerDisplayName = m_sIssuerName;
+		//check for CN
+		oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+		if(hm.containsKey(oix)) {
+			m_sIssuerCommonName = hm.get(oix).toString();
+		}
 	}
 }

@@ -343,6 +343,20 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getIssuerCommonName()
+	 */
+	@Override
+	public String getIssuerCommonName() {
+		try {
+			checkDisplayed();
+			return 	m_xoxCertificateDisplayString.getIssuerCommonName();
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return m_sDisplayObjectKO;
+	}
+	
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getMD5Thumbprint()
 	 */
 	@Override

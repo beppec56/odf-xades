@@ -38,6 +38,7 @@ import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.security.crl.X509CertRL;
@@ -51,6 +52,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import org.bouncycastle.cms.CMSException;
 
@@ -300,7 +302,9 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 						System.getProperty("file.separator")+
 						"LISTACER_20090303.zip.p7m"
 						);
-				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, false);
+				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, 
+						true //to display debug data
+						);
 			} catch (MalformedURLException e) {
 				m_aLogger.severe(e);
 			} catch (GeneralSecurityException e) {
@@ -342,7 +346,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 //                    certParent = m_aCADbData.getIssuerCertificate(certChild);
                     isInCA = true;
                 } catch (GeneralSecurityException ex) {
-                    //la CA non � presente nella root
+                    //la CA non è presente nella root
                 	//set 'CA unknown to Italian PA'
                 	//set the current XOX_X509Certificate state as well
                 	//this can be an intermediate certificate, it's the last one that should be ok
@@ -351,7 +355,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 	m_xQc.setCertificateElementErrorState(
         					GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
         					CertificateElementState.INVALID_value);			
-                	
+
                 	//set the CA state of m_xQc as not credited to Italian CNIPA structure
 
                 	return isPathValid;
@@ -363,7 +367,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				//now create the Certificate Control UNO objects
 				//first the certificate compliance control
 				//FIXME, may be we can change this to a better behavior, moving the tests currently carried out in
-                //CertificationAuthorities to here
+                //CertificationAuthorities here
 				//Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
 				//Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 
@@ -377,7 +381,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				//set the certificate raw value
 				aArguments[0] = certParent.getEncoded();//aCert;
 				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
-				aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
+				aArguments[2] = oCertDisp; //the display object
 //				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 //				aArguments[3] = oCertPath;
 
@@ -419,7 +423,6 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	 */
 	@Override
 	public CertificateStateConditions getCertificateStateConditions() {
-		// TODO Auto-generated method stub
 		return m_aCertificateStateConditions;
 	}
 
@@ -505,9 +508,13 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			if(numCA > 0) {
 				m_aCAList = new XComponent[numCA];
 
+				TreeMap<String,XComponent>	aTreeMap = new TreeMap<String, XComponent>();
+
 				Collection<X509Certificate> c = m_aCADbData.getCA();
 				Iterator<X509Certificate> i = c.iterator();
 				int idx = 0;
+				
+				//get the certificates and put them in a collection
 				while(i.hasNext()) {
 					X509Certificate cert = i.next();
 					//prepare objects for subordinate service
@@ -519,31 +526,39 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 						//ca test & display functions known by this component
 						//note that this component is localized, no need for it to be adapted
 						Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
-
 						aArguments[0] = cert.getEncoded();
 						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
 						aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
-	/*				aArguments[3] = oCertPath;
-					aArguments[4] = oCertRev;*/
 
 						Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 								aArguments, m_xCC);
 						//get the main interface
-						XOX_X509Certificate xQualCert = 
-							(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
+						XOX_X509CertificateDisplay xQualCert = 
+							(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, oACertificate);
 						if(xQualCert != null) {
+							//add the certificate to the sorted collection, using the name as a key (may be duplicated)
 							XComponent com = 
 								(XComponent)UnoRuntime.queryInterface(XComponent.class, xQualCert);
-							m_aCAList[idx++] = com;
+							//sort the collection while constructing the tree
+							XComponent xCo = aTreeMap.put(
+									xQualCert.getSubjectDisplayName()+xQualCert.getSubjectName(),com);
+							if (xCo != null) {
+								m_aLogger.log("duplicated CA: "+xQualCert.getSubjectDisplayName()+" - "+xQualCert.getSubjectName());
+							}
 						}
 					} catch (CertificateEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}//aCert;				
+						m_aLogger.severe(e);
+					}				
 					catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						m_aLogger.severe(e);
 					}
+				}
+//now compose the array and exit
+				idx = 0;
+				Collection<XComponent> aComp = aTreeMap.values();
+				Iterator<XComponent>	ic = aComp.iterator();
+				while(ic.hasNext()) {					
+					m_aCAList[idx++] = ic.next();
 				}
 				return m_aCAList;
 			}
