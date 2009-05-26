@@ -69,7 +69,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the CertificationPathCacheIT service, used to check the
+ *  This service implements the CertificationPathCache_IT service, used to check the
  *  certificate for compliance on Italian law.
  *  
  *  This is basically a memory cache that remains active for the entire OOo session.
@@ -83,7 +83,7 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class CertificationPathCacheIT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificationPathCache_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
@@ -92,7 +92,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificationPathCacheIT.class.getName();
+	public static final String			m_sImplementationName	= CertificationPathCache_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT };
@@ -122,7 +122,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 	 * 
 	 * @param _ctx
 	 */
-	public CertificationPathCacheIT(XComponentContext _ctx) {
+	public CertificationPathCache_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);

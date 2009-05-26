@@ -52,7 +52,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the CertificationPathIT service, used to check the
+ *  This service implements the CertificationPath_IT service, used to check the
  *  certificate for compliance on Italian law.
  *  
  *  The conformance will be checked for the certificate dates, certificate configuration
@@ -65,7 +65,7 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class CertificateRevocationIT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificateRevocation_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
@@ -73,7 +73,7 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateRevocationIT.class.getName();
+	public static final String			m_sImplementationName	= CertificateRevocation_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT };
@@ -96,7 +96,7 @@ public class CertificateRevocationIT extends ComponentBase //help class, impleme
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateRevocationIT(XComponentContext _ctx) {
+	public CertificateRevocation_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();

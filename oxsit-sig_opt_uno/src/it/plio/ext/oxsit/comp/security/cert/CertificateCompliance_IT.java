@@ -75,7 +75,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the CertificationPathIT service, used to check the
+ *  This service implements the CertificationPath_IT service, used to check the
  *  certificate for compliance on Italian law.
  *  
  *  The conformance will be checked for the certificate dates, certificate configuration
@@ -88,7 +88,7 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class CertificateComplianceIT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificateCompliance_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
@@ -96,7 +96,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateComplianceIT.class.getName();
+	public static final String			m_sImplementationName	= CertificateCompliance_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
@@ -113,7 +113,7 @@ public class CertificateComplianceIT extends ComponentBase //help class, impleme
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateComplianceIT(XComponentContext _ctx) {
+	public CertificateCompliance_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 //		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
