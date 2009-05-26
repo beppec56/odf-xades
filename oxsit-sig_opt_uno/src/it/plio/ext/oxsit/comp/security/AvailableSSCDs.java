@@ -380,18 +380,20 @@ public class AvailableSSCDs extends ComponentBase
 								Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
 								Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 								Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+								Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT, m_xCC);
 
 								//now the certification path control
 								
 								//prepare objects for subordinate service
-								Object[] aArguments = new Object[5];
+								Object[] aArguments = new Object[6];
 //								byte[] aCert = cert.getEncoded();
 								//set the certificate raw value
 								aArguments[0] = cert.getEncoded();//aCert;
 								aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
 								aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 								aArguments[3] = oCertPath;
-								aArguments[4] = oCertRev;								
+								aArguments[4] = oCertRev;
+								aArguments[5] = oCertDisp;
 
 								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 										aArguments, m_xCC);

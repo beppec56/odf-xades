@@ -508,16 +508,19 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 				while(i.hasNext()) {
 					X509Certificate cert = i.next();
 					//prepare objects for subordinate service
-					Object[] aArguments = new Object[2];
 	//				byte[] aCert = cert.getEncoded();
 					//set the certificate raw value
 					try {
+						Object[] aArguments = new Object[3];
 						//this are supposed to be CA, so we'll add the 
-						//ca test functions known by this component
+						//ca test & display functions known by this component
+						//note that this component is localized, no need for it to be adapted
+						Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT, m_xCC);
+
 						aArguments[0] = cert.getEncoded();
 						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
-	/*				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
-					aArguments[3] = oCertPath;
+						aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
+	/*				aArguments[3] = oCertPath;
 					aArguments[4] = oCertRev;*/
 
 						Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,

@@ -23,16 +23,13 @@
 #ifndef __it_plio_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
 #define __it_plio_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
 
+#include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/util/DateTime.idl>
 #include <com/sun/star/uno/Exception.idl>
 #include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/frame/XFrame.idl>
 #include "XOX_CertificateExtension.idl"
-#include "CertificateState.idl"
-#include "CertificationAuthorityState.idl"
-#include "XOX_CertificationPathControlProcedure.idl"
-#include "XOX_CertificateComplianceControlProcedure.idl"
-#include "XOX_CertificateRevocationStateControlProcedure.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -122,8 +119,10 @@
 		/**
 		@param DEREncoded the DER byte stream of the certificate to render in text.
 		*/
-		boolean prepareDisplayStrings( [in] sequence< byte > DEREncoded );
-
+		void prepareDisplayStrings([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::lang::XComponent xCertificate)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
 	} ;
 
   }; }; }; }; };  };

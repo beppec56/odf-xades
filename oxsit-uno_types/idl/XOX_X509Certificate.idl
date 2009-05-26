@@ -33,6 +33,7 @@
 #include "XOX_CertificationPathControlProcedure.idl"
 #include "XOX_CertificateComplianceControlProcedure.idl"
 #include "XOX_CertificateRevocationStateControlProcedure.idl"
+#include "XOX_X509CertificateDisplay.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
