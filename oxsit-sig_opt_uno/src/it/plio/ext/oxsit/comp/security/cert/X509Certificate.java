@@ -179,37 +179,32 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		XOX_CertificationPathControlProcedure xCert =
 			(XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(
 							XOX_CertificationPathControlProcedure.class, _arg);
-		if(xCert != null) {
+		if(xCert != null && m_xoxCertificationPathControlProcedure == null) {
 			m_xoxCertificationPathControlProcedure = xCert;
-			return;
 		}
-		else {
-			XOX_CertificateComplianceControlProcedure xCert1 =
-				(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
-						XOX_CertificateComplianceControlProcedure.class, _arg);
-			if(xCert1 != null) {
-				m_xoxCertificateComplianceControlProcedure = xCert1;
-				return;
-			}
-			else {
-				XOX_CertificateRevocationStateControlProcedure xCert2 =
-					(XOX_CertificateRevocationStateControlProcedure)UnoRuntime.queryInterface(
-							XOX_CertificateRevocationStateControlProcedure.class, _arg);
-				if(xCert2 != null) {
-					m_xoxCertificateRevocationControlProcedure = xCert2;
-					return;
-				}
-				else {
-					XOX_X509CertificateDisplay xCert3 =
-						(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(
-								XOX_X509CertificateDisplay.class, _arg);
-					if(xCert3 != null) {
-						m_xoxCertificateDisplayString = xCert3;
-						return;
-					}
-				}
-			}
+		XOX_CertificateComplianceControlProcedure xCert1 =
+			(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
+					XOX_CertificateComplianceControlProcedure.class, _arg);
+		if(xCert1 != null && m_xoxCertificateComplianceControlProcedure == null) {
+			m_xoxCertificateComplianceControlProcedure = xCert1;
 		}
+		XOX_CertificateRevocationStateControlProcedure xCert2 =
+			(XOX_CertificateRevocationStateControlProcedure)UnoRuntime.queryInterface(
+					XOX_CertificateRevocationStateControlProcedure.class, _arg);
+		if(xCert2 != null && m_xoxCertificateRevocationControlProcedure == null) {
+			m_xoxCertificateRevocationControlProcedure = xCert2;
+		}
+		XOX_X509CertificateDisplay xCert3 =
+			(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(
+					XOX_X509CertificateDisplay.class, _arg);
+		if(xCert3 != null && m_xoxCertificateDisplayString == null) {
+			m_xoxCertificateDisplayString = xCert3;
+		}
+		if(xCert == null &&
+				xCert1 == null &&
+				xCert2 == null &&
+				xCert3 == null
+				)
 		throw(new com.sun.star.lang.IllegalArgumentException());
 	}
 
@@ -632,8 +627,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 				try {
 					//FIXME
 					//add the result to the certificate status
-//					m_xoxCertificationPathControlProcedure.initializeCADataBase(_aFrame);
 					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
+					setCAStateHelper(m_xoxCertificationPathControlProcedure.getCertificationAuthorityState());
 /*					m_aLogger.log("State: "+
 							Helpers.mapCertificateStateToValue(m_xoxCertificationPathControlProcedure.getCertificateState()));
 					m_nCertificateState = 
@@ -848,6 +843,16 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		m_xoxCertificateRevocationControlProcedure = arg0;
 	}
 	
+	/**
+	 * set the certificate state according to the new value, as enum,
+	 * mapped to numerical
+	 */
+	private void setCAStateHelper(CertificationAuthorityState _newState) {
+		int _nNewState;
+		if((_nNewState = _newState.getValue()) > m_nCAState)
+			m_nCAState = _nNewState;
+	}
+
 	/**
 	 * set the certificate state according to the new value, as enum,
 	 * mapped to numerical

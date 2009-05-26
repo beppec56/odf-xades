@@ -131,11 +131,6 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 							XOX_CertificationPathControlProcedure.class, oCertPath);
 				XComponent[] aList = aCtl.getCertificationAuthorities(m_xParentFrame);
 				if(aList != null) {
-					//start the status component
-					
-					//sort the list
-					
-					
 					XMutableTreeNode xCertifNode = addToTreeRootHelper();
 					//iterate through the list and set the element in the tree, before display
 					for(int idx1=0; idx1<aList.length;idx1++) {
@@ -146,7 +141,6 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 						//then add to the tree control
 						addX509CertificateToTree(xCertifNode, xoxCert);
 					}
-
 				}
 			} catch (Throwable e) {
 				m_logger.severe(e);

@@ -207,7 +207,20 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	 */
 	@Override
 	public CertificationAuthorityState getCertificationAuthorityState() {
-		return m_aLastCAState;
+		//check if already done
+		try {
+			if(checkSubComponent())
+				if(m_axoxChildProc != null) {
+					return m_axoxChildProc.getCertificationAuthorityState();
+				}
+				else
+					m_aLogger.info("CANNOT execute child");
+		} catch (ClassCastException e) {
+			m_aLogger.severe(e);
+		} catch (Throwable e) {
+			m_aLogger.severe(e);
+		}
+		return null;
 	}
 
 	private boolean checkSubComponent() throws 

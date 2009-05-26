@@ -107,6 +107,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 
 	private CertificateState m_aCertificateState;
 	private CertificateStateConditions	m_aCertificateStateConditions;
+	private CertificationAuthorityState m_aCAState;
     
     private 	RootsVerifier	m_aRootVerifier;
     
@@ -132,6 +133,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
     	m_aLogger.ctor();
     	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
     	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
+    	m_aCAState = CertificationAuthorityState.NOT_YET_CHECKED;
 	}
 
 	@Override
@@ -204,7 +206,6 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("dispose");
 //		super.dispose();
 	}
@@ -231,8 +232,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	 */
 	@Override
 	public CertificationAuthorityState getCertificationAuthorityState() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_aCAState;
 	}
 
 	/* (non-Javadoc)
@@ -246,7 +246,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
-		
+
 		initializeCADataBase(_aFrame);
 		isPathValid();
 		return null;
@@ -332,6 +332,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
             X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             XOX_X509Certificate qCertChild = m_xQc;
 
+            m_aCAState = CertificationAuthorityState.NOT_TRUSTED;
 //now loop, and add the certificate path to the current path, actually empty            
             X509Certificate certParent = null;
             boolean isPathValid = false;
@@ -343,7 +344,6 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 
                 try {
                     certParent = m_aCADbData.getCACertificate(certChild.getIssuerX500Principal());
-//                    certParent = m_aCADbData.getIssuerCertificate(certChild);
                     isInCA = true;
                 } catch (GeneralSecurityException ex) {
                     //la CA non è presente nella root
@@ -354,12 +354,11 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 	//main XOX_X509Certificate as invalid for italian signature
                 	m_xQc.setCertificateElementErrorState(
         					GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
-        					CertificateElementState.INVALID_value);			
-
-                	//set the CA state of m_xQc as not credited to Italian CNIPA structure
-
+        					CertificateElementState.INVALID_value);
                 	return isPathValid;
                 }
+                //set the main user certificate certification authority as trusted
+                m_aCAState = CertificationAuthorityState.TRUSTED;
                 certChild = certParent;
 //instantiate a qualified certificate to represent the parent,
                 certParent.getEncoded();
@@ -374,14 +373,16 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				//now the certification path control
 
 				//prepare objects for subordinate service
-				Object[] aArguments = new Object[3];
+				Object[] aArguments = new Object[4];
 //												byte[] aCert = cert.getEncoded();
 				Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
+				Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT, m_xCC);
 
 				//set the certificate raw value
 				aArguments[0] = certParent.getEncoded();//aCert;
 				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
 				aArguments[2] = oCertDisp; //the display object
+				aArguments[3] = oCertCompl; //the display object
 //				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 //				aArguments[3] = oCertPath;
 
@@ -391,6 +392,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				XOX_X509Certificate xQualCert = 
 					(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
+				xQualCert.verifyCertificate(null);
 //set it to the current child certificate, and put it as a new qualified certificate
 //set the status flags of the new certificate as correct for a CA certificate
                 qCertChild.setCertificationPath(xQualCert);
@@ -521,14 +523,16 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	//				byte[] aCert = cert.getEncoded();
 					//set the certificate raw value
 					try {
-						Object[] aArguments = new Object[3];
+						Object[] aArguments = new Object[4];
 						//this are supposed to be CA, so we'll add the 
 						//ca test & display functions known by this component
 						//note that this component is localized, no need for it to be adapted
 						Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
+						Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT, m_xCC);
 						aArguments[0] = cert.getEncoded();
 						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
 						aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
+						aArguments[3] = oCertCompl; //the compliance checker object, which implements the needed interface
 
 						Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 								aArguments, m_xCC);

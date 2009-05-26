@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.comp.security.DocumentSignatures;
 import it.plio.ext.oxsit.comp.security.SSCDevice;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPathCache_IT;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
+import it.plio.ext.oxsit.comp.security.cert.CertificateComplianceCA_IT;
 import it.plio.ext.oxsit.comp.security.cert.CertificateCompliance_IT;
 import it.plio.ext.oxsit.comp.security.cert.CertificateExtension;
 import it.plio.ext.oxsit.comp.security.cert.CertificateRevocation_IT;
@@ -70,6 +71,10 @@ public class RegisterServices {
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( CertificateComplianceCA_IT.class, CertificateComplianceCA_IT.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+CertificateCompliance_IT.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateCompliance_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateCompliance_IT.class, CertificateCompliance_IT.m_sServiceNames );
@@ -135,6 +140,9 @@ public class RegisterServices {
 		boolean retDigitalSignatures = 
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
 
+		boolean retCertifComplCA = 
+			Factory.writeRegistryServiceInfo( CertificateComplianceCA_IT.m_sImplementationName, CertificateComplianceCA_IT.m_sServiceNames, xRegistryKey );
+
 		boolean retCertifCompl = 
 			Factory.writeRegistryServiceInfo( CertificateCompliance_IT.m_sImplementationName, CertificateCompliance_IT.m_sServiceNames, xRegistryKey );
 
@@ -176,6 +184,9 @@ public class RegisterServices {
 		if (!retDigitalSignatures)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
+		if (!retCertifComplCA)
+			System.out.println("__writeRegistryServiceInfo: "+CertificateComplianceCA_IT.m_sImplementationName + "failed");
+		
 		if (!retCertifCompl)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateCompliance_IT.m_sImplementationName + "failed");
 		if (!retCertifPath)
@@ -206,6 +217,7 @@ public class RegisterServices {
 					retQualCertif && retSSCDevice && retAvailSSCDs &&
 					retSSCDOpts && retCertifExt && retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
-					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT);
+					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
+					retCertifComplCA);
 	}
 }

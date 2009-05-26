@@ -34,6 +34,7 @@ import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
@@ -89,24 +90,26 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class CertificateCompliance_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class CertificateComplianceCA_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificateComplianceControlProcedure
+			XOX_CertificateComplianceControlProcedure,
+			XOX_CertificationPathControlProcedure
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= CertificateCompliance_IT.class.getName();
+	public static final String			m_sImplementationName	= CertificateComplianceCA_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
+	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT };
 
 	protected DynamicLogger m_aLogger;
 
 	protected XOX_X509Certificate m_xQc;
 
 	private CertificateState m_aCertificateState;
+	private	CertificationAuthorityState m_aCAState;
     private java.security.cert.X509Certificate m_JavaCert = null;
 
 	/**
@@ -114,10 +117,11 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	 * 
 	 * @param _ctx
 	 */
-	public CertificateCompliance_IT(XComponentContext _ctx) {
+	public CertificateComplianceCA_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 //		m_aLogger.enableLogging();
-    	m_aLogger.ctor();    	
+    	m_aLogger.ctor();
+    	m_aCAState = CertificationAuthorityState.NOT_YET_CHECKED;
 	}
 
 	@Override
@@ -248,6 +252,9 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
             bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             //check for version, if version is not 3, exits, certificate cannot be used
+            
+			m_aCAState = CertificationAuthorityState.TRUSTED;
+
             if(m_JavaCert.getVersion() != 3) {
     			m_xQc.setCertificateElementErrorState(
     					GlobConstant.m_sX509_CERTIFICATE_VERSION,
@@ -269,20 +276,22 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 						GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
+				m_aCAState = CertificationAuthorityState.TRUSTED_WITH_WARNING;
 			} catch (CertificateNotYetValidException e) {
 				m_xQc.setCertificateElementErrorState(
 						GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
+				m_aCAState = CertificationAuthorityState.TRUSTED_WITH_WARNING;
 			}
 
 			//check the KeyUsage extension
-			int tempState = CertificateElementState.OK_value;
+/*			int tempState = CertificateElementState.OK_value;
 			if(!isKeyUsageNonRepudiationCritical(m_JavaCert)) {
 				tempState =  CertificateElementState.INVALID_value;
 				setCertificateStateHelper(CertificateState.NOT_COMPLIANT);
 			}
-			m_xQc.setCertificateElementErrorState(X509Extensions.KeyUsage.getId(), tempState);
+			m_xQc.setCertificateElementErrorState(X509Extensions.KeyUsage.getId(), tempState);*/
 		} catch (CertificateException e) {
 			m_aLogger.severe(e);
 			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
@@ -290,7 +299,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		}
 
 //convert to Bouncy Castle representation		
-		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
+/*		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado = null;
 		try {
@@ -325,7 +334,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 			m_aLogger.severe(e);
 			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
 			throw (new com.sun.star.uno.Exception(" wrapped exception: "));
-		}
+		}*/
 		return m_aCertificateState;
 	}
 
@@ -340,7 +349,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		DERString isSid = cert.getSubjectUniqueId();
 		if(isUid == null && isSid == null)
 			return true;
-		m_aLogger.log("detected spurious IssuerUniqueID od SubjectUniqueID");
+		m_aLogger.log("detected spurious IssuerUniqueID or SubjectUniqueID");
 		return false;
 	}
 
@@ -352,7 +361,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		if(_newState.getValue() >m_aCertificateState.getValue())
 			m_aCertificateState = _newState;
 	}
- 
+
     /**
 	 * @param _TbsC 
      * @return
@@ -462,4 +471,33 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
         }
         return (isKeyUsageCritical && isNonRepudiationPresent);
     }
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities(com.sun.star.frame.XFrame)
+	 */
+	@Override
+	public XComponent[] getCertificationAuthorities(XFrame arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
+	 */
+	@Override
+	public CertificationAuthorityState getCertificationAuthorityState() {
+		return m_aCAState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 * 
+	 * not implemented, same as the checker
+	 */
+	@Override
+	public CertificationAuthorityState verifyCertificationPath(XFrame arg0,
+			XComponent arg1) throws IllegalArgumentException, Exception {
+		verifyCertificateCertificateCompliance(arg0,arg1);
+		return m_aCAState;
+	}
 }
