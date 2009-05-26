@@ -370,11 +370,14 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 				//now the certification path control
 
 				//prepare objects for subordinate service
-				Object[] aArguments = new Object[2];
+				Object[] aArguments = new Object[3];
 //												byte[] aCert = cert.getEncoded();
+				Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
+
 				//set the certificate raw value
 				aArguments[0] = certParent.getEncoded();//aCert;
 				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
+				aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
 //				aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
 //				aArguments[3] = oCertPath;
 
@@ -515,7 +518,7 @@ public class CertificationPathCacheIT extends ComponentBase //help class, implem
 						//this are supposed to be CA, so we'll add the 
 						//ca test & display functions known by this component
 						//note that this component is localized, no need for it to be adapted
-						Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT, m_xCC);
+						Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
 
 						aArguments[0] = cert.getEncoded();
 						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)

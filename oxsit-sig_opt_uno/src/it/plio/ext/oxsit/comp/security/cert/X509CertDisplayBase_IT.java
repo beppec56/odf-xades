@@ -92,18 +92,12 @@ import com.sun.star.uno.XComponentContext;
  * @author beppec56
  *
  */
-public class X509CertDisplayIssuerIT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public abstract class X509CertDisplayBase_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
-			XServiceInfo,
 			XInitialization,
 			XOX_X509CertificateDisplay
 			 {
 
-	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= X509CertDisplayIssuerIT.class.getName();
-
-	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT };
 	private XComponentContext m_xContext;
 	private XMultiComponentFactory m_xMCF;
 
@@ -120,17 +114,17 @@ public class X509CertDisplayIssuerIT extends ComponentBase //help class, impleme
 	protected boolean	m_bDisplayOID;
 
 	//the certificate representation
-	private X509CertificateStructure m_aX509;
+	protected X509CertificateStructure m_aX509;
 
-	private String m_sSubjectDisplayName;	
-	private String m_sSubjectName = "";
+	protected String m_sSubjectDisplayName;	
+	protected String m_sSubjectName = "";
 
 	private String m_sVersion = "";
 
 	private String m_sSerialNumber = "";
 
-	private String m_sIssuerDisplayName = "";
-	private String m_sIssuerName = "";
+	protected String m_sIssuerDisplayName = "";
+	protected String m_sIssuerName = "";
 
 	private String m_sNotValidAfter = "";
 
@@ -168,7 +162,7 @@ public class X509CertDisplayIssuerIT extends ComponentBase //help class, impleme
 	 * 
 	 * @param _ctx
 	 */
-	public X509CertDisplayIssuerIT(XComponentContext _ctx) {
+	public X509CertDisplayBase_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 //
 		m_aLogger.enableLogging();
@@ -191,33 +185,6 @@ public class X509CertDisplayIssuerIT extends ComponentBase //help class, impleme
 		m_aRegAcc.dispose();
 		//locale of the extension
 		m_lTheLocale = new Locale(m_sLocaleLanguage);
-	}
-
-	public String getImplementationName() {
-//		m_aLoggerDialog.entering("getImplementationName");
-		return m_sImplementationName;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
-	 */
-	public String[] getSupportedServiceNames() {
-//		m_aLoggerDialog.info("getSupportedServiceNames");
-		return m_sServiceNames;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XServiceInfo#supportsService(java.lang.String)
-	 */
-	public boolean supportsService(String _sService) {
-		int len = m_sServiceNames.length;
-
-		m_aLogger.info("supportsService",_sService);
-		for (int i = 0; i < len; i++) {
-			if (_sService.equals( m_sServiceNames[i] ))
-				return true;
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
@@ -463,94 +430,9 @@ public class X509CertDisplayIssuerIT extends ComponentBase //help class, impleme
 		return time;
 	}	
 
-	@SuppressWarnings("unchecked")
-	protected void initSubjectName() {
-		m_sSubjectName = "";
-		//print the subject
-		//order of printing is as got in the CNIPA spec
-		//first, grab the OID in the subject name
-		X509Name aName = m_aX509.getSubject();
-		Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
-		Vector<?> values = aName.getValues();
-		HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
-		for(int i=0; i< oidv.size(); i++) {
-			m_sSubjectName = m_sSubjectName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
-					((m_bDisplayOID) ? (" (OID: "+oidv.elementAt(i).toString()+")" ): "") +" \n";
-			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
-		}
-		//extract data from subject name following CNIPA recommendation
-		/*
-		 * first lookup for givenname and surname, if not existent
-		 * lookup for commonName (cn), if not existent
-		 * lookup for pseudonym ()
-		 */
+	abstract void initSubjectName();
 
-		//look for givename (=nome di battesimo)
-			m_sSubjectDisplayName = "";			
-			//see BC source code for details about DefaultLookUp behaviour
-			DERObjectIdentifier oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("givenname")); 
-			if(hm.containsKey(oix)) {
-				String tmpName = hm.get(oix).toString();
-				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("surname"));
-				if(hm.containsKey(oix))
-					m_sSubjectDisplayName = tmpName +" "+hm.get(oix).toString();
-			}
-			if(m_sSubjectDisplayName.length() == 0) {
-				//check for CN
-				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
-				if(hm.containsKey(oix)) {
-					m_sSubjectDisplayName = hm.get(oix).toString();
-				}
-			}
-			if(m_sSubjectDisplayName.length() == 0) {
-				//if still not, check for pseudodym
-				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
-				if(hm.containsKey(oix))
-					m_sSubjectDisplayName = hm.get(oix).toString();						
-			}
-			if(m_sSubjectDisplayName.length() == 0)
-				m_sSubjectDisplayName = m_sSubjectName;
-	}
-
-	@SuppressWarnings("unchecked")
-	protected void initIssuerName() {
-		m_sIssuerName = "";
-		X509Name aName = m_aX509.getIssuer();
-		Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
-		HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
-		Vector<?> values = aName.getValues();
-		for(int i=0; i< oidv.size(); i++) {
-			m_sIssuerName = m_sIssuerName + X509Name.DefaultSymbols.get(oidv.elementAt(i))+"="+values.elementAt(i).toString()+
-			((m_bDisplayOID) ? (" (OID: "+oidv.elementAt(i).toString()+")" ): "") +" \n";
-			hm.put(oidv.elementAt(i), values.elementAt(i).toString());
-		}
-		//look for givename (=nome di battesimo)
-		m_sIssuerDisplayName = "";			
-		//see BC source code for details about DefaultLookUp behaviour
-		DERObjectIdentifier oix; 
-		if(m_sIssuerDisplayName.length() == 0) {
-			//check for O
-			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("o")); 
-			if(hm.containsKey(oix)) {
-				m_sIssuerDisplayName = hm.get(oix).toString();
-			}
-		}
-		if(m_sIssuerDisplayName.length() == 0) {
-			//check for CN
-			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
-			if(hm.containsKey(oix)) {
-				m_sIssuerDisplayName = hm.get(oix).toString();
-			}
-		}
-		if(m_sIssuerDisplayName.length() == 0) {
-			//if still not, check for pseudodym
-			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
-			if(hm.containsKey(oix))
-				m_sIssuerDisplayName = hm.get(oix).toString();						
-		}
-		if(m_sIssuerDisplayName.length() == 0)
-			m_sIssuerDisplayName = m_sIssuerName;
-	}
+	abstract void initIssuerName();
 	
 	//////////////////////////////////////////////////////////////////
 	///////////////// area for extension display management
@@ -666,9 +548,71 @@ public class X509CertDisplayIssuerIT extends ComponentBase //help class, impleme
 			throws IllegalArgumentException, Exception {
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComp);
 		if(m_xQc == null)
-			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
+			throw (new IllegalArgumentException("it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#prepareDisplayStrings wrong argument"));
 
-		setDEREncoded(m_xQc.getDEREncoded());
+		//
+		m_aX509 = null; //remove old certificate
+						//remove old data from HashMaps
+		m_aExtensions.clear();
+		m_aExtensionLocalizedNames.clear();
+		m_aExtensionDisplayValues.clear();
+		m_aCriticalExtensions.clear();
+		m_aNotCriticalExtensions.clear();
+
+		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
+		ASN1InputStream aderin = new ASN1InputStream(as);
+		DERObject ado;
+		try {
+			ado = aderin.readObject();
+			m_aX509 = new X509CertificateStructure((ASN1Sequence) ado);
+//initializes the certificate display information
+			initSubjectName();
+			m_sVersion = String.format("V%d", m_aX509.getVersion());
+			m_sSerialNumber = new String(""+m_aX509.getSerialNumber().getValue());
+			initIssuerName();
+			m_sNotValidBefore = initCertDate(m_aX509.getStartDate().getDate());
+			m_sNotValidAfter =  initCertDate(m_aX509.getEndDate().getDate());
+			m_sSubjectPublicKeyAlgorithm = initPublicKeyAlgorithm();
+			m_sSubjectPublicKeyValue = initPublicKeyData();
+			m_sSignatureAlgorithm = initSignatureAlgorithm();
+			initThumbPrints();
+			//now initializes the Extension listing			
+			X509Extensions aX509Exts = m_aX509.getTBSCertificate().getExtensions();
+			//fill the internal extension HashMaps
+			//at the same time we'll get the extension localized name from resources and
+			//fill the display data
+			MessageConfigurationAccess m_aRegAcc = null;
+			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
+//FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
+			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
+			IDynamicLogger aDlgH = null;
+			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_bDisplayOID, m_aLogger);
+
+			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
+				DERObjectIdentifier aDERId = enume.nextElement();
+				String aTheOID = aDERId.getId();
+				X509Extension aext = aX509Exts.getExtension(aDERId);
+				m_aExtensions.put(aTheOID, aext);
+				//now grab the localized description
+				try {
+					m_aExtensionLocalizedNames.put(aTheOID, m_aRegAcc.getStringFromRegistry( aTheOID )+
+							((m_bDisplayOID) ? (" (OID: "+aTheOID.toString()+")" ): ""));
+				} catch (com.sun.star.uno.Exception e) {
+					m_aLogger.severe("setDEREncoded", e);
+					m_aExtensionLocalizedNames.put(aTheOID, aTheOID);
+				}
+				//and decode this extension
+				m_aExtensionDisplayValues.put(aTheOID, aHelper.examineExtension(aext, aDERId));
+
+				if(aext.isCritical())
+					m_aCriticalExtensions.put(aTheOID, aext);
+				else
+					m_aNotCriticalExtensions.put(aTheOID, aext);					
+			}
+			m_aRegAcc.dispose();
+		} catch (IOException e) {
+			m_aLogger.severe("setDEREncoded", e);
+		}
 	}
 
 	/* (non-Javadoc)

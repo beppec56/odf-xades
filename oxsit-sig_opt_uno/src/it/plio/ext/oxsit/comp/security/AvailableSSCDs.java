@@ -380,7 +380,7 @@ public class AvailableSSCDs extends ComponentBase
 								Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
 								Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 								Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
-								Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT, m_xCC);
+								Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT, m_xCC);
 
 								//now the certification path control
 								

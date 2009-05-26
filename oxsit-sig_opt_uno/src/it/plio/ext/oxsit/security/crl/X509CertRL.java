@@ -560,7 +560,7 @@ public class X509CertRL {
             try {
                 trace("Tentativo di accesso al CRL Distribution Point = " +
                       dp[i]);
-                statusText("Tentativo di accesso al CRL Distribution Point");
+                statusText("Tentativo di accesso al CRL Distribution Point in Internet...");
                 crl = download(dp[i], userCert.getIssuerDN());
                 // il primo protocollo che dia esiti positivi interrompe il ciclo
                 if (crl != null) {

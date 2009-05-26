@@ -163,8 +163,9 @@ public class GlobConstant {
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 
-	//service to display data of a certificate in a human readable way
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplaySubjIT";
+	//services to display data of a certificate in a human readable way
+	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplaySubj_IT";
+	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplayIssuer_IT";
 	//service to hold a certificate compliance checker, for user certificate
 	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceIT";
 	//service to hold a certification path checker 
