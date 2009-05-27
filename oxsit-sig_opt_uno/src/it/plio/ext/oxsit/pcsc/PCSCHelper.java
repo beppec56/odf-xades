@@ -33,8 +33,6 @@ import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
-import it.trento.comune.j4sign.pcsc.CardInfo;
 
 import java.io.IOException;
 import java.io.InputStream;

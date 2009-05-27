@@ -248,7 +248,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 
 		initializeCADataBase(_aFrame);
-		isPathValid();
+		checkPathValidity();
 		return null;
 	}
 
@@ -322,7 +322,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	//FIXME: a big one, needs to set state for certificate in graphic...
 	//FIXME: another one, see behavior of this with a longer certification path
 	//FIXME: check with cert path problem
-	private boolean isPathValid() {
+	private boolean checkPathValidity() {
 		//convert the certificate to java internal representation
         java.security.cert.CertificateFactory cf;
 		try {

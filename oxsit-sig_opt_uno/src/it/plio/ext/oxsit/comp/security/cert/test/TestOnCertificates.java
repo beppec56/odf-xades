@@ -28,9 +28,10 @@ import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
-import it.trento.comune.j4sign.pcsc.CardInfo;
-import it.trento.comune.j4sign.pcsc.PCSCHelper;
+import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
+import it.plio.ext.oxsit.pcsc.CardInfo;
+import it.plio.ext.oxsit.pcsc.PCSCHelper;
+import it.plio.ext.oxsit.security.ReadCerts;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,57 +44,24 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERGeneralizedTime;
-import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Attribute;
-import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.CRLDistPoint;
-import org.bouncycastle.asn1.x509.CertificatePolicies;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.PolicyInformation;
-import org.bouncycastle.asn1.x509.PolicyQualifierId;
-import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
-import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
-import org.bouncycastle.asn1.x509.ReasonFlags;
-import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
-import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
-import org.bouncycastle.i18n.filter.TrustedInput;
 
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
@@ -366,7 +334,7 @@ public class TestOnCertificates {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("testMethod");
 
-		PCSCHelper pcsc = new PCSCHelper(true);
+		PCSCHelper pcsc = new PCSCHelper(true, null, m_aLogger);
 
 		m_aLogger.log("After 'new PCSCHelper'");
 
@@ -397,7 +365,7 @@ public class TestOnCertificates {
 				
 				m_aLogger.log("\tLettura certificati");
 				
-				ReadCertsTask rt = new ReadCertsTask(cIr);
+				ReadCerts rt = new ReadCerts(null, m_aLogger, currReader, cIr);
 				Collection<?> certsOnToken = rt.getCertsOnToken();
 				if (certsOnToken != null) {
 					Iterator<?> certIt = certsOnToken.iterator();

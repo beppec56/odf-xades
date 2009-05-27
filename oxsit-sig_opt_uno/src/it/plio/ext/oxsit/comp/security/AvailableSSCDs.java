@@ -30,13 +30,13 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
+import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
+import it.plio.ext.oxsit.pcsc.CardInfo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.trento.comune.j4sign.pcsc.CardInReaderInfo;
-import it.trento.comune.j4sign.pcsc.CardInfo;
 //import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
