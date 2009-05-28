@@ -34,36 +34,44 @@
 		<group oor:name="FileResource">
 			<prop oor:name="Url" oor:type="xs:string" oor:localized="true"/>
 		</group>
-		<group oor:name="oLinux">
-			<prop oor:name="LibName" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res1" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res2" oor:type="xs:string" oor:localized="false"/>			
-		</group>
-		<group oor:name="oWindows">
-			<prop oor:name="LibName" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res1" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res2" oor:type="xs:string" oor:localized="false"/>			
-		</group>
-		<group oor:name="oMac">
-			<prop oor:name="LibName" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res1" oor:type="xs:string" oor:localized="false"/>			
-			<prop oor:name="res2" oor:type="xs:string" oor:localized="false"/>			
+		<group oor:name="OsDataItem">
+			<prop oor:name="LibName" oor:type="xs:string"/>			
+			<prop oor:name="res1" oor:type="xs:string" />			
+			<prop oor:name="res2" oor:type="xs:string" />			
 		</group>
 
 		<!-- In OOo this will be accessed with the code of The ATR -->
-		<group oor:name="aSSCD">
-			<!--   prop oor:name="Description" oor:type="xs:string" oor:localized="false"/>
-			<prop oor:name="Manufacturer" oor:type="xs:string" oor:localized="false"/>
-			<prop oor:name="CardType" oor:type="xs:string" oor:localized="false"/ -->
+		<group oor:name="SSCDItemElem">
+			<prop oor:name="Description" oor:type="xs:string">
+			</prop>
+			<prop oor:name="Manufacturer" oor:type="xs:string"/>
+			<prop oor:name="CardType" oor:type="xs:string"/>
 			<!-- In OOo any one of these sets is accessed as a node, where the name is the name of the node -->
-			<set oor:name="OsLinux" oor:node-type="oLinux"/>
-			<set oor:name="OsWindows" oor:node-type="oWindows"/>
-			<set oor:name="OsMac" oor:node-type="oMac"/>
+			<group oor:name="OsLinux">
+				<prop oor:name="LibName" oor:type="xs:string">
+					<value></value>
+				</prop>			
+				<prop oor:name="res1" oor:type="xs:string" />			
+				<prop oor:name="res2" oor:type="xs:string" />			
+			</group>
+			<set oor:name="OsData" oor:node-type="OsDataItem">
+			</set>
 		</group>
+		<set oor:name="SSCDElement" oor:node-type="SSCDItemElem">
+			<info>
+				Contains all the SSCD component known to the extension.
+			</info>
+		</set>
 	</templates>
 	<component>
 		<!-- In OOo the following is accessed as a node  -->
-		<set oor:name="SSCDs" oor:node-type="aSSCD"/>
+		<group oor:name="SSCDCollection">
+			<set oor:name="SSCDs" oor:node-type="SSCDElement">
+				<info>
+					Contains all the SSCD component known to the extension.
+				</info>
+			</set>		
+		</group>	
 		<group oor:name="SignatureOptionsParameters">
 			<info>
 				<author>Giuseppe Castagno (aka beppec56)</author>

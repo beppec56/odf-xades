@@ -42,10 +42,14 @@ public class TestSSCDConfiguration {
             // query its XDesktop interface, we need the current component
 
 //init the configuration manager
-                SSCDsConfigurationAccess aSSCD = new SSCDsConfigurationAccess(xCC);
+                String root = "/it.plio.ext.oxsit.Configuration/SSCDCollection";
+//                root = "/org.openoffice.Office.TypeDetection/Filters";
+//                root = "/org.openoffice.Office.Calc/Grid";
+//                	root ="/org.openoffice.Office.Addons";
+                SSCDsConfigurationAccess aSSCD = new SSCDsConfigurationAccess(xCC,root);
                 
-                aSSCD.readConfig();
-                
+                aSSCD.printRegisteredSSCDs();
+
             }
         }
         catch(Exception e) {
