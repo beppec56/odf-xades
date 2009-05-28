@@ -31,7 +31,6 @@ import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
-import it.plio.ext.oxsit.pcsc.CardInfo;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;

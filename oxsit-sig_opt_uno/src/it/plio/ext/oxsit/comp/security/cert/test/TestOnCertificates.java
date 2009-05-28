@@ -29,7 +29,6 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
-import it.plio.ext.oxsit.pcsc.CardInfo;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;

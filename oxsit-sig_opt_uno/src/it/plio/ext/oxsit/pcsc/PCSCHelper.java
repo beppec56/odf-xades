@@ -62,8 +62,6 @@ import com.sun.star.uno.XInterface;
  */
 public class PCSCHelper {
 
-	private Hashtable<String, CardInfo> m_CardInfos = new Hashtable<String, CardInfo>();
-
 	private Hashtable<String, CardInfoOOo> m_CardInfosOOo = new Hashtable<String, CardInfoOOo>();
 	
     private IDynamicLogger m_aLogger;
@@ -154,92 +152,14 @@ public class PCSCHelper {
     private void loadOOoSSCDConfigurationData() {
     	//open the root config for SSCDs data
     	//see the file AddonConfiguration.xcu.xml on prj oxsit-ext_conf for details
-
+    	//on how the configuration is written
     	SSCDsConfigurationAccess aConf = new SSCDsConfigurationAccess(m_xCC,m_xMCF);
         // create the root element to look for the SSCD configuration
     	CardInfoOOo[] aCardList = aConf.readSSCDConfiguration();
-    	if(aCardList != null) {
-        	//scan the configuration, it's arrayed as a collection
-            //loading properties in a vector of CardInfo
-            Vector<Object> v = new Vector<Object>();
-            CardInfo ci = null;
-            
-            for(int i =0; i< aCardList.length;i++){
+    	if(aCardList != null) {            
+            for(int i =0; i< aCardList.length;i++)
             	m_CardInfosOOo.put(aCardList[i].m_sATRCode, aCardList[i]);
-            }
     	}
-    }
-    
-    private void loadProperties() {
-
-        m_aLogger.info("Loading properties...");
-
-        Properties prop = new Properties();
-
-        InputStream propertyStream=null;
-        String scPropertiesFile = null;
-        
-        String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().indexOf("win") > -1) {
-            scPropertiesFile = "scWin.properties";
-        }
-        if (osName.toLowerCase().indexOf("linux") > -1) {
-            scPropertiesFile = "scLinux.properties";
-        }
-        if (osName.toLowerCase().indexOf("mac") > -1) {
-            scPropertiesFile = "scMac.properties";
-        }
-        if (scPropertiesFile!=null) {
-            propertyStream = this.getClass().getResourceAsStream(scPropertiesFile);
-        }
-
-        if (propertyStream != null) {
-            try {
-                prop.load(propertyStream);
-
-            } catch (IOException e2) {
-            	m_aLogger.severe(e2);
-            }
-            //prop.list(System.out);
-        }
-
-        Iterator<Object> i = prop.keySet().iterator();
-
-        String currKey = null;
-
-        int index = 0;
-        int pos = -1;
-        String attribute = null;
-        String value = null;
-
-        //loading properties in a vector of CardInfo
-        Vector<Object> v = new Vector<Object>();
-        CardInfo ci = null;
-        while (i.hasNext()) {
-            currKey = (String) i.next();
-            pos = currKey.indexOf(".");
-            index = Integer.parseInt(currKey.substring(0, pos));
-            attribute = currKey.substring(pos + 1);
-            value = (String) prop.get(currKey);
-            value = "atr".equals(attribute) ? value.toUpperCase() : value;
-
-            while (index > v.size()) {
-                ci = new CardInfo();
-                v.addElement(ci);
-            }
-            ci = (CardInfo) v.get(index - 1);
-            ci.addProperty(attribute, value);
-        }
-
-        //coverting vector to Hashtable (keyed by ATR)
-        i = v.iterator();
-        while (i.hasNext()) {
-            ci = (CardInfo) i.next();
-            this.m_CardInfos.put(ci.getProperty("atr"), ci);
-            //cosa mette nella Hash Table?
-            //System.out.println("ATR inserita nella Hash Table: "+ ci.getProperty("atr"));
-        }
-
     }
 
     public List<CardInReaderInfo> findCardsAndReaders() {
@@ -368,14 +288,7 @@ public class PCSCHelper {
         // return "no card inserted", because terminal is already closed
     }
 
-
-    /**
-     * @return Returns the m_CardInfos.
-     */
-    public Hashtable<String, CardInfo> getCardInfosNoLongerUsed() {
-        return m_CardInfos;
-    }
-    
+    //function to substitute getCardInfos
     public Hashtable<String, CardInfoOOo> getCardInfosOOo() {
     	return m_CardInfosOOo;
     }
@@ -386,209 +299,10 @@ public class PCSCHelper {
     public String[] getReaders() {
         return readers;
     }    
-////////////////////////// code used to test the XML conversion
+
+ ////////////////////////// code used to test the XML conversion
     //ctor used to convert SSCD properties to XML structure
     public PCSCHelper() {
 
     }
-
-    //ctor used to convert SSCD properties to XML structure
-    public PCSCHelper(XComponentContext _xContext) {
-    	m_xCC = _xContext;
-    	m_xMCF = m_xCC.getServiceManager();
-    	m_aLogger = new DynamicLogger(this,m_xCC);
-    	m_aLogger.enableLogging();
-    }
-
-    private class sscdDescr {
-		public String sDescription;
-		public String sManufacturer;
-		public String sCardType;
-		public String sOsLinuxLib;
-		public String sOsWindowsLib;
-		public String sOsMacLib;
-		
-		public sscdDescr() {
-			sDescription =
-			sManufacturer= 
-			sCardType = 
-			sOsLinuxLib =
-			sOsWindowsLib =
-			sOsMacLib = "";
-		}
-	}
-
-    public void createSSCDsXML() {
-    	// for every property file
-    	
-    	Hashtable<String, sscdDescr> aElemTable = new Hashtable<String, sscdDescr>();
-    	
-    	final String[] lProps = {
-    				"scWin.properties",
-    				"scLinux.properties",
-    				"scMac.properties"
-    				}; 
-
-    	for(int idx=0; idx< lProps.length;idx++){
-        	// read in all the property
-            Properties prop = new Properties();
-
-            InputStream propertyStream=null;
-            String scPropertiesFile = null;
-            
-            scPropertiesFile = lProps[idx];
-            propertyStream = getClass().getResourceAsStream(scPropertiesFile);
-//add the properties to the Hashtable            
-            if (propertyStream != null) {
-                try {
-                    prop.load(propertyStream);
-
-                } catch (IOException e2) {
-                	m_aLogger.severe(e2);
-                }
-                //prop.list(System.out);
-            }
-
-            Iterator<Object> i = prop.keySet().iterator();
-
-            String currKey = null;
-
-            int index = 0;
-            int pos = -1;
-            String attribute = null;
-            String value = null;
-
-            //loading properties in a vector of CardInfo
-            Vector<Object> v = new Vector<Object>();
-            CardInfo ci = null;
-            while (i.hasNext()) {
-                currKey = (String) i.next();
-                pos = currKey.indexOf(".");
-                index = Integer.parseInt(currKey.substring(0, pos));
-                attribute = currKey.substring(pos + 1);
-                value = (String) prop.get(currKey);
-                value = "atr".equals(attribute) ? value.toUpperCase() : value;
-
-                while (index > v.size()) {
-                    ci = new CardInfo();
-                    v.addElement(ci);
-                }
-                ci = (CardInfo) v.get(index - 1);
-                ci.addProperty(attribute, value);
-            }
-    		//now check it the atr already exist in the hashtable
-            
-
-            i = v.iterator();
-            while (i.hasNext()) {
-                ci = (CardInfo) i.next();
-                sscdDescr aDesc = aElemTable.get(ci.getProperty("atr"));
-                if(aDesc == null)
-                	aDesc = new sscdDescr();
-                
-                aDesc.sCardType = ci.getProperty("description");
-                aDesc.sDescription = ci.getProperty("description");
-                aDesc.sManufacturer = ci.getProperty("manufacturer");
-                //position corresponding to the property file
-                switch(idx) {
-                case 0:
-                	aDesc.sOsWindowsLib = ((ci.getProperty("lib") == null)? "" : ci.getProperty("lib"));
-                	break;
-                case 1:
-                	aDesc.sOsLinuxLib = ((ci.getProperty("lib") == null)? "": ci.getProperty("lib"));
-                	break;
-                case 2:
-                	aDesc.sOsMacLib = (ci.getProperty("lib") == null)? "": ci.getProperty("lib");
-                	break;
-                }
-                
-                aElemTable.put(ci.getProperty("atr"),aDesc);                
-            }    		
-    	}
-    	//now output the Hashtable as a XML formatted chunk
-    	
-    	Set<String> setATR = aElemTable.keySet();
-    	
-    	Iterator< String> keys = setATR.iterator();
-    	
-    	outTab(1) ; out("<!-- All the known SSCDs (smart cards) -->");
-    	outTab(1) ; out("<node oor:name=\"SSCDCollection\">");
-    	while(keys.hasNext()) {
-    		String theKey = keys.next();
-    		sscdDescr aDesc = aElemTable.get(theKey);
-    		outTab(2) ;	out("<!-- ");
-    		outTab(3) ;	out("The smart card ATR code, starts the description");
-    		outTab(3) ;	out("It's used as a key to the right library name");
-    		outTab(2) ;	out("-->");
-    		outTab(2) ; out("<node oor:name=\"" + theKey +  "\" oor:op=\"replace\">");
-    		outTab(3) ; 	out("<node oor:name=\"S1\" oor:op=\"replace\">");
-    		outTab(4) ; 		out("<prop oor:name=\"Description\" oor:type=\"xs:string\">");
-    		outTab(5) ; 			out("<value>"+aDesc.sDescription+"</value>");
-    		outTab(4) ; 		out("</prop>");
-    		outTab(4) ;		 	out("<prop oor:name=\"Manufacturer\" oor:type=\"xs:string\">");
-    		outTab(5) ; 			out("<value>"+aDesc.sManufacturer+"</value>");
-    		outTab(4) ; 		out("</prop>");
-    		outTab(4) ; 		out("<prop oor:name=\"CardType\" oor:type=\"xs:string\">");
-    		outTab(5) ; 			out("<value>"+aDesc.sDescription+"</value>");
-    		outTab(4) ; 		out("</prop>");
-    		outTab(4) ; 		out("<!-- this node contains the operating system related properties -->");
-    		outTab(4) ; 		out("<node oor:name=\"OsData\">");
-    		outTab(5) ; 			out("<node oor:name=\"OsLinux\" oor:op=\"replace\">");
-    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
-    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value>"+aDesc.sOsLinuxLib+"</value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(5) ; 			out("</node>");
-    		outTab(5) ; 			out("<node oor:name=\"OsWindows\" oor:op=\"replace\">");
-    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
-    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		outTab(7) ;	 					out("<value>"+aDesc.sOsWindowsLib+"</value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(5) ; 			out("</node>");
-    		outTab(5) ; 			out("<node oor:name=\"OsMac\" oor:op=\"replace\">");
-    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
-    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value>"+aDesc.sOsMacLib+"</value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		outTab(7) ; 					out("<value></value>");
-    		outTab(6) ; 				out("</prop>");
-    		outTab(5) ; 			out("</node>");
-    		outTab(4) ; 		out("</node>");
-    		outTab(3) ; 	out("</node>");
-    		outTab(2) ; out("</node>");
-    		outTab(2) ; out("<!--  -->");
-    	}
-    	outTab(1) ; out("</node>");
-    	//
-    	//
-    	//
-    }
-
-    private void outTab(int ntabs) {
-    	for(int y=0; y < ntabs; y++)
-    	System.out.print("\t");
-    }
-    private void out(String line) {
-    
-    	System.out.println(line);
-    	
-    }
-    
-    //////////////////////// end of temporary code, to be removed after the configuration has moved
 }

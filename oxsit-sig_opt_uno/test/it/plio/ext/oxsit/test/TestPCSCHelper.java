@@ -20,7 +20,6 @@ public class TestPCSCHelper {
     public static void main(String[] args) {
 
         PCSCHelper a = new PCSCHelper();
-        a.createSSCDsXML();
         System.exit(0);
     }
 
