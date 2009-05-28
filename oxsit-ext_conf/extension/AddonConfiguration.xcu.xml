@@ -23,23 +23,24 @@
 	xmlns:oor="http://openoffice.org/2001/registry"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" >
 	<!-- All the known SSCDs (smart cards) -->
-	<node oor:name="SSCDCollection">
-		<node oor:name="SSCDs">
-			<!-- The smart card ATR code, starts the description -->
-			<node oor:name="3BF49800FFC11031FE554D346376B4" oor:op="replace">
-				<node oor:name="S1" oor:op="replace">
-					<prop oor:name="Description" oor:type="xs:string">
-						<value>CryptoVision</value>
-					</prop>
-					<prop oor:name="Manufacturer" oor:type="xs:string">
-						<value>InfoCamere</value>
-					</prop>
-					<prop oor:name="CardType" oor:type="xs:string">
-						<value>CryptoVision</value>
-					</prop>
-					<node oor:name="OsLinux" oor:op="replace">
+	<!-- node oor:name="OptionData" -->
+		<node oor:name="SSCDCollection">
+		<!-- The smart card ATR code, starts the description -->
+		<node oor:name="3BF49800FFC11031FE554D346376B4" oor:op="replace">
+			<node oor:name="S1" oor:op="replace">
+				<prop oor:name="Description" oor:type="xs:string">
+					<value>CryptoVision</value>
+				</prop>
+				<prop oor:name="Manufacturer" oor:type="xs:string">
+					<value>InfoCamere</value>
+				</prop>
+				<prop oor:name="CardType" oor:type="xs:string">
+					<value>CryptoVision</value>
+				</prop>
+				<node oor:name="OsData">
+					<node oor:name="OsWindows" oor:op="replace">
 							<prop oor:name="LibName" oor:type="xs:string">
-								<value>yyyy</value>
+									<value>cvp11_M4.dll</value>
 							</prop>
 							<prop oor:name="res1" oor:type="xs:string">
 								<value></value>
@@ -48,24 +49,38 @@
 								<value></value>
 							</prop>
 					</node>
-					<node oor:name="OsData">
-						<node oor:name="OsWindows" oor:op="replace">
-								<prop oor:name="LibName" oor:type="xs:string">
-										<value>cvp11_M4.dll</value>
-								</prop>
-								<prop oor:name="res1" oor:type="xs:string">
-									<value></value>
-								</prop>
-								<prop oor:name="res2" oor:type="xs:string">
-									<value></value>
-								</prop>
-						</node>
-					</node>
-				</node>					
-			</node>
-			<!--  -->
+				</node>
+			</node>					
 		</node>
+		<node oor:name="3BF49800FFC11031FE554D346376B5" oor:op="replace">
+			<node oor:name="S1" oor:op="replace">
+				<prop oor:name="Description" oor:type="xs:string">
+					<value>CryptoVision</value>
+				</prop>
+				<prop oor:name="Manufacturer" oor:type="xs:string">
+					<value>InfoCamere</value>
+				</prop>
+				<prop oor:name="CardType" oor:type="xs:string">
+					<value>CryptoVision</value>
+				</prop>
+				<node oor:name="OsData">
+					<node oor:name="OsWindows" oor:op="replace">
+							<prop oor:name="LibName" oor:type="xs:string">
+									<value>cvp11_M4.dll</value>
+							</prop>
+							<prop oor:name="res1" oor:type="xs:string">
+								<value></value>
+							</prop>
+							<prop oor:name="res2" oor:type="xs:string">
+								<value></value>
+							</prop>
+					</node>
+				</node>
+			</node>					
+		</node>
+		<!--  -->
 	</node>
+	<!--  /node -->
 	<node oor:name="SignatureOptionsParameters">
 		<!--
 			Default set in .xcs.xml configuration file 

@@ -43,6 +43,7 @@ public class TestSSCDConfiguration {
 
 //init the configuration manager
                 String root = "/it.plio.ext.oxsit.Configuration/SSCDCollection";
+//                root = "/it.plio.ext.oxsit.Configuration";
 //                root = "/org.openoffice.Office.TypeDetection/Filters";
 //                root = "/org.openoffice.Office.Calc/Grid";
 //                	root ="/org.openoffice.Office.Addons";

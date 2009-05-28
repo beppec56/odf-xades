@@ -34,44 +34,72 @@
 		<group oor:name="FileResource">
 			<prop oor:name="Url" oor:type="xs:string" oor:localized="true"/>
 		</group>
-		<group oor:name="OsDataItem">
-			<prop oor:name="LibName" oor:type="xs:string"/>			
-			<prop oor:name="res1" oor:type="xs:string" />			
-			<prop oor:name="res2" oor:type="xs:string" />			
-		</group>
-
-		<!-- In OOo this will be accessed with the code of The ATR -->
-		<group oor:name="SSCDItemElem">
-			<prop oor:name="Description" oor:type="xs:string">
+		<!-- group oor:name="MenuItem" -->
+		<group oor:name="OsType">
+			<info>
+				<desc></desc>
+			</info>
+			<prop oor:name="LibName" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
 			</prop>
-			<prop oor:name="Manufacturer" oor:type="xs:string"/>
-			<prop oor:name="CardType" oor:type="xs:string"/>
-			<!-- In OOo any one of these sets is accessed as a node, where the name is the name of the node -->
-			<group oor:name="OsLinux">
-				<prop oor:name="LibName" oor:type="xs:string">
-					<value></value>
-				</prop>			
-				<prop oor:name="res1" oor:type="xs:string" />			
-				<prop oor:name="res2" oor:type="xs:string" />			
-			</group>
-			<set oor:name="OsData" oor:node-type="OsDataItem">
+			<prop oor:name="res1" oor:type="xs:string" oor:localized="true">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+			<prop oor:name="res2" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+		</group>
+		<!-- group oor:name="MergeMenuInstruction" -->
+		<group oor:name="SSCDNode">
+				<info>
+					<desc></desc>
+				</info>
+			<prop oor:name="Description" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+			<prop oor:name="Manufacturer" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+			<prop oor:name="CardType" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+			<!--  set oor:name="MenuItems" oor:node-type="MenuItem" -->
+			<set oor:name="OsData" oor:node-type="OsType">
+				<info>
+					<desc></desc>
+				</info>
 			</set>
 		</group>
-		<set oor:name="SSCDElement" oor:node-type="SSCDItemElem">
+		<!--  set oor:name="MergeMenuItems" oor:node-type="MergeMenuInstruction" -->
+		<set oor:name="SSCD_ATR" oor:node-type="SSCDNode">
 			<info>
-				Contains all the SSCD component known to the extension.
+				<desc>Contains all the SSCD component known to the extension.</desc>
 			</info>
 		</set>
 	</templates>
 	<component>
 		<!-- In OOo the following is accessed as a node  -->
-		<group oor:name="SSCDCollection">
-			<set oor:name="SSCDs" oor:node-type="SSCDElement">
-				<info>
-					Contains all the SSCD component known to the extension.
-				</info>
-			</set>		
-		</group>	
+		<!--  group oor:name="AddonUI" -->
+		<!-- group oor:name="OptionData" -->
+			<info>
+				<desc></desc>
+			</info>
+			<!--  set oor:name="OfficeMenuBarMerging" oor:node-type="MergeMenuItems" -->
+			<set oor:name="SSCDCollection" oor:node-type="SSCD_ATR">
+			</set>
+		<!-- /group -->
 		<group oor:name="SignatureOptionsParameters">
 			<info>
 				<author>Giuseppe Castagno (aka beppec56)</author>
