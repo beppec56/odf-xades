@@ -124,7 +124,7 @@ public class ReadCerts {
             // indexToken = Integer.parseInt(in.readLine());
             // }
 
-            cardDescription = cIr.getCard().getProperty("description");
+            cardDescription = cIr.getCard().m_sDescription;
 
         } catch (TokenException te) {
             // setStatus(ERROR, PKCS11Helper.decodeError(te.getCode()));

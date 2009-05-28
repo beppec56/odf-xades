@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.plio.ext.oxsit.pcsc.CardInfo;
+import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
@@ -317,14 +318,14 @@ public class AvailableSSCDs extends ComponentBase
         	}
         }
         
-		PCSCHelper pcsc = new PCSCHelper(true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
+		PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 //		PCSCHelper pcsc = new PCSCHelper(true, null);
 
 		m_aLogger.log("After 'new PCSCHelper'");
 
 		java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
 
-		CardInfo ci = null;
+		CardInfoOOo ci = null;
 		Iterator<CardInReaderInfo> it = infos.iterator();
 		int indexToken = 0;
 		int indexReader = 0;
@@ -347,10 +348,10 @@ public class AvailableSSCDs extends ComponentBase
 					oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
 					xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
-					xSSCDevice.setDescription(ci.getProperty("description"));
-					xSSCDevice.setManufacturer(ci.getProperty("manufacturer"));
-					xSSCDevice.setATRcode(ci.getProperty("atr"));
-					xSSCDevice.setCryptoLibraryUsed(ci.getProperty("lib"));
+					xSSCDevice.setDescription(ci.m_sDescription);
+					xSSCDevice.setManufacturer(ci.m_sManufacturer);
+					xSSCDevice.setATRcode(ci.m_sATRCode);
+					xSSCDevice.setCryptoLibraryUsed(ci.m_sOsLib);
 
 					m_aLogger.log("\tLettura certificati");
 					if(xStatusIndicator != null) {

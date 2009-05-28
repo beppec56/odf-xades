@@ -50,7 +50,7 @@ public class GlobConstant {
 	public static final String m_sEXTENSION_CONF_BASE_KEY = m_sEXTENSION_BASE_KEY+".Configuration/";
 	public static final String m_sEXTENSION_CONF_FRAME_KEY = m_sEXTENSION_CONF_BASE_KEY	+ "Frames/";
 	public static final String m_sEXTENSION_CONF_OPTIONS = m_sEXTENSION_CONF_BASE_KEY	+ "SignatureOptionsParameters/";
-	public static final String m_sEXTENSION_CONF_SSCDS = m_sEXTENSION_CONF_BASE_KEY	+ "SSCDs/";
+	public static final String m_sEXTENSION_CONF_SSCDS = m_sEXTENSION_CONF_BASE_KEY	+ "SSCDCollection";
 	public static final String m_sEXTENSION_CONF_FRAME_ID = "Fuhc";
 	public static final String m_sOFFICE_ADDONS_BASE_CONF ="/org.openoffice.Office.Addons/";
 	public static final String m_sTOOLBAR_CONF_BASE_KEY = m_sOFFICE_ADDONS_BASE_CONF+"AddonUI/OfficeToolBar";

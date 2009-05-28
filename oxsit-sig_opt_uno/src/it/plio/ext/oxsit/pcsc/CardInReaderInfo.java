@@ -65,14 +65,14 @@ public class CardInReaderInfo {
     private String reader;
     private long slotID=0;
     private int indexToken = 0;
-    private CardInfo card;
+    private CardInfoOOo card;
     private String lib;
 
     public CardInReaderInfo() {
 
     }
 
-    public CardInReaderInfo(String attribute1, CardInfo attribute2) {
+    public CardInReaderInfo(String attribute1, CardInfoOOo attribute2) {
         reader = attribute1;
         card = attribute2;
     }
@@ -81,7 +81,7 @@ public class CardInReaderInfo {
         reader = attribute;
     }
 
-    public void setCard(CardInfo attribute) {
+    public void setCard(CardInfoOOo attribute) {
         card = attribute;
     }
 
@@ -114,7 +114,7 @@ public class CardInReaderInfo {
         return reader;
     }
 
-    public CardInfo getCard() {
+    public CardInfoOOo getCard() {
         return card;
     }
 

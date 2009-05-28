@@ -33,6 +33,8 @@ import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +51,9 @@ import com.ibm.opencard.terminal.pcsc10.OCFPCSC1;
 import com.ibm.opencard.terminal.pcsc10.Pcsc10Constants;
 import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.XComponentContext;
+import com.sun.star.uno.XInterface;
 
 /**
  * A java class for detecting SmartCard tokens and readers via PCSC.
@@ -56,8 +61,11 @@ import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
  * @author Roberto Resoli
  */
 public class PCSCHelper {
-    private Hashtable<String, CardInfo> m_CardInfos = new Hashtable<String, CardInfo>();
-    
+
+	private Hashtable<String, CardInfo> m_CardInfos = new Hashtable<String, CardInfo>();
+
+	private Hashtable<String, CardInfoOOo> m_CardInfosOOo = new Hashtable<String, CardInfoOOo>();
+	
     private IDynamicLogger m_aLogger;
 
     /** The reference to the PCSC ResourceManager for this card terminal. */
@@ -72,6 +80,8 @@ public class PCSCHelper {
 
     /** The state of this card terminal. */
     private boolean closed;
+    
+    
 
     /* states returned by SCardGetStatusChange */
     private static final int SCARD_STATE_MUTE = 0x200;
@@ -80,8 +90,14 @@ public class PCSCHelper {
 
     /** The <tt>ATR</tt> of the presently inserted card. */
     private byte[] cachedATR;
+
     
-    public PCSCHelper(boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
+    private 	XComponentContext m_xCC;
+    private		XMultiComponentFactory m_xMCF;
+    
+    public PCSCHelper(XComponentContext _xContext, boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
+    	m_xCC = _xContext;
+    	m_xMCF = m_xCC.getServiceManager();
     	if(aLogger == null)
     		m_aLogger = new DynamicLazyLogger();
     	else {
@@ -117,7 +133,7 @@ public class PCSCHelper {
 
             m_aLogger.info("Driver initialized");
 
-            loadProperties();
+            loadOOoSSCDConfigurationData();
 
         } catch (UnsatisfiedLinkError e) {
 	        m_aLogger.severe("","Missing a library ? ",e);
@@ -134,10 +150,254 @@ public class PCSCHelper {
         /* add one slot */
         //this.addSlots(1);
     }
+    
+    private void loadOOoSSCDConfigurationData() {
+    	//open the root config for SSCDs data
+    	//see the file AddonConfiguration.xcu.xml on prj oxsit-ext_conf for details
 
-    //code used to convert SSCD properties to XML structure
+    	SSCDsConfigurationAccess aConf = new SSCDsConfigurationAccess(m_xCC,m_xMCF);
+        // create the root element to look for the SSCD configuration
+    	CardInfoOOo[] aCardList = aConf.readSSCDConfiguration();
+    	if(aCardList != null) {
+        	//scan the configuration, it's arrayed as a collection
+            //loading properties in a vector of CardInfo
+            Vector<Object> v = new Vector<Object>();
+            CardInfo ci = null;
+            
+            for(int i =0; i< aCardList.length;i++){
+            	m_CardInfosOOo.put(aCardList[i].m_sATRCode, aCardList[i]);
+            }
+    	}
+    }
+    
+    private void loadProperties() {
+
+        m_aLogger.info("Loading properties...");
+
+        Properties prop = new Properties();
+
+        InputStream propertyStream=null;
+        String scPropertiesFile = null;
+        
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().indexOf("win") > -1) {
+            scPropertiesFile = "scWin.properties";
+        }
+        if (osName.toLowerCase().indexOf("linux") > -1) {
+            scPropertiesFile = "scLinux.properties";
+        }
+        if (osName.toLowerCase().indexOf("mac") > -1) {
+            scPropertiesFile = "scMac.properties";
+        }
+        if (scPropertiesFile!=null) {
+            propertyStream = this.getClass().getResourceAsStream(scPropertiesFile);
+        }
+
+        if (propertyStream != null) {
+            try {
+                prop.load(propertyStream);
+
+            } catch (IOException e2) {
+            	m_aLogger.severe(e2);
+            }
+            //prop.list(System.out);
+        }
+
+        Iterator<Object> i = prop.keySet().iterator();
+
+        String currKey = null;
+
+        int index = 0;
+        int pos = -1;
+        String attribute = null;
+        String value = null;
+
+        //loading properties in a vector of CardInfo
+        Vector<Object> v = new Vector<Object>();
+        CardInfo ci = null;
+        while (i.hasNext()) {
+            currKey = (String) i.next();
+            pos = currKey.indexOf(".");
+            index = Integer.parseInt(currKey.substring(0, pos));
+            attribute = currKey.substring(pos + 1);
+            value = (String) prop.get(currKey);
+            value = "atr".equals(attribute) ? value.toUpperCase() : value;
+
+            while (index > v.size()) {
+                ci = new CardInfo();
+                v.addElement(ci);
+            }
+            ci = (CardInfo) v.get(index - 1);
+            ci.addProperty(attribute, value);
+        }
+
+        //coverting vector to Hashtable (keyed by ATR)
+        i = v.iterator();
+        while (i.hasNext()) {
+            ci = (CardInfo) i.next();
+            this.m_CardInfos.put(ci.getProperty("atr"), ci);
+            //cosa mette nella Hash Table?
+            //System.out.println("ATR inserita nella Hash Table: "+ ci.getProperty("atr"));
+        }
+
+    }
+
+    public List<CardInReaderInfo> findCardsAndReaders() {
+
+        ArrayList<CardInReaderInfo> cardsAndReaders = new ArrayList<CardInReaderInfo>();
+
+        try {
+//            int numReaders = getReaders().length;
+
+            //System.out.println("Found " + numReaders + " readers.");
+
+            String currReader = null;
+            CardInReaderInfo cIr = null;
+            int indexToken = 0;
+            for (int i = 0; i < getReaders().length; i++) {
+
+                currReader = getReaders()[i];
+                // System.out.println("\nChecking card in reader '"
+                //                   + currReader + "'.");
+                if (isCardPresent(currReader)) {
+                    // System.out.println("Card is present in reader '"
+                    //                    + currReader + "' , ATR String follows:");
+                    // System.out.println("ATR: " + formatATR(cachedATR, " "));
+                    CardInfoOOo ci = new CardInfoOOo();
+                    // trova per ATR
+                    try {
+                    	ci = (CardInfoOOo) getCardInfosOOo().get(
+                            formatATR(cachedATR, ""));
+                    	if(ci == null) {
+                    		String term =System.getProperty("line.separator"); 
+                    		throw (new NullPointerException(term+term+
+                    				"Card with ATR: "+formatATR(cachedATR, "")+" not found on internal properties"+term));
+                    	}
+	                    cIr = new CardInReaderInfo(currReader, ci);
+	                    cIr.setIndexToken(indexToken);
+	                    cIr.setSlotId(indexToken);
+	                    cIr.setLib(ci.m_sOsLib);
+	                    indexToken++;                    	
+                    } catch (NullPointerException e) {
+                    	m_aLogger.severe(e);
+	                    cIr = new CardInReaderInfo(currReader, null);
+	                    cIr.setLib(null);
+                    }
+                } else {
+                    //  System.out.println("No card in reader '" + currReader
+                    //                     + "'!");
+                    cIr = new CardInReaderInfo(currReader, null);
+                    cIr.setLib(null);
+                }
+                cardsAndReaders.add(cIr);
+            }
+        } catch (Exception e) {
+            m_aLogger.severe(e);
+        }
+        return cardsAndReaders;
+    }
+
+    public String formatATR(byte[] atr, String byteSeparator) {
+        int n, x;
+        String w = new String();
+        String s = new String();
+
+        for (n = 0; n < atr.length; n++) {
+            x = (int) (0x000000FF & atr[n]);
+            w = Integer.toHexString(x).toUpperCase();
+            if (w.length() == 1) {
+                w = "0" + w;
+            }
+            s = s + w + ((n + 1 == atr.length) ? "" : byteSeparator);
+        } // for
+        return s;
+    }
+
+   /**
+     * Check whether there is a smart card present.
+     *
+     * @param name
+     *            Name of the reader to check.
+     * @return True if there is a smart card inserted in the card terminals
+     *         slot.
+     */
+    public synchronized boolean isCardPresent(String name) {
+
+        // check if terminal is already closed...
+        if (!closed) {
+
+            /* fill in the data structure for the state request */
+            PcscReaderState[] rState = new PcscReaderState[1];
+            rState[0] = new PcscReaderState();
+            rState[0].CurrentState = Pcsc10Constants.SCARD_STATE_UNAWARE;
+            rState[0].Reader = name;
+
+            try {
+                /* set the timeout to 1 second */
+                pcsc.SCardGetStatusChange(context, 1, rState);
+
+                // PTR 0219: check if a card is present but unresponsive
+                if (((rState[0].EventState & SCARD_STATE_MUTE) != 0)
+                    && ((rState[0].EventState & SCARD_STATE_PRESENT) != 0)) {
+
+                	m_aLogger.info("Card present but unresponsive in reader "
+                                     + name);
+                }
+
+            } catch (PcscException e) {
+            	m_aLogger.severe("","Reader " + name + " is not responsive!",e);
+            }
+
+            cachedATR = rState[0].ATR;
+
+            // check the length of the returned ATR. if ATR is empty / null, no
+            // card is inserted
+            if (cachedATR != null) {
+                if (cachedATR.length > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+        // return "no card inserted", because terminal is already closed
+    }
+
+
+    /**
+     * @return Returns the m_CardInfos.
+     */
+    public Hashtable<String, CardInfo> getCardInfosNoLongerUsed() {
+        return m_CardInfos;
+    }
+    
+    public Hashtable<String, CardInfoOOo> getCardInfosOOo() {
+    	return m_CardInfosOOo;
+    }
+
+    /**
+     * @return Returns the readers.
+     */
+    public String[] getReaders() {
+        return readers;
+    }    
+////////////////////////// code used to test the XML conversion
+    //ctor used to convert SSCD properties to XML structure
     public PCSCHelper() {
 
+    }
+
+    //ctor used to convert SSCD properties to XML structure
+    public PCSCHelper(XComponentContext _xContext) {
+    	m_xCC = _xContext;
+    	m_xMCF = m_xCC.getServiceManager();
+    	m_aLogger = new DynamicLogger(this,m_xCC);
+    	m_aLogger.enableLogging();
     }
 
     private class sscdDescr {
@@ -331,273 +591,4 @@ public class PCSCHelper {
     }
     
     //////////////////////// end of temporary code, to be removed after the configuration has moved
-    
-    private void loadOOoSSCDConfigurationData() {
-    	//open the root config for SSCDs data
-    	
-    	//scan the configuration, it's arrayed as a collection
-    	
-    	//of Names: the name are the atr code
-    	
-    	//then for every atr code
-    	
-    	/*
-    	 * type of elements
-    	 *  <node>SSCDs
-    	 *     	<node>ATRcode1
-    	 *     		<prop>LongDescription
-    	 *						<text>
-    	 *     
-    	 *     		<prop> manufacturer
-    	 *						<text>
-    	 *     
-    	 *     		<prop>Cardype
-    	 *						<text>
-    	 *     
-    	 *			<node>osLinux
-    	 *					<prop>LibName
-    	 *						<text>
-    	 *					<prop>res1
-    	 *						<text>
-    	 *					<prop>res2
-    	 *						<text>
-    	 *
-    	 *			<node>osWindows
-    	 *					<prop>LibName
-    	 *						<text>
-    	 *					<prop>res1
-    	 *						<text>
-    	 *					<prop>res2
-    	 *						<text>
-    	 *
-    	 *			<node>osMac
-    	 *					<prop>LibName
-    	 *						<text>
-    	 *					<prop>res1
-    	 *						<text>
-    	 *					<prop>res2
-    	 *						<text>
-    	 *
-    	 *     	<node>ATRcode2
-    	 *     
-    	 * 
-    	 * 
-    	 */
-    	
-    	
-    	//close root config
-    }
-    
-    private void loadProperties() {
-
-        m_aLogger.info("Loading properties...");
-
-        Properties prop = new Properties();
-
-        InputStream propertyStream=null;
-        String scPropertiesFile = null;
-        
-        String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().indexOf("win") > -1) {
-            scPropertiesFile = "scWin.properties";
-        }
-        if (osName.toLowerCase().indexOf("linux") > -1) {
-            scPropertiesFile = "scLinux.properties";
-        }
-        if (osName.toLowerCase().indexOf("mac") > -1) {
-            scPropertiesFile = "scMac.properties";
-        }
-        if (scPropertiesFile!=null) {
-            propertyStream = this.getClass().getResourceAsStream(scPropertiesFile);
-        }
-
-        if (propertyStream != null) {
-            try {
-                prop.load(propertyStream);
-
-            } catch (IOException e2) {
-            	m_aLogger.severe(e2);
-            }
-            //prop.list(System.out);
-        }
-
-        Iterator<Object> i = prop.keySet().iterator();
-
-        String currKey = null;
-
-        int index = 0;
-        int pos = -1;
-        String attribute = null;
-        String value = null;
-
-        //loading properties in a vector of CardInfo
-        Vector<Object> v = new Vector<Object>();
-        CardInfo ci = null;
-        while (i.hasNext()) {
-            currKey = (String) i.next();
-            pos = currKey.indexOf(".");
-            index = Integer.parseInt(currKey.substring(0, pos));
-            attribute = currKey.substring(pos + 1);
-            value = (String) prop.get(currKey);
-            value = "atr".equals(attribute) ? value.toUpperCase() : value;
-
-            while (index > v.size()) {
-                ci = new CardInfo();
-                v.addElement(ci);
-            }
-            ci = (CardInfo) v.get(index - 1);
-            ci.addProperty(attribute, value);
-        }
-
-        //coverting vector to Hashtable (keyed by ATR)
-        i = v.iterator();
-        while (i.hasNext()) {
-            ci = (CardInfo) i.next();
-            this.m_CardInfos.put(ci.getProperty("atr"), ci);
-            //cosa mette nella Hash Table?
-            //System.out.println("ATR inserita nella Hash Table: "+ ci.getProperty("atr"));
-        }
-
-    }
-
-    public List<CardInReaderInfo> findCardsAndReaders() {
-
-        ArrayList<CardInReaderInfo> cardsAndReaders = new ArrayList<CardInReaderInfo>();
-
-        try {
-//            int numReaders = getReaders().length;
-
-            //System.out.println("Found " + numReaders + " readers.");
-
-            String currReader = null;
-            CardInReaderInfo cIr = null;
-            int indexToken = 0;
-            for (int i = 0; i < getReaders().length; i++) {
-
-                currReader = getReaders()[i];
-                // System.out.println("\nChecking card in reader '"
-                //                   + currReader + "'.");
-                if (isCardPresent(currReader)) {
-                    // System.out.println("Card is present in reader '"
-                    //                    + currReader + "' , ATR String follows:");
-                    // System.out.println("ATR: " + formatATR(cachedATR, " "));
-                    CardInfo ci = new CardInfo();
-                    // trova per ATR
-                    try {
-                    	ci = (CardInfo) getCardInfos().get(
-                            formatATR(cachedATR, ""));
-                    	if(ci == null) {
-                    		String term =System.getProperty("line.separator"); 
-                    		throw (new NullPointerException(term+term+
-                    				"Card with ATR: "+formatATR(cachedATR, "")+" not found on internal properties"+term));
-                    	}
-	                    cIr = new CardInReaderInfo(currReader, ci);
-	                    cIr.setIndexToken(indexToken);
-	                    cIr.setSlotId(indexToken);
-	                    cIr.setLib(ci.getProperty("lib"));
-	                    indexToken++;                    	
-                    } catch (NullPointerException e) {
-                    	m_aLogger.severe(e);
-	                    cIr = new CardInReaderInfo(currReader, null);
-	                    cIr.setLib(null);
-                    }
-                } else {
-                    //  System.out.println("No card in reader '" + currReader
-                    //                     + "'!");
-                    cIr = new CardInReaderInfo(currReader, null);
-                    cIr.setLib(null);
-                }
-                cardsAndReaders.add(cIr);
-            }
-        } catch (Exception e) {
-            m_aLogger.severe(e);
-        }
-        return cardsAndReaders;
-    }
-
-    public String formatATR(byte[] atr, String byteSeparator) {
-        int n, x;
-        String w = new String();
-        String s = new String();
-
-        for (n = 0; n < atr.length; n++) {
-            x = (int) (0x000000FF & atr[n]);
-            w = Integer.toHexString(x).toUpperCase();
-            if (w.length() == 1) {
-                w = "0" + w;
-            }
-            s = s + w + ((n + 1 == atr.length) ? "" : byteSeparator);
-        } // for
-        return s;
-    }
-
-   /**
-     * Check whether there is a smart card present.
-     *
-     * @param name
-     *            Name of the reader to check.
-     * @return True if there is a smart card inserted in the card terminals
-     *         slot.
-     */
-    public synchronized boolean isCardPresent(String name) {
-
-        // check if terminal is already closed...
-        if (!closed) {
-
-            /* fill in the data structure for the state request */
-            PcscReaderState[] rState = new PcscReaderState[1];
-            rState[0] = new PcscReaderState();
-            rState[0].CurrentState = Pcsc10Constants.SCARD_STATE_UNAWARE;
-            rState[0].Reader = name;
-
-            try {
-                /* set the timeout to 1 second */
-                pcsc.SCardGetStatusChange(context, 1, rState);
-
-                // PTR 0219: check if a card is present but unresponsive
-                if (((rState[0].EventState & SCARD_STATE_MUTE) != 0)
-                    && ((rState[0].EventState & SCARD_STATE_PRESENT) != 0)) {
-
-                	m_aLogger.info("Card present but unresponsive in reader "
-                                     + name);
-                }
-
-            } catch (PcscException e) {
-            	m_aLogger.severe("","Reader " + name + " is not responsive!",e);
-            }
-
-            cachedATR = rState[0].ATR;
-
-            // check the length of the returned ATR. if ATR is empty / null, no
-            // card is inserted
-            if (cachedATR != null) {
-                if (cachedATR.length > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-
-        } else {
-            return false;
-        }
-        // return "no card inserted", because terminal is already closed
-    }
-
-
-    /**
-     * @return Returns the m_CardInfos.
-     */
-    public Hashtable<String, CardInfo> getCardInfos() {
-        return m_CardInfos;
-    }
-    
-    /**
-     * @return Returns the readers.
-     */
-    public String[] getReaders() {
-        return readers;
-    }    
 }

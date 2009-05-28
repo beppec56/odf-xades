@@ -3,8 +3,7 @@
  */
 package it.plio.ext.oxsit.test.ooo;
 
-import it.plio.ext.oxsit.ooo.ConfigurationAccess;
-import it.plio.ext.oxsit.security.crl.RootsVerifier;
+import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -47,9 +46,14 @@ public class TestSSCDConfiguration {
 //                root = "/org.openoffice.Office.TypeDetection/Filters";
 //                root = "/org.openoffice.Office.Calc/Grid";
 //                	root ="/org.openoffice.Office.Addons";
-                SSCDsConfigurationAccess aSSCD = new SSCDsConfigurationAccess(xCC,root);
+                it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess aSSCD = new 
+                				it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess(xCC,xMCF);
                 
-                aSSCD.printRegisteredSSCDs();
+//                aSSCD.printRegisteredSSCDs();
+                CardInfoOOo[] aR = aSSCD.readSSCDConfiguration();
+                for(int z = 0; z < aR.length; z++) {
+                	System.out.println(aR[z].toString());
+                }
 
             }
         }

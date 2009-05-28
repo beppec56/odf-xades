@@ -30,6 +30,7 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.plio.ext.oxsit.pcsc.CardInfo;
+import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;
 
@@ -334,13 +335,13 @@ public class TestOnCertificates {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("testMethod");
 
-		PCSCHelper pcsc = new PCSCHelper(true, null, m_aLogger);
+		PCSCHelper pcsc = new PCSCHelper(null,true, null, m_aLogger);
 
 		m_aLogger.log("After 'new PCSCHelper'");
 
 		java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
 
-		CardInfo ci = null;
+		CardInfoOOo ci = null;
 		Iterator<CardInReaderInfo> it = infos.iterator();
 		int indexToken = 0;
 		int indexReader = 0;
@@ -357,12 +358,12 @@ public class TestOnCertificates {
 				
 				m_aLogger.log("Informations found for this card:");
 				m_aLogger.log("\tDescription:\t"
-						+ ci.getProperty("description"));
+						+ ci.m_sDescription);
 				m_aLogger.log("\tManufacturer:\t"
-						+ ci.getProperty("manufacturer"));
-				m_aLogger.log("\tATR:\t\t" + ci.getProperty("atr"));
-				m_aLogger.log("\tCriptoki:\t" + ci.getProperty("lib"));
-				
+						+ ci.m_sManufacturer);
+				m_aLogger.log("\tATR:\t\t" + ci.m_sATRCode);
+				m_aLogger.log("\tCriptoki:\t" + ci.m_sOsLib);
+
 				m_aLogger.log("\tLettura certificati");
 				
 				ReadCerts rt = new ReadCerts(null, m_aLogger, currReader, cIr);
