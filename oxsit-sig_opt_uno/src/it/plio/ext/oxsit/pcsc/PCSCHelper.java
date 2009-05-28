@@ -251,64 +251,79 @@ public class PCSCHelper {
     	
     	Iterator< String> keys = setATR.iterator();
     	
-		out("\t<!-- All the known SSCDs (smart cards) -->");
-		out("\t<node oor:name=\"SSCDs\">");
+    	outTab(1) ; out("<!-- All the known SSCDs (smart cards) -->");
+    	outTab(1) ; out("<node oor:name=\"SSCDCollection\">");
     	while(keys.hasNext()) {
     		String theKey = keys.next();
     		sscdDescr aDesc = aElemTable.get(theKey);
-    		out("\t\t<!-- The smart card ATR code, starts the description -->");
-    		out("\t\t<node oor:name=\"" + theKey + "\">");
-    		out("\t\t\t<prop oor:name=\"Description\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t<value>"+aDesc.sDescription+"</value>");
-    		out("\t\t\t</prop>");
-    		out("\t\t\t<prop oor:name=\"Manufacturer\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t<value>"+aDesc.sManufacturer+"</value>");
-    		out("\t\t\t</prop>");
-    		out("\t\t\t<prop oor:name=\"CardType\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t<value>"+aDesc.sDescription+"</value>");
-    		out("\t\t\t</prop>");
-    		out("\t\t\t<node oor:name=\"OsLinux\">");
-    		out("\t\t\t\t<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value>"+aDesc.sOsLinuxLib+"</value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t</node>");
-    		out("\t\t\t<node oor:name=\"OsWindows\">");
-    		out("\t\t\t\t<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t\t<value>"+aDesc.sOsWindowsLib+"</value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t</node>");
-    		out("\t\t\t<node oor:name=\"OsMac\">");
-    		out("\t\t\t\t<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value>"+aDesc.sOsMacLib+"</value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res1\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t\t<prop oor:name=\"res2\" oor:type=\"xs:string\">");
-    		out("\t\t\t\t\t<value></value>");
-    		out("\t\t\t\t</prop>");
-    		out("\t\t\t</node>");
-    		out("\t\t</node>");
-    		out("\t\t<!--  -->");
+    		outTab(2) ;	out("<!-- ");
+    		outTab(3) ;	out("The smart card ATR code, starts the description");
+    		outTab(3) ;	out("It's used as a key to the right library name");
+    		outTab(2) ;	out("-->");
+    		outTab(2) ; out("<node oor:name=\"" + theKey +  "\" oor:op=\"replace\">");
+    		outTab(3) ; 	out("<node oor:name=\"S1\" oor:op=\"replace\">");
+    		outTab(4) ; 		out("<prop oor:name=\"Description\" oor:type=\"xs:string\">");
+    		outTab(5) ; 			out("<value>"+aDesc.sDescription+"</value>");
+    		outTab(4) ; 		out("</prop>");
+    		outTab(4) ;		 	out("<prop oor:name=\"Manufacturer\" oor:type=\"xs:string\">");
+    		outTab(5) ; 			out("<value>"+aDesc.sManufacturer+"</value>");
+    		outTab(4) ; 		out("</prop>");
+    		outTab(4) ; 		out("<prop oor:name=\"CardType\" oor:type=\"xs:string\">");
+    		outTab(5) ; 			out("<value>"+aDesc.sDescription+"</value>");
+    		outTab(4) ; 		out("</prop>");
+    		outTab(4) ; 		out("<!-- this node contains the operating system related properties -->");
+    		outTab(4) ; 		out("<node oor:name=\"OsData\">");
+    		outTab(5) ; 			out("<node oor:name=\"OsLinux\" oor:op=\"replace\">");
+    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
+    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value>"+aDesc.sOsLinuxLib+"</value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(5) ; 			out("</node>");
+    		outTab(5) ; 			out("<node oor:name=\"OsWindows\" oor:op=\"replace\">");
+    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
+    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
+    		outTab(7) ;	 					out("<value>"+aDesc.sOsWindowsLib+"</value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(5) ; 			out("</node>");
+    		outTab(5) ; 			out("<node oor:name=\"OsMac\" oor:op=\"replace\">");
+    		outTab(6) ; 				out("<!-- the PKCS#11 library name, the path is detected by the extension -->");
+    		outTab(6) ; 				out("<prop oor:name=\"LibName\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value>"+aDesc.sOsMacLib+"</value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res1\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(6) ; 				out("<prop oor:name=\"res2\" oor:type=\"xs:string\">");
+    		outTab(7) ; 					out("<value></value>");
+    		outTab(6) ; 				out("</prop>");
+    		outTab(5) ; 			out("</node>");
+    		outTab(4) ; 		out("</node>");
+    		outTab(3) ; 	out("</node>");
+    		outTab(2) ; out("</node>");
+    		outTab(2) ; out("<!--  -->");
     	}
-		out("\t</node>");
+    	outTab(1) ; out("</node>");
     	//
     	//
     	//
     }
 
+    private void outTab(int ntabs) {
+    	for(int y=0; y < ntabs; y++)
+    	System.out.print("\t");
+    }
     private void out(String line) {
     
     	System.out.println(line);
