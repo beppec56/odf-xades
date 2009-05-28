@@ -15,11 +15,12 @@ public class TestPCSCHelper {
 
 
 	
+	
 	   //a simple test method..
     public static void main(String[] args) {
 
-        PCSCHelper a = new PCSCHelper();
-        a.createSSCDsXML();
+/*        PCSCHelper a = new PCSCHelper();
+        a.createSSCDsXML();*/
         System.exit(0);
     }
 

@@ -52,9 +52,9 @@
 
 		<!-- In OOo this will be accessed with the code of The ATR -->
 		<group oor:name="aSSCD">
-			<prop oor:name="Description" oor:type="xs:string" oor:localized="false"/>
+			<!--   prop oor:name="Description" oor:type="xs:string" oor:localized="false"/>
 			<prop oor:name="Manufacturer" oor:type="xs:string" oor:localized="false"/>
-			<prop oor:name="CardType" oor:type="xs:string" oor:localized="false"/>
+			<prop oor:name="CardType" oor:type="xs:string" oor:localized="false"/ -->
 			<!-- In OOo any one of these sets is accessed as a node, where the name is the name of the node -->
 			<set oor:name="OsLinux" oor:node-type="oLinux"/>
 			<set oor:name="OsWindows" oor:node-type="oWindows"/>
