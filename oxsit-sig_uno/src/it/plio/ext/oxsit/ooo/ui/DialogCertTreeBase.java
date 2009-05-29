@@ -88,6 +88,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	protected String 			m_sDlgListCertTitle = "id_title_mod_cert_tree";	
 	protected String 			m_sFt_Hint_Doc = "id_title_mod_cert_treew";
 	protected String 			m_sDlgListCACertTitle = "id_title_mod_ca_cert";
+	protected String			m_sDlgListCACertStatus = "id_mex_build_ca_tree";
 
 	//Strings used for certificate elements
 	private String				m_sLabelVersion = "id_cert_version";
@@ -206,6 +207,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sFt_Hint_Doc = m_aRegAcc.getStringFromRegistry( m_sFt_Hint_Doc );
 			m_sBtn_ListCA = m_aRegAcc.getStringFromRegistry( m_sBtn_ListCA );
 			m_sDlgListCACertTitle = m_aRegAcc.getStringFromRegistry( m_sDlgListCACertTitle );
+			m_sDlgListCACertStatus = m_aRegAcc.getStringFromRegistry( m_sDlgListCACertStatus );
 
 //strings for certificate tre control display
 			m_sLabelVersion = m_aRegAcc.getStringFromRegistry( m_sLabelVersion );

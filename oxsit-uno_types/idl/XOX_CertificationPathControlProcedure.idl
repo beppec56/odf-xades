@@ -75,6 +75,11 @@
 		void	configureOptions(	[in] com::sun::star::frame::XFrame xFrame, 
 							[in] com::sun::star::uno::XComponentContext xContext);
 
+		/*
+		returns the number of certification autority available, useful for user feedback on operations.<br>
+		returns -1 if not initialized.
+		*/
+		long	getCertificationAutorities() ;
 		/** Returns a sequence of the Certification Autority certificates used for the<br>
 			control this interface implements, e.g. the ones unsed to search for the<br>
 			certification path.

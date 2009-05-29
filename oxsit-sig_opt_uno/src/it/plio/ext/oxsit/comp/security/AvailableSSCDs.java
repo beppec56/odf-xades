@@ -431,7 +431,6 @@ public class AvailableSSCDs extends ComponentBase
 		}
 		if(xStatusIndicator != null)
 			xStatusIndicator.end();
-
 	}
 
 	public void testCertificateDisplay() {

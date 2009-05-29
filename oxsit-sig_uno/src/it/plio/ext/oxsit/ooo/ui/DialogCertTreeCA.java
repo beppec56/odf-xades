@@ -40,6 +40,8 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.task.XStatusIndicator;
+import com.sun.star.task.XStatusIndicatorFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -132,9 +134,27 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 					(XOX_CertificationPathControlProcedure)
 					UnoRuntime.queryInterface(
 							XOX_CertificationPathControlProcedure.class, oCertPath);
+				
+		        XStatusIndicator xStatusIndicator = null;
+		        if (m_xParentFrame != null) {
+		        	//check interface
+		        	//
+		        	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,m_xParentFrame);
+		        	if(xFact != null) {
+		        		xStatusIndicator = xFact.createStatusIndicator();
+		        		if(xStatusIndicator != null)
+		        			xStatusIndicator.start(m_sDlgListCACertStatus, 
+		        					aCtl.getCertificationAutorities()); //meaning 100%
+		        	}
+		        }
+
+		        xStatusIndicator.setValue(1);
+		        
 				XComponent[] aList = aCtl.getCertificationAuthorities(m_xParentFrame);
+
 				if(aList != null) {
 					XMutableTreeNode xCertifNode = addToTreeRootHelper();
+					//prepare the status object to give the user some feedback
 					//iterate through the list and set the element in the tree, before display
 					for(int idx1=0; idx1<aList.length;idx1++) {
 						XOX_X509Certificate xoxCert = (XOX_X509Certificate)
@@ -145,8 +165,13 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 						xoxCert.verifyCertificationPath(m_xParentFrame);
 						//then add to the tree control
 						addX509CertificateToTree(xCertifNode, xoxCert);
+						if( idx1 % 4 == 0 && xStatusIndicator != null)
+							xStatusIndicator.setValue(idx1);
 					}
+
 				}
+				if(xStatusIndicator != null)
+					xStatusIndicator.end();
 			} catch (Throwable e) {
 				m_logger.severe(e);
 			}

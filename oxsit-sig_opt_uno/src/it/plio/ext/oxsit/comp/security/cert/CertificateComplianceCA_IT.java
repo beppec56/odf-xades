@@ -130,8 +130,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	public CertificateComplianceCA_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
     	m_aLogger.ctor();
@@ -493,6 +492,14 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
         return (isKeyUsageCritical && isNonRepudiationPresent);
     }
 
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
+	 */
+	@Override
+	public int getCertificationAutorities() {
+		return 0;
+	}
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities(com.sun.star.frame.XFrame)
 	 */

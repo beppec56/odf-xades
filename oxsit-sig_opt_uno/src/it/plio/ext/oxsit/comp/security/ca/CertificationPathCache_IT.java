@@ -513,6 +513,17 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			m_aCertificateState = _newState;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
+	 */
+	@Override
+	public int getCertificationAutorities() {
+		if(m_aCADbData != null)
+			return m_aCADbData.getCANumber();
+		return -1;
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
 	 */

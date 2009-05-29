@@ -3,6 +3,7 @@
  */
 package it.plio.ext.oxsit.test.ooo;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 
 import com.sun.star.lang.XComponent;
@@ -41,7 +42,7 @@ public class TestSSCDConfiguration {
             // query its XDesktop interface, we need the current component
 
 //init the configuration manager
-                String root = "/it.plio.ext.oxsit.Configuration/SSCDCollection";
+                String root = GlobConstant.m_sEXTENSION_CONF_SSCDS;
 //                root = "/it.plio.ext.oxsit.Configuration";
 //                root = "/org.openoffice.Office.TypeDetection/Filters";
 //                root = "/org.openoffice.Office.Calc/Grid";
@@ -49,11 +50,11 @@ public class TestSSCDConfiguration {
                 it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess aSSCD = new 
                 				it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess(xCC,xMCF);
                 
-//                aSSCD.printRegisteredSSCDs();
-                CardInfoOOo[] aR = aSSCD.readSSCDConfiguration();
+                aSSCD.printRegisteredSSCDs();
+/*                CardInfoOOo[] aR = aSSCD.readSSCDConfiguration();
                 for(int z = 0; z < aR.length; z++) {
                 	System.out.println(aR[z].toString());
-                }
+                }*/
 
             }
         }

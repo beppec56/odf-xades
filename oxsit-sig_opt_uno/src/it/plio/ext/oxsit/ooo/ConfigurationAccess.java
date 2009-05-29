@@ -24,12 +24,15 @@ package it.plio.ext.oxsit.ooo;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 
+import com.sun.star.container.XHierarchicalName;
+import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.uno.XInterface;
 import com.sun.star.util.XChangesBatch;
 
 public class ConfigurationAccess {
@@ -130,7 +133,48 @@ public class ConfigurationAccess {
 			}
 		}
 	}
-	
+
+	public void exploreRegistryRecursively(XInterface _viewRoot, IGeneralConfigurationProcessor _aProcessor, Object _aObj) 
+	throws com.sun.star.uno.Exception {
+		// First process this as an element (preorder traversal)
+		XHierarchicalName xElementPath = (XHierarchicalName) UnoRuntime.queryInterface(
+				XHierarchicalName.class, _viewRoot);
+
+		String sPath = xElementPath.getHierarchicalName();
+
+		//call configuration processor object
+		_aProcessor.processStructuralElement(sPath, _viewRoot);
+
+		// now process this as a container of named elements
+		XNameAccess xChildAccess =
+			(XNameAccess) UnoRuntime.queryInterface(XNameAccess.class, _viewRoot);
+
+		// get a list of child elements
+		String[] aElementNames = xChildAccess.getElementNames();
+
+		// and process them one by one
+		for (int i=0; i< aElementNames.length; ++i) {
+			Object aChild = xChildAccess.getByName(aElementNames[i]);
+
+			// is it a structural element (object) ...
+			if ( aChild instanceof XInterface ) {
+				// then get an interface 
+				XInterface xChildElement = (XInterface)aChild;
+				// and continue processing child elements recursively
+				exploreRegistryRecursively(xChildElement, _aProcessor, _aObj);
+			}
+			// ... or is it a simple value
+			else {
+				// Build the path to it from the path of 
+				// the element and the name of the child
+				String sChildPath;
+				sChildPath = xElementPath.composeHierarchicalName(aElementNames[i]);
+				// and process the value
+				_aProcessor.processValueElement(sChildPath, aChild,_aObj);
+			}
+		}
+	}
+
 	/**
 	 * to be used by derived class, when needed
 	 */

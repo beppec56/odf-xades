@@ -40,6 +40,9 @@ public class DialogQuery {
 	private XMultiComponentFactory m_axMCF;
 	private XFrame m_xFrame;
 	
+	//FIXME: dialog to rewrite subclassing:
+	//it.plio.ext.oxsit.ooo.ui.MessageNoSSCD.MessageNoSSCD
+	//
 	public DialogQuery(XFrame _xFrame, XMultiComponentFactory _axMCF, XComponentContext _xCC) {
 		m_xCC = _xCC;
 		m_axMCF = _axMCF;

@@ -344,6 +344,27 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 		return null;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
+	 */
+	@Override
+	public int getCertificationAutorities() {
+		try {
+			if(checkSubComponent())
+				if(m_axoxChildProc != null) {
+					return m_axoxChildProc.getCertificationAutorities();
+				}
+				else
+					m_aLogger.info("CANNOT execute child");
+		} catch (ClassCastException e) {
+			m_aLogger.severe(e);
+		} catch (Throwable e) {
+			m_aLogger.severe(e);
+		}
+		return -1;
+	}
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
 	 */
