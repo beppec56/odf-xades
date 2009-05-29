@@ -33,21 +33,13 @@ import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.MessageNoSSCD;
 import it.plio.ext.oxsit.ooo.ui.MessageNoSSCDReaders;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
 
 import com.ibm.opencard.terminal.pcsc10.OCFPCSC1;
 import com.ibm.opencard.terminal.pcsc10.Pcsc10Constants;
@@ -55,7 +47,6 @@ import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
 
 /**
  * A java class for detecting SmartCard tokens and readers via PCSC.
