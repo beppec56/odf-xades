@@ -25,12 +25,10 @@ package it.plio.ext.oxsit.signature.dispatchers;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
-import it.plio.ext.oxsit.dispatchers.threads.ImplXAdESThread;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
-import it.plio.ext.oxsit.ooo.ui.test.DialogCertificateTree;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.Collection;
@@ -39,8 +37,6 @@ import java.util.Iterator;
 
 import com.sun.star.beans.NamedValue;
 import com.sun.star.beans.PropertyValue;
-import com.sun.star.deployment.PackageInformationProvider;
-import com.sun.star.deployment.XPackageInformationProvider;
 import com.sun.star.document.XEventBroadcaster;
 import com.sun.star.frame.ControlCommand;
 import com.sun.star.frame.FeatureStateEvent;

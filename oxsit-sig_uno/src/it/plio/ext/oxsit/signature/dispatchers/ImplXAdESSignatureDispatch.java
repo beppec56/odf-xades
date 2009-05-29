@@ -23,11 +23,10 @@
 package it.plio.ext.oxsit.signature.dispatchers;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.ui.test.DialogCertificateTree;
+import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
 import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
 
 import java.util.HashMap;
@@ -45,14 +44,11 @@ import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.ucb.ServiceNotFoundException;
-import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
-import com.sun.star.util.XChangesNotifier;
 import com.sun.star.util.XModifiable;
-import com.sun.star.util.XURLTransformer;
 
 /**
  * @author beppe
@@ -207,8 +203,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	}
 
 	public short signatureDialog() {
-//		DialogListCertificates aDialog1 = new DialogListCertificates( m_xFrame, m_xCC,
-		DialogCertificateTree aDialog1 = new DialogCertificateTree( m_xFrame, m_xCC,
+		DialogSignatureTreeDocument aDialog1 = new DialogSignatureTreeDocument( m_xFrame, m_xCC,
 				m_axMCF );
 		try {
 			aDialog1.initialize( 10, 10 );
@@ -223,6 +218,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 			return -1;
 		}
 	}
+
 
 
 	/*

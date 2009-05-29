@@ -377,6 +377,12 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 //												byte[] aCert = cert.getEncoded();
 
 				Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
+				/*
+				 * the following service exposes all the interfaces needed to check a CA certificate<.
+				 * - compliance
+				 * - certification path
+				 * - certificate revocation 
+				 */
 				Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT, m_xCC);
 /*				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_PATH_SERVICE_CA_IT, m_xCC);
 				Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_PATH_SERVICE_CA_IT, m_xCC);*/
