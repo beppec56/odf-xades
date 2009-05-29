@@ -88,6 +88,11 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 
 	private CertificationAuthorityState m_aLastCAState;
 	private	XComponent		m_xaCertificationAutorities;
+	
+	
+	//service to hold a certification path checker cache, used for Italian custom implementation 
+	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = GlobConstant.m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
+
 
 	/**
 	 * 
@@ -230,7 +235,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -242,12 +247,12 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, xComp);
 					return true;
 				}
@@ -288,7 +293,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -299,12 +304,12 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, xComp);
 				}
 				else

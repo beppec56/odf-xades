@@ -164,19 +164,29 @@ public class GlobConstant {
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 
+	////////// the following UNO service names should go to the registry
 	//services to display data of a certificate in a human readable way
 	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplaySubj_IT";
+
 	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplayIssuer_IT";
 	//service to hold a certificate compliance checker, for CA certificate
 	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceCA_IT";
+	//service to hold a certification path checker, for CA certificate
+	//The italian version is the same UNO object
+	public static final String m_sCERTIFICATE_PATH_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceCA_IT";
+
+	//////////////// services to check Italian user certificates (ussued to 'Natural Persons').
 	//service to hold a certificate compliance checker, for user certificate
 	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateCompliance_IT";
 	//service to hold a certification path checker 
 	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPath_IT";
 	//service to hold a certification revocation state checker 
 	public static final String m_sCERTIFICATE_REVOCATION_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateRevocation_IT";
-	//service to hold a certification path checker cache 
-	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
+
+	//service to hold a certification path checker cache moved to CertificationPath_IT class, specific of Italian implementation 
+//	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
+	/////////// end of service to be mocved to registryS
+	
 	
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";

@@ -97,7 +97,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	public static final String			m_sImplementationName	= CertificationPathCache_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT };
+	public static final String[]		m_sServiceNames			= { CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT };
 
 	private XComponentContext			m_xCC;
 	private	XMultiComponentFactory		m_xMCF;
@@ -373,16 +373,21 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				//now the certification path control
 
 				//prepare objects for subordinate service
-				Object[] aArguments = new Object[4];
+				Object[] aArguments = new Object[6];
 //												byte[] aCert = cert.getEncoded();
+
 				Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT, m_xCC);
 				Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT, m_xCC);
+/*				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_PATH_SERVICE_CA_IT, m_xCC);
+				Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_PATH_SERVICE_CA_IT, m_xCC);*/
 
 				//set the certificate raw value
 				aArguments[0] = certParent.getEncoded();//aCert;
 				aArguments[1] = new Boolean(m_bUseGUI);//FIXME change according to UI (true) or not UI (false)
 				aArguments[2] = oCertDisp; //the display object
 				aArguments[3] = oCertCompl; //the checker object, in this case implements all
+				aArguments[4] = oCertCompl; //the checker object, in this case implements all
+				aArguments[5] = oCertCompl; //the checker object, in this case implements all
 
 				Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 						aArguments, m_xCC);
@@ -391,6 +396,14 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 					(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
 				xQualCert.verifyCertificateCompliance(null);
+				xQualCert.verifyCertificationPath(null);
+				//we don't check the revocation state of the CA, if the CA is in the CA root, then it's supposed to be valid and not revoked
+				// now get the current CA state, get it from the child process
+				//FIXME need to check for broken certification Path
+				CertificationAuthorityState aCAState = CertificationAuthorityState.fromInt(xQualCert.getCertificationAuthorityState());
+/*				if (aCAState == CertificationAuthorityState.CANNOT_BE_CHECKED)
+					;*/
+				m_aCAState = aCAState;
 //set it to the current child certificate, and put it as a new qualified certificate
 //set the status flags of the new certificate as correct for a CA certificate
                 qCertChild.setCertificationPath(xQualCert);

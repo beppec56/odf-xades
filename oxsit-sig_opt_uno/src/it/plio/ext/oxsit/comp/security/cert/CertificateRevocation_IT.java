@@ -29,6 +29,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
+import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -240,7 +241,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -251,12 +252,12 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
 								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
 				}

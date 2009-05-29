@@ -316,7 +316,7 @@
 		<node oor:name="3BFF1800FF8131FE55006B02090200010101434E531031809F" oor:op="replace">
 			<node oor:name="S1" oor:op="replace">
 				<prop oor:name="Description" oor:type="xs:string">
-					<value>incrypto34v2</value>
+					<value>CNS Carta Nazionale dei Servizi (CNS1)</value>
 				</prop>
 				<prop oor:name="Manufacturer" oor:type="xs:string">
 					<value>InfoCamere</value>

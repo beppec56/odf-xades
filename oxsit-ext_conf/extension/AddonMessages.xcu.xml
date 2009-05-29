@@ -292,7 +292,7 @@ Roberto Resoli, developer
 		<node oor:name="id_pb_sel_device" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">Select...</value>
-				<value xml:lang="it">Seleziona...</value>
+				<value xml:lang="it">Certificato...</value>
 			</prop>
 		</node>
 		<node oor:name="id_opt_dlg_log_dir" oor:op="replace">

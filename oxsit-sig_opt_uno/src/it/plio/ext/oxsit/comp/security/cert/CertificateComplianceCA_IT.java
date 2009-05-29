@@ -29,6 +29,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
+import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
@@ -129,7 +130,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	public CertificateComplianceCA_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+//
+		m_aLogger.enableLogging();
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
     	m_aLogger.ctor();
@@ -252,10 +254,10 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	@Override
 	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
-			XComponent arg0) throws IllegalArgumentException, Exception {
+			XComponent _xComponent) throws IllegalArgumentException, Exception {
 		m_xFrame = _xFrame;
 		// TODO Auto-generated method stub
-		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComponent);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		m_aCertificateState = CertificateState.OK;
@@ -542,7 +544,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				axoxChildProc = 
@@ -553,12 +555,12 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(GlobConstant.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
 								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
 				}
