@@ -295,135 +295,137 @@ public class AvailableSSCDs extends ComponentBase
 		m_aLogger.entering("scanDevices");
         XStatusIndicator xStatusIndicator = null;
 		try {
-		//get the library path property
-		//
-		m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
-		m_aLogger.log("java.library.path: \""+
-				System.getProperty("java.library.path")+"\"");
-
-		IDynamicLogger aLogger = null;
-		if(_aFrame != null)
-			aLogger = new DynamicLoggerDialog(this,m_xCC);
-		else
-			aLogger = new DynamicLogger(this,m_xCC);
-        if (_aFrame != null) {
-        	//check interface
-        	//
-        	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,_aFrame);
-        	if(xFact != null) {
-        		xStatusIndicator = xFact.createStatusIndicator();
-        		if(xStatusIndicator != null)
-        			xStatusIndicator.start("", 100); //meaning 100%
-        	}
-        }
-        
-		PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
-//		PCSCHelper pcsc = new PCSCHelper(true, null);
-
-		m_aLogger.log("After 'new PCSCHelper'");
-
-		java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
-
-		CardInfoOOo ci = null;
-		Iterator<CardInReaderInfo> it = infos.iterator();
-		int indexToken = 0;
-		int indexReader = 0;
-
-		while (it.hasNext()) {
-			m_aLogger.log("Reader " + indexReader + ")");
-
-			CardInReaderInfo cIr = it.next();
-			String currReader = cIr.getReader();
-
-			ci = cIr.getCard();
+			//get the library path property
+			//
+			m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
+			m_aLogger.log("java.library.path: \""+
+					System.getProperty("java.library.path")+"\"");
+	
+			IDynamicLogger aLogger = null;
+			if(_aFrame != null)
+				aLogger = new DynamicLoggerDialog(this,m_xCC);
+			else
+				aLogger = new DynamicLogger(this,m_xCC);
+	        if (_aFrame != null) {
+	        	//check interface
+	        	//
+	        	XStatusIndicatorFactory xFact = (XStatusIndicatorFactory)UnoRuntime.queryInterface(XStatusIndicatorFactory.class,_aFrame);
+	        	if(xFact != null) {
+	        		xStatusIndicator = xFact.createStatusIndicator();
+	        		if(xStatusIndicator != null)
+	        			xStatusIndicator.start("", 100); //meaning 100%
+	        	}
+	        }
+	
+			PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
+	//		PCSCHelper pcsc = new PCSCHelper(true, null);
+	
+			m_aLogger.log("After 'new PCSCHelper'");
 			
-			if (ci != null) {
-//instantiate a SSCDevice service object to hold the token device information and
-				//the detected certificates
-				
-				Object oAnSSCD = null;
-				XOX_SSCDevice xSSCDevice = null;
-				try {
-					oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
-					xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
-
-					xSSCDevice.setDescription(ci.m_sDescription);
-					xSSCDevice.setManufacturer(ci.m_sManufacturer);
-					xSSCDevice.setATRcode(ci.m_sATRCode);
-					xSSCDevice.setCryptoLibraryUsed(ci.m_sOsLib);
-
-					m_aLogger.log("\tLettura certificati");
-					if(xStatusIndicator != null) {
-						xStatusIndicator.setText("Lettura certificati");
-						xStatusIndicator.setValue(5);
-					}
-
-					// set the library to be used, locally
-					String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+			if(pcsc.getReaders() != null ) {
+				java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
+		
+				CardInfoOOo ci = null;
+				Iterator<CardInReaderInfo> it = infos.iterator();
+				int indexToken = 0;
+				int indexReader = 0;
+		
+				while (it.hasNext()) {
+					m_aLogger.log("Reader " + indexReader + ")");
+		
+					CardInReaderInfo cIr = it.next();
+					String currReader = cIr.getReader();
+		
+					ci = cIr.getCard();
 					
-					m_aLogger.info(Pkcs11WrapperLocal);
-					
-					ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
-					Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
-					if (certsOnToken != null) {
-						Iterator<X509Certificate> certIt = certsOnToken.iterator();
-						while (certIt.hasNext()) {
-	//add this certificate to our structure
-							X509Certificate cert = (X509Certificate) certIt.next();
-							try {
-								//this try will only check for correctness, before
-								//instantiating the service
-								cert.getEncoded();
-//all seems right, instantiate the certificate service
-								//now create the Certificate Control UNO objects
-								//first the certificate compliance control
-								//
-								Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
-								Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
-								Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
-								Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT, m_xCC);
-
-								//now the certification path control
-								
-								//prepare objects for subordinate service
-								Object[] aArguments = new Object[6];
-//								byte[] aCert = cert.getEncoded();
-								//set the certificate raw value
-								aArguments[0] = cert.getEncoded();//aCert;
-								aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
-								aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
-								aArguments[3] = oCertPath;
-								aArguments[4] = oCertRev;
-								aArguments[5] = oCertDisp;
-
-								Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
-										aArguments, m_xCC);
-								//get the main interface
-								XOX_X509Certificate xQualCert = 
-									(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
-
-//								xQualCert.setDEREncoded(cert.getEncoded());
-								//add it to this token collection
-								xSSCDevice.addAQualifiedCertificate(xQualCert);
-							} catch (CertificateEncodingException e) {
-								m_aLogger.severe("scanDevices",e);
-							}	
+					if (ci != null) {
+		//instantiate a SSCDevice service object to hold the token device information and
+						//the detected certificates
+						
+						Object oAnSSCD = null;
+						XOX_SSCDevice xSSCDevice = null;
+						try {
+							oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
+							xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
+		
+							xSSCDevice.setDescription(ci.m_sDescription);
+							xSSCDevice.setManufacturer(ci.m_sManufacturer);
+							xSSCDevice.setATRcode(ci.m_sATRCode);
+							xSSCDevice.setCryptoLibraryUsed(ci.m_sOsLib);
+		
+							m_aLogger.log("\tLettura certificati");
+							if(xStatusIndicator != null) {
+								xStatusIndicator.setText("Lettura certificati");
+								xStatusIndicator.setValue(5);
+							}
+		
+							// set the library to be used, locally
+							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+							
+							m_aLogger.info(Pkcs11WrapperLocal);
+							
+							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
+							Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
+							if (certsOnToken != null) {
+								Iterator<X509Certificate> certIt = certsOnToken.iterator();
+								while (certIt.hasNext()) {
+			//add this certificate to our structure
+									X509Certificate cert = (X509Certificate) certIt.next();
+									try {
+										//this try will only check for correctness, before
+										//instantiating the service
+										cert.getEncoded();
+		//all seems right, instantiate the certificate service
+										//now create the Certificate Control UNO objects
+										//first the certificate compliance control
+										//
+										Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+										Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+										Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+										Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT, m_xCC);
+		
+										//now the certification path control
+										
+										//prepare objects for subordinate service
+										Object[] aArguments = new Object[6];
+		//								byte[] aCert = cert.getEncoded();
+										//set the certificate raw value
+										aArguments[0] = cert.getEncoded();//aCert;
+										aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
+										aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+										aArguments[3] = oCertPath;
+										aArguments[4] = oCertRev;
+										aArguments[5] = oCertDisp;
+		
+										Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
+												aArguments, m_xCC);
+										//get the main interface
+										XOX_X509Certificate xQualCert = 
+											(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
+		
+		//								xQualCert.setDEREncoded(cert.getEncoded());
+										//add it to this token collection
+										xSSCDevice.addAQualifiedCertificate(xQualCert);
+									} catch (CertificateEncodingException e) {
+										m_aLogger.severe("scanDevices",e);
+									}	
+								}
+								rt.closeSession();
+								rt.libFinalize();
+								indexToken++;
+							}
+							//add the token to the list
+							addSSCDevice(xSSCDevice);
+						} catch (Exception e) {
+							m_aLogger.severe("scanDevices",e);
 						}
-						rt.closeSession();
-						rt.libFinalize();
-						indexToken++;
+					} else {
+						m_aLogger.log("No card in reader '" + currReader + "'!");
+		
 					}
-					//add the token to the list
-					addSSCDevice(xSSCDevice);
-				} catch (Exception e) {
-					m_aLogger.severe("scanDevices",e);
+					indexReader++;
 				}
-			} else {
-				m_aLogger.log("No card in reader '" + currReader + "'!");
-
 			}
-			indexReader++;
-		}
 		} catch (Throwable e) {
 			m_aLogger.severe("scanDevices",e);
 		}

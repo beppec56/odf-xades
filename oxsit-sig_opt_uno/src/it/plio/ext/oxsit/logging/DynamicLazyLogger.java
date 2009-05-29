@@ -236,4 +236,13 @@ public class DynamicLazyLogger implements IDynamicLogger {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.logging.IDynamicLogger#log(java.lang.Throwable, boolean)
+	 */
+	@Override
+	public void log(Throwable e, boolean dialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

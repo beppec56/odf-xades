@@ -119,6 +119,25 @@ Copyright 2009 Roberto Resoli
 </value>
 			</prop>
 		</node>
+		<node oor:name="id_error_extension" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Errore estensione firma digitale OpenOffice.org</value>
+			</prop>
+		</node>
+		<node oor:name="id_no_sscd_avlb" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Il dispositivo di lettura:
+
+%1$s
+
+non contiene Smart Card (SSCD).</value>
+			</prop>
+		</node>
+		<node oor:name="id_no_sscd_readers" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Non ci sono lettori di Smart Card disponibili.</value>
+			</prop>
+		</node>
 		<!--
 		    signature toolbar messages (partly from svx/source/stbctrls/stbctrls.src, id RID_SVXSTR_XMLSEC_SIG_NOT_OK )
 		-->
@@ -251,6 +270,11 @@ Roberto Resoli, developer
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">List CA</value>
 				<value xml:lang="it">Lista CA</value>
+			</prop>
+		</node>
+		<node oor:name="id_mex_build_ca_tree" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">In corso caricamento CA nel dialogo...</value>
 			</prop>
 		</node>
 		<node oor:name="id_title_cert_tree" oor:op="replace">

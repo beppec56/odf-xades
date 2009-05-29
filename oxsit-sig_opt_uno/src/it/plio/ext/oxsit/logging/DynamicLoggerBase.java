@@ -107,6 +107,10 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "", _message);
 	}
 
+	public void log(Throwable e, boolean _useDialog) {
+		log_exception(GlobConstant.m_nLOG_LEVEL_INFO, "", "", e, _useDialog);
+	}
+
 	public void entering(String _theMethod) {
 		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "entering "+_theMethod, "");

@@ -48,6 +48,8 @@ public interface IDynamicLogger {
 
 	abstract void log(String _message);
 
+	abstract void log(Throwable e, boolean _useDialog);
+
 	abstract void entering(String _theMethod);
 
 	abstract void entering(String _theMethod, String _message);

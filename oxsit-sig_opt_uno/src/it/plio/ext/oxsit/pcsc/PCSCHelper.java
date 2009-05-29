@@ -35,6 +35,8 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.SSCDsConfigurationAccess;
+import it.plio.ext.oxsit.ooo.ui.MessageNoSSCD;
+import it.plio.ext.oxsit.ooo.ui.MessageNoSSCDReaders;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,8 +81,6 @@ public class PCSCHelper {
     /** The state of this card terminal. */
     private boolean closed;
     
-    
-
     /* states returned by SCardGetStatusChange */
     private static final int SCARD_STATE_MUTE = 0x200;
 
@@ -136,7 +136,10 @@ public class PCSCHelper {
         } catch (UnsatisfiedLinkError e) {
 	        m_aLogger.severe("","Missing a library ? ",e);
         } catch (PcscException e) {
-	        m_aLogger.severe(e);
+        	//Give the user some feedback
+        	MessageNoSSCDReaders aMex = new MessageNoSSCDReaders(null,m_xMCF,m_xCC);      	
+        	aMex.executeDialogLocal();
+	        m_aLogger.log(e, false);
         } catch (NoSuchMethodError e) {
 	        m_aLogger.severe(e);
         } catch (NullPointerException e) {
@@ -174,6 +177,7 @@ public class PCSCHelper {
             String currReader = null;
             CardInReaderInfo cIr = null;
             int indexToken = 0;
+            
             for (int i = 0; i < getReaders().length; i++) {
 
                 currReader = getReaders()[i];
@@ -204,10 +208,11 @@ public class PCSCHelper {
 	                    cIr.setLib(null);
                     }
                 } else {
-                    //  System.out.println("No card in reader '" + currReader
-                    //                     + "'!");
                     cIr = new CardInReaderInfo(currReader, null);
                     cIr.setLib(null);
+                    //give the user some feedback
+                    MessageNoSSCD	aMex = new MessageNoSSCD(null,m_xMCF,m_xCC);
+                    aMex.executeDialogLocal(currReader);
                 }
                 cardsAndReaders.add(cIr);
             }
