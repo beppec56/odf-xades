@@ -36,6 +36,7 @@ import com.sun.star.lang.*;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.*;
+import com.sun.star.uno.Exception;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.util.DateTime;
@@ -58,6 +59,27 @@ public class Helpers {
 	protected Helpers() {
 	}
 
+	public static String getExtensionStorageSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {		
+		String filesep = System.getProperty("file.separator");
+		return getUserStorageSystemPath(_xCC)+filesep+"extdata"+filesep+GlobConstant.m_sEXTENSION_IDENTIFIER;
+	}
+
+	public static String getUserStorageSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {
+		String aPath = getUserStoragePathURL(_xCC);
+		return fromURLtoSystemPath(aPath);
+	}
+
+	public static String getUserStoragePathURL(XComponentContext _xCC) throws Exception {
+		XMultiComponentFactory xMCF = _xCC.getServiceManager();
+		Object oPathServ = xMCF.createInstanceWithContext("com.sun.star.util.PathSettings", _xCC);
+		if(oPathServ != null){
+			XPropertySet xPS = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oPathServ);
+			String aPath = (String)xPS.getPropertyValue("Storage");
+			return aPath;
+		}
+		else
+			throw (new Exception("The PathSetting service can not be retrieved") );
+	}
 	/**
 	 * Returns the complete path to the native binary library in the root extension directory
 	 * 
@@ -83,6 +105,22 @@ public class Helpers {
         } else //something else...
         	throw(new java.lang.NullPointerException("Native libraries for '"+osName+"' not available! Giving up."));
 	}
+
+	public static String convertToHex(byte[] data) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < data.length; i++) {
+        	int halfbyte = (data[i] >>> 4) & 0x0F;
+        	int two_halfs = 0;
+        	do {
+	        	if ((0 <= halfbyte) && (halfbyte <= 9))
+	                buf.append((char) ('0' + halfbyte));
+	            else
+	            	buf.append((char) ('a' + (halfbyte - 10)));
+	        	halfbyte = data[i] & 0x0F;
+        	} while(two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
 
 	/** Return the hex hash code of an object.
 	 * 
@@ -193,6 +231,20 @@ public class Helpers {
 	public static String getExtensionInstallationSystemPath(XComponentContext context) throws URISyntaxException, IOException {
 		String aPath = getExtensionInstallationPath(context);
 		return fromURLtoSystemPath(aPath);
+	}
+
+	/**
+	 * @param abyte
+	 */
+	public static String getCompactHexStringFromString(String _String) {
+		//FIXME see if this confersion is ok, what about the char set?
+		byte[] ret = _String.getBytes();
+		
+		String rets = "";
+		for(int i=0;i<ret.length;i++) {
+			rets = rets+ String.format("%02X", ret[i] );
+		}
+		return rets;
 	}
 
 	public static String printHexBytes(byte[] _theBytes) {

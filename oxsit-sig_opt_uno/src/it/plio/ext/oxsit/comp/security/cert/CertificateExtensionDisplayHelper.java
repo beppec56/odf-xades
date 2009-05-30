@@ -545,7 +545,7 @@ Superior references
 			GeneralName[] gn = gnx.getNames();
 			
 			for(int y=0; y <gn.length;y++) {
-				stx = stx + decodeAGeneralName(gn[y]);
+				stx = stx + decodeAGeneralName(gn[y]) + term;
 			}
 			stx = stx + term;
 

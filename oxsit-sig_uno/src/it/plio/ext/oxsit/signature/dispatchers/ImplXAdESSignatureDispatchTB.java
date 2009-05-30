@@ -332,7 +332,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		if(m_imagesUrl != null) {
 			switch (m_nState) {
 			case GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES:
-				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE+aSize;// image with certificate image
+				return m_imagesUrl + "/"+GlobConstant.m_sSSCD_ELEMENT+aSize;// image with certificate image
 			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK:
 				return m_imagesUrl + "/"+"signature"+aSize;// image with certificate image + green tick
 //				return m_imagesUrl + "/"+GlobConstant.m_nCERTIFICATE_CHECKED_OK+aSize;// image with certificate image + green tick

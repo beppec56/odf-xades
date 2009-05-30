@@ -29,9 +29,11 @@
 
 package it.plio.ext.oxsit.security.crl;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
+import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 
@@ -39,15 +41,21 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.security.Provider;
 import java.security.Security;
+import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
@@ -66,6 +74,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -73,7 +82,18 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.ReasonFlags;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.sun.jmx.snmp.daemon.CommunicationException;
@@ -81,6 +101,7 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.task.XStatusIndicator;
 import com.sun.star.task.XStatusIndicatorFactory;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -94,7 +115,7 @@ public class X509CertRL {
 	private boolean debug;
 	private CertificationAuthorities certAuths;
 	private boolean useProxy;
-	private HashMap crls;
+	private HashMap<X500Principal, X509CRL>	crls;
 	private XComponentContext m_xCC;
 	private XMultiComponentFactory	m_xMCF;
 	private XFrame	m_xFrame;
@@ -279,7 +300,7 @@ public class X509CertRL {
                         setCertificateState(CertificateState.REVOKED);
                         return false;
                     }
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     trace(ex);
                     traceDialog(
                             "isNotRevoked - Errore nella lettura delle estensioni di revoca -> " +
@@ -299,7 +320,7 @@ public class X509CertRL {
                 setCertificateState(CertificateState.REVOKED);
                 return false; // o false da decidere
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             //trace(e);
             traceDialog("isNotRevoked - Errore generico nel metodo -> ", e);
 
@@ -339,10 +360,35 @@ public class X509CertRL {
                       crl.getNextUpdate());
                 forceUpdate = (crl.getNextUpdate().before(date));
             } else {
-                trace("CRL NON contenuta nella cache");
-                forceUpdate = true;
+                //FIXME: before attempting the download check if a CRL file with the name derived from
+                //one of the the distribution point string is available in the user's file system cache.
+                //if available, load it, recheck the dates and behave accordingly
+            	crl = loadCRLFromPersistentStorage(userCert);
+            	if(crl == null)
+            		forceUpdate = true;
+            	else {
+            		//insert into the application internal cache and recheck the dates
+                    forceUpdate = (crl.getNextUpdate().before(date));
+                    if(!forceUpdate) {
+	                    int verCode = check(crl, certAuths.getCACertificate(issuer), date);
+	                    if (verCode != 0) {
+	                       //CRL broken, so CRLerror reset:
+	                        setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
+	                    	forceUpdate = true;
+	                    } else {//no error, load CRL in internal cache
+	                        trace("Added to cache CRL of: " +
+	                              userCert.getIssuerDN());
+	                        crls.put(userCert.getIssuerX500Principal(), crl);
+	                        trace("CRL was in persistent storage, check nextUpdate: " +
+	                                crl.getNextUpdate());
+	                    }
+                    }
+                    else
+                        trace("The CRL loaded from persistent storage is stale, download forced");                    	
+            	}
             }
         }
+
         if (forceUpdate) {
         	//check if the Issuer is in CARoot
         	try {
@@ -353,13 +399,13 @@ public class X509CertRL {
         		m_aLogger.log("CA not found");
         		return false;
         	}
-        	trace("Inizio download CRL...");
+        	trace("(01) Inizio download CRL...");
             if ((crl = download(userCert)) == null) {
         		setCertificateStateConditions(CertificateStateConditions.INET_ACCESS_ERROR);
                 return false;
             }
             //verifica CRL
-            trace("Inizio verifica della CRL...");
+            trace("(02) Inizio verifica della CRL...");
             //lancia GeneralSecurityEx se issuer non è presente in certAuths
             //cioè se la CA non è in root
             int verCode = check(crl, certAuths.getCACertificate(issuer), date);
@@ -380,6 +426,61 @@ public class X509CertRL {
     }
 
     /**
+     * Method look up if a CRL file with the name derived from
+     * one of the the distribution point strings is available in the user's OOo file system
+     * storage
+     * if available, load it and returns
+ 	 * @param userCert
+	 * @return the CRL loaded from persistent storage, or null if not existent
+	 */
+	private X509CRL loadCRLFromPersistentStorage(X509Certificate userCert) {
+		try {
+			String filesep = System.getProperty("file.separator");
+			String aCRLCachePath = getCRLCachePath();
+			//first check if there is a storage cache
+			File aStorDir = new File(aCRLCachePath);
+			if(aStorDir.exists()) {
+				//iterate through the distribution points
+				CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				// ciclo sui distribution point presenti nel certificato utente
+				X509CRL crl = null;
+				//storage exists or was created, form the CRL file name of the CRL from the distribution point
+				String aFileName = aCRLCachePath+filesep+getIssuerMD5Hash(userCert)+".crl";
+				m_aLogger.log("crl storage: "+aFileName);
+				//now save the CRL, if there is one, remove it first
+
+				try {
+					FileInputStream fos = new FileInputStream(aFileName);
+					crl = (X509CRL) cf.generateCRL(fos);
+					//crl loaded							
+					return crl;
+				} catch (FileNotFoundException e) {
+					//expected exception, mean we don't have the file
+				} catch (IOException e) {
+					//something went wrong, continue to cicle
+					m_aLogger.warning("", "Could not load a CRL from persistent storage, file non existent", e);
+				} catch (CRLException e) {
+					//something went wrong, continue to cicle
+					m_aLogger.warning("", "Could not load a CRL from persistent storage", e);
+				}
+			}
+		} catch (NoSuchAlgorithmException e) {
+			m_aLogger.severe(e);
+		} catch (URISyntaxException e) {
+			m_aLogger.severe(e);
+		} catch (IOException e) {
+			m_aLogger.severe(e);
+		} catch (CertificateParsingException e) {
+			m_aLogger.severe(e);
+		} catch (CertificateException e) {
+			m_aLogger.severe(e);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return null;
+	}
+
+	/**
      * Checks validity of CRL of the specified CA at the specified date<br><br>
      *
      * Controlla la validita' di una CRL rispetto ad una specifica CA ed ad una data prefissata
@@ -436,6 +537,8 @@ public class X509CertRL {
             setCertificateStateConditions(CertificateStateConditions.CRL_CANNOT_BE_VERIFIED);
             return 3;
         }
+        else
+        	trace("CRL next update previsto dalla CA: "+crl.getNextUpdate());
         trace("Controllo validita' firma...");
         try {
             crl.verify(caCert.getPublicKey());
@@ -451,7 +554,72 @@ public class X509CertRL {
         }
     }
 
+	private static String decodeAGeneralName(GeneralName genName) throws IOException {
+        switch (genName.getTagNo())
+        {
+            //only URI are used here, the other protocols are ignored
+        case GeneralName.uniformResourceIdentifier:
+        	return ((DERString)genName.getName()).getString();
+        case GeneralName.ediPartyName:
+        case GeneralName.x400Address:
+        case GeneralName.otherName:
+        case GeneralName.directoryName:
+        case GeneralName.dNSName:
+        case GeneralName.rfc822Name:            
+        case GeneralName.registeredID:
+        case GeneralName.iPAddress:
+        	break;
+        default:
+        	throw new IOException("Bad tag number: " + genName.getTagNo());
+        }
+		return null;
+	}
+    
     public static String[] getCrlDistributionPoint(X509Certificate certificate) throws
+    CertificateParsingException {
+    	try {
+    		//trova i DP (OID="2.5.29.31") nel certificato
+    		DERObject obj = getExtensionValue(certificate, "2.5.29.31");
+
+    		if (obj == null) {
+    			//nessun DP presente
+    			return null;
+    		}
+    		CRLDistPoint	crldp = CRLDistPoint.getInstance(obj);
+    		DistributionPoint[] dp = crldp.getDistributionPoints();
+    		String []urls=new String[5];
+
+    		int p = 0;
+    		for(int i = 0;i < dp.length;i++) {
+    			DistributionPointName dpn = dp[i].getDistributionPoint();
+    			//custom toString
+    			if(dpn.getType() == DistributionPointName.FULL_NAME) {
+    				//stx = stx+"fullName:" + term;
+    			}
+    			else {
+    				//stx = stx+"nameRelativeToCRLIssuer:" + term;						
+    			}
+
+    			GeneralNames gnx = GeneralNames.getInstance(dpn.getName());
+    			GeneralName[] gn = gnx.getNames();
+
+    			for(int y=0; y <gn.length;y++) {
+    				String aNm = decodeAGeneralName(gn[y]);
+    				if(aNm != null) {
+						urls[p++] = aNm;
+    				}
+    			}
+    		}
+    		return urls;
+    	} catch (Throwable e) {
+    		e.printStackTrace();
+    		throw new CertificateParsingException(e.toString());
+    	}
+    }
+
+    //FIXME: ROb, guarda se si può togliere, in un caso, con un certificato con protocollo
+    //non stringa, non funzionava
+    public static String[] getCrlDistributionPoint_Rob(X509Certificate certificate) throws
             CertificateParsingException {
         try {
             //trova i DP (OID="2.5.29.31") nel certificato
@@ -485,7 +653,7 @@ public class X509CertRL {
 
             }
             return urls;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new CertificateParsingException(e.toString());
         }
@@ -550,48 +718,60 @@ public class X509CertRL {
         // ciclo sui distribution point presenti nel certificato utente
 
         int p = 0;
+        //FIXME, why not used db.length ?
         while (dp[p] != null) {
             p++;
         }
 
-        trace(p + " distribution points trovati.");
+        trace(p + " distribution points found.");
 
         for (int i = 0; i < p; i++) {
             try {
-                trace("Tentativo di accesso al CRL Distribution Point = " +
+                trace("Try to access the CRL Distribution Point = " +
                       dp[i]);
-                statusText("Tentativo di accesso al CRL Distribution Point in Internet...");
+                statusText("Try to access the CRL Distribution Point in Internet...");
+
                 crl = download(dp[i], userCert.getIssuerDN());
                 // il primo protocollo che dia esiti positivi interrompe il ciclo
                 if (crl != null) {
-                    trace("CRL scaricata correttamente");
+                    trace("CRL downloaded correctly");
+                    //so now, save the CRL into persistent cache storage
+                    //first check if thereis already a storage, if not then create one
+            		try {
+            			String filesep = System.getProperty("file.separator");
+            			String aCRLCachePath = getCRLCachePath();
+            			//first check if there is a storage cache
+            			File aStorDir = new File(aCRLCachePath);
+            			if(!aStorDir.exists()) {
+            				//create the storage path
+            				if(!aStorDir.mkdirs()) {
+                				m_aLogger.warning("Path: "+aCRLCachePath+ " cannot be created!");
+                				return null;
+            				}
+            			}
 
-                    if (debug) {
-                        try {
-                            File dir1 = new File (".");
-							String curDir=dir1.getCanonicalPath();
-							//zip contenente le CA
-							//FIXME, change with OOo user temp path.
-							String filePath =
-                   //System.getProperty("user.home")
-                                   curDir + System.getProperty("file.separator") +
-                                   "crl"+ System.getProperty("file.separator") + getCommonName(userCert) +
-                                              ".crl";
-
-                            FileOutputStream fos = new FileOutputStream(
-                                    filePath);
-                            fos.write(crl.getEncoded());
-                            fos.flush();
-                            fos.close();
-                        } catch (Exception e) {
-                            System.out.println(e);;
-                        }
-                    }
+            			//storage exists or was created, form the CRL file name of the CRL from the distribution point
+            			String aFileName = aCRLCachePath+filesep+getIssuerMD5Hash(userCert)+".crl";
+            			m_aLogger.log("crl storage: "+aFileName);
+            			//now save the CRL, if there is one, remove it first
+                        FileOutputStream fos = new FileOutputStream(aFileName);
+                        fos.write(crl.getEncoded());
+                        fos.flush();
+                        fos.close();
+            		} catch (NoSuchAlgorithmException e) {
+            			m_aLogger.severe(e);
+            		} catch (URISyntaxException e) {
+            			m_aLogger.severe(e);
+            		} catch (IOException e) {
+            			m_aLogger.severe(e);
+            		} catch (Throwable e) {
+            			m_aLogger.severe(e);
+            		}
                     break;
                 }
                 else
                 	setCertificateStateConditions(CertificateStateConditions.INET_ACCESS_ERROR);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 trace(e);
                 trace("isNotRevoked - Errore durante il " + i +
                       "-esimo accesso alle CRL " + e.getMessage());
@@ -607,6 +787,24 @@ public class X509CertRL {
         return crl;
     }
 
+    private String getCRLCachePath() throws Exception, URISyntaxException, IOException {
+		String filesep = System.getProperty("file.separator");
+		return Helpers.getExtensionStorageSystemPath(m_xCC)+
+								filesep+GlobConstant.m_sCRL_CACHE_PATH;
+    	
+    }
+    
+    private String getIssuerMD5Hash(X509Certificate userCert) throws NoSuchAlgorithmException {
+		//get the issuer principal
+		byte[] xp = userCert.getIssuerX500Principal().getEncoded();
+		//form the MD5 hash of this array
+		MessageDigest md;
+		md = MessageDigest.getInstance("MD5");
+		byte[] md5hash = new byte[32];
+		md.update(xp, 0, xp.length);
+		md5hash = md.digest();
+		return Helpers.convertToHex(md5hash).toUpperCase();
+    }
     /**
      * Returns Common Name (string) of the given certificate <br><br>
      * Restituisce il CN del certificato in oggetto
@@ -701,7 +899,7 @@ public class X509CertRL {
             }
             ctx.close();
             statusValue(40);
-            
+
             Attributes attribs = ((SearchResult) ne.next()).getAttributes();
             Attribute a = null;
             statusValue(60);
@@ -727,7 +925,7 @@ public class X509CertRL {
         	// set the error to the CRL control
         	
         	return null;
-        }  catch (Exception e) {
+        }  catch (Throwable e) {
             trace(e);
             trace("ricercaCrlByLDAP -> " + e.toString());
             return null;
@@ -755,7 +953,7 @@ public class X509CertRL {
             baos.flush();
             trace("Scaricati " + baos.size() + " bytes");
             return parse(baos.toByteArray());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             trace(e);
             trace("ricercaCrlByProxyHTTP -> " + e.toString());
             return null;
@@ -790,7 +988,7 @@ public class X509CertRL {
                         "Classi di JSSE SSL non trovate. Controllare il classpath: " +
                         cfe.toString());
                 return false;
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 trace("Errore generico nel metodo initHTTPS --> " + e.toString());
                 return false;
             }
@@ -822,7 +1020,7 @@ public class X509CertRL {
             // crlData = new sun.misc.BASE64Decoder().decodeBuffer(new String(crlEnc));
             crlData = Base64.decode(crlEnc);
             trace("Decodifica base64 completata");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             trace("La CRL non e' in formato base64");
             crlData = crlEnc;
 

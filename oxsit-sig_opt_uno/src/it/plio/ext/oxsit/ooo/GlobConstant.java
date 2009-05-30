@@ -161,6 +161,10 @@ public class GlobConstant {
 	public static final String m_sX509_CERTIFICATE_NCEXT = "NotCritExt";	
 	public static final String m_sX509_CERTIFICATE_CERTPATH = "CertifPath";	
 	
+	//this path is the path to the temporary CRL storage cache in OOo
+	//should be used together with the current user OOo temporary path 
+	public	static	final	String		m_sCRL_CACHE_PATH		= "crlc";
+
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 

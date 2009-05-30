@@ -23,6 +23,7 @@
 
 package it.plio.ext.oxsit.test.ooo;
 
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.test.ooo.OOoServerInfo;
 
@@ -94,11 +95,14 @@ public class TestRootVerifierOOo {
                         }                */
                 
 //to get a frame, for check                
-                RootsVerifier aVerif = new RootsVerifier(null,xCC);
+//                RootsVerifier aVerif = new RootsVerifier(null,xCC);
 //building it it's enough?
-
-                
-                
+                	String aPath = Helpers.getUserStoragePathURL(xCC);
+                	trace(aPath);
+                	
+                	trace(Helpers.getUserStorageSystemPath(xCC)
+                			);
+                	
             }
         }
         catch(Exception e) {
@@ -107,6 +111,11 @@ public class TestRootVerifierOOo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+    }
+
+    private void trace(String _mex) {
+    	System.out.println(_mex);
     }
     /**
      * @param args the command line arguments
