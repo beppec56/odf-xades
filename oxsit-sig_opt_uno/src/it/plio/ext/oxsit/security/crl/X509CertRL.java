@@ -34,6 +34,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 
@@ -64,15 +65,12 @@ import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 
-import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.security.auth.x500.X500Principal;
 
@@ -82,8 +80,6 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -91,18 +87,13 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.ReasonFlags;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.sun.jmx.snmp.daemon.CommunicationException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.task.XStatusIndicator;
-import com.sun.star.task.XStatusIndicatorFactory;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -126,8 +117,14 @@ public class X509CertRL {
 	private String reasonCode;
 	private String auth;
 	private CertificateState m_aCertificateState;
-	private CertificateStateConditions m_aCertificateStateConditions; 
+	private CertificateStateConditions m_aCertificateStateConditions;
+	
+	private	boolean	m_bOffLineOperation;
+	private	boolean	m_bDisableCRLControl;
+	private	boolean	m_bAlwaysDownloadCRL;
 
+	protected OptionsParametersAccess m_xOptionsConfigAccess;
+	
 	//FIXME some text inside the class needs localization
 	
 	/**
@@ -141,10 +138,12 @@ public class X509CertRL {
 		m_xMCF = m_xCC.getServiceManager();
 		m_xFrame = frame;
 		m_aLogger = new DynamicLogger(this,m_xCC);
-		
+
 		setCertificateState(CertificateState.OK);
 		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
-//
+		//get configuration access, using standard registry functions
+		getConfiguration();
+		//
 		m_aLogger.enableLogging();
 		if(frame != null) {
 			m_aLoggerDialog = new DynamicLoggerDialog(this,_xcc);
@@ -160,12 +159,24 @@ public class X509CertRL {
 	}
 
     /**
+	 * 
+	 */
+	private void getConfiguration() {
+		m_xOptionsConfigAccess = new OptionsParametersAccess(m_xCC);
+		m_bOffLineOperation = m_xOptionsConfigAccess.getBoolean("OperationOffLine");
+		m_bDisableCRLControl = m_xOptionsConfigAccess.getBoolean("DisableCRLControl");
+		m_bAlwaysDownloadCRL = m_xOptionsConfigAccess.getBoolean("ForceDownloadCRL");
+		m_xOptionsConfigAccess.dispose();		
+	}
+
+	/**
      *  Controls if the given certificate is revoked at the current date.<br><br>
      * Effettua il controllo di revoca sulla firma contenuta nel certificato userCert, rispetto alla data corrente
      * @param userCert certificate to verify
      * @return true if certificate is not revoked
      */
 	public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert) {
+//reread the configuration parameters
         return isNotRevoked(_aStatus,userCert, new Date());
 	}
 
@@ -180,13 +191,22 @@ public class X509CertRL {
      */
     public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
 
+		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
+    	
         X509CRL crl = null;
         //check if we have a status indicator
         m_xStatusIndicator = _aStatus;
+		getConfiguration();        
+        //check if CRL control is enabled
+        if(m_bDisableCRLControl) {
+            setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED);
+    		setCertificateState(CertificateState.NOT_VERIFIABLE);
+        	return false;
+        }
         
         try {
             // devo fare l'update per compatibilita' all'indietro!
-            if (!update(userCert, date, false)) {
+            if (!update(userCert, date, m_bAlwaysDownloadCRL)) {
 
             	return false;
             } else {
@@ -390,6 +410,12 @@ public class X509CertRL {
         }
 
         if (forceUpdate) {
+        	//first check if iINternet is enabled
+        	if(m_bOffLineOperation) {
+        		setCertificateStateConditions(CertificateStateConditions.INET_ACCESS_NOT_ENABLED);
+        		setCertificateState(CertificateState.NOT_VERIFIABLE);
+        		return false;
+        	}
         	//check if the Issuer is in CARoot
         	try {
         		certAuths.getCACertificate(issuer);
@@ -436,7 +462,7 @@ public class X509CertRL {
 	private X509CRL loadCRLFromPersistentStorage(X509Certificate userCert) {
 		try {
 			String filesep = System.getProperty("file.separator");
-			String aCRLCachePath = getCRLCachePath();
+			String aCRLCachePath = Helpers.getCRLCacheSystemPath(m_xCC);
 			//first check if there is a storage cache
 			File aStorDir = new File(aCRLCachePath);
 			if(aStorDir.exists()) {
@@ -650,7 +676,6 @@ public class X509CertRL {
                         }
                     }
                 }
-
             }
             return urls;
         } catch (Throwable e) {
@@ -739,7 +764,7 @@ public class X509CertRL {
                     //first check if thereis already a storage, if not then create one
             		try {
             			String filesep = System.getProperty("file.separator");
-            			String aCRLCachePath = getCRLCachePath();
+            			String aCRLCachePath = Helpers.getCRLCacheSystemPath(m_xCC);
             			//first check if there is a storage cache
             			File aStorDir = new File(aCRLCachePath);
             			if(!aStorDir.exists()) {
@@ -787,13 +812,6 @@ public class X509CertRL {
         return crl;
     }
 
-    private String getCRLCachePath() throws Exception, URISyntaxException, IOException {
-		String filesep = System.getProperty("file.separator");
-		return Helpers.getExtensionStorageSystemPath(m_xCC)+
-								filesep+GlobConstant.m_sCRL_CACHE_PATH;
-    	
-    }
-    
     private String getIssuerMD5Hash(X509Certificate userCert) throws NoSuchAlgorithmException {
 		//get the issuer principal
 		byte[] xp = userCert.getIssuerX500Principal().getEncoded();

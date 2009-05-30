@@ -530,11 +530,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 			case CertificateState.ERROR_IN_EXTENSION_value:
 			case CertificateState.MISSING_EXTENSION_value:
 			default:
-			case CertificateState.NOT_VERIFIABLE_value:
-			case CertificateState.NOT_YET_VERIFIED_value:
 				return m_sSignatureNotValidatedOrCertificateNotVerified;
 			case CertificateState.OK_value:
 				return m_sSignatureOrCertificateOK;
+			case CertificateState.NOT_YET_VERIFIED_value:
+			case CertificateState.NOT_VERIFIABLE_value:
 			case CertificateState.NOT_COMPLIANT_value:
 				return m_sSignatureOrCertificateBroken;
 			case CertificateState.MALFORMED_CERTIFICATE_value:

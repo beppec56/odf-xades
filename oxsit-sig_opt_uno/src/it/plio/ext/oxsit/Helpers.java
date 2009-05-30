@@ -59,6 +59,12 @@ public class Helpers {
 	protected Helpers() {
 	}
 
+    public static String getCRLCacheSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {
+		String filesep = System.getProperty("file.separator");
+		return Helpers.getExtensionStorageSystemPath(_xCC)+
+								filesep+GlobConstant.m_sCRL_CACHE_PATH;
+    }
+    
 	public static String getExtensionStorageSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {		
 		String filesep = System.getProperty("file.separator");
 		return getUserStorageSystemPath(_xCC)+filesep+"extdata"+filesep+GlobConstant.m_sEXTENSION_IDENTIFIER;

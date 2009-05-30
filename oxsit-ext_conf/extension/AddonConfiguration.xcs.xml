@@ -105,6 +105,33 @@
 				<author>Giuseppe Castagno (aka beppec56)</author>
 				<desc></desc>
 			</info>
+			<!--  START General options -->
+			<prop  oor:name="OperationOffLine" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>True for off line operation</desc>
+				</info>
+				<value>false</value>
+			</prop>
+			<prop  oor:name="DisableCRLControl" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>True to disable CRL check on certificates</desc>
+				</info>
+				<value>false</value>
+			</prop>
+			<prop  oor:name="ForceDownloadCRL" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>
+						True to always download download the CRL.
+						If set to false the CRL is locallly cached and updated using the suggested updateTime set
+						in the CRL by the Certification Authority. 
+					</desc>
+				</info>
+				<value>false</value>
+			</prop>
+			<!--  END General options -->
 			<!-- a sample comment -->
 			<prop oor:name="TestNumericValue" oor:type="xs:int">
 				<info>

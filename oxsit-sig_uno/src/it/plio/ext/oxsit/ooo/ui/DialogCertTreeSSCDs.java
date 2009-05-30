@@ -22,15 +22,14 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import java.net.URISyntaxException;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+
+import java.net.URISyntaxException;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -41,7 +40,6 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
-import com.sun.star.io.IOException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;

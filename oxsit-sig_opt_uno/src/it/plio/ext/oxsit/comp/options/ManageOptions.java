@@ -60,7 +60,7 @@ public abstract class ManageOptions extends ComponentBase  implements
     protected XMultiComponentFactory m_xMultiComponentFactory;
 
 	protected OptionsParametersAccess m_xOptionsConfigAccess;
-	protected DynamicLogger			m_logger;
+	protected DynamicLogger			m_aLogger;
 
     protected	SingleControlDescription[] ArrayOfControls = null;
     protected int m_nNumberOfControls = 0;
@@ -78,7 +78,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		m_xMultiComponentFactory = m_xComponentContext.getServiceManager();                
 		m_nNumberOfControls = _nNumberOfControls;
 	    m_sOptionPagename = _sPageName;
-		m_logger = new DynamicLogger(this,m_xComponentContext);// must be enabled by the subclass (derived class)
+		m_aLogger = new DynamicLogger(this,m_xComponentContext);// must be enabled by the subclass (derived class)
 		//prepare the list of controls on the single page
 		// the key is the control name, there is a list every page,
 		// when multiple pages, then a page hasjhmap of list of controls will be used
@@ -95,7 +95,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	 */
 	public boolean callHandlerMethod(XWindow xWindow, Object aEventObject, String sMethodName)
 			throws WrappedTargetException {
-		m_logger.entering("base callHandlerMethod");
+		m_aLogger.entering("base callHandlerMethod");
         if (sMethodName.equals("external_event") ){
             try {
                 return handleExternalEvent(xWindow, aEventObject);
@@ -129,7 +129,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	protected void saveData(com.sun.star.awt.XWindow aWindow)
 	  				throws com.sun.star.lang.IllegalArgumentException, com.sun.star.uno.Exception {
 
-		m_logger.entering("base saveData");
+		m_aLogger.entering("base saveData");
 		  //Determine the name of the window. This serves two purposes. First, if this
 		  //window is supported by this handler and second we use the name two locate
 		  //the corresponding data in the registry.
@@ -138,7 +138,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		    throw new com.sun.star.lang.IllegalArgumentException(
 		      "The window is not supported by this handler", this, (short) -1);
 		 
-		m_logger.info("page is: "+sWindowName);
+		m_aLogger.info("page is: "+sWindowName);
 		  //To acces the separate controls of the window we ne_theMethoded to obtain the
 		  //XControlContainer from window implementation
 		XControlContainer xContainer = (XControlContainer) UnoRuntime.queryInterface(
@@ -147,21 +147,18 @@ public abstract class ManageOptions extends ComponentBase  implements
 		    throw new com.sun.star.uno.Exception(
 		      "Could not get XControlContainer from window.", this);
 
-		  m_logger.log("saveData", "examine "+ArrayOfControls.length+" controls");
+		  m_aLogger.log("saveData", "examine "+ArrayOfControls.length+" controls");
 			//from the current window, scan the contained controls, then for every control
 			//access the data and save them
 		  for (int i = 0; i < ArrayOfControls.length; i++) {
 		    //load the values from the registry
-
 			//grab the current control
 		    XControl xControl = xContainer.getControl(ArrayOfControls[i].m_sControlName);
 
 		    if (xControl == null) {
-		    	m_logger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
+		    	m_aLogger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
 		      continue;
-		    }
-//	    	printlnName("control: "+ArrayOfControls[i].m_sControlName+" to save found in window page.");
-		 
+		    }		 
 		    //From the control we get the model, which in turn supports the
 		    //XPropertySet interface, which we finally use to set the data at the
 		    //control
@@ -172,7 +169,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    		throw new com.sun.star.uno.Exception(
 	    				"Could not get XPropertySet from control.", this);
 
-		    m_logger.log("saveData", "examine "+ArrayOfControls[i].m_sControlName+" control");
+		    m_aLogger.log("saveData", "examine "+ArrayOfControls[i].m_sControlName+" control");
 		    //now we need to set the property according to the control type
 	    	switch(ArrayOfControls[i].m_eTheCode) {
 	    	case EDIT_TEXT_INT:
@@ -194,7 +191,6 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    		break;
 	    	case EDIT_TEXT:
 	    		//call the get method and assign the text to the control
-//	    		Utilities.showProperties(xProp);
 	    		//get the value of the text
 	    		String sTheText = 
 	    			AnyConverter.toString( xProp.getPropertyValue( "Text" ) );
@@ -204,7 +200,6 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    		break;
 	    	case CHECK_BOX:
 	    		//in this case we need the boolean property of the control
-//	    		Utilities.showProperties(xProp);
 	    		short nState = AnyConverter.toShort(xProp.getPropertyValue( "State" ));
 	    		if(ArrayOfControls[i].m_bEnableSave)
 	    			m_xOptionsConfigAccess.setBoolean(ArrayOfControls[i].m_sPropertyName,
@@ -212,7 +207,6 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    		break;
 	    	case RADIO_BUTTON:
 	    		//this is different, so...
-//	    		Utilities.showProperties(xProp);
 	    		//...we grab the value from the registry, an integer
 	    		//grab the status, when we find the selected one, set the vaue in the option.
 	    		short nRbState = AnyConverter.toShort(xProp.getPropertyValue( "State" ));
@@ -231,6 +225,8 @@ public abstract class ManageOptions extends ComponentBase  implements
 
 		//commit changes
 		m_xOptionsConfigAccess.commit();
+		//and clse the access to parameters
+		m_xOptionsConfigAccess.dispose();
 	}
 
 	/**
@@ -241,7 +237,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	protected void loadData(com.sun.star.awt.XWindow aWindow)
 	  throws com.sun.star.uno.Exception {
 
-		m_logger.entering("base loadData");
+		m_aLogger.entering("base loadData");
 	  //Determine the name of the window. This serves two purposes. First, if this
 	  //window is supported by this handler and second we use the name two locate
 	  //the corresponding data in the registry.
@@ -263,7 +259,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	  
 	  //iterate through the controls on this page and
 	  //for each grab the parameter and set the value
-	  m_logger.log("loadData", "examine "+ArrayOfControls.length+" controls");
+	  m_aLogger.log("loadData", "examine "+ArrayOfControls.length+" controls");
 	  for (int i = 0; i < ArrayOfControls.length; i++) {
 	    //load the values from the registry
 		  
@@ -271,7 +267,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    XControl xControl = m_xContainer.getControl(ArrayOfControls[i].m_sControlName);
 
 	    if (xControl == null) {
-	    	m_logger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
+	    	m_aLogger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
 	      continue;
 	    }
 	    
@@ -289,7 +285,7 @@ public abstract class ManageOptions extends ComponentBase  implements
     		throw new com.sun.star.uno.Exception(
     				"Could not get XPropertySet from control.", this);
 
-	    m_logger.log("loadData", "examine "+ArrayOfControls[i].m_sControlName+" control");
+	    m_aLogger.log("loadData", "examine "+ArrayOfControls[i].m_sControlName+" control");
 	    //now we need to set the property according to the control type
 //check if there is an action listener to associate with the control    	
 		//change the event function of the button, to see
@@ -358,7 +354,7 @@ public abstract class ManageOptions extends ComponentBase  implements
     //always a valid string or null
 	protected String getWindowName(com.sun.star.awt.XWindow aWindow)
 	throws com.sun.star.uno.Exception {
-		m_logger.entering("base getWindowName, check against "+m_sOptionPagename);
+		m_aLogger.entering("base getWindowName, check against "+m_sOptionPagename);
 
 		if (aWindow == null)
 			new com.sun.star.lang.IllegalArgumentException(
@@ -399,7 +395,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 					"Name - property of window is not a string.", this);
 		}
 
-		m_logger.log("getWindowName","the window name is "+sName);
+		m_aLogger.log("getWindowName","the window name is "+sName);
 		if(sName.equals(m_sOptionPagename))
 			return sName;
 
@@ -418,7 +414,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	 */
 	public void disposing(EventObject arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("disposing");				
+		m_aLogger.entering("disposing");				
 	}
 	
 }

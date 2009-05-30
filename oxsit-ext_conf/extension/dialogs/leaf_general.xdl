@@ -5,20 +5,14 @@
   <dlg:style dlg:style-id="0" dlg:font-height="12" dlg:font-weight="150"/>
  </dlg:styles>
  <dlg:bulletinboard>
-  <dlg:text dlg:id="Label1" dlg:tab-index="0" dlg:left="15" dlg:top="20" dlg:width="209" dlg:height="10" dlg:help-text="&amp;68.leaf_general.Label1.HelpText" dlg:value="&amp;69.leaf_general.Label1.Label"/>
-  <dlg:text dlg:id="Label2" dlg:tab-index="6" dlg:left="22" dlg:top="32" dlg:width="18" dlg:height="8" dlg:help-text="&amp;80.leaf_general.Label2.HelpText" dlg:value="&amp;81.leaf_general.Label2.Label" dlg:align="right"/>
-  <dlg:text dlg:style-id="0" dlg:id="Label3" dlg:tab-index="7" dlg:left="6" dlg:top="4" dlg:width="209" dlg:height="14" dlg:help-text="&amp;82.leaf_general.Label3.HelpText" dlg:value="&amp;83.leaf_general.Label3.Label"/>
-  <dlg:titledbox dlg:id="FrameControl1" dlg:tab-index="8" dlg:left="38" dlg:top="67" dlg:width="116" dlg:height="69" dlg:help-text="&amp;84.leaf_general.FrameControl1.HelpText">
-   <dlg:title dlg:value="&amp;85.leaf_general.FrameControl1.Label"/>
+  <dlg:text dlg:style-id="0" dlg:id="Label3" dlg:tab-index="1" dlg:left="6" dlg:top="4" dlg:width="209" dlg:height="14" dlg:help-text="&amp;82.leaf_general.Label3.HelpText" dlg:value="&amp;83.leaf_general.Label3.Label"/>
+  <dlg:button dlg:id="AboutButton" dlg:tab-index="2" dlg:left="12" dlg:top="163" dlg:width="57" dlg:height="14" dlg:help-text="&amp;98.leaf_general.AboutButton.HelpText" dlg:value="&amp;99.leaf_general.AboutButton.Label"/>
+  <dlg:titledbox dlg:id="FrameControl2" dlg:tab-index="3" dlg:left="12" dlg:top="39" dlg:width="139" dlg:height="68" dlg:help-text="&amp;246.leaf_general.FrameControl2.HelpText">
+   <dlg:title dlg:value="&amp;247.leaf_general.FrameControl2.Label"/>
   </dlg:titledbox>
-  <dlg:textfield dlg:id="GeneralCNIPA_URL" dlg:tab-index="1" dlg:left="43" dlg:top="30" dlg:width="182" dlg:height="12" dlg:help-text="&amp;86.leaf_general.GeneralCNIPA_URL.HelpText" dlg:value="&amp;87.leaf_general.GeneralCNIPA_URL.Text"/>
-  <dlg:checkbox dlg:id="GeneralCheckBox1" dlg:tab-index="2" dlg:left="43" dlg:top="51" dlg:width="95" dlg:height="8" dlg:help-text="&amp;88.leaf_general.GeneralCheckBox1.HelpText" dlg:value="&amp;89.leaf_general.GeneralCheckBox1.Label" dlg:checked="false"/>
-  <dlg:radiogroup>
-   <dlg:radio dlg:id="OptionButton0" dlg:tab-index="3" dlg:left="44" dlg:top="84" dlg:width="96" dlg:height="10" dlg:help-text="&amp;90.leaf_general.OptionButton0.HelpText" dlg:value="&amp;91.leaf_general.OptionButton0.Label" dlg:checked="true"/>
-   <dlg:radio dlg:id="OptionButton1" dlg:tab-index="4" dlg:left="44" dlg:top="97" dlg:width="96" dlg:height="10" dlg:help-text="&amp;92.leaf_general.OptionButton1.HelpText" dlg:value="&amp;93.leaf_general.OptionButton1.Label"/>
-   <dlg:radio dlg:id="OptionButton2" dlg:tab-index="5" dlg:left="44" dlg:top="109" dlg:width="96" dlg:height="10" dlg:help-text="&amp;94.leaf_general.OptionButton2.HelpText" dlg:value="&amp;95.leaf_general.OptionButton2.Label"/>
-  </dlg:radiogroup>
-  <dlg:button dlg:id="AboutButton" dlg:tab-index="9" dlg:left="37" dlg:top="163" dlg:width="57" dlg:height="14" dlg:help-text="&amp;98.leaf_general.AboutButton.HelpText" dlg:value="&amp;99.leaf_general.AboutButton.Label"/>
-  <dlg:button dlg:id="BrowseInternet" dlg:tab-index="10" dlg:left="226" dlg:top="30" dlg:width="15" dlg:height="12" dlg:help-text="&amp;102.leaf_general.BrowseInternet.HelpText" dlg:value="&amp;103.leaf_general.BrowseInternet.Label"/>
+  <dlg:checkbox dlg:id="OffLineCB" dlg:tab-index="6" dlg:left="12" dlg:top="25" dlg:width="121" dlg:height="10" dlg:help-text="&amp;258.leaf_general.OffLineCB.HelpText" dlg:value="&amp;259.leaf_general.OffLineCB.Label" dlg:checked="false"/>
+  <dlg:checkbox dlg:id="DisableCRLCB" dlg:tab-index="5" dlg:left="18" dlg:top="50" dlg:width="121" dlg:height="10" dlg:help-text="&amp;260.leaf_general.DisableCRLCB.HelpText" dlg:value="&amp;261.leaf_general.DisableCRLCB.Label" dlg:checked="false"/>
+  <dlg:button dlg:id="ClearCRLCachePB" dlg:tab-index="4" dlg:left="18" dlg:top="81" dlg:width="96" dlg:height="12" dlg:help-text="&amp;262.leaf_general.ClearCRLCachePB.HelpText" dlg:value="&amp;263.leaf_general.ClearCRLCachePB.Label"/>
+  <dlg:checkbox dlg:id="ForceCRLDownloadCB" dlg:tab-index="0" dlg:left="24" dlg:top="66" dlg:width="95" dlg:height="10" dlg:help-text="&amp;264.leaf_general.ForceCRLDownloadCB.HelpText" dlg:value="&amp;265.leaf_general.ForceCRLDownloadCB.Label" dlg:checked="false"/>
  </dlg:bulletinboard>
 </dlg:window>

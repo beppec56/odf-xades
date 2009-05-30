@@ -58,7 +58,7 @@ import com.sun.star.uno.XComponentContext;
 public class ManageLoggingOptions extends ManageOptions  implements XItemListener {
 	// needed for registration
 	public static final String			m_sImplementationName	= ManageLoggingOptions.class.getName();
-	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.options.ManageLoggingOptions" };
+	public static final String[]		m_sServiceNames			= { "it.plio.ext.oxsit.comp.options.ManageLoggingOptions" };
 
     private int m_nBrowseSystemPathPB = 0;
 	private int m_nEnableFileCtl; // the file enable/disable check box
@@ -79,9 +79,8 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	public ManageLoggingOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_logging");//leaf refers to OOo documentation about
 															// extension options
-//DEBUG	
-		m_logger.enableLogging();// disabled in base class
-		m_logger.ctor();
+//DEBUG		m_aLogger.enableLogging();// disabled in base class
+		m_aLogger.ctor();
 		//prepare the list of controls on the page
 
 		//the parameter sName comes from basic dialog
@@ -133,7 +132,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		try {
 			m_sDialogTitle = m_aRegAcc.getStringFromRegistry( m_sDialogTitle );
 		} catch (Exception e) {
-			m_logger.severe("ctor",e);
+			m_aLogger.severe("ctor",e);
 		}			
 		m_aRegAcc.dispose();
 	}
@@ -149,7 +148,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_logger.info( "supportsService" );
+		m_aLogger.info( "supportsService" );
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -157,6 +156,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		return false;
 	}
 
+	@Override
 	protected void loadData(com.sun.star.awt.XWindow aWindow)
 	  throws com.sun.star.uno.Exception {
 		super.loadData(aWindow);
@@ -173,15 +173,14 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 			enableTheFileControls(bEnable);
 		}
 		else
-			m_logger.severe("enableTheFileControls", "there is no window!");
+			m_aLogger.severe("enableTheFileControls", "there is no window!");
 	}
 
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent rEvent) {
-		m_logger.entering("actionPerformed");
-	// TODO Auto-generated method stub
+		m_aLogger.entering("actionPerformed");
         try{
             // get the control that has fired the event,
             XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class, rEvent.Source);
@@ -191,7 +190,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // just in case the listener has been added to several controls,
             // we make sure we refer to the right one
             if (sName.equals(ArrayOfControls[m_nBrowseSystemPathPB].m_sControlName)) {
-            	m_logger.info("browse the system for a path");
+            	m_aLogger.info("browse the system for a path");
 //standard dialog for file/folder access
             	DialogFileOrFolderPicker aDlg = new DialogFileOrFolderPicker(m_xMultiComponentFactory,m_xComponentContext);
 // we need to get the frame, the component context and from it the multiservice factory
@@ -218,7 +217,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	    			URI aUri = aFileFolder.toURI();
 	    			//then form the URL for the dialog
 					sStartFolder = aUri.getScheme()+"://" + aUri.getPath();									    			
-	    			m_logger.log(sStartFolder);
+	    			m_aLogger.log(sStartFolder);
             	}
             	//call the dialog
             	String aPath = aDlg.runFolderPicker(m_sDialogTitle, sStartFolder);
@@ -228,9 +227,9 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 					try {
 						aFile = Helpers.fromURLtoSystemPath(aPath);
 					} catch (URISyntaxException e) {
-						m_logger.severe("actionPerformed", e);
+						m_aLogger.severe("actionPerformed", e);
 					} catch (IOException e) {
-						m_logger.severe("actionPerformed", e);
+						m_aLogger.severe("actionPerformed", e);
 					}
 	    			//grab the current control
 	    		    xControl = ArrayOfControls[m_nLogFilePathIdxTF].m_xTheControl;
@@ -243,7 +242,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             	}
             }
             else {
-            	m_logger.info("Activated: "+sName);            	
+            	m_aLogger.info("Activated: "+sName);            	
             }
         }catch (com.sun.star.uno.Exception ex){
             // perform individual exception handling here.
@@ -251,7 +250,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // com.sun.star.lang.WrappedTargetException,
             // com.sun.star.beans.UnknownPropertyException,
             // com.sun.star.uno.Exception
-        	m_logger.severe("", "", ex);
+        	m_aLogger.severe("", "", ex);
         }		
 	}
 
@@ -259,8 +258,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 	 * @see com.sun.star.awt.XItemListener#itemStateChanged(com.sun.star.awt.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent rIEvent) {
-		// TODO Auto-generated method stub
-		m_logger.entering("itemStateChanged");
+		m_aLogger.entering("itemStateChanged");
         try{
             // get the control that has fired the event,
             XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class, rIEvent.Source);
@@ -281,7 +279,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
                 enableTheFileControls(( nState == 0 ) ? false : true); 
             }
             else {
-            	m_logger.info("Activated: "+sName);            	
+            	m_aLogger.info("Activated: "+sName);            	
             }
         } catch (com.sun.star.uno.Exception ex){
             // perform individual exception handling here.
@@ -289,7 +287,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
             // com.sun.star.lang.WrappedTargetException,
             // com.sun.star.beans.UnknownPropertyException,
             // com.sun.star.uno.Exception
-        	m_logger.severe("", "", ex);
+        	m_aLogger.severe("", "", ex);
         }		
 	}
 
@@ -301,19 +299,16 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
         try {
 			xPSet.setPropertyValue("Enabled", new Boolean((_bEnable) ? true : false));
 		} catch (UnknownPropertyException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("enableOneFileControl", "", e);
+			m_aLogger.severe("enableOneFileControl", "", e);
 		} catch (PropertyVetoException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("enableOneFileControl", "", e);
+			m_aLogger.severe("enableOneFileControl", "", e);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("enableOneFileControl", "", e);
+			m_aLogger.severe("enableOneFileControl", "", e);
 		} catch (WrappedTargetException e) {
-			// TODO Auto-generated catch block
-			m_logger.severe("enableOneFileControl", "", e);
+			m_aLogger.severe("enableOneFileControl", "", e);
 		}
 	}
+
 	/**
 	 * 
 	 * @param _bEnable true enable the four controls the file checkbox enables/disables
@@ -328,6 +323,6 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 			enableOneFileControl(_bEnable,m_nLogFileSizeTF);
 		}
 		else
-			m_logger.severe("enableTheFileControls", "there is no window!");
+			m_aLogger.severe("enableTheFileControls", "there is no window!");
 	}
 }

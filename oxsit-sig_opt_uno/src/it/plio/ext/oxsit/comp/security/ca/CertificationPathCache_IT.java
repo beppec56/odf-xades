@@ -494,7 +494,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
             xStatusIndicator.end();
 
     		//grab certificate state and conditions
-    		m_aCertificateState = CRL.getCertificateState();
+			setCertificateStateHelper(CRL.getCertificateState());
     		m_aCertificateStateConditions = CRL.getCertificateStateConditions();
 		} catch (CertificateException e) {
 			m_aLogger.severe(e);

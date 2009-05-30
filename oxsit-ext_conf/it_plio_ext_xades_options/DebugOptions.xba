@@ -4,12 +4,23 @@
 
 Sub Main
 &apos;examine configuration, for test
-&apos;	GlobalScope.BasicLibraries.LoadLibrary(&quot;Tools&quot;)&apos;contiene LoadDialog, usata più sotto
+	GlobalScope.BasicLibraries.LoadLibrary(&quot;Tools&quot;)&apos;contiene LoadDialog, usata più sotto
 &apos; abilitare per debug con xray
 	GlobalScope.BasicLibraries.LoadLibrary(&quot;XrayTool&quot;)&apos;
 
-	tryCertificateDiscovery()
+	tryConfigSSCD()
+&apos;	tryCertificateDiscovery()
 End Sub
+
+sub tryConfigSSCD
+
+	oVal = GetRegistryKeyContent( &quot;it.plio.ext.oxsit.Configuration/SSCDs&quot; )
+	
+	xray oVal
+
+end sub
+
+
 
 sub tryCertificateDiscovery()
  &apos;try the new certificate discovery service
@@ -38,17 +49,17 @@ sub tryCertificateDiscovery()
 				certList() = sscdList(ix).QualifiedCertificates
 				&apos;print certificati
 				for i = 0 to (sscdList(ix).HasQualifiedCertificates-1)
-					xray certList(i)
+&apos;					xray certList(i)
 					dim sExt() as object
 					sExt() = certList(i).CriticalCertificateExtensions
 &apos;					xray sExt
 					for ax = 0 to UBound(sExt)
-						xray sExt(ax)
+						&apos;xray sExt(ax)
 					next ax
 					sExt() = certList(i).CertificateExtensions
 &apos;					xray sExt
 					for ax = 0 to UBound(sExt)
-						xray sExt(ax)
+						&apos;xray sExt(ax)
 					next ax
 				next i
 			else

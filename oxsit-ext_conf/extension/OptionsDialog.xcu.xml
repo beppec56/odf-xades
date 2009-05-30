@@ -63,7 +63,7 @@
           </prop>
           <prop oor:name="EventHandlerService">
 	        <!-- Service name implementing the handler -->
-            <value>it.plio.ext.oxsit.options.ManageGeneralOptions</value>
+            <value>it.plio.ext.oxsit.comp.options.ManageGeneralOptions</value>
           </prop>
           <prop oor:name="GroupId">
             <value>@WEBIDENTBASE@.@NAME@.options.node</value>
@@ -88,7 +88,7 @@
           </prop>
           <prop oor:name="EventHandlerService">
 	        <!-- Service name implementing the handler -->
-            <value>it.plio.ext.oxsit.options.ManageLoggingOptions</value>
+            <value>it.plio.ext.oxsit.comp.options.ManageLoggingOptions</value>
           </prop>
           <prop oor:name="GroupId">
             <value>@WEBIDENTBASE@.@NAME@.options.node</value>
@@ -113,7 +113,7 @@
           </prop>
           <prop oor:name="EventHandlerService">
 	        <!-- Service name implementing the handler -->
-            <value>it.plio.ext.oxsit.options.ManageSSCDOptions</value>
+            <value>it.plio.ext.oxsit.comp.options.ManageSSCDOptions</value>
           </prop>
           <prop oor:name="GroupId">
             <value>@WEBIDENTBASE@.@NAME@.options.node</value>

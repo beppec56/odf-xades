@@ -5,4 +5,5 @@
  <library:element library:name="leaf_general"/>
  <library:element library:name="leaf_logging"/>
  <library:element library:name="leaf_sscd"/>
+ <library:element library:name="leaf_it"/>
 </library:library>

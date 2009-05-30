@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="leaf_it" dlg:left="157" dlg:top="93" dlg:width="260" dlg:height="185" dlg:help-text="&amp;220.leaf_it.HelpText" dlg:closeable="true" dlg:moveable="true" dlg:title="&amp;221.leaf_it.Title" dlg:withtitlebar="false">
+ <dlg:styles>
+  <dlg:style dlg:style-id="0" dlg:font-height="12" dlg:font-weight="150"/>
+ </dlg:styles>
+ <dlg:bulletinboard>
+  <dlg:text dlg:id="Label1" dlg:tab-index="0" dlg:left="21" dlg:top="22" dlg:width="209" dlg:height="10" dlg:help-text="&amp;222.leaf_it.Label1.HelpText" dlg:value="&amp;223.leaf_it.Label1.Label"/>
+  <dlg:textfield dlg:id="TextField1" dlg:tab-index="1" dlg:left="49" dlg:top="31" dlg:width="182" dlg:height="12" dlg:help-text="&amp;224.leaf_it.TextField1.HelpText" dlg:value="&amp;225.leaf_it.TextField1.Text"/>
+  <dlg:text dlg:id="Label2" dlg:tab-index="2" dlg:left="28" dlg:top="34" dlg:width="18" dlg:height="8" dlg:help-text="&amp;234.leaf_it.Label2.HelpText" dlg:value="&amp;235.leaf_it.Label2.Label" dlg:align="right"/>
+  <dlg:text dlg:style-id="0" dlg:id="Label3" dlg:tab-index="3" dlg:left="13" dlg:top="6" dlg:width="209" dlg:height="14" dlg:help-text="&amp;236.leaf_it.Label3.HelpText" dlg:value="&amp;237.leaf_it.Label3.Label"/>
+  <dlg:button dlg:id="CommandButton2" dlg:tab-index="4" dlg:left="232" dlg:top="31" dlg:width="15" dlg:height="12" dlg:help-text="&amp;242.leaf_it.CommandButton2.HelpText" dlg:value="&amp;243.leaf_it.CommandButton2.Label"/>
+  <dlg:button dlg:id="CommandButton3" dlg:tab-index="5" dlg:left="49" dlg:top="46" dlg:width="50" dlg:height="12" dlg:help-text="&amp;244.leaf_it.CommandButton3.HelpText" dlg:value="&amp;245.leaf_it.CommandButton3.Label"/>
+ </dlg:bulletinboard>
+</dlg:window>

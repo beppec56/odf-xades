@@ -55,24 +55,14 @@ public class MessageConfigurationAccess extends ConfigurationAccess implements X
     	if(_stringIdToRetrieve == null)
     		return "";
     	if(m_oMessagesRegKey != null) {
-//get the string at id
-//    		Utilities.showInterfaces( (XInterface) m_oMessagesRegKey );
-    	      // accessing a single nested value
+    		//get the string at id
+    	    // accessing a single nested value
     		XPropertySetInfo oPropIn = (XPropertySetInfo) UnoRuntime.queryInterface(XPropertySetInfo.class, m_oMessagesRegKey);  		
     		if(oPropIn.hasPropertyByName( _stringIdToRetrieve )) {
     			XNameAccess xNAccess =(XNameAccess) UnoRuntime.queryInterface(XNameAccess.class, m_oMessagesRegKey);
-//    			String[] elements = xNAccess.getElementNames();
-//				print( "Names " );
-//    			
-//    			for(int i = 0; i < elements.length; i++) {
-//    				print( elements[i]+ ", " );
-//    			}
-//    			println("");
     			// get the value
     			Object oObj = xNAccess.getByName( _stringIdToRetrieve );
 
-//    			println("obj: "+ AnyConverter.getType( oObj ).getTypeName() );
-//    			Utilities.showInterfaces( oObj );
     			XPropertySet xPS = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, oObj);
     			String retVal = AnyConverter.toString( xPS.getPropertyValue( "Text" ) );
         		return retVal;
@@ -81,11 +71,9 @@ public class MessageConfigurationAccess extends ConfigurationAccess implements X
     			m_logger.info("no element id: "+_stringIdToRetrieve);
     	}
 		return new String(_stringIdToRetrieve); 
-//    	return new String(this.getClass().getName()+":getStringFromRegistry() "+_stringIdToRetrieve);
     }
 
 	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
 		m_logger.info("addEventListener");
 	}
 
@@ -100,7 +88,6 @@ public class MessageConfigurationAccess extends ConfigurationAccess implements X
 	}
 
 	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
 		m_logger.info("removeEventListener");		
 	}
 }
