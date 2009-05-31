@@ -647,15 +647,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 		//add the critical extensions
 		try {
-			String[] aCtritExt = certDisp.getCriticalCertificateExtensionOIDs();
-			if(aCtritExt != null) {
+			String[] aCritExt = certDisp.getCriticalCertificateExtensionOIDs();
+			if(aCritExt != null) {
 				//then there are extension marked critical
 				//add the main node
 				//the root node for extensions should see for the aggregate state of all
 				//the critical extensions
 				int aggregateState = 0;
-				for(int i=0; i<aCtritExt.length;i++) {
-					int temp = _aCertif.getCertificateElementErrorState(aCtritExt[i]);
+				for(int i=0; i<aCritExt.length;i++) {
+					int temp = _aCertif.getCertificateElementErrorState(aCritExt[i]);
 					if(temp > aggregateState)
 						aggregateState = temp;
 				}
@@ -663,11 +663,11 @@ public class DialogCertTreeBase extends BasicDialog implements
 							TreeNodeType.EXTENSIONS_CRITICAL,
 							certDisp.getCertificateElementLocalizedName(CertificateElementID.CRITICAL_EXTENSION),
 							m_sCertificateElementGraphicName[aggregateState]);
-				for(int i=0; i<aCtritExt.length;i++) {
+				for(int i=0; i<aCritExt.length;i++) {
 					addVariablePitchTreeElementAndState(xNode,TreeNodeType.EXTENSIONS_CRITICAL,
-							certDisp.getCertificateExtensionLocalizedName(aCtritExt[i]),
-							certDisp.getCertificateExtensionValueString(aCtritExt[i]),
-							_aCertif.getCertificateElementErrorState(aCtritExt[i]));
+							certDisp.getCertificateExtensionLocalizedName(aCritExt[i]),
+							certDisp.getCertificateExtensionValueString(aCritExt[i]),
+							_aCertif.getCertificateElementErrorState(aCritExt[i]));
 				}
 			}
 		} catch (Exception e) {

@@ -30,6 +30,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -254,6 +255,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
     					GlobConstant.m_sX509_CERTIFICATE_VERSION,
     					CertificateElementState.INVALID_value);			
     			setCertificateStateHelper(CertificateState.MALFORMED_CERTIFICATE);
+    			m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.VERSION, "Version MUST be V3");
             	return m_aCertificateState;
             }
 			//check for validity date
@@ -270,11 +272,15 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 						GlobConstant.m_sX509_CERTIFICATE_NOT_AFTER,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
+				m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.NOT_AFTER,
+						"The date is elapsed.");				
 			} catch (CertificateNotYetValidException e) {
 				m_xQc.setCertificateElementErrorState(
 						GlobConstant.m_sX509_CERTIFICATE_NOT_BEFORE,
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
+				m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.NOT_BEFORE,
+				"The date is not yet arrived.");
 			}
 
 			//check the KeyUsage extension
@@ -387,6 +393,11 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 			//no qcStatement
 			setCertificateStateHelper(CertificateState.MISSING_EXTENSION);
 			m_aLogger.log("missing qcStatements");
+			String s = m_xQc.getCertificateDisplayObj().getCertificateElementCommentString(CertificateElementID.NOT_CRITICAL_EXTENSION);
+			s = s+"\r";
+
+			m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.NOT_CRITICAL_EXTENSION, s+
+					"qcStatement missing");
 			return false;
 		}
 		int numberOfChecksOk = 4; //if this drops to zero,
@@ -409,6 +420,9 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
         if(numberOfChecksOk != 0) {
 			m_xQc.setCertificateElementErrorState(X509Extensions.QCStatements.getId(), CertificateElementState.INVALID_value);			
 			setCertificateStateHelper(CertificateState.ERROR_IN_EXTENSION);
+
+			m_xQc.getCertificateDisplayObj().setCertificateExtensionCommentString(X509Extensions.QCStatements.getId(), 
+					"some statement is wrong.");
 			return false;
         }
 		
@@ -430,12 +444,15 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
         boolean isNonRepudiationPresent = false;
         boolean isKeyUsageCritical = false;
 
+        String err = "";
         Set<String> oids = javaCert.getCriticalExtensionOIDs();
         if (oids != null) {
             // check presence between critical extensions of oid:2.5.29.15
             // (KeyUsage)
             isKeyUsageCritical = oids.contains(X509Extensions.KeyUsage.getId());
         }
+        else
+			err = "Key usage is NOT marked critical"+"\r";
 
         boolean[] keyUsages = javaCert.getKeyUsage();
         if (keyUsages != null) {
@@ -461,6 +478,9 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
                		keyUsages[8]   // decipherOnly     (8) }
             		));
         }
+        if(!isNonRepudiationPresent)
+        	err = err +"missing nonRepudiation";       
+       	m_xQc.getCertificateDisplayObj().setCertificateExtensionCommentString(X509Extensions.KeyUsage.getId(), err);
         return (isKeyUsageCritical && isNonRepudiationPresent);
     }
 

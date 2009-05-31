@@ -31,6 +31,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -355,6 +356,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 	m_xQc.setCertificateElementErrorState(
         					GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
         					CertificateElementState.INVALID_value);
+                	m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.CERTIFICATION_PATH,
+                			"The Certification Authority is NOT trusted.\r\rIt does NOT exist in the data base of the trusted Entities.");
                 	return isPathValid;
                 }
                 //set the main user certificate certification authority as trusted

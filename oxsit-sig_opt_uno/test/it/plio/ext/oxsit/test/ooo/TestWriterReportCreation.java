@@ -3,13 +3,18 @@
  */
 package it.plio.ext.oxsit.test.ooo;
 
+import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 
+import com.sun.star.awt.Size;
+import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.container.XNameAccess;
+import com.sun.star.container.XNameContainer;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
@@ -17,13 +22,17 @@ import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
+import com.sun.star.style.BreakType;
 import com.sun.star.style.XStyle;
 import com.sun.star.style.XStyleFamiliesSupplier;
+import com.sun.star.text.WrapTextMode;
+import com.sun.star.text.XPagePrintable;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextTable;
+import com.sun.star.text.XTextTablesSupplier;
 import com.sun.star.text.XTextViewCursor;
 import com.sun.star.text.XTextViewCursorSupplier;
 import com.sun.star.ucb.XContent;
@@ -52,15 +61,52 @@ public class TestWriterReportCreation {
 	}
 
 	/**
-	 * @param textDocument
+	 * @param viewCursor
 	 * @param string
 	 */
-	private void insertAHeading(XTextDocument textDocument, String string) {
+	private void insertAHeading(XTextViewCursor xViewCursor, String string, String style) {
 		// TODO Auto-generated method stub
+		//from view cursor get properties
+		try {
+			XText xDocumentText = xViewCursor.getText();
+		     
+		     // the text creates a model cursor from the viewcursor
+		     XTextCursor xModelCursor = xDocumentText.createTextCursorByRange(xViewCursor.getStart());
+	
+		     // query its XPropertySet interface, we want to set character and paragraph properties
+		     XPropertySet xCursorPropertySet = (XPropertySet)UnoRuntime.queryInterface(
+		         XPropertySet.class, xViewCursor);
+		     String sParSt = (String) xCursorPropertySet.getPropertyValue("ParaStyleName");
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", new String(style) );
+		     xViewCursor.setString(string+"\r");
+		     xViewCursor.collapseToEnd();
+		     xViewCursor.setString("\r");
+		     xViewCursor.collapseToEnd();
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );
+		     		     
+		     if(xCursorPropertySet != null) {
+//		    	 XPropertySetInfo xf = xCursorPropertySet.getPropertySetInfo();
+//		    	 Property[] pr = xf.getProperties();
+//		    	 for(int i = 0; i < pr.length;i++)
+//		    		 trace(""+pr[i].Name);
+			     Utilities.showProperties(xViewCursor, xCursorPropertySet);		    	 
+		     }
+		     xCursorPropertySet = (XPropertySet)UnoRuntime.queryInterface(
+			         XPropertySet.class, xModelCursor);	     
+//		     Utilities.showProperties(xModelCursor, xCursorPropertySet);
+/*		     sParSt = (String) xCursorPropertySet.getPropertyValue("ParaStyleName");
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", new String("Heading 1") );
+		     xModelCursor.setString(string+"\r");
+		     xModelCursor.collapseToEnd();
+		     xModelCursor.setString("\r");
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );*/
+		     
+		} catch (Throwable e) {
+			trace(e);
+		}
 		
 		
-		
-	}
+   	}
 
 	/** This method sets the text colour of the cell refered to by sCellName to white and inserts
     the string sText in it
@@ -133,8 +179,41 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
         
         // Access the property set of the first row (properties listed in service description:
         // com.sun.star.text.TextTableRow)
-//        XPropertySet xRow = (XPropertySet) UnoRuntime.queryInterface( 
-//            XPropertySet.class, xRows.getByIndex ( 0 ) );
+		// Access the property set of the whole table
+	       XPropertySet xTableProps = (XPropertySet)UnoRuntime.queryInterface( 
+	           XPropertySet.class, xTable );
+
+//	       Utilities.showProperties(xTable, xTableProps);
+	 //set table
+	// We want visible background colors
+	       xTableProps.setPropertyValue( "RepeatHeadline", new Boolean(true));
+	       xTableProps.setPropertyValue( "HeaderRowCount", new Integer(1));
+	       xTableProps.setPropertyValue( "HoriOrient", new Short(com.sun.star.text.HoriOrientation.LEFT));
+	       xTableProps.setPropertyValue( "RelativeWidth", new Short((short)100));
+	       Object oProp = xTableProps.getPropertyValue("TextWrap");
+	       
+	       WrapTextMode aMode = (WrapTextMode) AnyConverter.toObject(WrapTextMode.class, oProp); 
+        trace("WrapTextMode "+aMode.getValue());
+        
+        	BreakType  abk = (BreakType) AnyConverter.toObject(BreakType.class,  xTableProps.getPropertyValue("BreakType"));
+            trace("BreakType "+abk.getValue());
+            
+            XNameContainer xnc = (XNameContainer) AnyConverter.toObject(XNameContainer.class, 
+            		xTableProps.getPropertyValue("UserDefinedAttributes") );
+            
+            String[] en = xnc.getElementNames();
+            if(en != null) {
+            	for(int i = 0; i <en.length; i++) {
+                	trace(en[i]);            		
+            	}
+            }
+	       
+//	       xTableProps.setPropertyValue( "Split", new Boolean(false));
+//	       xTableProps.setPropertyValue( "IsWidthRelative", new Boolean(true));
+
+//	       Utilities.showProperties(xTable, xTableProps);
+	       
+	       
         // If BackTransparant is false, then the background color is visible
 //        xRow.setPropertyValue( "BackTransparent", new Boolean(false));
         // Specify the color of the background to be dark blue
@@ -150,6 +229,8 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
         
         // set the text (and text colour) of all the cells in the first row of the table
         insertIntoCell( "A1", "First Row", xTable );
+        insertIntoCell( "B1", "First Row (B)", xTable );
+        insertIntoCell( "C1", "First Row (C)", xTable );
         insertIntoCell( "A2", "Second Row", xTable );
         insertIntoCell( "A3", "Third Row", xTable );
         insertIntoCell( "A4", "Row", xTable );
@@ -173,6 +254,44 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
 /*        xTable.getCellByName( "D2" ).setFormula( "sum <A2:C2>" );
         xTable.getCellByName( "D3" ).setFormula( "sum <A3:C3>" );
         xTable.getCellByName( "D4" ).setFormula( "sum <A4:C4>" );*/
+        
+        // first query the XTextTablesSupplier interface from our document
+        XTextTablesSupplier xTablesSupplier = (XTextTablesSupplier) UnoRuntime.queryInterface(
+            XTextTablesSupplier.class, xDoc );
+        // get the tables collection
+        XNameAccess xNamedTables = xTablesSupplier.getTextTables();
+        
+        // now query the XIndexAccess from the tables collection
+ /*       XIndexAccess xIndexedTables = (XIndexAccess) UnoRuntime.queryInterface(
+            XIndexAccess.class, xNamedTables);
+
+        // we need properties
+        xTableProps = null;
+        */
+        
+/*        XTextTable xt =	(XTextTable)UnoRuntime.queryInterface(XTextTable.class,        xNamedTables.getByName("Table1") );
+        xTableProps = (XPropertySet)UnoRuntime.queryInterface( 
+        		XPropertySet.class, xt );
+
+        Utilities.showProperties(xt, xTableProps);
+
+        oProp = xTableProps.getPropertyValue("TextWrap");
+
+        aMode = (WrapTextMode) AnyConverter.toObject(WrapTextMode.class, oProp); 
+        trace("WrapTextMode "+aMode.getValue());
+        abk = (BreakType) AnyConverter.toObject(BreakType.class,  xTableProps.getPropertyValue("BreakType"));
+        trace("BreakType "+abk.getValue());*/
+        // get the tables
+        /*        for (int i = 0; i < xIndexedTables.getCount(); i++) {
+            Object table = xIndexedTables.getByIndex(i);
+            // the properties, please!
+            xTableProps = (XPropertySet) UnoRuntime.queryInterface(
+                XPropertySet.class, table);
+
+            // color the table light green in format 0xRRGGBB
+            xTableProps.setPropertyValue("BackColor", new Integer(0xC8FFB9));
+        } */
+
         return xTable;
     } 
     catch (Exception e) 
@@ -181,6 +300,47 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
     }
     return null;
 }
+
+	private void trace(String s) {
+		System.out.println(s);
+	}
+	
+	private void trace(Throwable s) {
+		s.printStackTrace();
+	}
+
+	
+	private void setCustomPageStyle(XTextDocument _xaDoc) {
+		XText xText = (com.sun.star.text.XText) _xaDoc.getText();
+
+		XStyleFamiliesSupplier StyleFam = (XStyleFamiliesSupplier) UnoRuntime.queryInterface(XStyleFamiliesSupplier.class, _xaDoc);
+		XNameAccess StyleFamNames = StyleFam.getStyleFamilies();
+
+		XStyle StdStyle = null;
+		try {
+			XNameAccess PageStyles = (XNameAccess) AnyConverter.toObject(new Type(XNameAccess.class),StyleFamNames.getByName("PageStyles"));
+			StdStyle = (XStyle) AnyConverter.toObject(new Type(XStyle.class),
+					PageStyles.getByName("Standard"));
+
+			XPropertySet PropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, StdStyle);
+
+			// changing/getting some properties
+			PropSet.setPropertyValue("IsLandscape", new Boolean(true));
+			Size aSz = new Size();
+			aSz.Height = 21000;
+			aSz.Width = 29700;
+			PropSet.setPropertyValue("Size", aSz);
+			
+			PropSet.setPropertyValue("LeftMargin", new Integer(1500));
+			PropSet.setPropertyValue("RightMargin", new Integer(1500));
+			PropSet.setPropertyValue("TopMargin", new Integer(1500));
+			PropSet.setPropertyValue("BottomMargin", new Integer(1500));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+	}
 	
 	private void prepareAHeader(XTextDocument _xaDoc, String _TheHeader) {
 		XText xText = (com.sun.star.text.XText) _xaDoc.getText();
@@ -202,7 +362,8 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
 
 		try {
 			PropSet.setPropertyValue("HeaderIsOn", new Boolean(true));
-			PropSet.setPropertyValue("FooterIsOn", new Boolean(true));
+			PropSet.setPropertyValue("FooterIsOn", new Boolean(true));			
+			
 			HeaderText = (XText) UnoRuntime.queryInterface(XText.class, PropSet.getPropertyValue("HeaderText"));
 			XTextCursor xTextCursor = (XTextCursor) _xaDoc.getText().createTextCursor();
 			HeaderText.setString(_TheHeader);
@@ -251,46 +412,60 @@ protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int ro
 
     			XTextDocument aTextDocument = (com.sun.star.text.XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, aDocComp);
     			
+    		     // get the XModel interface from the component
+    		     XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, aDocComp);
+    		     
+    		     // the model knows its controller
+    		     XController xController = xModel.getCurrentController();
+    		     
+    		     // the controller gives us the TextViewCursor
+    		     // query the viewcursor supplier interface 
+    		     XTextViewCursorSupplier xViewCursorSupplier = 
+    		         (XTextViewCursorSupplier)UnoRuntime.queryInterface(
+    		             XTextViewCursorSupplier.class, xController);
+    		     
+    		     // get the cursor 
+    		     XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
+    			
+
+    		     setCustomPageStyle(aTextDocument);
+    		     
     			//General certificate section H1
     			//insert a title, Heading level 1
-    			insertAHeading(aTextDocument,"Certificate Report");
+    			insertAHeading(xViewCursor,"Certificate Report","Heading 1");
 
-    			XTextCursor xInsTblTextCursor = (XTextCursor) aTextDocument.getText().createTextCursor();
-
+/*    			XPagePrintable xp = (XPagePrintable)UnoRuntime.queryInterface(XPagePrintable.class, aTextDocument);
     			
-    			XTextCursor xInsTextCursor = (XTextCursor) aTextDocument.getText().createTextCursor();
+    			PropertyValue[] xps = xp.getPagePrintSettings();
     			
-    			XTextRange xTr = xInsTextCursor.getStart();
+    			for(int i = 0; i < xps.length;i++) {
+    				if(xps[i].Name.equals("IsLandscape")) {
+    					xps[i].Value = new Boolean(true);
+    					break;
+    				}
+    				trace(xps[i].Name);
+    			}
     			
+    			xp.setPagePrintSettings(xps);
     			
-    			xTr.setString("A text");
-    			
-    			XText xtx = xTr.getText();
-    			
-    			xtx.insertString(xTr, "another string \r\n\r", false);
-    			
+*/    			
     			//compute all the extensions + 11 other elements
     			
-    			insertTable(aTextDocument, xInsTblTextCursor, 10, 3);
+    			insertTable(aTextDocument, xViewCursor, 30, 4);
     			
-    			xInsTblTextCursor = aTextDocument.getText().createTextCursor();
+    			xViewCursor.collapseToEnd();
+    			xViewCursor.setString("Another string"+"\r"+"\r");
+    			xViewCursor.collapseToEnd();
+    			insertTable(aTextDocument, xViewCursor, 10, 4);
     			
-    			xInsTblTextCursor.gotoEnd(false);
-    			xtx = xInsTblTextCursor.getEnd().getText();
     			
+    			
+    	        xModel = (XModel)UnoRuntime.queryInterface(XModel.class, aTextDocument);
 
-    	        XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, aTextDocument);
-
-    	        XController xController = xModel.getCurrentController();
+    	        xController = xModel.getCurrentController();
     	        // the controller gives us the TextViewCursor
-    	        XTextViewCursorSupplier xViewCursorSupplier =
-    	        (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, xController);
-    	        XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
     			
     	        xViewCursor.gotoEnd(false);
-    			
-    			
-    			xtx.insertString(xTr, "(2) another string \r\n\r", false);
 
     			//core certificate element H2
 

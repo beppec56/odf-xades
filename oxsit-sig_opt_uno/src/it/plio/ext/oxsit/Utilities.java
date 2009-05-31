@@ -122,7 +122,7 @@ public class Utilities {
 									.toString();
 			} else
 				theMessage = theMessage + "(void)";
-		} catch (com.sun.star.uno.Exception e) {
+		} catch (Throwable e) {
 			theMessage = theMessage + pName + " EXCEPTION: " + e.getMessage();
 			// e.printStackTrace();
 		}
@@ -164,7 +164,7 @@ public class Utilities {
 				} else
 					theMessage = theMessage + "(void)";
 			}
-		} catch (com.sun.star.uno.Exception e) {
+		} catch (Throwable e) {
 			theMessage = theMessage + " showProperty " + pName + " EXCEPTION: " + e.getMessage();
 			// e.printStackTrace();
 		}
@@ -192,7 +192,7 @@ public class Utilities {
 		}		
 		XPropertySetInfo xPInfo = xPropSet.getPropertySetInfo();
 		if (xPInfo != null) {
-			Property allProp[] = xPInfo.getProperties();
+			Property[] allProp = xPInfo.getProperties();
 			int i;
 			for (i = 0; i < allProp.length; i++) {
 				theMessage = theMessage +"\n"+ i + " : " + allProp[i].Name + ",   " + allProp[i].Type + 
@@ -214,7 +214,7 @@ public class Utilities {
 		else {
 			XPropertySetInfo xPInfo = xPropSet.getPropertySetInfo();
 			if (xPInfo != null) {
-				Property allProp[] = xPInfo.getProperties();
+				Property[] allProp = xPInfo.getProperties();
 				int i;
 				for (i = 0; i < allProp.length; i++) {
 					theMessage = theMessage + "\n" + i + " : " + allProp[i].Name + ",   " + 

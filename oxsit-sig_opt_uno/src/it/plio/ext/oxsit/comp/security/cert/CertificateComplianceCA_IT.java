@@ -32,6 +32,7 @@ import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -295,6 +296,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.EXPIRED);
 				m_aCAState = CertificationAuthorityState.TRUSTED_WITH_WARNING;
+				m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.NOT_AFTER,
+						"The date is elapsed.");				
 //check CRL of this certificate
 //commented due to excessive time out			verifyCertifRevocHelper();
 			} catch (CertificateNotYetValidException e) {
@@ -303,6 +306,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 						CertificateElementState.INVALID_value);
 				setCertificateStateHelper(CertificateState.NOT_ACTIVE);
 				m_aCAState = CertificationAuthorityState.TRUSTED_WITH_WARNING;
+				m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.NOT_BEFORE,
+				"The date is not yet arrived.");
 			}
 
 			//check the KeyUsage extension

@@ -7,6 +7,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -127,13 +128,14 @@ public class CertificateExtensionDisplayHelper {
 		m_aLogger = new DynamicLogger(this,_context);
 //		m_aLogger.enableLogging();
 	}
-	
+
 	/**
 	 * @param aext
 	 * @param _aOID TODO
+	 * @param _xCert TODO
 	 * @return
 	 */
-	public String examineExtension(X509Extension aext, DERObjectIdentifier _aOID) {
+	public String examineExtension(X509Extension aext, DERObjectIdentifier _aOID, XOX_X509CertificateDisplay _xCert) {
 		try {
 			if(_aOID.equals(X509Extensions.KeyUsage))
 				return examineKeyUsage(aext);
@@ -169,6 +171,7 @@ public class CertificateExtensionDisplayHelper {
 			}
 		} catch (java.lang.Exception e) {
 			String ret = "Exception while processing OID: " + _aOID.getId();
+			_xCert.setCertificateExtensionCommentString(_aOID.getId(), "This extension is NOT recognized.\nIssuer specific extension?");
 			m_aLogger.severe(e);
 			return ret;
 		}

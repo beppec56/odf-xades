@@ -275,7 +275,7 @@ public class TestOnCertificates {
 				if(aext.isCritical())
 					try {
 						m_aLogger.log(extoid.get(i).getId()+ " "+m_aRegAcc.getStringFromRegistry(extoid.get(i).getId())+term+
-								aHelper.examineExtension(aext, extoid.get(i)));
+								aHelper.examineExtension(aext, extoid.get(i), null));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -288,7 +288,7 @@ public class TestOnCertificates {
 				if(!aext.isCritical())
 					try {
 						m_aLogger.log(extoid.get(i).getId()+ " "+m_aRegAcc.getStringFromRegistry(extoid.get(i).getId())+term+
-								aHelper.examineExtension(aext, extoid.get(i)));
+								aHelper.examineExtension(aext, extoid.get(i), null));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
