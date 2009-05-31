@@ -22,12 +22,12 @@
 
 package it.plio.ext.oxsit.comp.options;
 
-import java.io.File;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
+
+import java.io.File;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.ItemEvent;
@@ -38,7 +38,6 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;

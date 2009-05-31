@@ -22,29 +22,21 @@
 
 package it.plio.ext.oxsit.comp.options;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogFileOrFolderPicker;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import com.sun.star.awt.ActionEvent;
-import com.sun.star.awt.ItemEvent;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
-import com.sun.star.awt.XItemListener;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;

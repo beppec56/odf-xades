@@ -76,6 +76,10 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure ComplianceControlObj;
 
+		/** the object used to prepare the certificate display
+		*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_X509CertificateDisplay CertificateDisplayObj;
+
 		/** The first certificate in the certification path, this is the start of the certification path
 		tree.
 		*/

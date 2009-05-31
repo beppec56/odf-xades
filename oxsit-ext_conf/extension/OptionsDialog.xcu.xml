@@ -97,7 +97,7 @@
             <value>1</value>
           </prop>
         </node>
-        <!-- end leaf for logging options -->      
+        <!-- end leaf for logging options -->
         <!-- leaf for SSCD options -->
         <node oor:name="@WEBIDENTBASE@.@NAME@.options.node.SSCD" oor:op="fuse">
         <!-- the following id is used by the extension manager to retrieve the option leaf -->

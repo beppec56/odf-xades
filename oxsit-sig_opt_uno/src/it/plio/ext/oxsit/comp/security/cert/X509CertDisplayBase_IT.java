@@ -24,35 +24,24 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
-import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -62,20 +51,37 @@ import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
+import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.XPropertySet;
+import com.sun.star.container.XIndexAccess;
+import com.sun.star.container.XNameAccess;
+import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XController;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.style.XStyle;
+import com.sun.star.style.XStyleFamiliesSupplier;
+import com.sun.star.text.XText;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextRange;
+import com.sun.star.text.XTextTable;
+import com.sun.star.text.XTextViewCursor;
+import com.sun.star.text.XTextViewCursorSupplier;
+import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
+import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -103,6 +109,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
+	//Strings used for certificate elements
 
 	protected IDynamicLogger m_aLogger;
 
@@ -116,39 +123,57 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	protected String m_sSubjectDisplayName;	
 	protected String m_sSubjectName = "";
+	private String				m_sLabelSubject = "id_cert_subject";
+	public	static final String		m_CERT_SBJ_NAME = "Subject";
 
 	private String m_sVersion = "";
+	private String				m_sLabelVersion = "id_cert_version";
 
 	private String m_sSerialNumber = "";
+	private String				m_sLabelSerialNumer = "id_cert_ser_numb";
 
 	protected String m_sIssuerDisplayName = "";
+	private String				m_sLabelIssuer = "id_cert_issuer";
 	protected String m_sIssuerName = "";
 	protected String m_sIssuerCommonName = "";
 
 	private String m_sNotValidAfter = "";
+	private String				m_sLabelNotValidAfter = "id_cert_valid_to";
 
 	private String m_sNotValidBefore = "";
+	private String				m_sLabelNotValidBefore = "id_cert_valid_from";
 
 	private String m_sSubjectPublicKeyAlgorithm = "";
+	private String				m_sLabelSubjAlgor = "id_cert_sign_alg";
 
 	private String m_sSubjectPublicKeyValue = "";
+	private String 				m_sLabelSubjectPublicKey = "id_cert_pub_key";
 
 	private String m_sSignatureAlgorithm = "";
+	private String 				m_sLabelThumbAlgor = "id_cert_thumbp";
 
 	private String m_sMD5Thumbprint = "";
+	private String 				m_sLabelThumbMDA5 = "id_cert_mda5_thumbp";
 
 	private String m_sSHA1Thumbprint = "";
+	private String 				m_sLabelThumbSHA1 = "id_cert_sha1_thumbp";
 
 	private Locale m_lTheLocale;
 
 	private XOX_CertificateExtension[] m_xCritExt = null;
+	private String 				m_sLabelCritExtension = "id_cert_crit_ext";
 	private XOX_CertificateExtension[] m_xExt = null;
+	private String 				m_sLabelNotCritExtension = "id_cert_notcrit_ext";
+	private String 				m_sLabelCertPath = "id_cert_certif_path";
 
 	//the hash map of all the extensions
 	//the String is the OID,
 	private HashMap<String,X509Extension>	m_aExtensions = new HashMap<String, X509Extension>(20);
-	private HashMap<String,String>			m_aExtensionLocalizedNames = new HashMap<String, String>(20);
+	private HashMap<CertificateElementID,String>	m_aElementLocalizedNames = new HashMap<CertificateElementID, String>(15);
+	private HashMap<CertificateElementID,String>	m_aElementComments = new HashMap<CertificateElementID, String>(15);
+	private HashMap<String,String>			m_aExtensionLocalizedNames = new HashMap<String, String>(50);
 	private HashMap<String,String>			m_aExtensionDisplayValues = new HashMap<String, String>(20);
+	private HashMap<String,String>			m_aElementAdditionalNotes = new HashMap<String, String>(20);
 	//the hash map of all the critical extensions
 	private HashMap<String,X509Extension>	m_aCriticalExtensions = new HashMap<String, X509Extension>(20);
 	//the hash map of all the non critical extensions
@@ -163,7 +188,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 */
 	public X509CertDisplayBase_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+//
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();
@@ -171,18 +197,43 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 //    	m_bIsFromUI = false;
     	//grab the locale strings, we'll use the interface language as a locale
     	//e.g. if interface language is Italian, the locale will be Italy, Italian
+		fillLocalizedString();
+
+		//locale of the extension
+		m_lTheLocale = new Locale(m_sLocaleLanguage);
+	}
+
+	/**
+	 * prepare the strings for the dialogs
+	 */
+	protected void fillLocalizedString() {
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 
 		try {
 			m_sTimeLocaleString = m_aRegAcc.getStringFromRegistry( m_sTimeLocaleString );			
 			m_sLocaleLanguage = m_aRegAcc.getStringFromRegistry( m_sLocaleLanguage );
+
+//strings for certificate tree control display
+			//directly inserted into a Hashmap
+			m_aElementLocalizedNames.put(CertificateElementID.VERSION, m_aRegAcc.getStringFromRegistry( m_sLabelVersion ) );
+			m_aElementLocalizedNames.put(CertificateElementID.SERIAL_NUMBER, m_aRegAcc.getStringFromRegistry( m_sLabelSerialNumer ));
+			m_aElementLocalizedNames.put(CertificateElementID.ISSUER, m_aRegAcc.getStringFromRegistry( m_sLabelIssuer ) );
+			m_aElementLocalizedNames.put(CertificateElementID.NOT_BEFORE, m_aRegAcc.getStringFromRegistry( m_sLabelNotValidBefore ));
+			m_aElementLocalizedNames.put(CertificateElementID.NOT_AFTER, m_aRegAcc.getStringFromRegistry( m_sLabelNotValidAfter ));
+			m_aElementLocalizedNames.put(CertificateElementID.SUBJECT, m_aRegAcc.getStringFromRegistry( m_sLabelSubject ));
+			m_aElementLocalizedNames.put(CertificateElementID.SUBJECT_ALGORITHM, m_aRegAcc.getStringFromRegistry( m_sLabelSubjAlgor ));
+			m_aElementLocalizedNames.put(CertificateElementID.SUBJECT_PUBLIC_KEY, m_aRegAcc.getStringFromRegistry( m_sLabelSubjectPublicKey ));
+			m_aElementLocalizedNames.put(CertificateElementID.THUMBPRINT_SIGNATURE_ALGORITHM, m_aRegAcc.getStringFromRegistry( m_sLabelThumbAlgor ));
+			m_aElementLocalizedNames.put(CertificateElementID.CERTIFICATE_SHA1_THUMBPRINT, m_aRegAcc.getStringFromRegistry( m_sLabelThumbSHA1 ));
+			m_aElementLocalizedNames.put(CertificateElementID.CERTIFICATE_MD5_THUMBPRINT, m_aRegAcc.getStringFromRegistry( m_sLabelThumbMDA5 ));
+			m_aElementLocalizedNames.put(CertificateElementID.CERTIFICATION_PATH, m_aRegAcc.getStringFromRegistry( m_sLabelCertPath ));
+			m_aElementLocalizedNames.put(CertificateElementID.CRITICAL_EXTENSION, m_aRegAcc.getStringFromRegistry( m_sLabelCritExtension ));
+			m_aElementLocalizedNames.put(CertificateElementID.NOT_CRITICAL_EXTENSION, m_aRegAcc.getStringFromRegistry( m_sLabelNotCritExtension ));
 		} catch (com.sun.star.uno.Exception e) {
-			m_aLogger.severe("ctor", e);
+			m_aLogger.severe("fillLocalizedString", e);
 		}
 		m_aRegAcc.dispose();
-		//locale of the extension
-		m_lTheLocale = new Locale(m_sLocaleLanguage);
 	}
 
 	/* (non-Javadoc)
@@ -448,8 +499,9 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionStringValue(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionStringValue(String _oid) {
-		return m_aExtensionDisplayValues.get(_oid);
+	public String getCertificateExtensionValueString(String _oid) {
+		String ret = m_aExtensionDisplayValues.get(_oid);
+		return (ret == null) ? "": ret;
 	}
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionOIDs()
@@ -495,8 +547,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		for(int i=0;i< critOIDs.length;i++) {
 			Object[] aArguments = new Object[4];
 			aArguments[0] = new String(critOIDs[i]);//aExts.getExtension(new DERObjectIdentifier(critOIDs[i])).getValue().getOctets();
-			aArguments[1] = new String(getCertificateExtensionName(critOIDs[i]));
-			aArguments[2] = new String(getCertificateExtensionStringValue(critOIDs[i]));
+			aArguments[1] = new String(getCertificateExtensionLocalizedName(critOIDs[i]));
+			aArguments[2] = new String(getCertificateExtensionValueString(critOIDs[i]));
 			aArguments[3] = new Boolean(_bIsCritical);
 
 			try {
@@ -542,11 +594,38 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateExtensionName(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionName(String _oid) {
-		// TODO Auto-generated method stub
-		return m_aExtensionLocalizedNames.get(_oid);
+	public String getCertificateExtensionLocalizedName(String _oid) {
+		String ret = m_aExtensionLocalizedNames.get(_oid);
+		return (ret == null) ? "": ret;
 	}
 
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementLocalizedName(it.plio.ext.oxsit.security.cert.CertificateElementID)
+	 */
+	@Override
+	public String getCertificateElementLocalizedName(CertificateElementID arg0) {
+		String ret = m_aElementLocalizedNames.get(arg0);
+		return (ret == null) ? "" : ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementCommentString(it.plio.ext.oxsit.security.cert.CertificateElementID)
+	 */
+	@Override
+	public String getCertificateElementCommentString(CertificateElementID arg0) {
+		String ret = m_aElementComments.get(arg0);
+		return (ret == null) ? "" : ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#setCertificateElementCommentString(it.plio.ext.oxsit.security.cert.CertificateElementID, java.lang.String)
+	 */
+	@Override
+	public void setCertificateElementCommentString(CertificateElementID arg0,
+			String arg1) {
+		m_aElementComments.put(arg0, arg1);
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#prepareDisplayStrings(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
@@ -624,6 +703,317 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#setCertificateElementCommentString(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void setCertificateExtensionCommentString(String _Name, String _Comment) {
+		m_aElementAdditionalNotes.put(_Name, _Comment);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementCommentString(java.lang.String)
+	 */
+	@Override
+	public String getCertificateExtensionCommentString(String _Name) {
+		String ret = m_aElementAdditionalNotes.get(_Name);
+		return (ret == null) ? "": ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#generateReport()
+	 */
+	@Override
+	public void generateCertificateReport(XComponent _xComp) 
+	throws IllegalArgumentException, Exception  {
+		//Create a writer document with certificate element description
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComp);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#generateCertificateReport wrong argument"));
+
+		try {
+			//create a writer empty document
+			Object oDesktop = m_xMCF.createInstanceWithContext("com.sun.star.frame.Desktop", m_xContext);
+			//insert a title, H1
+			XComponentLoader aCompLd = (XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, oDesktop);
+
+			// define load properties according to com.sun.star.document.MediaDescriptor
+
+			/* or simply create an empty array of com.sun.star.beans.PropertyValue structs:
+			    PropertyValue[] loadProps = new PropertyValue[0]
+			 */
+
+			// the boolean property Hidden tells the office to open a file in hidden mode
+			PropertyValue[] loadProps = new PropertyValue[2];
+			loadProps[0] = new PropertyValue();
+			loadProps[0].Name = "DocumentTitle";
+			loadProps[0].Value = new String("Certificate report"); 
+			loadProps[1] = new PropertyValue();
+			loadProps[1].Name = "Author";
+			loadProps[1].Value = new String("OXSIT signature extension"); 
+
+			// load
+			XComponent aDocComp = aCompLd.loadComponentFromURL("private:factory/swriter", "_blank", 0, loadProps); 
+
+			XTextDocument aTextDocument = (com.sun.star.text.XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, aDocComp);
+			
+			//General certificate section H1
+			//insert a title, Heading level 1
+			insertAHeading(aTextDocument,"");
+			
+			XOX_X509CertificateDisplay xCeDisp = (XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, m_xQc);
+
+			//General certificate section H1
+			//insert a title, Heading level 1
+			insertAHeading(aTextDocument,"Certificate Report");
+
+			XTextCursor xInsTblTextCursor = (XTextCursor) aTextDocument.getText().createTextCursor();
+			
+			XTextCursor xInsTextCursor = (XTextCursor) aTextDocument.getText().createTextCursor();
+			
+			XTextRange xTr = xInsTextCursor.getStart();
+			
+			
+			xTr.setString("A text");
+			
+			XText xtx = xTr.getText();
+			
+			xtx.insertString(xTr, "another string \r\n\r", false);
+			
+			xtx.insertString(xTr,
+					xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT),
+					false);
+			
+			//compute all the extensions + 11 other elements
+			
+			XTextTable xTable = insertTable(aTextDocument, xInsTblTextCursor, 10, 3);
+			
+
+	        XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, aTextDocument);
+
+	        XController xController = xModel.getCurrentController();
+	        // the controller gives us the TextViewCursor
+	        XTextViewCursorSupplier xViewCursorSupplier =
+	        (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, xController);
+	        XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
+			
+	        xViewCursor.gotoEnd(false);
+
+	        //core certificate element H2
+			int nRow = 2;
+			insertIntoCell("A"+nRow, xCeDisp.getSubjectDisplayName(), xTable);
+			nRow++;
+			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(CertificateElementID.SERIAL_NUMBER), xTable);
+			insertIntoCell("B"+nRow, xCeDisp.getVersion(), xTable);
+			nRow++;
+			insertIntoCell("A"+nRow, xCeDisp.getVersion(), xTable);
+			
+			
+			//table with element, 3 columns: name, value, notes
+
+			//certificate critical extensions H2
+
+			//table with element, 3 columns: name, value, notes
+
+			//Not certificate critical extensions H2
+
+			//table with element, 3 columns: name, value, notes
+
+
+			//General certificate section H1
+			//insert a title, Heading level 1
+			insertAHeading(aTextDocument,"Certificate Report");
+
+			//insert a Header
+			prepareAHeader(aTextDocument, "Certificate Report\n\n");
+
+			//exit, leave the document opened and unsaved, that's up to the user
+		} catch (Throwable e) {
+			m_aLogger.severe(e);
+		}
+
+	}
+
+
+	/** This method sets the text colour of the cell refered to by sCellName to white and inserts
+    the string sText in it
+	 */
+	private void insertIntoCell(String sCellName, String sText, XTextTable xTable) {
+		// Access the XText interface of the cell referred to by sCellName
+		XText xCellText = (XText) UnoRuntime.queryInterface(
+				XText.class, xTable.getCellByName(sCellName));
+
+		// create a text cursor from the cells XText interface
+		XTextCursor xCellCursor = xCellText.createTextCursor();
+
+		// Get the property set of the cell's TextCursor
+		XPropertySet xCellCursorProps = (XPropertySet)UnoRuntime.queryInterface(
+				XPropertySet.class, xCellCursor);
+
+		/*    try {
+        // Set the colour of the text to white
+        xCellCursorProps.setPropertyValue("CharColor", new Integer(16777215));
+    } catch (Exception e) {
+        e.printStackTrace(System.out);
+    }*/
+
+		// Set the text in the cell to sText
+		xCellText.setString(sText);
+	}
+
+
+	/** This method shows how to create and insert a text table, as well as insert text and formulae
+   into the cells of the table
+	 * @param xTxCurs TODO
+	 */
+	protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int row, int col)
+	{
+		try 
+		{
+			XMultiServiceFactory xMSF = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, xDoc);
+
+			//       Object desktop = xMCF.createInstanceWithContext("com.sun.star.frame.Desktop", xCC);
+			// get the remote service manager
+			// query its XDesktop interface, we need the current component
+			//       XDesktop xDesktop = (XDesktop)UnoRuntime.queryInterface(XDesktop.class, desktop);
+
+			//       XComponent xWriterComponent = xDesktop.getCurrentComponent();
+
+			//       XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, xDoc);
+
+			//       XController xController = xModel.getCurrentController();
+			// the controller gives us the TextViewCursor
+			//       XTextViewCursorSupplier xViewCursorSupplier =
+			//       (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, xController);
+			//       XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
+			//get the main text document
+			XText mxDocText = xDoc.getText();      
+
+			// Create a new table from the document's factory
+			XTextTable xTable = (XTextTable) UnoRuntime.queryInterface( 
+					XTextTable.class, 
+					xMSF.createInstance(
+							"com.sun.star.text.TextTable" ) );
+
+			// Specify that we want the table to have 4 rows and 4 columns
+			xTable.initialize( row	, col );
+
+			XTextRange xPos = xTxCurs.getStart();//xViewCursor.getStart();
+
+			// Insert the table into the document
+			mxDocText.insertTextContent( xPos, xTable, false);
+			// Get an XIndexAccess of the table rows
+			XIndexAccess xRows = xTable.getRows();
+
+			// Access the property set of the first row (properties listed in service description:
+			// com.sun.star.text.TextTableRow)
+			//       XPropertySet xRow = (XPropertySet) UnoRuntime.queryInterface( 
+			//           XPropertySet.class, xRows.getByIndex ( 0 ) );
+			// If BackTransparant is false, then the background color is visible
+			//       xRow.setPropertyValue( "BackTransparent", new Boolean(false));
+			// Specify the color of the background to be dark blue
+			//       xRow.setPropertyValue( "BackColor", new Integer(6710932));
+
+			// Access the property set of the whole table
+			//       XPropertySet xTableProps = (XPropertySet)UnoRuntime.queryInterface( 
+			//           XPropertySet.class, xTable );
+			// We want visible background colors
+			//       xTableProps.setPropertyValue( "BackTransparent", new Boolean(false));
+			// Set the background colour to light blue
+			//       xTableProps.setPropertyValue( "BackColor", new Integer(13421823));
+
+			// set the text (and text colour) of all the cells in the first row of the table
+			//insert some titles
+			insertIntoCell( "A1", "Element", xTable );
+			insertIntoCell( "B1", "Value", xTable );
+			insertIntoCell( "C1", "Notes", xTable );
+
+			/*       // Insert random numbers into the first this three cells of each
+       // remaining row
+       xTable.getCellByName( "A2" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "B2" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "C2" ).setValue( getRandomDouble() );
+
+       xTable.getCellByName( "A3" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "B3" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "C3" ).setValue( getRandomDouble() );
+
+       xTable.getCellByName( "A4" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "B4" ).setValue( getRandomDouble() );
+       xTable.getCellByName( "C4" ).setValue( getRandomDouble() );*/
+
+			// Set the last cell in each row to be a formula that calculates
+			// the sum of the first three cells
+			/*        xTable.getCellByName( "D2" ).setFormula( "sum <A2:C2>" );
+       xTable.getCellByName( "D3" ).setFormula( "sum <A3:C3>" );
+       xTable.getCellByName( "D4" ).setFormula( "sum <A4:C4>" );*/
+			return xTable;
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace ( System.out );
+		}
+		return null;
+	}
+
+	
+	/**
+	 * @param textDocument
+	 * @param string
+	 */
+	private void insertAHeading(XTextDocument textDocument, String string) {
+		// TODO Auto-generated method stub
+		
+		
+		
+	}
+
+	private void prepareAHeader(XTextDocument _xaDoc, String _TheHeader) {
+		XText xText = (com.sun.star.text.XText) _xaDoc.getText();
+
+		XStyleFamiliesSupplier StyleFam = (XStyleFamiliesSupplier) UnoRuntime.queryInterface(XStyleFamiliesSupplier.class, _xaDoc);
+		XNameAccess StyleFamNames = StyleFam.getStyleFamilies();
+
+		XStyle StdStyle = null;
+		try {
+			XNameAccess PageStyles = (XNameAccess) AnyConverter.toObject(new Type(XNameAccess.class),StyleFamNames.getByName("PageStyles"));
+			StdStyle = (XStyle) AnyConverter.toObject(new Type(XStyle.class),PageStyles.getByName("Standard"));
+		}
+		catch (Exception e) {}
+
+		XPropertySet PropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, StdStyle);
+
+		// changing/getting some properties
+		XText HeaderText = null;
+
+		try {
+			PropSet.setPropertyValue("HeaderIsOn", new Boolean(true));
+			PropSet.setPropertyValue("FooterIsOn", new Boolean(true));
+			HeaderText = (XText) UnoRuntime.queryInterface(XText.class, PropSet.getPropertyValue("HeaderText"));
+			XTextCursor xTextCursor = (XTextCursor) _xaDoc.getText().createTextCursor();
+			HeaderText.setString(_TheHeader);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport(com.sun.star.text.XTextDocument)
+	 */
+	@Override
+	public void addCertificateReport(XTextDocument _aTextDocument, XComponent _xComp)
+			throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComp);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport wrong argument"));
+		
+
+	}
+
+	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
 	 */
 	@Override
@@ -664,5 +1054,5 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		super.removeEventListener(arg0);
-	}
+	}	
 }

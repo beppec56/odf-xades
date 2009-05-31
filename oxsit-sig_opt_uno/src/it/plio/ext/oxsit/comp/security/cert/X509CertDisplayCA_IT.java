@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -31,8 +32,11 @@ import java.util.Vector;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.X509Name;
 
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 
 /**

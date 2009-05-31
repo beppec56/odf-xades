@@ -1,0 +1,74 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_CertificateElementID_idl__
+#define __it_plio_ext_oxsit_security_cert_CertificateElementID_idl__
+
+  module it { module plio { module ext { module oxsit { module security { module cert {
+
+/** ID for certificate elements that don't have an OID. Used for display, value string, error string, etc...
+<p>The lower, the better, meaning that the code nearer to LAST_STATE is the worst</p>
+ */
+	enum CertificateElementID
+	{
+		/** Identifies a short abstract of the certificate state
+		*/
+		GENERAL_CERTIFICATE_ABSTRACT,
+
+		SUBJECT_DISPLAY_NAME,
+
+		VERSION,
+
+		SERIAL_NUMBER,
+
+		ISSUER,
+
+		NOT_BEFORE,
+
+		NOT_AFTER,
+
+		SUBJECT,
+
+		SUBJECT_ALGORITHM,
+
+		SUBJECT_PUBLIC_KEY,
+
+		THUMBPRINT_SIGNATURE_ALGORITHM,
+
+		CERTIFICATE_SHA1_THUMBPRINT,
+
+		CERTIFICATE_MD5_THUMBPRINT,
+
+ 		CERTIFICATION_PATH,
+
+		CRITICAL_EXTENSION,
+
+		NOT_CRITICAL_EXTENSION,
+
+		/** Last ID.
+		*/
+		LAST_ID 
+	}; 
+ 
+  }; }; }; }; };  };
+ 
+#endif

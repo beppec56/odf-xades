@@ -28,6 +28,7 @@ import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.net.URISyntaxException;
 
@@ -179,29 +180,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void removeButtonPressed() {
 		//not implemented here
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.ui.IDialogCertTreeBase#reportButtonPressed()
-	 */
-	@Override
-	public void reportButtonPressed() {
-		//prints a report of the selected CERTIFICATE
-		String m_sExtensionSystemPath;
-		//not implemented here, next code is for test only:
-		try {
-			m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xContext);
-			m_logger.ctor("extension installed in: "+m_sExtensionSystemPath);
-			String libPath=System.getProperty("java.library.path");
-			//first the current extension path into the library path
-			libPath = m_sExtensionSystemPath + System.getProperty("path.separator") + libPath;
-			System.setProperty("java.library.path", libPath);
-			m_logger.log("library path is: "+ System.getProperty("java.library.path"));		
-		} catch (URISyntaxException e) {
-			m_logger.severe("ctor", "", e);
-		} catch (java.io.IOException e) {
-			m_logger.severe("ctor", "", e);
-		}		
 	}
 
 	/* (non-Javadoc)

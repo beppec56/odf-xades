@@ -29,6 +29,8 @@
 #include <com/sun/star/lang/IllegalArgumentException.idl>
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/frame/XFrame.idl>
+#include <com/sun/star/text/XTextDocument.idl>
+#include "CertificateElementID.idl"
 #include "XOX_CertificateExtension.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
@@ -112,15 +114,55 @@
 		/** Find the localized name of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		string getCertificateExtensionName( [in] string oid ) ;
+		string getCertificateElementLocalizedName( [in]  it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
+
+		string getCertificateElementCommentString( [in] it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
+
+		void setCertificateElementCommentString( [in] it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID,
+													[in] string aComment ) ;
+
+		/** Find the localized name of an extension from OID.
+		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
+		*/
+		string getCertificateExtensionLocalizedName( [in] string oid ) ;
 
 		/** Returns the human redeable content of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		string getCertificateExtensionStringValue( [in] string oid ) ;
+		string getCertificateExtensionValueString( [in] string oid ) ;
+
+		/** Returns an additional comment of a certificate from OID or the element description.<br>
+		This comment can contains any character string suitable for a text document report generation.<br>
+		A comment about the certificate core elements can be retrieved using as name parameter the name of the
+		corresponding  attribute.<br>
+		For example using "NotValidAfter" string will return a comment about the NotValidAfter element of the
+		certificate.
+		<p>the name should be in string form, for example the string "2.5.29.15" for KeyUsage extension.</p>
+		*/
+		string getCertificateExtensionCommentString( [in] string name ) ;
+
+		/** The counterpart of getCertificateElementCommentString
+		@param name
+		@param comment
+		*/
+		void setCertificateExtensionCommentString( [in] string name, [in] string comment ) ;
+
+		/** generate a report in a stand alone Writer document
+		*/
+		void generateCertificateReport([in] com::sun::star::lang::XComponent xCertificate)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
+		/** generate a report and add it to the document represented by the passed XTextDocument interface.
+		@param aTextDocument
+		*/
+		void addCertificateReport([in] com::sun::star::text::XTextDocument aTextDocument,
+									[in] com::sun::star::lang::XComponent xCertificate )
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
 
 		/**
-		@param DEREncoded the DER byte stream of the certificate to render in text.
+		@param xCertificate a UNO component supporting the XOX_X509Certificate interface.
 		*/
 		void prepareDisplayStrings([in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::lang::XComponent xCertificate)

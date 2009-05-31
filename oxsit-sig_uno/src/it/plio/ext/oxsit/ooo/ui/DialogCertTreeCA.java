@@ -213,16 +213,6 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.ooo.ui.IDialogCertTreeBase#reportButtonPressed()
-	 */
-	@Override
-	public void reportButtonPressed() {
-		//prints a report of the selected CERTIFICATE
-		//not implemented here, next code is for test only:
-		m_logger.log("list Ca available");
-	}
-
-	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.ooo.ui.IDialogCertTreeBase#selectButtonPressed()
 	 */
 	@Override

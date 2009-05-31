@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -54,6 +55,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -252,7 +254,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectDisplayName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSubjectDisplayName()
 	 */
 	@Override
 	public String getSubjectDisplayName() {
@@ -437,7 +439,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectPublicKeyValue()
 	 */
-	@Override
+	//@Override
 	public String getSubjectPublicKeyValue() {
 		try {
 			checkDisplayed();
@@ -673,10 +675,10 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionName(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionName(String _oid) {
+	public String getCertificateExtensionLocalizedName(String _oid) {
 		try {
 			checkDisplayed();
-			return 	m_xoxCertificateDisplayString.getCertificateExtensionName(_oid);
+			return 	m_xoxCertificateDisplayString.getCertificateExtensionLocalizedName(_oid);
 		} catch (Exception e) {
 			m_aLogger.severe(e);
 		}
@@ -684,18 +686,33 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	}
 
 	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementLocalizedName(it.plio.ext.oxsit.security.cert.CertificateElementID)
+	 */
+	@Override
+	public String getCertificateElementLocalizedName(CertificateElementID _CertElId) {
+		try {
+			checkDisplayed();
+			return 	m_xoxCertificateDisplayString.getCertificateElementLocalizedName(_CertElId);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return m_sDisplayObjectKO;
+	}	
+	
+	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionStringValue(java.lang.String)
 	 */
 	@Override
-	public String getCertificateExtensionStringValue(String _oid) {
+	public String getCertificateExtensionValueString(String _oid) {
 		try {
 			checkDisplayed();
-			return 	m_xoxCertificateDisplayString.getCertificateExtensionStringValue(_oid);
+			return 	m_xoxCertificateDisplayString.getCertificateExtensionValueString(_oid);
 		} catch (Exception e) {
 			m_aLogger.severe(e);
 		}
 		return m_sDisplayObjectKO;
 	}
+
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionOIDs()
 	 */
@@ -753,7 +770,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotCriticalExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getNotCriticalExtensions()
 	 */
 	@Override
 	public XOX_CertificateExtension[] getNotCriticalExtensions() {
@@ -764,6 +781,110 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_aLogger.severe(e);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementCommentString(java.lang.String)
+	 */
+	@Override
+	public String getCertificateExtensionCommentString(String _Name) {
+		try {
+			checkDisplayed();
+			return 	m_xoxCertificateDisplayString.getCertificateExtensionCommentString(_Name);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return m_sDisplayObjectKO;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateElementCommentString(it.plio.ext.oxsit.security.cert.CertificateElementID)
+	 */
+	@Override
+	public String getCertificateElementCommentString(CertificateElementID _CertElId) {
+		try {
+			checkDisplayed();
+			return 	m_xoxCertificateDisplayString.getCertificateElementCommentString(_CertElId);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return m_sDisplayObjectKO;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#setCertificateElementCommentString(it.plio.ext.oxsit.security.cert.CertificateElementID, java.lang.String)
+	 */
+	@Override
+	public void setCertificateElementCommentString(CertificateElementID _CertElID,
+			String _Comment) {
+		try {
+			checkDisplayed();
+			m_xoxCertificateDisplayString.setCertificateElementCommentString(_CertElID,_Comment);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+	}
+
+	/**
+	 * set the certificate state according to the new value, as enum,
+	 * mapped to numerical
+	 */
+	private void setCertificateStateConditionsHelper(CertificateStateConditions _newState) {
+		int _nNewState;
+		if((_nNewState = _newState.getValue())
+				> m_nCertificateStateConditions)
+			m_nCertificateStateConditions = _nNewState;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#prepareDisplayStrings(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public void prepareDisplayStrings(XFrame arg0, XComponent arg1)
+			throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+//call the subcomponent method?	
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport(com.sun.star.text.XTextDocument)
+	 */
+	@Override
+	public void addCertificateReport(XTextDocument _aTextDocument, XComponent _xCertificate)
+			throws IllegalArgumentException, Exception {
+		try {
+			checkDisplayed();
+			m_xoxCertificateDisplayString.addCertificateReport(_aTextDocument,_xCertificate);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#generateCertificateReport()
+	 */
+	@Override
+	public void generateCertificateReport( XComponent _xCertificate)
+	throws IllegalArgumentException, Exception {
+		try {
+			checkDisplayed();
+			m_xoxCertificateDisplayString.generateCertificateReport(_xCertificate);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#setCertificateElementCommentString(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void setCertificateExtensionCommentString(String _Name, String _Comment) {
+		try {
+			checkDisplayed();
+			m_xoxCertificateDisplayString.setCertificateExtensionCommentString(_Name,_Comment);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -814,7 +935,6 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public XOX_CertificationPathControlProcedure getCertificationPathControlObj() {
-		// TODO Auto-generated method stub
 		return m_xoxCertificationPathControlProcedure;
 	}
 
@@ -871,25 +991,11 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_nCertificateState = _nNewState;
 	}
 
-	/**
-	 * set the certificate state according to the new value, as enum,
-	 * mapped to numerical
-	 */
-	private void setCertificateStateConditionsHelper(CertificateStateConditions _newState) {
-		int _nNewState;
-		if((_nNewState = _newState.getValue())
-				> m_nCertificateStateConditions)
-			m_nCertificateStateConditions = _nNewState;
-	}
-
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#prepareDisplayStrings(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateDisplayObj()
 	 */
 	@Override
-	public void prepareDisplayStrings(XFrame arg0, XComponent arg1)
-			throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
-//call the subcomponent method?	
+	public XOX_X509CertificateDisplay getCertificateDisplayObj() {
+		return this;//it's implemented as well
 	}
-
 }
