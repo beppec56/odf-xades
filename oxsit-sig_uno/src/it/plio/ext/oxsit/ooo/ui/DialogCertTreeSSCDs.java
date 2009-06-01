@@ -24,6 +24,8 @@ package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
+import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
@@ -159,17 +161,41 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
-		m_logger.info("cambio stato certificato");
+		m_logger.info("firma document con un certificato");
 		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
 		Object aObj = xAnode.getDataValue();
 		if(aObj instanceof CertificateTreeElement) {
+			//check if not CA
 			CertificateTreeElement ct = (CertificateTreeElement)aObj;
-			int avl = ct.getCertificateGraficStateValue();
-			avl++;
-			if(avl >= CertificateGraphicDisplayState.LAST_STATE_value)
-				avl = CertificateGraphicDisplayState.NOT_VERIFIED_value;
-			ct.setCertificateGraficStateValue(avl);
-			xAnode.setNodeGraphicURL(m_sCertificateValidityGraphicName[avl]);
+			if(ct.getNodeType() == TreeNodeType.CERTIFICATE) {
+				//add a check on the state and alert the user
+				//FIXME
+				
+				//instantiate the signer
+				try {
+					//FIXME get the object name form the parameters
+					Object oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE, m_xContext);
+					
+					XOX_DocumentSigner xSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
+					
+					if(xSigner != null) {
+						XOX_X509Certificate[] aCert = new XOX_X509Certificate[1]; 						
+						aCert[0] = ct.getCertificate();
+
+						xSigner.signDocumentStandard(m_xParentFrame,getDocumentStorage(), aCert);
+						//mark signature status dirty ?
+						endDialog();
+					}
+					else
+						throw (new NoSuchMethodException("Missing XOX_DocumentSigner interface !"));
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+			
 		}
 //		addOneSignature();		
 	}
@@ -220,7 +246,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 								//perform certificate verification (a full one!)
 								oCertifs[idx1].verifyCertificate(m_xParentFrame);
 								//then add to the tree control
-								addX509CertificateToTree(xCertifNode, oCertifs[idx1]);
+								addX509CertificateToTree(xCertifNode, oCertifs[idx1], TreeNodeType.CERTIFICATE);
 							}
 						}
 					}
@@ -270,15 +296,22 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		if(xTheCurrentComp != null) {
 //get node type and enable/disable	the pushbutton
 			TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
-			boolean bEnableButton = false;
-			if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
-				bEnableButton = true;
-			}
-			enableSingleButton(m_sAddBtn,bEnableButton);
+			boolean bEnableAddButton = false;
+			boolean bEnableRepButton = false;
+			TreeNodeType aNdType = aCurrentNode.getNodeType();
+			if(aNdType == TreeNodeType.CERTIFICATE ||
+					aNdType == TreeNodeType.CERTIFICATE_CA)
+				bEnableRepButton = true;
+			if(aNdType == TreeNodeType.CERTIFICATE)
+				bEnableAddButton = true;
+			enableSingleButton(m_sAddBtn,bEnableAddButton);
+			enableSingleButton(m_sReportBtn,bEnableRepButton);
 			aCurrentNode.EnableDisplay(true);
 		}
-		else
-			enableSingleButton(m_sAddBtn,false);		
+		else {
+			enableSingleButton(m_sAddBtn,false);
+			enableSingleButton(m_sReportBtn,false);
+		}
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {

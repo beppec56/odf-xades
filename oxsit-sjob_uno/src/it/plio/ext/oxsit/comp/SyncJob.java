@@ -22,15 +22,13 @@
 
 package it.plio.ext.oxsit.comp;
 
-import java.net.URISyntaxException;
-
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import com.sun.star.beans.NamedValue;
 import com.sun.star.document.XStorageBasedDocument;
@@ -404,7 +402,7 @@ public class SyncJob extends ComponentBase
 
 		if (m_axFrame != null) {
 			m_aLogger.info("execute", "document loaded URL: " + m_axModel.getURL() );
-			
+
 //grab the XStorage interface of this document
 /*
 * unfortunately, the storage we get this way doesn't give us access to the
@@ -438,10 +436,13 @@ public class SyncJob extends ComponentBase
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
 //verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
 				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-				
+
 //just for test, analyze the document package structure
 				DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xServiceManager,m_xComponentContext);
+				
 				dg.verifyDocumentSignature(xStorage,null);
+				//instead call the signature verifier
+				//FIXME
 			}
 			else
 				m_aLogger.severe("executeOnLoad","Missing XOX_SingletonDataAccess interface"); 

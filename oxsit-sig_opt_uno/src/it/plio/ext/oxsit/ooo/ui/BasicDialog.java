@@ -756,6 +756,10 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 			exception.printStackTrace( System.out );
 		}
 	}
+	
+	protected void endDialog() {
+		xDialog.endExecute();
+	}
 
 	public XItemListener getRoadmapItemStateChangeListener() {
 		return new RmapItemStateChgListener( m_xMSFDialogModel );
@@ -873,7 +877,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 /*	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("keyPressed, please implement on subclass! "+arg0.KeyCode);
+		m_aLogger.entering("keyPressed, please implement on subclass! "+arg0.KeyCode);
 	}*/
 
 	/* (non-Javadoc)
@@ -882,6 +886,6 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 /*	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("keyReleased, please implement on subclass! "+arg0.KeyCode);		
+		m_aLogger.entering("keyReleased, please implement on subclass! "+arg0.KeyCode);		
 	}*/
 }

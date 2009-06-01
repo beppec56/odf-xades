@@ -40,11 +40,11 @@
 		 */
 		[attribute, readonly] string ExtensionOID ;
 
-		/** The extension value, String representation, containing the human readable extension name
+		/** The string representation, containing the human readable extension name
 		*/
 		[attribute, readonly] string ExtensionLocalizedName ;
 
-		/** The extension value, String representation, containing the human readable extension value
+		/** The string representation, containing the human readable extension value
 		*/
 		[attribute, readonly] string ExtensionStringValue ;
 

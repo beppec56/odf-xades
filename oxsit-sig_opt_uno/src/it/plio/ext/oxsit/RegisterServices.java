@@ -27,6 +27,7 @@ import it.plio.ext.oxsit.comp.options.ManageLoggingOptions;
 import it.plio.ext.oxsit.comp.options.ManageSSCDOptions;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.comp.security.DocumentSignatures;
+import it.plio.ext.oxsit.comp.security.DocumentSigner;
 import it.plio.ext.oxsit.comp.security.SSCDevice;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPathCache_IT;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
@@ -71,6 +72,10 @@ public class RegisterServices {
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( DocumentSigner.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( DocumentSigner.class, DocumentSigner.m_sServiceNames );
+	//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateComplianceCA_IT.class, CertificateComplianceCA_IT.m_sServiceNames );
@@ -118,6 +123,7 @@ public class RegisterServices {
 		}
 		return xFactory;
 	}
+
 	/** Writes the service information into the given registry key.
 	 * This method is called by the <code>JavaLoader</code>.
 	 * @return returns true if the operation succeeded
@@ -139,6 +145,9 @@ public class RegisterServices {
 
 		boolean retDigitalSignatures = 
 			Factory.writeRegistryServiceInfo( DocumentSignatures.m_sImplementationName, DocumentSignatures.m_sServiceNames, xRegistryKey );
+
+		boolean retDocumSigner = 
+			Factory.writeRegistryServiceInfo( DocumentSigner.m_sImplementationName, DocumentSigner.m_sServiceNames, xRegistryKey );
 
 		boolean retCertifComplCA = 
 			Factory.writeRegistryServiceInfo( CertificateComplianceCA_IT.m_sImplementationName, CertificateComplianceCA_IT.m_sServiceNames, xRegistryKey );
@@ -184,6 +193,9 @@ public class RegisterServices {
 		if (!retDigitalSignatures)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSignatures.m_sImplementationName + "failed");		
 
+		if (!retDocumSigner)
+			System.out.println("__writeRegistryServiceInfo: "+DocumentSigner.m_sImplementationName + "failed");		
+
 		if (!retCertifComplCA)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateComplianceCA_IT.m_sImplementationName + "failed");
 		
@@ -218,6 +230,6 @@ public class RegisterServices {
 					retSSCDOpts && retCertifExt && retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
 					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
-					retCertifComplCA);
+					retCertifComplCA && retDocumSigner);
 	}
 }

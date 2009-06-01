@@ -347,7 +347,7 @@ public class AvailableSSCDs extends ComponentBase
 						try {
 							oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
 							xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
-		
+
 							xSSCDevice.setDescription(ci.m_sDescription);
 							xSSCDevice.setManufacturer(ci.m_sManufacturer);
 							xSSCDevice.setATRcode(ci.m_sATRCode);
@@ -358,7 +358,7 @@ public class AvailableSSCDs extends ComponentBase
 								xStatusIndicator.setText("Lettura certificati");
 								xStatusIndicator.setValue(5);
 							}
-		
+
 							// set the library to be used, locally
 							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
 							
@@ -375,44 +375,8 @@ public class AvailableSSCDs extends ComponentBase
 										//this try will only check for correctness, before
 										//instantiating the services
 										cert.getEncoded();
-		//all seems right, instantiate the certificate service
-										//now create the Certificate Control UNO objects
-										//first the certificate compliance control
-										//
-										Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
-										Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
-										Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
-										Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT, m_xCC);
-
-										//now the certification path control
-										
-										//prepare objects for subordinate service
-										Object[] aArguments = new Object[6];
-		//								byte[] aCert = cert.getEncoded();
-										//set the certificate raw value
-										aArguments[0] = cert.getEncoded();//aCert;
-										aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
-										//the order used for the following three certificate check objects
-										//is the same that will be used for a full check of the certificate
-										//if one of your checker object implements more than one interface
-										//whev XOX_X509Certificate.verifyCertificate will be called,
-										// the checkers will be called in a fixed sequence.
-										aArguments[2] = oCertCompl; //the compliance checker object, which implements the needed interface
-										aArguments[3] = oCertPath;//the certification path checker
-										aArguments[4] = oCertRev; //the revocation state checker 
-
-										//the display formatter can be passed in any order, here it's the last one
-										aArguments[5] = oCertDisp;
-		
-										Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
-												aArguments, m_xCC);
-										//get the main interface
-										XOX_X509Certificate xQualCert = 
-											(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
-		
-		//								xQualCert.setDEREncoded(cert.getEncoded());
-										//add it to this token collection
-										xSSCDevice.addAQualifiedCertificate(xQualCert);
+										//all seems right, add the device the certificate
+										xSSCDevice.addCertificate(cert.getEncoded());
 									} catch (CertificateEncodingException e) {
 										m_aLogger.severe("scanDevices",e);
 									}	

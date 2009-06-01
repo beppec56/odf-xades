@@ -279,7 +279,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
+	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, Object arg0)
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
 		//see if our singleton has the object

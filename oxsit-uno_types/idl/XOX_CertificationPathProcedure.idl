@@ -27,6 +27,7 @@
 #include <com/sun/star/uno/Exception.idl>
 #include <com/sun/star/lang/IllegalArgumentException.idl>
 #include <com/sun/star/uno/XComponentContext.idl> 
+#include <com/sun/star/uno/XInterface.idl> 
 #include <com/sun/star/frame/XFrame.idl>
 #include "CertificationAuthorityState.idl"
 
@@ -62,7 +63,7 @@
 		*/
 		it::plio::ext::oxsit::security::cert::CertificationAuthorityState
 			verifyCertificationPath( [in] com::sun::star::frame::XFrame xFrame, 
-							[in] com::sun::star::lang::XComponent xCertificate )
+							[in] com::sun::star::uno::XInterface xCertificate )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/**

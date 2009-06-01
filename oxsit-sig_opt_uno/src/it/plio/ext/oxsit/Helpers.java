@@ -25,7 +25,7 @@ package it.plio.ext.oxsit;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import com.sun.star.beans.*;
 import com.sun.star.container.*;

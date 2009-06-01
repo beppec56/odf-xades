@@ -55,13 +55,15 @@
 		*/
 		[attribute,readonly]  long HasX509Certificates;
 
-		/** The certificates this device holds.
+		/** The certificates this device contains.
 		*/
 		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
 
-		/** Adds a certificate to the list of certificates available on this token.
+		/** Adds this certificate to the list of certificates available on this token.
+		@param DERencoded the DER encoded byte array of the certificate to add.
 		*/
-		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
+		void	addCertificate( [in] sequence< byte > DERencoded);
+//		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
   };
  
   }; }; }; }; };

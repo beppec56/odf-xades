@@ -26,7 +26,7 @@
 #include <com/sun/star/embed/XStorage.idl>
 #include "XOX_X509Certificate.idl"
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module it { module plio { module ext { module oxsit { module security {
 
 	/** this interface represents the main interface to describe
 	  document signature states.
@@ -51,6 +51,6 @@
 		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
   };
  
-  }; }; }; }; };  };
+  }; }; }; }; };
  
 #endif

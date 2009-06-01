@@ -25,11 +25,10 @@ package it.plio.ext.oxsit.comp;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.container.ElementExistException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.IllegalArgumentException;

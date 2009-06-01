@@ -53,7 +53,7 @@ XOX_AvailableSSCDs interface or</p>
 		/** the state of the certificate, for general and string indications.
 		<p>It's an integer in the form of <type scope="it::plio::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
 		not the enum (e.g. CertificateState.OK_value).</p>
-		
+
 	 	*/
 		/* @see it::plio::ext::module::oxsit::security::cert::CertificateState
 		*/

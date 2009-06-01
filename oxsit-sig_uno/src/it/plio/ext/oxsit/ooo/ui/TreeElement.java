@@ -55,6 +55,7 @@ public abstract class TreeElement
 		short description of signee: name and Italian fiscal code
 		a confirmation of identity check */		
 		CERTIFICATE, /*	 */
+		CERTIFICATE_CA, /*	 */
 		VERSION, /* */
 		SERIAL_NUMBER, /* */
 		ISSUER, /* */

@@ -242,7 +242,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
-	public CertificationAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
+	public CertificationAuthorityState verifyCertificationPath(XFrame _aFrame, Object arg0)
 			throws IllegalArgumentException, Exception {
 		m_aLogger.log("verifyCertificationPath");
 //check for certificate
@@ -456,7 +456,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _aFrame,
-			XComponent arg1) throws IllegalArgumentException, Exception {
+			Object arg1) throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		m_aLogger.log("verifyCertificateRevocationState");
     	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;

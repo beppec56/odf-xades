@@ -36,6 +36,7 @@ import java.util.Vector;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
@@ -64,6 +65,7 @@ public class SSCDevice extends ComponentBase
 		XOX_SSCDevice {
 
 	protected XComponentContext m_xCC;
+	protected XMultiComponentFactory m_xMCF;
 	
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = SSCDevice.class
@@ -95,6 +97,7 @@ public class SSCDevice extends ComponentBase
 	public SSCDevice(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_xCC = _ctx;
+		m_xMCF = _ctx.getServiceManager();	
 		m_aLogger.enableLogging();
 		m_aLogger.ctor();
 
@@ -227,16 +230,63 @@ public class SSCDevice extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addAQualifiedCertificate(it.plio.ext.oxsit.security.cert.XOX_QualifiedCertificate)
-	 * 
-	 * To be called for every qualified certificate that will be added
-	 * 
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addCertificate(byte[])
 	 */
 	@Override
-	public void addAQualifiedCertificate(XOX_X509Certificate _aCertif) {
-		m_xQualCertList.add(_aCertif);
-	}
+	public void addCertificate(byte[] _aDERencoded) {
+		// instantiate the components needed to check this certificate
+		// create the Certificate Control UNO objects
+		// first the certificate compliance control
+		try {
+			Object oCertCompl;
+			oCertCompl = m_xMCF.createInstanceWithContext(
+					GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+			// now the certification path control
+			Object oCertPath = m_xMCF.createInstanceWithContext(
+					GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+			Object oCertRev = m_xMCF.createInstanceWithContext(
+					GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+			Object oCertDisp = m_xMCF.createInstanceWithContext(
+					GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
+					m_xCC);
 
+			// prepare objects for subordinate service
+			Object[] aArguments = new Object[6];
+			// byte[] aCert = cert.getEncoded();
+			// set the certificate raw value
+			aArguments[0] = _aDERencoded;// aCert;
+			aArguments[1] = new Boolean(false);// FIXME change according to UI
+												// (true) or not UI (false)
+			// the order used for the following three certificate check objects
+			// is the same that will be used for a full check of the certificate
+			// if one of your checker object implements more than one interface
+			// when XOX_X509Certificate.verifyCertificate will be called,
+			// the checkers will be called in a fixed sequence (compliance,
+			// certification path, revocation state).
+			aArguments[2] = oCertCompl; // the compliance checker object, which
+										// implements the needed interface
+			aArguments[3] = oCertPath;// the certification path checker
+			aArguments[4] = oCertRev; // the revocation state checker
+
+			// the display formatter can be passed in any order, here it's the
+			// last one
+			aArguments[5] = oCertDisp;
+
+			Object oACertificate;
+			oACertificate = m_xMCF
+					.createInstanceWithArgumentsAndContext(
+							GlobConstant.m_sX509_CERTIFICATE_SERVICE,
+							aArguments, m_xCC);
+			// get the main interface
+			XOX_X509Certificate xQualCert = (XOX_X509Certificate) UnoRuntime
+					.queryInterface(XOX_X509Certificate.class, oACertificate);
+
+			m_xQualCertList.add(xQualCert);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getQualifiedCertificates()
 	 */

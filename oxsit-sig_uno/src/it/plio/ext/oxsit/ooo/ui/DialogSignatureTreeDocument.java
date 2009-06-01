@@ -154,6 +154,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		try {
 			int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
 			int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*4;//to see the underlying certificates already in the document
+			aDialog1.setDocumentStorage(getDocumentStorage());
 			aDialog1.initialize( BiasX, BiasY);
 			aDialog1.executeDialog();
 			aDialog1.disposeElements();

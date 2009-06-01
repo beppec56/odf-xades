@@ -1,0 +1,56 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
+
+#include <com/sun/star/lang/XComponent.idl>
+#include <com/sun/star/uno/Exception.idl>
+#include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/uno/XComponentContext.idl> 
+#include <com/sun/star/uno/XInterface.idl> 
+#include <com/sun/star/embed/XStorage.idl> 
+#include <com/sun/star/frame/XFrame.idl>
+#include "CertificateState.idl"
+#include "CertificateStateConditions.idl"
+#include "XOX_X509Certificate.idl"
+
+  module it { module plio { module ext { module oxsit { module security {
+
+/** Interface to implement document signer.
+ */
+	interface XOX_DocumentSigner
+	{
+		/**
+		@param xTheDocument the document to sign
+		@param xCertificates a sequence of certificates to use to sign the document.
+		*/
+		void signDocumentStandard(	[in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::embed::XStorage xTheDocument,
+						  			[in] sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates)
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+	} ;
+
+  }; }; }; }; };
+ 
+#endif

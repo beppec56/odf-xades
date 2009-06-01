@@ -28,7 +28,7 @@ import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;

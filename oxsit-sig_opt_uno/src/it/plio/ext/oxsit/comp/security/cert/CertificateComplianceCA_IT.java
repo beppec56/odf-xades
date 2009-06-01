@@ -254,7 +254,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	@Override
 	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
-			XComponent _xComponent) throws IllegalArgumentException, Exception {
+			Object _xComponent) throws IllegalArgumentException, Exception {
 		m_xFrame = _xFrame;
 		// TODO Auto-generated method stub
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComponent);
@@ -529,7 +529,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame arg0,
-			XComponent arg1) throws IllegalArgumentException, Exception {
+			Object arg1) throws IllegalArgumentException, Exception {
 		verifyCertificateCompliance(arg0,arg1);
 		return m_aCAState;
 	}
@@ -547,7 +547,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame arg0,
-			XComponent arg1) throws IllegalArgumentException, Exception {
+			Object arg1) throws IllegalArgumentException, Exception {
 		verifyCertificateCompliance(arg0, arg1);
 		// FIXME check if revocation control is enabled or not
 		m_aLogger.log("verifyCertificateRevocationState");

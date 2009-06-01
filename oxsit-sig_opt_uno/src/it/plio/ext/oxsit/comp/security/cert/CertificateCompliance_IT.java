@@ -67,6 +67,7 @@ import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.uno.XInterface;
 
 /**
  *  This service implements the CertificationPath_IT service, used to check the
@@ -228,8 +229,8 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	 */
 	@Override
 	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
-			XComponent arg0) throws IllegalArgumentException, Exception {
-		
+			Object arg0) throws IllegalArgumentException, Exception {
+
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceProcedure#verifyCertificateCertificateCompliance wrong argument"));

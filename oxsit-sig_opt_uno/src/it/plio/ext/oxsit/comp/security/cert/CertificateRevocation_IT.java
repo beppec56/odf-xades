@@ -231,7 +231,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _xFrame,
-			XComponent arg0) throws IllegalArgumentException, Exception {
+			Object arg0) throws IllegalArgumentException, Exception {
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateRevocationStateProcedure#verifyCertificateRevocationState wrong argument"));

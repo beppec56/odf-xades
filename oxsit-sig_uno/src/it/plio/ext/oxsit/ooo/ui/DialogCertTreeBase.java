@@ -4,7 +4,6 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.comp.security.cert.X509CertDisplayBase_IT;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
@@ -34,6 +33,8 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.document.XStorageBasedDocument;
+import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
@@ -43,6 +44,7 @@ import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
+
 
 /**
  * @author beppe
@@ -107,6 +109,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
 	private String[] 			m_sCertificateElementGraphicName = new String[CertificateElementState.LAST_STATE_value];
 
+	private XStorage			m_xDocumentStorage;	
 	///////////// end of graphic name string
 
 	/**
@@ -118,7 +121,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 * tree structure:
 	 *  tree ()
 	 *      node ()
-	 *      	
+	 *
 	 * @param frame
 	 * @param context
 	 * @param _xmcf
@@ -538,7 +541,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				sPathGraph);
 
 			//call the certificate adder...
-			addX509CertificateToTree(xNode, xCPath);
+			addX509CertificateToTree(xNode, xCPath, TreeNodeType.CERTIFICATE_CA);
 		}
 		else {//add the empty node only if there is an error
 			if( aState != CertificateElementState.OK_value)
@@ -549,14 +552,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	////// methods to manage the certificate display
-	protected void addX509CertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
+	protected void addX509CertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif, TreeNodeType _NodeType) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
+		//set the type
+		aNewNode.setNodeType(_NodeType);
 		//now set the certificate graphic state
-
 		//and then sets the strings, according to the state from the certificate itself
 //		aNewNode.m_sStringList[CertificateTreeElement.] = m_sCertificateState[_aCertif.getCertificateState()]; 
-
 		aNewNode.setCertificateData(_aCertif);
 		//get the data set and add a string to the certificate object
 		String sCertificateAbstract = "";
@@ -1016,6 +1019,20 @@ public class DialogCertTreeBase extends BasicDialog implements
 					m_xTreeControl );
 			xTFWindow.setFocus();
 		}
+	}
+
+	/**
+	 * @param m_xDocumentStorage the m_xDocumentStorage to set
+	 */
+	public void setDocumentStorage(XStorage m_xDocumentStorage) {
+		this.m_xDocumentStorage = m_xDocumentStorage;
+	}
+
+	/**
+	 * @return the m_xDocumentStorage
+	 */
+	public XStorage getDocumentStorage() {
+		return m_xDocumentStorage;
 	}
 
 	/* (non-Javadoc)

@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -164,7 +165,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 						xoxCert.verifyCertificateCompliance(m_xParentFrame);
 						xoxCert.verifyCertificationPath(m_xParentFrame);
 						//then add to the tree control
-						addX509CertificateToTree(xCertifNode, xoxCert);
+						addX509CertificateToTree(xCertifNode, xoxCert, TreeNodeType.CERTIFICATE_CA);
 						if( idx1 % 4 == 0 && xStatusIndicator != null)
 							xStatusIndicator.setValue(idx1);
 					}
@@ -268,15 +269,16 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 		if(xTheCurrentComp != null) {
 //get node type and enable/disable	the pushbutton
 			TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
-			boolean bEnableButton = false;
-			if(aCurrentNode.getNodeType() == it.plio.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
-				bEnableButton = true;
-			}
-			enableSingleButton(m_sAddBtn,bEnableButton);
+			boolean bEnableRepButton = false;
+			TreeNodeType aNdType = aCurrentNode.getNodeType();
+			if(aNdType == TreeNodeType.CERTIFICATE_CA)
+				bEnableRepButton = true;
+			enableSingleButton(m_sReportBtn,bEnableRepButton);
 			aCurrentNode.EnableDisplay(true);
 		}
-		else
-			enableSingleButton(m_sAddBtn,false);		
+		else {
+			enableSingleButton(m_sReportBtn,false);
+		}
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {

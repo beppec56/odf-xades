@@ -54,16 +54,16 @@ public class DigitalSignatureHelper {
     
 //    public OOoServerInfo SvrInfo = new OOoServerInfo();
 
-	private DynamicLogger m_logger;
+	private DynamicLogger m_aLogger;
 	protected XComponentContext m_xCtx;
 	protected XMultiComponentFactory m_xMFC;
     /** Creates a new instance of __NAME__ */
     public DigitalSignatureHelper(XMultiComponentFactory _xMFC, XComponentContext _context) {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
-    	m_logger = new DynamicLogger(this, _context);
+    	m_aLogger = new DynamicLogger(this, _context);
 //    	m_aLogger.enableLogging();
-    	m_logger.info("ctor","");
+    	m_aLogger.info("ctor","");
     }
 
     public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
@@ -85,13 +85,13 @@ public class DigitalSignatureHelper {
 								try {
 									sMediaType = AnyConverter.toString(xPset.getPropertyValue("MediaType"));
 								} catch (UnknownPropertyException e) {
-									m_logger.severe("fillElementList", e);
+									m_aLogger.severe("fillElementList", e);
 								} catch (WrappedTargetException e) {
-									m_logger.severe("fillElementList", e);
+									m_aLogger.severe("fillElementList", e);
 								}
 							}
 							else
-								m_logger.log("properties don't exist!");
+								m_aLogger.log("properties don't exist!");
 							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
 							XInputStream xI = xSt.getInputStream();
 							nSize = xI.available(); 
@@ -99,7 +99,7 @@ public class DigitalSignatureHelper {
 							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,nSize) );
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
-							m_logger.warning("fillElementList", aElements[i]+" wrong password", e);
+							m_aLogger.warning("fillElementList", aElements[i]+" wrong password", e);
 						}
 					}
 					else if(_bRecurse && xThePackage.isStorageElement(aElements[i])) {
@@ -110,7 +110,7 @@ public class DigitalSignatureHelper {
 							xSubStore.dispose();
 						} 
 						catch (IOException e) {
-								m_logger.info("fillElementList", "the substorage "+aElements[i]+" might be locked, get the last committed version of it");
+								m_aLogger.info("fillElementList", "the substorage "+aElements[i]+" might be locked, get the last committed version of it");
 								   try {
 									   Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
 									   XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
@@ -120,20 +120,20 @@ public class DigitalSignatureHelper {
 									   fillElementList(xAnotherSubStore, _List,_rootElement+aElements[i]+"/", true);
 									   xAnotherSubStore.dispose();						   
 								   } catch (Exception e1) {
-										m_logger.severe("fillElementList", "\""+aElements[i]+"\""+" missing", e1);
+										m_aLogger.severe("fillElementList", "\""+aElements[i]+"\""+" missing", e1);
 								   } // should create an empty temporary storage
 						}
 					}
 				} catch (InvalidStorageException e) {
-					m_logger.warning("fillElementList", aElements[i]+" missing", e);
+					m_aLogger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (NoSuchElementException e) {
-					m_logger.warning("fillElementList", aElements[i]+" missing", e);
+					m_aLogger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (IllegalArgumentException e) {
-					m_logger.warning("fillElementList", aElements[i]+" missing", e);
+					m_aLogger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (StorageWrappedTargetException e) {
-					m_logger.warning("fillElementList", aElements[i]+" missing", e);
+					m_aLogger.warning("fillElementList", aElements[i]+" missing", e);
 				} catch (IOException e) {
-					m_logger.warning("fillElementList", aElements[i]+" missing", e);
+					m_aLogger.warning("fillElementList", aElements[i]+" missing", e);
 				}
 			}
 		}
@@ -157,12 +157,12 @@ public class DigitalSignatureHelper {
     	XStorage xThePackage;
     	if(_xStorage == null ){
     		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
-    		m_logger.info("makeTheElementList", "use the URL storage");
+    		m_aLogger.info("makeTheElementList", "use the URL storage");
 //    		Utilities.showInterfaces(this,xThePackage);
     	}
     	else {
     		xThePackage = _xStorage;
-    		m_logger.info("makeTheElementList", "use the document storage");
+    		m_aLogger.info("makeTheElementList", "use the document storage");
     	}
  
     	XPropertySet xPropset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, _othePackage);
@@ -171,15 +171,15 @@ public class DigitalSignatureHelper {
 			try {
 				sVersion = (String)xPropset.getPropertyValue("Version");
 			} catch (UnknownPropertyException e) {
-				m_logger.warning("makeTheElementList", "Version missing", e);
+				m_aLogger.warning("makeTheElementList", "Version missing", e);
 				//no problem if not existent
 			} catch (WrappedTargetException e) {
-				m_logger.warning("makeTheElementList", "Version missing", e);
+				m_aLogger.warning("makeTheElementList", "Version missing", e);
 			}
 			if(sVersion.length() != 0)
-				m_logger.log("Version is: "+sVersion); // this should be 1.2 or more
+				m_aLogger.log("Version is: "+sVersion); // this should be 1.2 or more
 			else
-				m_logger.log("Version is 1.0 or 1.1");
+				m_aLogger.log("Version is 1.0 or 1.1");
 		}
 
 		//if version <1.2 then all excluding META-INF
@@ -340,9 +340,9 @@ public class DigitalSignatureHelper {
 //	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
 //	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
 	            Vector<APackageElement> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
-	            m_logger.log("\nThis package contains the following elements:");
+	            m_aLogger.log("\nThis package contains the following elements:");
 	            for(int i = 0; i < aElements.size();i++) {
-	            	m_logger.log(aElements.get(i).toString());	            	
+	            	m_aLogger.log(aElements.get(i).toString());	            	
 	            }
 // using the created element list, test the file signature	            
 
@@ -359,26 +359,26 @@ public class DigitalSignatureHelper {
 	           			String[] sNames = xSubStore.getElementNames();
 	           			
 	           			for(int i = 0; i < sNames.length;i++)
-	           				m_logger.log(sNames[i]);	         	           			
+	           				m_aLogger.log(sNames[i]);	         	           			
 	           			xSubStore.dispose();
 	           		}
 	        		catch (IOException e) {
 	        			//no problem if not existent
-	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
+	        			m_aLogger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		} catch (StorageWrappedTargetException e) {
 	        			// TODO Auto-generated catch block
 	        			//no problem if not existent
-	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
+	        			m_aLogger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		} catch (IllegalArgumentException e) {
 	        			// TODO Auto-generated catch block
 	        			//no problem if not existent
-	        			m_logger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
+	        			m_aLogger.warning("verifyDocumentSignature", "\"META-INF\""+" missing", e);
 	        		}
 	           	}
 	            
 			}
 			else
-				m_logger.log("No package storage factory!");
+				m_aLogger.log("No package storage factory!");
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

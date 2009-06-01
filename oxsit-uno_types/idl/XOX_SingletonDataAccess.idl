@@ -50,13 +50,15 @@
 	
 			@return the new added structure (in form of the main structure interface)
 		*/
-		it::plio::ext::oxsit::security::cert::XOX_DocumentSignaturesState initDocumentAndListener( [in] string DocumentId, [in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
+		it::plio::ext::oxsit::security::XOX_DocumentSignaturesState
+				initDocumentAndListener( [in] string DocumentId,
+						[in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
 
 		/** return the XOX_DocumentSignaturesState interface of the document
 			@see  XOX_DocumentSignaturesState
 			@param DocumentId the document id
 		*/
-		it::plio::ext::oxsit::security::cert::XOX_DocumentSignaturesState getDocumentSignatures([in] string DocumentId);
+		it::plio::ext::oxsit::security::XOX_DocumentSignaturesState getDocumentSignatures([in] string DocumentId);
 
 		/**
 			the document signatures structure is removed 

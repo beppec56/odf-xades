@@ -29,7 +29,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ import java.util.Iterator;
 import com.sun.star.beans.NamedValue;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.document.XEventBroadcaster;
+import com.sun.star.document.XStorageBasedDocument;
+import com.sun.star.embed.XStorage;
 import com.sun.star.frame.ControlCommand;
 import com.sun.star.frame.FeatureStateEvent;
 import com.sun.star.frame.FrameActionEvent;
@@ -48,6 +50,7 @@ import com.sun.star.frame.XFrameActionListener;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStorable;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XComponent;
@@ -118,6 +121,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	protected boolean											m_bObjectActive;
 
 	private boolean 											m_bSignatureIsEnabled;
+	private XStorage											m_xDocumentStorage;
 
 	public ImplXAdESSignatureDispatchTB(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -256,46 +260,64 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				/**
 				 * returned value: 1 2 0 = Cancel
 				 */
-				short ret = signatureDialog();
-				/** the next lines of code are not needed in the end.
-				 * These are here only to test extension behavior.
-				 */
-				XModel xModel = m_xFrame.getController().getModel();
-				m_aLogger.info("impl_dispatch: \tthe url of the document under signature is: "
-						+ xModel.getURL() );
+				grabModel();
+				XStorageBasedDocument xDocStorage =
+							(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, m_xModel );
 
-				TestWriteDigitalSignature aCls = new TestWriteDigitalSignature();				
-				aCls.testWriteSignatureStream(xModel.getURL(),m_aMultiComponentFctry,m_aComponentContext);
+				try {
+					m_xDocumentStorage = xDocStorage.getDocumentStorage(); 
 
-				int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-				if (ret != 0) {
-					localstate = m_xDocumentSignatures.getDocumentSignatureState();
-					localstate = localstate + 1;
-					localstate = ( localstate > 4 ) ? 0 : localstate;
+					short ret;
+					ret = signatureDialog();
+					/**
+					 * the next lines of code are not needed in the end. These
+					 * are here only to test extension behavior.
+					 */
+					m_aLogger
+							.info("impl_dispatch: \tthe url of the document under signature is: "
+									+ m_xModel.getURL());
+
+					TestWriteDigitalSignature aCls = new TestWriteDigitalSignature();
+					aCls.testWriteSignatureStream(m_xModel.getURL(),
+							m_aMultiComponentFctry, m_aComponentContext);
+
+					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
+					if (ret != 0) {
+						localstate = m_xDocumentSignatures
+								.getDocumentSignatureState();
+						localstate = localstate + 1;
+						localstate = (localstate > 4) ? 0 : localstate;
+					}
+
+					// now change the frame location
+					m_xDocumentSignatures.setDocumentSignatureState(localstate);
+					// println( "m_nState is: " +
+					// ImplCNIPASignatureDispatch.m_nState );
+					/**
+					 * while returning we will do as follow Ok was hit: grab the
+					 * added signature certificate(s) and sign the document
+					 * (this may be something quite log, may be we need to add
+					 * some user feedback using the status bar, same as it's
+					 * done while loading the document)
+					 * 
+					 * report the signature status in the registry and (quickly)
+					 * back to the dispatcher
+					 * 
+					 * the signature of the certificates eventually removed are
+					 * deleted Current signature are left in place (e.g.
+					 * depending on certificates that are left untouched by the
+					 * dialog)
+					 * 
+					 * Cancel was hit: the added signature certificate(s) are
+					 * discarded and the document is not signed. Current
+					 * signature are left in place
+					 * 
+					 */
+				} catch (IOException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
 				}
-
-				// now change the frame location
-				m_xDocumentSignatures.setDocumentSignatureState( localstate );
-				// println( "m_nState is: " + ImplCNIPASignatureDispatch.m_nState );
-				/**
-				 * while returning we will do as follow Ok was hit: grab the added
-				 * signature certificate(s) and sign the document (this may be
-				 * something quite log, may be we need to add some user feedback
-				 * using the status bar, same as it's done while loading the
-				 * document)
-				 * 
-				 * report the signature status in the registry and (quickly) back to
-				 * the dispatcher
-				 * 
-				 * the signature of the certificates eventually removed are deleted
-				 * Current signature are left in place (e.g. depending on
-				 * certificates that are left untouched by the dialog)
-				 * 
-				 * Cancel was hit: the added signature certificate(s) are discarded
-				 * and the document is not signed. Current signature are left in
-				 * place
-				 * 
-				 */
 			} catch (RuntimeException e) {
 				m_aLogger.severe("impl_dispatch", "", e);
 			}
@@ -306,6 +328,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		DialogSignatureTreeDocument aDialog1 = new DialogSignatureTreeDocument( m_xFrame, m_xCC,
 				m_axMCF );
 		try {
+			aDialog1.setDocumentStorage(getDocumentStorage());
 			aDialog1.initialize( 10, 10 );
 		} catch (BasicErrorException e) {
 			e.printStackTrace();
@@ -800,6 +823,20 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			m_aLoggerDialog.log( "frameAction other value" );
 		}
 		print("\n");*/
+	}
+
+	/**
+	 * @param m_xDocumentStorage the m_xDocumentStorage to set
+	 */
+	public void setDocumentStorage(XStorage m_xDocumentStorage) {
+		this.m_xDocumentStorage = m_xDocumentStorage;
+	}
+
+	/**
+	 * @return the m_xDocumentStorage
+	 */
+	public XStorage getDocumentStorage() {
+		return m_xDocumentStorage;
 	}
 
 	/**

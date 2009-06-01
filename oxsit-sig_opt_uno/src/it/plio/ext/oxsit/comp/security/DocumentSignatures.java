@@ -25,7 +25,7 @@ package it.plio.ext.oxsit.comp.security;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Collection;

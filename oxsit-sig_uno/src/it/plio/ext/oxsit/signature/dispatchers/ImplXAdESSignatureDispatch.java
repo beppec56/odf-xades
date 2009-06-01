@@ -27,11 +27,13 @@ import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
 
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.document.XStorageBasedDocument;
+import com.sun.star.embed.XStorage;
 import com.sun.star.frame.FeatureStateEvent;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatch;
@@ -39,11 +41,13 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStorable;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.ucb.ServiceNotFoundException;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -69,6 +73,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
 	protected XOX_DocumentSignaturesState							m_xDocumentSignatures;
+	private XStorage											m_xDocumentStorage;
 		
 	public ImplXAdESSignatureDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -136,67 +141,89 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		// call the select signature dialog
 		/*
 		 * to access data: singleton PackageInformationProvider
-		 * (http://localhost/ooohs-sdk/docs/common/ref/com/sun/star/deployment/PackageInformationProvider.html)
-		 * XPackageInformationProvider xPkgInfo =
-		 * PackageInformationProvider.get(m_xContext); String m_pkgRootUrl =
+		 * (http://localhost/ooohs-sdk/docs/common/ref/com/sun/star/deployment/
+		 * PackageInformationProvider.html) XPackageInformationProvider xPkgInfo
+		 * = PackageInformationProvider.get(m_xContext); String m_pkgRootUrl =
 		 * xPkgInfo.getPackageLocation("org.openoffice.test.ResourceTest");
-		 * 
 		 */
 
 		try {
 			/**
 			 * returned value: 1 2 0 = Cancel
 			 */
-			short ret = signatureDialog();
-			XModel xModel = m_xFrame.getController().getModel();
-			System.out.println( this.getClass().getName()
-					+ "\n\t\tthe url of the document under signature is: " + xModel.getURL() );
-	
-			//grab the frame configuration, point to the frame value
-			if(m_xModel != null) {
-				// init the status structure from the configuration
-				if(m_xSingletonDataAccess != null) {
-					//add this to the document-signatures list
-					 m_xDocumentSignatures = m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_xModel), null);
-					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-					if (ret != 0) {
-						localstate = m_xDocumentSignatures.getDocumentSignatureState();
-						m_aLogger.info("localstate: "+localstate+" "+m_xDocumentSignatures.getDocumentId());
-						localstate = localstate + 1;
-						localstate = ( localstate > 4 ) ? 0 : localstate;
-					}
-		
-					//now change the frame location
-					m_xDocumentSignatures.setDocumentSignatureState( localstate );
+			grabModel();
+
+			XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime
+					.queryInterface(XStorageBasedDocument.class, m_xModel);
+			short ret;
+			try {
+				setDocumentStorage(xDocStorage.getDocumentStorage());
+
+				ret = signatureDialog();
+
+				System.out.println(this.getClass().getName()
+						+ "\n\t\tthe url of the document under signature is: "
+						+ m_xModel.getURL());
+
+				// grab the frame configuration, point to the frame value
+				if (m_xModel != null) {
+					// init the status structure from the configuration
+					if (m_xSingletonDataAccess != null) {
+						// add this to the document-signatures list
+						m_xDocumentSignatures = m_xSingletonDataAccess
+								.initDocumentAndListener(Helpers
+										.getHashHex(m_xModel), null);
+						int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
+						if (ret != 0) {
+							localstate = m_xDocumentSignatures
+									.getDocumentSignatureState();
+							m_aLogger.info("localstate: " + localstate + " "
+									+ m_xDocumentSignatures.getDocumentId());
+							localstate = localstate + 1;
+							localstate = (localstate > 4) ? 0 : localstate;
+						}
+
+						// now change the frame location
+						m_xDocumentSignatures
+								.setDocumentSignatureState(localstate);
+					} else
+						m_aLogger.severe("ctor",
+								"XOX_SingletonDataAccess missing!");
 				}
-				else
-					m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!");		
+			} catch (IOException e) {
+				m_aLogger.severe(e);
+			} catch (Exception e) {
+				m_aLogger.severe(e);
+			} catch (Throwable e) {
+				m_aLogger.severe(e);
 			}
 			/**
 			 * while returning we will do as follow Ok was hit: grab the added
-			 * signature certificate(s) and sign the document (this may be something
-			 * quite log, may be we need to add some user feedback using the status
-			 * bar, same as it's done while loading the document)
+			 * signature certificate(s) and sign the document (this may be
+			 * something quite log, may be we need to add some user feedback
+			 * using the status bar, same as it's done while loading the
+			 * document)
 			 * 
-			 * report the signature status in the registry and (quickly) back to the
-			 * dispatcher
+			 * report the signature status in the registry and (quickly) back to
+			 * the dispatcher
 			 * 
 			 * the signature of the certificates eventually removed are deleted
-			 * Current signature are left in place (e.g. depending on certificates
-			 * that are left untouched by the dialog)
+			 * Current signature are left in place (e.g. depending on
+			 * certificates that are left untouched by the dialog)
 			 * 
-			 * Cancel was hit: the added signature certificate(s) are discarded and
-			 * the document is not signed. Current signature are left in place
+			 * Cancel was hit: the added signature certificate(s) are discarded
+			 * and the document is not signed. Current signature are left in
+			 * place
 			 * 
 			 */
-	
-	/*		if (m_aDispatchListener != null) {
-				DispatchResultEvent aEvent = new DispatchResultEvent();
-				aEvent.State = ret;
-				aEvent.Source = this;
-				m_aDispatchListener.dispatchFinished( aEvent );
-				m_aDispatchListener = null; // we do not need the object anymore
-			}*/
+
+			/*
+			 * if (m_aDispatchListener != null) { DispatchResultEvent aEvent =
+			 * new DispatchResultEvent(); aEvent.State = ret; aEvent.Source =
+			 * this; m_aDispatchListener.dispatchFinished( aEvent );
+			 * m_aDispatchListener = null; // we do not need the object anymore
+			 * }
+			 */
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -206,6 +233,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		DialogSignatureTreeDocument aDialog1 = new DialogSignatureTreeDocument( m_xFrame, m_xCC,
 				m_axMCF );
 		try {
+			aDialog1.setDocumentStorage(getDocumentStorage());
 			aDialog1.initialize( 10, 10 );
 		} catch (BasicErrorException e) {
 			e.printStackTrace();
@@ -363,5 +391,19 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	public void dispose() {
 
 		m_aLogger.entering("dispose");
+	}
+
+	/**
+	 * @param m_xDocumentStorage the m_xDocumentStorage to set
+	 */
+	public void setDocumentStorage(XStorage m_xDocumentStorage) {
+		this.m_xDocumentStorage = m_xDocumentStorage;
+	}
+
+	/**
+	 * @return the m_xDocumentStorage
+	 */
+	public XStorage getDocumentStorage() {
+		return m_xDocumentStorage;
 	}
 }
