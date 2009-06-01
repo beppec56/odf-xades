@@ -95,15 +95,15 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	protected XFrame									m_xParentFrame		= null;
 	protected XComponent								m_xComponent		= null;
 	protected Rectangle									m_rectParentWindow	= null;
-	protected DynamicLoggerDialog						m_logger;
+	protected DynamicLoggerDialog						m_aLogger;
 
 	public BasicDialog(XFrame _xFrame, XComponentContext _xContext,
 			XMultiComponentFactory _xMCF) {
 		m_xContext = _xContext;
 		m_xMCF = _xMCF;
 		m_xParentFrame = _xFrame;
-		m_logger = new DynamicLoggerDialog(this, _xContext);
-		m_logger.ctor();
+		m_aLogger = new DynamicLoggerDialog(this, _xContext);
+		m_aLogger.ctor();
 		// from the frame get the parent window and set the window peer
 		if (m_xParentFrame == null) {
 			Object oDesktop = null;
@@ -115,7 +115,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 				m_xParentFrame = (XFrame) xFramesSupplier.getActiveFrame();
 				// println("default Frame...");
 			} catch (com.sun.star.uno.Exception oException) {
-				m_logger.severe(oException);
+				m_aLogger.severe(oException);
 			}
 		}
 		if (m_xParentFrame != null) {
@@ -126,9 +126,9 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 				// + m_rectParentWindow.Width + " X: " + m_rectParentWindow.X
 				// + " Y: " + m_rectParentWindow.Y);
 			} else
-				m_logger.severe("BasicDialog", "no parent Window!" );
+				m_aLogger.severe("BasicDialog", "no parent Window!" );
 		} else
-			m_logger.severe( "BasicDialog","no parent Frame!" );
+			m_aLogger.severe( "BasicDialog","no parent Frame!" );
 		createDialog( m_xMCF );
 	}
 
@@ -732,7 +732,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 					.queryInterface( XItemEventBroadcaster.class, xRMControl );
 			xRMBroadcaster.addItemListener( getRoadmapItemStateChangeListener() );
 		} catch (java.lang.Exception e) {
-			m_logger.severe(e);
+			m_aLogger.severe(e);
 		}
 	}
 
@@ -795,7 +795,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		m_logger.entering("actionPerformed, please implement on subclass!");
+		m_aLogger.entering("actionPerformed, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -816,12 +816,12 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("itemStateChanged, please implement on subclass!");
+		m_aLogger.entering("itemStateChanged, please implement on subclass!");
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("adjustmentValueChanged, please implement on subclass!");
+		m_aLogger.entering("adjustmentValueChanged, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -830,7 +830,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void requestChildNodes(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("requestChildNodes, please implement on subclass!");		
+		m_aLogger.entering("requestChildNodes, please implement on subclass!");		
 	}
 
 	/* (non-Javadoc)
@@ -839,7 +839,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void treeCollapsed(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeCollapsed, please implement on subclass!");		
+		m_aLogger.entering("treeCollapsed, please implement on subclass!");		
 	}
 
 	/* (non-Javadoc)
@@ -849,7 +849,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	public void treeCollapsing(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeCollapsing, please implement on subclass!");
+		m_aLogger.entering("treeCollapsing, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -858,7 +858,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	@Override
 	public void treeExpanded(TreeExpansionEvent arg0) {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeExpanded, please implement on subclass!");
+		m_aLogger.entering("treeExpanded, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)
@@ -868,7 +868,7 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 	public void treeExpanding(TreeExpansionEvent arg0)
 			throws ExpandVetoException {
 		// TODO Auto-generated method stub
-		m_logger.entering("treeExpanding, please implement on subclass!");
+		m_aLogger.entering("treeExpanding, please implement on subclass!");
 	}
 
 	/* (non-Javadoc)

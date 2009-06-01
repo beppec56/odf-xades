@@ -35,6 +35,7 @@ public class ControlDims {
 	public static final int	RSC_SP_DLG_INNERBORDER_BOTTOM	= 6;
 	public static final int	RSC_CD_PUSHBUTTON_WIDTH			= 50;
 	public static final int	RSC_CD_PUSHBUTTON_HEIGHT		= 14;
+	public static final int	RSC_CD_EDIT_FIELD_HEIGHT		= 14;
 
 	public static final int	RSC_SP_CTRL_DESC_X				= 3;
 	public static final int	RSC_SP_CTRL_X					= 6;					// controls that are unrelated

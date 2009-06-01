@@ -28,6 +28,7 @@
 package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
@@ -109,9 +110,9 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	 * @param _ctx
 	 */
 	public CertificateCompliance_IT(XComponentContext _ctx) {
-//		m_aLogger = new DynamicLogger(this, _ctx);
-		m_aLogger = new DynamicLazyLogger();
-		m_aLogger.enableLogging();
+		m_aLogger = new DynamicLogger(this, _ctx);
+//		m_aLogger = new DynamicLazyLogger();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
 

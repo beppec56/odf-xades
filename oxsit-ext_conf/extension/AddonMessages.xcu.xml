@@ -1089,6 +1089,24 @@ Impronta del Presidente CNIPA.</value>
 				<value xml:lang="it">IMPOSSIBILE CALCOLARE L'IMPRONTA !</value>
 			</prop>
 		</node>
+		<node oor:name="id_mex_err_only_num" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Only number allowed !</value>
+				<value xml:lang="it">Sono permessi solo i caratteri numerici !</value>
+			</prop>
+		</node>
+		<node oor:name="id_pin_title" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Please enter PIN</value>
+				<value xml:lang="it">Introdurre il PIN</value>
+			</prop>
+		</node>
+		<node oor:name="id_mex_err_wrong_pin" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The PIN appears wrong</value>
+				<value xml:lang="it">Il PIN è errato.</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

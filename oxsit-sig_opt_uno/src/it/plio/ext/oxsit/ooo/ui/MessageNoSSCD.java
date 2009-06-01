@@ -17,11 +17,12 @@ import com.sun.star.uno.XComponentContext;
  *
  */
 public class MessageNoSSCD extends DialogGeneralMessage {
-
 	/**
 	 * @param frame
 	 * @param _axmcf
 	 * @param _xcc
+	 * 
+	 * 
 	 */
 	public MessageNoSSCD(XFrame frame, XMultiComponentFactory _axmcf,
 			XComponentContext _xcc) {

@@ -78,7 +78,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	// the font at run-time
 	private Object					m_xDisplElementModel;				// the service "com.sun.star.awt.UnoControlEditModel"
 
-	
 	private String				m_sBtnOKLabel = "id_ok";
 	private String				m_sBtn_CancelLabel = "id_cancel";
 	private String				m_sBtn_CreateReport = "id_pb_cert_report";
@@ -129,8 +128,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	public DialogCertTreeBase(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
-		m_logger.enableLogging();
-		m_logger.ctor();
+		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 		//fill string for graphics
 		String sLoc = Helpers.getExtensionInstallationPath(context);
 		if(sLoc != null){
@@ -175,7 +174,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 								m_imagesUrl + "/"+GlobConstant.m_nCERT_ELEM_INVALID +aSize;
 		}
 		else
-			m_logger.severe("ctor","no package location !");
+			m_aLogger.severe("ctor","no package location !");
 	}
 
 	/**
@@ -200,13 +199,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_sDlgListCACertStatus = m_aRegAcc.getStringFromRegistry( m_sDlgListCACertStatus );
 
 		} catch (com.sun.star.uno.Exception e) {
-			m_logger.severe("fillLocalizedString", e);
+			m_aLogger.severe("fillLocalizedString", e);
 		}
 		m_aRegAcc.dispose();
 	}
 
 	public void initializeLocal(String _sName, String _sTitle, int posX, int posY) throws BasicErrorException {
-		m_logger.entering("initialize");
+		m_aLogger.entering("initialize");
 		try {
 			super.initialize(_sName, _sTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
 			//inserts the control elements needed to display properties
@@ -278,13 +277,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 		} catch (UnknownPropertyException e) {
 			e.printStackTrace();
-			m_logger.severe("initialize", e);
+			m_aLogger.severe("initialize", e);
 		} catch (PropertyVetoException e) {
-			m_logger.severe("initialize", e);
+			m_aLogger.severe("initialize", e);
 		} catch (IllegalArgumentException e) {
-			m_logger.severe("initialize", e);
+			m_aLogger.severe("initialize", e);
 		} catch (WrappedTargetException e) {
-			m_logger.severe("initialize", e);
+			m_aLogger.severe("initialize", e);
 		}
 	}
 
@@ -304,31 +303,31 @@ public class DialogCertTreeBase extends BasicDialog implements
 		try {
 			m_oTreeDataModel = m_xMCF.createInstanceWithContext("com.sun.star.awt.tree.MutableTreeDataModel", m_xContext);
 			if(m_oTreeDataModel == null) {
-				m_logger.severe("insertTreeControl", "the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
+				m_aLogger.severe("insertTreeControl", "the com.sun.star.awt.tree.MutableTreeDataModel wasn't created!");
 				return null;
 			}
 
 			m_xTreeDataModel = (XMutableTreeDataModel)UnoRuntime.queryInterface( XMutableTreeDataModel.class, m_oTreeDataModel );
 			if(m_xTreeDataModel == null) {
-				m_logger.severe("insertTreeControl", "the XMutableTreeDataModel not available!");
+				m_aLogger.severe("insertTreeControl", "the XMutableTreeDataModel not available!");
 				return null;
 			}
 			m_aTreeRootNode = m_xTreeDataModel.createNode(_sLabel, true);
 			if(m_aTreeRootNode == null) {
-				m_logger.severe("insertTreeControl", "the Node not available!");
+				m_aLogger.severe("insertTreeControl", "the Node not available!");
 				return null;
 			}
 			m_xTreeDataModel.setRoot(m_aTreeRootNode);
 
 			m_oTreeControlModel = m_xMSFDialogModel.createInstance( "com.sun.star.awt.tree.TreeControlModel" );
 			if(m_oTreeControlModel == null) {
-				m_logger.severe("insertTreeControl", "the oTreeModel not available!");
+				m_aLogger.severe("insertTreeControl", "the oTreeModel not available!");
 				return null;
 			}
 
 			XMultiPropertySet xTreeMPSet = (XMultiPropertySet) UnoRuntime.queryInterface( XMultiPropertySet.class, m_oTreeControlModel );
 			if(xTreeMPSet == null ) {
-				m_logger.severe("insertTreeControl", "no XMultiPropertySet");
+				m_aLogger.severe("insertTreeControl", "no XMultiPropertySet");
 				return null;
 			}
 
@@ -382,7 +381,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			xTFWindow.addKeyListener( this );*/
 			
 		} catch (com.sun.star.uno.Exception ex) {
-			m_logger.severe("insertTreeControl", ex);
+			m_aLogger.severe("insertTreeControl", ex);
 		}
 		return xTree;
 	}
@@ -424,7 +423,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 							aCurrentNode.dispose();
 						}
 						else
-							m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+							m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 					}
 					
 					aNode.setDataValue(null);
@@ -437,7 +436,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				childIndex = _aStartNode.getChildCount();
 			}
 		} catch (java.lang.Exception e) {
-			m_logger.severe("Index: "+childIndex,e);
+			m_aLogger.severe("Index: "+childIndex,e);
 		}
 	}
 
@@ -463,9 +462,9 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_aTreeRootNode.appendChild(xaCNode);			
 			m_xTreeControl.expandNode(m_aTreeRootNode);			
 		} catch (IllegalArgumentException e) {
-			m_logger.severe("addMultiLineToTreeRootHelper", e);
+			m_aLogger.severe("addMultiLineToTreeRootHelper", e);
 		} catch (ExpandVetoException e) {
-			m_logger.severe("addMultiLineToTreeRootHelper", e);
+			m_aLogger.severe("addMultiLineToTreeRootHelper", e);
 		}
 		return xaCNode;
 	}
@@ -593,10 +592,10 @@ public class DialogCertTreeBase extends BasicDialog implements
 			_aParentNode.appendChild(xaCNode);			
 			m_xTreeControl.expandNode(_aParentNode);
 		} catch (IllegalArgumentException e) {
-			m_logger.severe("addQualifiedCertificateToTree", e);
+			m_aLogger.severe("addQualifiedCertificateToTree", e);
 		} catch (ExpandVetoException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("addQualifiedCertificateToTree", e);
+			m_aLogger.severe("addQualifiedCertificateToTree", e);
 		}
 		
 		//grab the display interface of the certificate
@@ -674,7 +673,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				}
 			}
 		} catch (Exception e) {
-			m_logger.severe("addQualifiedCertificateToTree", e);
+			m_aLogger.severe("addQualifiedCertificateToTree", e);
 		}
 
 		//add the non critical extensions
@@ -711,7 +710,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 				}
 			}
 		} catch (Exception e) {
-			m_logger.severe("addQualifiedCertificateToTree", e);
+			m_aLogger.severe("addQualifiedCertificateToTree", e);
 		}
 		//add the certificate path
 		//first see if there is a path
@@ -743,7 +742,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_xTreeControl.expandNode(m_aTreeRootNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("addOneCertificate", e);
+			m_aLogger.severe("addOneCertificate", e);
 		} catch (ExpandVetoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -763,7 +762,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			_Node.appendChild(xaCNode);			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("addMultilineTreeElementHelper", e);
+			m_aLogger.severe("addMultilineTreeElementHelper", e);
 		}
 		return xaCNode;		
 	}
@@ -810,7 +809,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//add it to the tree node
 			_Node.appendChild(xaCNode);			
 		} catch (IllegalArgumentException e) {
-			m_logger.severe("addEmptyDataTreeElement", e);
+			m_aLogger.severe("addEmptyDataTreeElement", e);
 		}
 		return xaCNode;		
 	}
@@ -827,7 +826,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
-		m_logger.log("addButtonPressed");		
+		m_aLogger.log("addButtonPressed");		
 	}
 
 	/* (non-Javadoc)
@@ -836,7 +835,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void removeButtonPressed() {
 		// TODO Auto-generated method stub
-		m_logger.log("removeButtonPressed");
+		m_aLogger.log("removeButtonPressed");
 	}
 
 	/* (non-Javadoc)
@@ -861,14 +860,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 							if(aDisplay != null)
 								aDisplay.generateCertificateReport(aCeComp);
 						} catch (IllegalArgumentException e) {
-							m_logger.severe(e);
+							m_aLogger.severe(e);
 						} catch (Throwable e) {
-							m_logger.severe(e);
+							m_aLogger.severe(e);
 						}
 					}
 				}
 				else
-					m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}			
 		}		
 	}
@@ -879,7 +878,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void selectButtonPressed() {
 		// TODO Auto-generated method stub
-		m_logger.log("selectButtonPressed");
+		m_aLogger.log("selectButtonPressed");
 		//very crl status of the selected element
 	}
 
@@ -889,7 +888,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void verifyButtonPressed() {
 		// TODO Auto-generated method stub
-		m_logger.log("verifyButtonPressed");		
+		m_aLogger.log("verifyButtonPressed");		
 	}
 
 	/* (non-Javadoc)
@@ -909,21 +908,21 @@ public class DialogCertTreeBase extends BasicDialog implements
 			// just in case the listener has been added to several controls,
 			// we make sure we refer to the right one
 			if (sName.equals(m_sAddBtn)) {
-				m_logger.log("actionPerformed","action: "+sName);
+				m_aLogger.log("actionPerformed","action: "+sName);
 				addButtonPressed();
 			} else if (sName.equals(m_sSelectBtn)) {
 				selectButtonPressed();
 			} else if (sName.equals(m_sReportBtn)) {
 				reportButtonPressed();
 			} else if (sName.equals(m_sVerifyBtn)) {
-				m_logger.log("actionPerformed","action: "+sName);
+				m_aLogger.log("actionPerformed","action: "+sName);
 				verifyButtonPressed();
 			} else if (sName.equals(m_sRemoveBtn)) {
-				m_logger.log("actionPerformed","action: "+sName);
+				m_aLogger.log("actionPerformed","action: "+sName);
 				removeButtonPressed();
 			}
 			else {
-				m_logger.warning("actionPerformed","Activated, unimplemented: " + sName);
+				m_aLogger.warning("actionPerformed","Activated, unimplemented: " + sName);
 			}
 		} catch (com.sun.star.uno.Exception ex) {
 			/*
@@ -932,7 +931,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			 * com.sun.star.beans.UnknownPropertyException,
 			 * com.sun.star.uno.Exception
 			 */
-			m_logger.severe("actionPerformed", ex);
+			m_aLogger.severe("actionPerformed", ex);
 		}
 	}
 
@@ -971,7 +970,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 					aCurrentNode.EnableDisplay(false);
 				}
 				else
-					m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
 		}
 		else {// old node null, disable all all the display elements

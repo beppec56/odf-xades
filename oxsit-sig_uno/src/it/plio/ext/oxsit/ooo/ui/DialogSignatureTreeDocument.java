@@ -84,7 +84,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
-		m_logger.entering("initialize");
+		m_aLogger.entering("initialize");
 		insertButton(this,
 				CertifTreeDlgDims.DS_COL_PB2(),
 //				CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
@@ -159,14 +159,14 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			aDialog1.executeDialog();
 			aDialog1.disposeElements();
 		} catch (BasicErrorException e) {
-			m_logger.severe("actionPerformed", "", e);
+			m_aLogger.severe("actionPerformed", "", e);
 		}
 		try {
 			aDialog1.executeDialog();
 			return;
 		} catch (BasicErrorException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("actionPerformed", "", e);
+			m_aLogger.severe("actionPerformed", "", e);
 			return;
 		}
 	// Helper.setUnoPropertyValue(m_xMSFDialogModel, "Step", new
@@ -188,7 +188,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	@Override
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE
-		m_logger.info("reportButtonPressed","FAKE IMPLEMENTATION!");
+		m_aLogger.info("reportButtonPressed","FAKE IMPLEMENTATION!");
 //		addOneSignature();
 		
 //dirty trick, do not instantiate the UNO component this way !

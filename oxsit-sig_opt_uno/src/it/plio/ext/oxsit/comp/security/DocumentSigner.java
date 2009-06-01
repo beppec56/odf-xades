@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
+import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -44,6 +45,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
@@ -171,7 +173,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 	 * gets called from dialog when a document should be signed with independednt certificate signature
 	 */
 	@Override
-	public void signDocumentStandard(XFrame xFrame, XStorage xStorage,
+	public boolean signDocumentStandard(XFrame xFrame, XStorage xStorage,
 			XOX_X509Certificate[] arg1) throws IllegalArgumentException,
 			Exception {
 		// TODO Auto-generated method stub
@@ -186,7 +188,35 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 		dg.verifyDocumentSignature(xStorage,null);
 		
 		//try to get a pin from the user
-		
-		
-	}	
+		DialogQueryPIN aDialog1 =
+			new DialogQueryPIN( xFrame, m_xCC, m_xMCF );
+		try {
+			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
+			//get the parente window data
+//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
+//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
+			int BiasX = 100;
+			int BiasY = 30;
+//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
+//			XWindow xWindow = m_xFrame.getContainerWindow();
+//			XWindowPeer xPeer = xWindow.
+			aDialog1.initialize(BiasX,BiasY);
+//center the dialog
+			short test = aDialog1.executeDialog();
+			m_aLogger.log("return: "+test+ " "+aDialog1.getThePin());
+			String sThePin = aDialog1.getThePin();
+			if( sThePin.length() > 0) {
+				m_aLogger.log("sign!");
+				return true;
+			}
+		}
+		catch (com.sun.star.uno.RuntimeException e) {
+			m_aLogger.severe(e);
+		} catch (BasicErrorException e) {
+			m_aLogger.severe(e);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		return false;
+	}
 }

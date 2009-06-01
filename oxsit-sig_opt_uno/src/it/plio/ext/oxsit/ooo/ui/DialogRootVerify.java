@@ -56,7 +56,7 @@ public class DialogRootVerify extends BasicDialog {
 	public DialogRootVerify(XFrame _xFrame, XComponentContext context,
 			XMultiComponentFactory _xmcf, String _Message) {
 		super ( _xFrame, context, _xmcf );
-		m_logger.enableLogging();
+		m_aLogger.enableLogging();
 		m_xReceivedFrame = _xFrame;
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
@@ -67,7 +67,7 @@ public class DialogRootVerify extends BasicDialog {
 			m_sBtnYesLabel = m_aRegAcc.getStringFromRegistry( m_sBtnYesLabel );
 			m_sBtnNoLabel = m_aRegAcc.getStringFromRegistry( m_sBtnNoLabel );
 		} catch (com.sun.star.uno.Exception e) {
-			m_logger.severe("", "", e);
+			m_aLogger.severe("", "", e);
 		}
 		m_aRegAcc.dispose();
 	}

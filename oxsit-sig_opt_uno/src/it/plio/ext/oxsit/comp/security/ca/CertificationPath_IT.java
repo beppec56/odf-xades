@@ -103,9 +103,9 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	public CertificationPath_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
-//		m_aLogger = new DynamicLogger(this, m_xCC);
-		m_aLogger = new DynamicLazyLogger();
-		m_aLogger.enableLogging();
+		m_aLogger = new DynamicLogger(this, m_xCC);
+//		m_aLogger = new DynamicLazyLogger();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
 	}
 

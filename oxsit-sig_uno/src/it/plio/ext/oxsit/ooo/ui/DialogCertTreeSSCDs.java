@@ -99,7 +99,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
-		m_logger.entering("initialize");
+		m_aLogger.entering("initialize");
 		insertButton(this,
 				CertifTreeDlgDims.DS_COL_PB2(),
 //				CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
@@ -140,6 +140,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 
 	@Override
 	public short executeDialog() throws BasicErrorException {
+		enableSingleButton(m_sAddBtn,false);
+		enableSingleButton(m_sReportBtn,false);
 		return super.executeDialog();
 	}
 
@@ -161,7 +163,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
-		m_logger.info("firma document con un certificato");
+		m_aLogger.info("firma document con un certificato");
 		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
 		Object aObj = xAnode.getDataValue();
 		if(aObj instanceof CertificateTreeElement) {
@@ -182,9 +184,10 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 						XOX_X509Certificate[] aCert = new XOX_X509Certificate[1]; 						
 						aCert[0] = ct.getCertificate();
 
-						xSigner.signDocumentStandard(m_xParentFrame,getDocumentStorage(), aCert);
-						//mark signature status dirty ?
-						endDialog();
+						if(xSigner.signDocumentStandard(m_xParentFrame,getDocumentStorage(), aCert))
+							endDialog();
+						//mark signature status dirty if signed?
+						//TODO
 					}
 					else
 						throw (new NoSuchMethodException("Missing XOX_DocumentSigner interface !"));
@@ -214,7 +217,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
-		m_logger.info("Seleziona dispositivo");
+		m_aLogger.info("Seleziona dispositivo");
 //		addOneCertificate();
 		//instantiate the SSCDs service
 		if(m_axoxAvailableSSCDs != null) {
@@ -253,7 +256,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				}
 			}
 		} catch (Exception e) {
-			m_logger.severe("selectButtonPressed", e);
+			m_aLogger.severe("selectButtonPressed", e);
 		}
 	}
 
@@ -271,14 +274,14 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			aDialog1.executeDialog();
 			aDialog1.disposeElements();
 		} catch (BasicErrorException e) {
-			m_logger.severe("actionPerformed", "", e);
+			m_aLogger.severe("actionPerformed", "", e);
 		}
 		try {
 			aDialog1.executeDialog();
 			return;
 		} catch (BasicErrorException e) {
 			// TODO Auto-generated catch block
-			m_logger.severe("actionPerformed", "", e);
+			m_aLogger.severe("actionPerformed", "", e);
 			return;
 		}
 		

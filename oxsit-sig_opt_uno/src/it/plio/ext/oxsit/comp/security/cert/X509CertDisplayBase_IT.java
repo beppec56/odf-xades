@@ -190,9 +190,9 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 * @param _ctx
 	 */
 	public X509CertDisplayBase_IT(XComponentContext _ctx) {
-//		m_aLogger = new DynamicLogger(this, _ctx);
-		m_aLogger = new DynamicLazyLogger();
-		m_aLogger.enableLogging();
+		m_aLogger = new DynamicLogger(this, _ctx);
+//		m_aLogger = new DynamicLazyLogger();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_xContext = _ctx;
     	m_xMCF = m_xContext.getServiceManager();

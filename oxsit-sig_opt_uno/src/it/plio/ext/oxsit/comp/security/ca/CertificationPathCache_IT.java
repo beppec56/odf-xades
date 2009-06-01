@@ -130,9 +130,9 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	public CertificationPathCache_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
-//		m_aLogger = new DynamicLogger(this, _ctx);
-		m_aLogger = new DynamicLazyLogger();
-		m_aLogger.enableLogging();
+		m_aLogger = new DynamicLogger(this, _ctx);
+//		m_aLogger = new DynamicLazyLogger();
+//		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
     	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;

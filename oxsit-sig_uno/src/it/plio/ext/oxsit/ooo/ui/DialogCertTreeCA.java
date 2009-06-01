@@ -99,7 +99,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
-		m_logger.entering("initialize");
+		m_aLogger.entering("initialize");
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB2(),
 					CertifTreeDlgDims.DS_ROW_4(),
@@ -174,7 +174,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 				if(xStatusIndicator != null)
 					xStatusIndicator.end();
 			} catch (Throwable e) {
-				m_logger.severe(e);
+				m_aLogger.severe(e);
 			}
 	}
 
@@ -201,7 +201,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	public void addButtonPressed() {
 		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
-		m_logger.info("cambio stato certificato");
+		m_aLogger.info("cambio stato certificato");
 //		addOneSignature();		
 	}
 
@@ -219,7 +219,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 	@Override
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
-		m_logger.info("do operation on selected CA");
+		m_aLogger.info("do operation on selected CA");
 	}
 
 	/* (non-Javadoc)
@@ -245,14 +245,14 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 							aCurrentNode.updateString();
 							aCurrentNode.EnableDisplay(true);
 						} catch (IllegalArgumentException e) {
-							m_logger.severe(e);
+							m_aLogger.severe(e);
 						} catch (Throwable e) {
-							m_logger.severe(e);
+							m_aLogger.severe(e);
 						}
 					}
 				}
 				else
-					m_logger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}			
 		}		
 	}	

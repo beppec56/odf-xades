@@ -43,8 +43,9 @@
 		/**
 		@param xTheDocument the document to sign
 		@param xCertificates a sequence of certificates to use to sign the document.
+		@return true if the PIN was confirmed, false if the operation was cancelled
 		*/
-		void signDocumentStandard(	[in] com::sun::star::frame::XFrame xFrame,
+		boolean signDocumentStandard(	[in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::embed::XStorage xTheDocument,
 						  			[in] sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
