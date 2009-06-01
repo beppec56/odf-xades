@@ -25,7 +25,7 @@ package it.plio.ext.oxsit.comp;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
 
@@ -159,19 +159,19 @@ public class SingletonGlobalVariables extends ComponentBase
 	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
-	public XOX_DocumentSignatures getDocumentSignatures(String _aDocumentId) {
+	public XOX_DocumentSignaturesState getDocumentSignatures(String _aDocumentId) {
 		// TODO Auto-generated method stub
 		synchronized (m_aDocumentList) {				
 			//see if the document already exists
 			if(m_aDocumentList.containsKey(_aDocumentId)) {
 				//if exists, returns the document signatures element
 				m_aLogger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
-				XOX_DocumentSignatures aDoc = null;
+				XOX_DocumentSignaturesState aDoc = null;
 				Object aObj = m_aDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
 				if(aObj != null) {
-					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					aDoc = (XOX_DocumentSignaturesState)UnoRuntime.queryInterface(XOX_DocumentSignaturesState.class, aObj);
 					if(aDoc == null) 
-						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");					
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignaturesState is null");					
 				}
 				else
 					m_aLogger.severe("initDocumentAndListener", "aObj is null");					
@@ -187,7 +187,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	 * FIXME set exception
 	 */
 	@Override
-	public XOX_DocumentSignatures initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
+	public XOX_DocumentSignaturesState initDocumentAndListener(String _aDocumentId, XChangesListener _aListener) {
 		synchronized (m_aDocumentList) {				
 			//see if the document already exists
 			if(!m_aDocumentList.containsKey(_aDocumentId)) {
@@ -207,9 +207,9 @@ public class SingletonGlobalVariables extends ComponentBase
 					else
 						m_aLogger.severe("initDocumentAndListener", "XChangesNotifier missing.");
 						
-					XOX_DocumentSignatures aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					XOX_DocumentSignaturesState aDoc = (XOX_DocumentSignaturesState)UnoRuntime.queryInterface(XOX_DocumentSignaturesState.class, aObj);
 					if(aDoc == null) 
-						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures missing.");
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignaturesState missing.");
 					else
 						aDoc.setDocumentId(_aDocumentId);
 					m_aLogger.exiting("initDocumentAndListener", _aDocumentId);
@@ -223,7 +223,7 @@ public class SingletonGlobalVariables extends ComponentBase
 			else {
 				//if exists, returns the document signatures element
 				m_aLogger.log("initDocumentAndListener","RETURNING doc id: "+_aDocumentId);
-				XOX_DocumentSignatures aDoc = null;
+				XOX_DocumentSignaturesState aDoc = null;
 				Object aObj = m_aDocumentList.get(_aDocumentId).m_aDocumentSignaturesService;
 				if(aObj != null) {
 					//need to add the listener to the doc, if needed
@@ -232,9 +232,9 @@ public class SingletonGlobalVariables extends ComponentBase
 						aNotif.addChangesListener(_aListener);
 					else
 						m_aLogger.severe("initDocumentAndListener", "XChangesNotifier missing.");
-					aDoc = (XOX_DocumentSignatures)UnoRuntime.queryInterface(XOX_DocumentSignatures.class, aObj);
+					aDoc = (XOX_DocumentSignaturesState)UnoRuntime.queryInterface(XOX_DocumentSignaturesState.class, aObj);
 					if(aDoc == null) 
-						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignatures is null");
+						m_aLogger.severe("initDocumentAndListener", "XOX_DocumentSignaturesState is null");
 				}
 				else
 					m_aLogger.severe("initDocumentAndListener", "aObj is null");					

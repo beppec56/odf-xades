@@ -27,7 +27,7 @@
 #include <com/sun/star/util/XChangesListener.idl>
 #include <com/sun/star/container/ElementExistException.idl>
 #include <com/sun/star/lang/IllegalArgumentException.idl>
-#include "XOX_DocumentSignatures.idl"
+#include "XOX_DocumentSignaturesState.idl"
 
 
   module it { module plio { module ext { module oxsit {
@@ -38,7 +38,7 @@
 	interface XOX_SingletonDataAccess
 	{
 		/** To add a new structure describing the XAdES document signatues of the document
-			@see  it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures for a description of the related interface
+			@see  it::plio::ext::oxsit::security::cert::XOX_DocumentSignaturesState for a description of the related interface
 			
 			if the document signature structure of the document in DocumentId, already exists, the interface does nothing and returns the
 			existent document signatures structures.
@@ -50,13 +50,13 @@
 	
 			@return the new added structure (in form of the main structure interface)
 		*/
-		it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures initDocumentAndListener( [in] string DocumentId, [in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
+		it::plio::ext::oxsit::security::cert::XOX_DocumentSignaturesState initDocumentAndListener( [in] string DocumentId, [in] com::sun::star::util::XChangesListener DocumentSignaturesChangesListener);
 
-		/** return the XOX_DocumentSignatures interface of the document
-			@see  XOX_DocumentSignatures
+		/** return the XOX_DocumentSignaturesState interface of the document
+			@see  XOX_DocumentSignaturesState
 			@param DocumentId the document id
 		*/
-		it::plio::ext::oxsit::security::cert::XOX_DocumentSignatures getDocumentSignatures([in] string DocumentId);
+		it::plio::ext::oxsit::security::cert::XOX_DocumentSignaturesState getDocumentSignatures([in] string DocumentId);
 
 		/**
 			the document signatures structure is removed 

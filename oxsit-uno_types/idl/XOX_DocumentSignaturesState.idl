@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignatures_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
 
 #include <com/sun/star/embed/XStorage.idl>
 #include "XOX_X509Certificate.idl"
@@ -32,7 +32,7 @@
 	  document signature states.
 	  <p>That is, the state of all the signatures in a document.</p>
 	 */
-  interface XOX_DocumentSignatures
+  interface XOX_DocumentSignaturesState
   {
 		/** This document storage
 		*/

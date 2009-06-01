@@ -228,7 +228,7 @@ the default target must be removed
 
 		<antcall target="compile-idl">
 			<!--interface name -->
-			<param name="parm1" value="XOX_DocumentSignatures"/>
+			<param name="parm1" value="XOX_DocumentSignaturesState"/>
 			<!--interface path -->
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>

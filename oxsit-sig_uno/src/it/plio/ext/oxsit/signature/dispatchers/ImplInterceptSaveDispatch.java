@@ -28,7 +28,7 @@ import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQuery;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;
@@ -90,7 +90,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 				XModel m_xModel = xCont.getModel();
 				if (m_xModel != null) {	
 					try {
-						 XOX_DocumentSignatures xoxDocSigns = Helpers.getDocumentSignatures(m_xCC,m_xModel);						 
+						 XOX_DocumentSignaturesState xoxDocSigns = Helpers.getDocumentSignatures(m_xCC,m_xModel);						 
 						 int sigState = xoxDocSigns.getDocumentSignatureState();
 						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES &&
 								 sigState != GlobConstant.m_nSIGNATURESTATE_UNKNOWN) {

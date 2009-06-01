@@ -27,7 +27,7 @@ import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
 
@@ -68,7 +68,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 	private boolean	m_bIsModified = false;
 	
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
-	protected XOX_DocumentSignatures							m_xDocumentSignatures;
+	protected XOX_DocumentSignaturesState							m_xDocumentSignatures;
 		
 	public ImplXAdESSignatureDispatch(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {

@@ -30,7 +30,7 @@ import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import com.sun.star.beans.NamedValue;
 import com.sun.star.document.XStorageBasedDocument;
@@ -80,7 +80,7 @@ public class SyncJob extends ComponentBase
 
 	private XModel 						m_axModel;
 	private XFrame						m_axFrame;												// use
-	private XOX_DocumentSignatures 		m_aDocSign;
+	private XOX_DocumentSignaturesState 		m_aDocSign;
 	// when frame is needed as reference
 	private XComponentContext			m_xComponentContext;
 
@@ -364,7 +364,7 @@ public class SyncJob extends ComponentBase
 						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
-						m_aLogger.severe("execute","Missing XOX_DocumentSignatures interface");						
+						m_aLogger.severe("execute","Missing XOX_DocumentSignaturesState interface");						
 				}
 				else
 					m_aLogger.severe("execute","Missing XOX_SingletonDataAccess interface"); 
@@ -385,7 +385,7 @@ public class SyncJob extends ComponentBase
 						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
-						m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignatures interface");						
+						m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignaturesState interface");						
 				}
 				else
 					m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_SingletonDataAccess interface"); 

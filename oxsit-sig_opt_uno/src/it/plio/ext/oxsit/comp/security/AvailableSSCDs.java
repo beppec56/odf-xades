@@ -421,7 +421,6 @@ public class AvailableSSCDs extends ComponentBase
 						}
 					} else {
 						m_aLogger.log("No card in reader '" + currReader + "'!");
-		
 					}
 					indexReader++;
 				}

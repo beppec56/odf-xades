@@ -25,7 +25,7 @@ package it.plio.ext.oxsit;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import com.sun.star.beans.*;
 import com.sun.star.container.*;
@@ -176,29 +176,29 @@ public class Helpers {
 		}
 	}
 
-	public static XOX_DocumentSignatures initDocumentSignaturesData(XComponentContext xContext, XModel _xModel, XChangesListener _xChg) 
+	public static XOX_DocumentSignaturesState initDocumentSignaturesData(XComponentContext xContext, XModel _xModel, XChangesListener _xChg) 
 	throws ClassCastException, ServiceNotFoundException, NoSuchMethodException {
 		final Boolean	_staticLock = new Boolean(true);
 		synchronized(_staticLock) {			
 			XOX_SingletonDataAccess		m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
-			XOX_DocumentSignatures		m_xDocumentSignatures =
+			XOX_DocumentSignaturesState		m_xDocumentSignatures =
 								m_xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(_xModel), _xChg);
 			if(m_xDocumentSignatures == null)
-				throw (new NoSuchMethodException("XOX_DocumentSignatures missing") ); 									
+				throw (new NoSuchMethodException("XOX_DocumentSignaturesState missing") ); 									
 
 			return m_xDocumentSignatures;
 		}
 	}
 
-	public static XOX_DocumentSignatures getDocumentSignatures(XComponentContext xContext, XModel _xModel) 
+	public static XOX_DocumentSignaturesState getDocumentSignatures(XComponentContext xContext, XModel _xModel) 
 	throws ClassCastException, ServiceNotFoundException, NoSuchMethodException {
 		final Boolean	_staticLock = new Boolean(true);
 		synchronized(_staticLock) {			
 			XOX_SingletonDataAccess		m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
-			XOX_DocumentSignatures		m_xDocumentSignatures =
+			XOX_DocumentSignaturesState		m_xDocumentSignatures =
 								m_xSingletonDataAccess.getDocumentSignatures(Helpers.getHashHex(_xModel));
 			if(m_xDocumentSignatures == null)
-				throw (new NoSuchMethodException("XOX_DocumentSignatures missing") ); 									
+				throw (new NoSuchMethodException("XOX_DocumentSignaturesState missing") ); 									
 
 			return m_xDocumentSignatures;
 		}

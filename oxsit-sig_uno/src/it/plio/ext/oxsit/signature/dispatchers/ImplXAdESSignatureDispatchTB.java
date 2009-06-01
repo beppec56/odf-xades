@@ -29,7 +29,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
-import it.plio.ext.oxsit.security.cert.XOX_DocumentSignatures;
+import it.plio.ext.oxsit.security.cert.XOX_DocumentSignaturesState;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -110,7 +110,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	private Object												m_aFrameConfMutex			= new Object();
 	
 	protected XOX_SingletonDataAccess							m_xSingletonDataAccess;
-	protected XOX_DocumentSignatures							m_xDocumentSignatures;
+	protected XOX_DocumentSignaturesState							m_xDocumentSignatures;
 	
 	private XComponentContext									m_aComponentContext;
 	private XMultiComponentFactory								m_aMultiComponentFctry;
