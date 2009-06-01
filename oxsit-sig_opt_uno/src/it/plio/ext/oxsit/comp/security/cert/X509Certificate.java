@@ -31,10 +31,10 @@ import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
@@ -108,9 +108,9 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 
 	private boolean m_bIsFromUI;
 
-	private XOX_CertificationPathControlProcedure m_xoxCertificationPathControlProcedure;
-	private XOX_CertificateComplianceControlProcedure m_xoxCertificateComplianceControlProcedure;
-	private XOX_CertificateRevocationStateControlProcedure m_xoxCertificateRevocationControlProcedure;
+	private XOX_CertificationPathProcedure m_xoxCertificationPathProcedure;
+	private XOX_CertificateComplianceProcedure m_xoxCertificateComplianceProcedure;
+	private XOX_CertificateRevocationStateProcedure m_xoxCertificateRevocationProcedure;
 	// subordinate object to prepare the certificate display data according to
 	// implementation requirement.
 	private XOX_X509CertificateDisplay		m_xoxCertificateDisplayString;
@@ -177,23 +177,23 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 
 	private void initializeHelper(Object _arg) throws IllegalArgumentException {
 		//check the type of elements we have, can be CRL or CP control
-		XOX_CertificationPathControlProcedure xCert =
-			(XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(
-							XOX_CertificationPathControlProcedure.class, _arg);
-		if(xCert != null && m_xoxCertificationPathControlProcedure == null) {
-			m_xoxCertificationPathControlProcedure = xCert;
+		XOX_CertificationPathProcedure xCert =
+			(XOX_CertificationPathProcedure)UnoRuntime.queryInterface(
+							XOX_CertificationPathProcedure.class, _arg);
+		if(xCert != null && m_xoxCertificationPathProcedure == null) {
+			m_xoxCertificationPathProcedure = xCert;
 		}
-		XOX_CertificateComplianceControlProcedure xCert1 =
-			(XOX_CertificateComplianceControlProcedure)UnoRuntime.queryInterface(
-					XOX_CertificateComplianceControlProcedure.class, _arg);
-		if(xCert1 != null && m_xoxCertificateComplianceControlProcedure == null) {
-			m_xoxCertificateComplianceControlProcedure = xCert1;
+		XOX_CertificateComplianceProcedure xCert1 =
+			(XOX_CertificateComplianceProcedure)UnoRuntime.queryInterface(
+					XOX_CertificateComplianceProcedure.class, _arg);
+		if(xCert1 != null && m_xoxCertificateComplianceProcedure == null) {
+			m_xoxCertificateComplianceProcedure = xCert1;
 		}
-		XOX_CertificateRevocationStateControlProcedure xCert2 =
-			(XOX_CertificateRevocationStateControlProcedure)UnoRuntime.queryInterface(
-					XOX_CertificateRevocationStateControlProcedure.class, _arg);
-		if(xCert2 != null && m_xoxCertificateRevocationControlProcedure == null) {
-			m_xoxCertificateRevocationControlProcedure = xCert2;
+		XOX_CertificateRevocationStateProcedure xCert2 =
+			(XOX_CertificateRevocationStateProcedure)UnoRuntime.queryInterface(
+					XOX_CertificateRevocationStateProcedure.class, _arg);
+		if(xCert2 != null && m_xoxCertificateRevocationProcedure == null) {
+			m_xoxCertificateRevocationProcedure = xCert2;
 		}
 		XOX_X509CertificateDisplay xCert3 =
 			(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(
@@ -480,12 +480,12 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public void verifyCertificationPath(XFrame _aFrame) throws IllegalArgumentException, Exception {
-		if(m_xoxCertificationPathControlProcedure != null) {
+		if(m_xoxCertificationPathProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
-					m_xoxCertificationPathControlProcedure.verifyCertificationPath(_aFrame,xCtl);
-					setCertifPathStateHelper(m_xoxCertificationPathControlProcedure.getCertificationAuthorityState());
+					m_xoxCertificationPathProcedure.verifyCertificationPath(_aFrame,xCtl);
+					setCertifPathStateHelper(m_xoxCertificationPathProcedure.getCertificationAuthorityState());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Throwable e) {
@@ -502,17 +502,17 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	public void verifyCertificateRevocationState(
 			XFrame frame) throws IllegalArgumentException,
 			Exception {
-		if(m_xoxCertificateRevocationControlProcedure != null) {
+		if(m_xoxCertificateRevocationProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
-					m_xoxCertificateRevocationControlProcedure.initializeProcedure(frame);
-					m_xoxCertificateRevocationControlProcedure.verifyCertificateRevocationState(frame,xCtl);
-/*					m_aLogger.log("State: "+m_xoxCertificateRevocationControlProcedure.getCertificateState().getValue()+
+					m_xoxCertificateRevocationProcedure.initializeProcedure(frame);
+					m_xoxCertificateRevocationProcedure.verifyCertificateRevocationState(frame,xCtl);
+/*					m_aLogger.log("State: "+m_xoxCertificateRevocationProcedure.getCertificateState().getValue()+
 							" conditions: "+
-							m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions().getValue());*/
-					setCertificateStateHelper(m_xoxCertificateRevocationControlProcedure.getCertificateState());
-					setCertificateStateConditionsHelper(m_xoxCertificateRevocationControlProcedure.getCertificateStateConditions());
+							m_xoxCertificateRevocationProcedure.getCertificateStateConditions().getValue());*/
+					setCertificateStateHelper(m_xoxCertificateRevocationProcedure.getCertificateState());
+					setCertificateStateConditionsHelper(m_xoxCertificateRevocationProcedure.getCertificateStateConditions());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Throwable e) {
@@ -604,8 +604,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateComplianceControl()
 	 */
 	@Override
-	public XOX_CertificateComplianceControlProcedure getComplianceControlObj() {
-		return m_xoxCertificateComplianceControlProcedure;
+	public XOX_CertificateComplianceProcedure getComplianceControlObj() {
+		return m_xoxCertificateComplianceProcedure;
 	}
 
 	/* (non-Javadoc)
@@ -613,14 +613,14 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public void setCertificateComplianceControlObject(
-			XOX_CertificateComplianceControlProcedure arg0)
+			XOX_CertificateComplianceProcedure arg0)
 			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
-		XOX_CertificateComplianceControlProcedure xCert = (XOX_CertificateComplianceControlProcedure)
-		UnoRuntime.queryInterface(XOX_CertificateComplianceControlProcedure.class, arg0);
+		XOX_CertificateComplianceProcedure xCert = (XOX_CertificateComplianceProcedure)
+		UnoRuntime.queryInterface(XOX_CertificateComplianceProcedure.class, arg0);
 		if(xCert == null)
 			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificateComplianceControlProcedure = xCert;	
+		m_xoxCertificateComplianceProcedure = xCert;	
 	}
 
 	/* (non-Javadoc)
@@ -632,15 +632,15 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		XOX_X509Certificate m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, this);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
-		if(m_xoxCertificateComplianceControlProcedure != null) {
+		if(m_xoxCertificateComplianceProcedure != null) {
 			XComponent xCtl = (XComponent)UnoRuntime.queryInterface(XComponent.class, this);
 			if(xCtl != null) {
 				try {
-					m_xoxCertificateComplianceControlProcedure.initializeProcedure(arg0);
-					m_xoxCertificateComplianceControlProcedure.verifyCertificateCompliance(arg0,xCtl);
-	//					m_aLogger.log("State: "+m_xoxCertificateComplianceControlProcedure.getCertificateState().getValue());
-					setCertificateStateHelper(m_xoxCertificateComplianceControlProcedure.getCertificateState());
-					setCertificateStateConditionsHelper(m_xoxCertificateComplianceControlProcedure.getCertificateStateConditions());
+					m_xoxCertificateComplianceProcedure.initializeProcedure(arg0);
+					m_xoxCertificateComplianceProcedure.verifyCertificateCompliance(arg0,xCtl);
+	//					m_aLogger.log("State: "+m_xoxCertificateComplianceProcedure.getCertificateState().getValue());
+					setCertificateStateHelper(m_xoxCertificateComplianceProcedure.getCertificateState());
+					setCertificateStateConditionsHelper(m_xoxCertificateComplianceProcedure.getCertificateStateConditions());
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Throwable e) {
@@ -934,41 +934,41 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateCertificationPathControl()
 	 */
 	@Override
-	public XOX_CertificationPathControlProcedure getCertificationPathControlObj() {
-		return m_xoxCertificationPathControlProcedure;
+	public XOX_CertificationPathProcedure getCertificationPathControlObj() {
+		return m_xoxCertificationPathProcedure;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificationPathControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificationPathControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure)
 	 */
 	@Override
 	public void setCertificationPathControlObject(
-			XOX_CertificationPathControlProcedure arg0)
+			XOX_CertificationPathProcedure arg0)
 			throws IllegalArgumentException, Exception {
 
-		XOX_CertificationPathControlProcedure xCert = (XOX_CertificationPathControlProcedure)
-		UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, arg0);
+		XOX_CertificationPathProcedure xCert = (XOX_CertificationPathProcedure)
+		UnoRuntime.queryInterface(XOX_CertificationPathProcedure.class, arg0);
 		if(xCert == null)
 			throw(new com.sun.star.lang.IllegalArgumentException());
-		m_xoxCertificationPathControlProcedure = xCert;
+		m_xoxCertificationPathProcedure = xCert;
 	}
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateRevocationControlObj()
 	 */
 	@Override
-	public XOX_CertificateRevocationStateControlProcedure getRevocationControlObj() {
-		return m_xoxCertificateRevocationControlProcedure;
+	public XOX_CertificateRevocationStateProcedure getRevocationControlObj() {
+		return m_xoxCertificateRevocationProcedure;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setRevocationStateControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setRevocationStateControlObject(it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure)
 	 */
 	@Override
 	public void setRevocationStateControlObject(
-			XOX_CertificateRevocationStateControlProcedure arg0)
+			XOX_CertificateRevocationStateProcedure arg0)
 			throws IllegalArgumentException, Exception {
-		m_xoxCertificateRevocationControlProcedure = arg0;
+		m_xoxCertificateRevocationProcedure = arg0;
 	}
 	
 	/**

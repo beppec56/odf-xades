@@ -34,7 +34,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.container.NoSuchElementException;
@@ -70,7 +70,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificateRevocationStateControlProcedure
+			XOX_CertificateRevocationStateProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -87,7 +87,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 
 	private XMultiComponentFactory m_xMCF;
 
-	private XOX_CertificateRevocationStateControlProcedure m_axoxChildProc;
+	private XOX_CertificateRevocationStateProcedure m_axoxChildProc;
 
 	private CertificateState m_aCertificateState;
 	private CertificateStateConditions	m_aCertificateStateConditions;
@@ -190,7 +190,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
@@ -198,7 +198,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateStateConditions()
 	 */
 	@Override
 	public CertificateStateConditions getCertificateStateConditions() {
@@ -206,7 +206,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#initializeProcedure(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#initializeProcedure(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void initializeProcedure(XFrame arg0) {
@@ -214,7 +214,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -223,7 +223,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 * 
 	 * currently only the crl is controlled
 	 */
@@ -232,7 +232,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 			XComponent arg0) throws IllegalArgumentException, Exception {
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
-			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
+			throw (new IllegalArgumentException("XOX_CertificateRevocationStateProcedure#verifyCertificateRevocationState wrong argument"));
 
 		// FIXME check if revocation control is enabled or not
 		m_aLogger.log("verifyCertificateRevocationState");
@@ -245,9 +245,9 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
-					(XOX_CertificateRevocationStateControlProcedure)
+					(XOX_CertificateRevocationStateProcedure)
 					UnoRuntime.queryInterface(
-							XOX_CertificateRevocationStateControlProcedure.class, xComp);
+							XOX_CertificateRevocationStateProcedure.class, xComp);
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
@@ -258,8 +258,8 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
 					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
-					m_axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
-								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
+					m_axoxChildProc = (XOX_CertificateRevocationStateProcedure)
+								UnoRuntime.queryInterface(XOX_CertificateRevocationStateProcedure.class, xComp);
 				}
 				else
 					throw (new IllegalArgumentException());

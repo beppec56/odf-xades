@@ -27,26 +27,20 @@
 
 package it.plio.ext.oxsit.comp.security.cert;
 
-import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.Vector;
 
@@ -60,12 +54,8 @@ import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
 import org.bouncycastle.asn1.x509.qualified.QCStatement;
-import org.bouncycastle.i18n.filter.TrustedInput;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
@@ -95,7 +85,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificateComplianceControlProcedure
+			XOX_CertificateComplianceProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -206,7 +196,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure#initializeProcedure(com.sun.star.frame.XFrame)
 	 */
 	@Override
 	public void initializeProcedure(XFrame arg0) {
@@ -215,7 +205,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -224,7 +214,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
@@ -232,7 +222,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure#verifyCertificateCertificateCompliance(com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
@@ -240,7 +230,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		// TODO Auto-generated method stub
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
-			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
+			throw (new IllegalArgumentException("XOX_CertificateComplianceProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		m_aCertificateState = CertificateState.OK;
 		//convert the certificate to java internal representation
         java.security.cert.CertificateFactory cf;
@@ -485,7 +475,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
     }
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure#getCertificateStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure#getCertificateStateConditions()
 	 */
 	@Override
 	public CertificateStateConditions getCertificateStateConditions() {

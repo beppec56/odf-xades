@@ -189,15 +189,15 @@ the default target must be removed
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">
-			<param name="parm1" value="XOX_CertificateRevocationStateControlProcedure"/>
+			<param name="parm1" value="XOX_CertificateRevocationStateProcedure"/>
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">
-			<param name="parm1" value="XOX_CertificationPathControlProcedure"/>
+			<param name="parm1" value="XOX_CertificationPathProcedure"/>
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">
-			<param name="parm1" value="XOX_CertificateComplianceControlProcedure"/>
+			<param name="parm1" value="XOX_CertificateComplianceProcedure"/>
 			<param name="parm2" value="it.plio.ext.oxsit.security.cert"/>
 		</antcall>
 		<antcall target="compile-idl">
@@ -221,7 +221,7 @@ the default target must be removed
 		
 		<antcall target="compile-idl">
 			<!--interface name -->
-			<param name="parm1" value="XOX_AvailableSSCDs"/>
+			<param name="parm1" value="XOX_SSCDManagement"/>
 			<!--interface path -->
 			<param name="parm2" value="it.plio.ext.oxsit.security"/>
 		</antcall>

@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_AvailableSSCDs_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
 
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/uno/Exception.idl>
@@ -34,7 +34,7 @@
 	  the available SSCD devices on system.
 	  <p>It needs to be expanded</p>
 	 */
-  interface XOX_AvailableSSCDs
+  interface XOX_SSCDManagement
   {
 		/** The number of SSC Devices on this system.
 		*/

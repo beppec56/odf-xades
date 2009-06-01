@@ -31,9 +31,9 @@
 #include "CertificateState.idl"
 #include "CertificateStateConditions.idl"
 #include "CertificationAuthorityState.idl"
-#include "XOX_CertificationPathControlProcedure.idl"
-#include "XOX_CertificateComplianceControlProcedure.idl"
-#include "XOX_CertificateRevocationStateControlProcedure.idl"
+#include "XOX_CertificationPathProcedure.idl"
+#include "XOX_CertificateComplianceProcedure.idl"
+#include "XOX_CertificateRevocationStateProcedure.idl"
 #include "XOX_X509CertificateDisplay.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
@@ -66,15 +66,15 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute, readonly] long CertificationAuthorityState;
 		/** the object used to control the certification path of this certificate
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure CertificationPathControlObj;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathProcedure CertificationPathControlObj;
 
 		/** the object used to control the certificate revocation state, CRL or OCSP
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateControlProcedure RevocationControlObj;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure RevocationControlObj;
 
 		/** the object used to control the certificate compliance
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure ComplianceControlObj;
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure ComplianceControlObj;
 
 		/** the object used to prepare the certificate display
 		*/
@@ -106,19 +106,19 @@ XOX_AvailableSSCDs interface or</p>
 			For a description of the suggested method to use this interface.
 		</p>
 		*/
-		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceControlProcedure arg0)
+		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 		/** Sets the interface object used to check for the certificate revocation state (CRL, OSP).
 		*/
-		void setRevocationStateControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateControlProcedure arg0)
+		void setRevocationStateControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 		/** Sets the interface object used to check for the certificate certification path.
 		*/
-		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathControlProcedure arg0)
+		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 

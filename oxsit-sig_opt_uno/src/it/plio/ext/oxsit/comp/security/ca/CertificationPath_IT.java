@@ -33,7 +33,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.container.NoSuchElementException;
@@ -63,7 +63,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificationPathControlProcedure
+			XOX_CertificationPathProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -82,7 +82,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	private CertificateState m_aCertificateState;
     private java.security.cert.X509Certificate m_JavaCert = null;
 
-    private XOX_CertificationPathControlProcedure m_axoxChildProc;
+    private XOX_CertificationPathProcedure m_axoxChildProc;
 
 	private XFrame m_xFrame;
 
@@ -192,7 +192,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -200,7 +200,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#initializeProcedure(com.sun.star.frame.XFrame)
 	 */
 	@Override
 	public void initializeProcedure(XFrame arg0) {
@@ -208,7 +208,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAuthorityState()
 	 */
 	@Override
 	public CertificationAuthorityState getCertificationAuthorityState() {
@@ -239,9 +239,9 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
-					(XOX_CertificationPathControlProcedure)
+					(XOX_CertificationPathProcedure)
 					UnoRuntime.queryInterface(
-							XOX_CertificationPathControlProcedure.class, xComp);
+							XOX_CertificationPathProcedure.class, xComp);
 				return true;
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
@@ -253,7 +253,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
 					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
-					m_axoxChildProc = (XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, xComp);
+					m_axoxChildProc = (XOX_CertificationPathProcedure)UnoRuntime.queryInterface(XOX_CertificationPathProcedure.class, xComp);
 					return true;
 				}
 				else
@@ -275,7 +275,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
@@ -297,9 +297,9 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
-					(XOX_CertificationPathControlProcedure)
+					(XOX_CertificationPathProcedure)
 					UnoRuntime.queryInterface(
-							XOX_CertificationPathControlProcedure.class, xComp);
+							XOX_CertificationPathProcedure.class, xComp);
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
@@ -310,7 +310,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
 					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
-					m_axoxChildProc = (XOX_CertificationPathControlProcedure)UnoRuntime.queryInterface(XOX_CertificationPathControlProcedure.class, xComp);
+					m_axoxChildProc = (XOX_CertificationPathProcedure)UnoRuntime.queryInterface(XOX_CertificationPathProcedure.class, xComp);
 				}
 				else
 					throw (new IllegalArgumentException());
@@ -346,7 +346,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAutorities()
 	 */
 	@Override
 	public int getCertificationAutorities() {
@@ -366,7 +366,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAuthorities()
 	 */
 	@Override
 	public XComponent[] getCertificationAuthorities(XFrame _aFrame) {

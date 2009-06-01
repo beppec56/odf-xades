@@ -24,7 +24,7 @@ package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -60,7 +60,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 
 	private static final String DLG_CERT_TREE = "DialogCertTreeSSCDs";
 
-	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
+	protected XOX_SSCDManagement	m_axoxAvailableSSCDs;
 
 	/**
 	 * Note on the display:
@@ -199,7 +199,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		m_axoxAvailableSSCDs = null;
 		try {
 			Object aObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sAVAILABLE_SSCD_SERVICE, m_xContext);
-			m_axoxAvailableSSCDs = (XOX_AvailableSSCDs)UnoRuntime.queryInterface(XOX_AvailableSSCDs.class, aObj);
+			m_axoxAvailableSSCDs = (XOX_SSCDManagement)UnoRuntime.queryInterface(XOX_SSCDManagement.class, aObj);
 			if(m_axoxAvailableSSCDs != null) {
 				//FIXME: may be we should remove the element from the tree only when new device
 				// scan finished?

@@ -23,8 +23,8 @@
 package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
+import it.plio.ext.oxsit.security.XOX_SSCDManagement;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
@@ -59,7 +59,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 
 	private static final String DLG_CERT_TREE = "DialogCertTreeCA";
 
-	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
+	protected XOX_SSCDManagement	m_axoxAvailableSSCDs;
 	
 	protected String	m_sVerCRLBtn = "vercrlbtn";
 	
@@ -130,10 +130,10 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 			try {
 				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xContext);
 //object created, we can procced
-				XOX_CertificationPathControlProcedure aCtl =
-					(XOX_CertificationPathControlProcedure)
+				XOX_CertificationPathProcedure aCtl =
+					(XOX_CertificationPathProcedure)
 					UnoRuntime.queryInterface(
-							XOX_CertificationPathControlProcedure.class, oCertPath);
+							XOX_CertificationPathProcedure.class, oCertPath);
 				
 		        XStatusIndicator xStatusIndicator = null;
 		        if (m_xParentFrame != null) {

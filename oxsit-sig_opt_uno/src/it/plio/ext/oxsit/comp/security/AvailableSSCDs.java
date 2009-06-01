@@ -34,7 +34,7 @@ import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;
-import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 //import it.trento.comune.j4sign.pcsc.PCSCHelper;
@@ -79,7 +79,7 @@ import com.sun.star.util.XChangesNotifier;
 public class AvailableSSCDs extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
-		XOX_AvailableSSCDs {
+		XOX_SSCDManagement {
 
 	protected XComponentContext m_xCC;
 	protected XMultiComponentFactory m_xMCF;
@@ -252,7 +252,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getAvailableSSCDevices()
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDManagement#getAvailableSSCDevices()
 	 */
 	@Override
 	public XOX_SSCDevice[] getAvailableSSCDevices() {
@@ -274,7 +274,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#getHasSSCDevices()
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDManagement#getHasSSCDevices()
 	 */
 	@Override
 	public int getHasSSCDevices() {
@@ -288,7 +288,7 @@ public class AvailableSSCDs extends ComponentBase
 	 * called to initiated a scan of the devices available on system.
 	 */
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#scanDevices(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDManagement#scanDevices(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public void scanDevices(XFrame _aFrame, XComponentContext arg1) throws Exception {
@@ -439,7 +439,7 @@ public class AvailableSSCDs extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_AvailableSSCDs#addSSCDevice(it.plio.ext.oxsit.security.XOX_SSCDevice)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDManagement#addSSCDevice(it.plio.ext.oxsit.security.XOX_SSCDevice)
 	 * 
 	 * add the single parameter device
 	 */

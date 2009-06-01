@@ -25,7 +25,7 @@ package it.plio.ext.oxsit.ooo.ui;
 import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
-import it.plio.ext.oxsit.security.XOX_AvailableSSCDs;
+import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -54,7 +54,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 
 	private static final String DLG_SIGN_TREE = "DialogSignTree";
 
-	protected XOX_AvailableSSCDs	m_axoxAvailableSSCDs;
+	protected XOX_SSCDManagement	m_axoxAvailableSSCDs;
 
 	/**
 	 * 

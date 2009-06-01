@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificationPathControlProcedure_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificationPathControlProcedure_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -34,7 +34,7 @@
 
 /** Interface of checker to verify the certification path of a X509 Certificate.
  */
-	interface XOX_CertificationPathControlProcedure 
+	interface XOX_CertificationPathProcedure
 	{
 		/** the state of the CA (Certification Authority) control.
 		This in in the form of an enumeration, the one defined for Certification autority state

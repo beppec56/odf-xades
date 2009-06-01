@@ -37,9 +37,9 @@ import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
@@ -102,9 +102,9 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificateComplianceControlProcedure,
-			XOX_CertificationPathControlProcedure,
-			XOX_CertificateRevocationStateControlProcedure
+			XOX_CertificateComplianceProcedure,
+			XOX_CertificationPathProcedure,
+			XOX_CertificateRevocationStateProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -535,7 +535,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateStateConditions()
 	 */
 	@Override
 	public CertificateStateConditions getCertificateStateConditions() {
@@ -543,7 +543,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame arg0,
@@ -552,7 +552,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 		// FIXME check if revocation control is enabled or not
 		m_aLogger.log("verifyCertificateRevocationState");
 		try {
-			XOX_CertificateRevocationStateControlProcedure axoxChildProc = null;
+			XOX_CertificateRevocationStateProcedure axoxChildProc = null;
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
@@ -560,9 +560,9 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				axoxChildProc = 
-					(XOX_CertificateRevocationStateControlProcedure)
+					(XOX_CertificateRevocationStateProcedure)
 					UnoRuntime.queryInterface(
-							XOX_CertificateRevocationStateControlProcedure.class, xComp);
+							XOX_CertificateRevocationStateProcedure.class, xComp);
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
@@ -573,8 +573,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
 					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
-					axoxChildProc = (XOX_CertificateRevocationStateControlProcedure)
-								UnoRuntime.queryInterface(XOX_CertificateRevocationStateControlProcedure.class, xComp);
+					axoxChildProc = (XOX_CertificateRevocationStateProcedure)
+								UnoRuntime.queryInterface(XOX_CertificateRevocationStateProcedure.class, xComp);
 				}
 				else
 					throw (new IllegalArgumentException());

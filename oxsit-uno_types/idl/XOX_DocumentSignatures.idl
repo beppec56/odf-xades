@@ -38,7 +38,7 @@
 		*/
 		[attribute] com::sun::star::embed::XStorage DocumentStorage;
 
-		/** this document signature state
+		/** this document combined signature state
 		*/
 		[attribute] long DocumentSignatureState;
 

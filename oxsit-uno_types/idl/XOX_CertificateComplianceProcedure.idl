@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateRevocationStateControlProcedure_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificateRevocationStateControlProcedure_idl__
+#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
+#define __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -40,7 +40,7 @@ XOX_AvailableSSCDs interface or</p>
 <p>by opening an ODF document that contains one it it in its XAdES signature.</p>
 <p>See service QualifiedCertificate for details.</p>
  */
-	interface XOX_CertificateRevocationStateControlProcedure
+	interface XOX_CertificateComplianceProcedure
 	{
 		/** the state of the certificate.
 		<p>This in in the form of an enumeration, the one defined for Certification state</p>
@@ -65,18 +65,18 @@ XOX_AvailableSSCDs interface or</p>
 		*/
 		void initializeProcedure( [in] com::sun::star::frame::XFrame xFrame);
 
-		/** Control the certification revocation state, may be implemented using CRL control or using OCSP
-		(Online Certificate Status Protocol).
+		/** control the certificate compiance of the UNO component passed as a parameter.
+			the XComponent passed as a parameter must have the XOX_QualifiedInterface available
+			for executing the function. 
 		 <p>
-
-		 @param xFrame the frame used for GUI if needed in the procedures<br>
+		 @param aFrame the frame used for GUI if needed in the procedures<br>
 		 		if the parameter is null, there will be no GUI
 		@param xCertificate the certificate to be verified		 		
 		 </p>
-		*/
+		  */
 		it::plio::ext::oxsit::security::cert::CertificateState
-			verifyCertificateRevocationState( [in] com::sun::star::frame::XFrame xFrame, 
-							[in] com::sun::star::lang::XComponent xCertificate )
+			verifyCertificateCompliance([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::lang::XComponent xCertificate)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 		/**
@@ -84,10 +84,10 @@ XOX_AvailableSSCDs interface or</p>
 		<p>It's meant to perform initialization for the special service implmenting the interface,
 		since behavior can change from a checker to another.</p>
 		<p>the passed frame and context are the one of the calling object, that is the ones to
-		be used to instantiate the dialog boxes needed for parameter editing</p>
+		be used to instantiate the dialog boxes needed for parameters editing</p>
 		*/
-		void	configureOptions([in] com::sun::star::frame::XFrame xFrame, 
-							[in] com::sun::star::uno::XComponentContext xContext);
+		void	configureOptions([in] com::sun::star::frame::XFrame arg0, 
+							[in] com::sun::star::uno::XComponentContext arg1);
 	} ;
 
   }; }; }; }; };  };

@@ -36,8 +36,8 @@ import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
+import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
@@ -90,8 +90,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			implements 
 			XServiceInfo,
 			XInitialization,
-			XOX_CertificationPathControlProcedure,
-			XOX_CertificateRevocationStateControlProcedure
+			XOX_CertificationPathProcedure,
+			XOX_CertificateRevocationStateProcedure
 			 {
 
 	// the name of the class implementing this object
@@ -432,7 +432,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateState()
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificateState()
 	 */
 	@Override
@@ -441,7 +441,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#getCertificateStateConditions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateStateConditions()
 	 */
 	@Override
 	public CertificateStateConditions getCertificateStateConditions() {
@@ -450,7 +450,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 
 	////////////////////// verify revocation state functions
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#verifyCertificateRevocationState(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _aFrame,
@@ -463,7 +463,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		//check for certificate
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg1);
 		if(m_xQc == null)
-			throw (new IllegalArgumentException("XOX_CertificateRevocationStateControlProcedure#verifyCertificateRevocationState wrong argument"));
+			throw (new IllegalArgumentException("XOX_CertificateRevocationStateProcedure#verifyCertificateRevocationState wrong argument"));
 
 		initializeCADataBase(_aFrame);
 
