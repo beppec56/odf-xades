@@ -373,17 +373,17 @@ public class AvailableSSCDs extends ComponentBase
 									X509Certificate cert = (X509Certificate) certIt.next();
 									try {
 										//this try will only check for correctness, before
-										//instantiating the service
+										//instantiating the services
 										cert.getEncoded();
 		//all seems right, instantiate the certificate service
 										//now create the Certificate Control UNO objects
 										//first the certificate compliance control
 										//
-										Object oACCObj = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+										Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
 										Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 										Object oCertRev = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
 										Object oCertDisp = m_xMCF.createInstanceWithContext(GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT, m_xCC);
-		
+
 										//now the certification path control
 										
 										//prepare objects for subordinate service
@@ -392,9 +392,16 @@ public class AvailableSSCDs extends ComponentBase
 										//set the certificate raw value
 										aArguments[0] = cert.getEncoded();//aCert;
 										aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
-										aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
-										aArguments[3] = oCertPath;
-										aArguments[4] = oCertRev;
+										//the order used for the following three certificate check objects
+										//is the same that will be used for a full check of the certificate
+										//if one of your checker object implements more than one interface
+										//whev XOX_X509Certificate.verifyCertificate will be called,
+										// the checkers will be called in a fixed sequence.
+										aArguments[2] = oCertCompl; //the compliance checker object, which implements the needed interface
+										aArguments[3] = oCertPath;//the certification path checker
+										aArguments[4] = oCertRev; //the revocation state checker 
+
+										//the display formatter can be passed in any order, here it's the last one
 										aArguments[5] = oCertDisp;
 		
 										Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,

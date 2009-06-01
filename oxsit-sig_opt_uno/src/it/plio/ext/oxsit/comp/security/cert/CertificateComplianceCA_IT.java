@@ -502,7 +502,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
 	 */
 	@Override
-	public int getCertificationAutorities() {
+	public int getCertificationAuthoritiesNumber() {
 		return 0;
 	}
 	/* (non-Javadoc)

@@ -30,7 +30,9 @@ package it.plio.ext.oxsit.comp.security.cert;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -79,7 +81,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT };
 
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 
 	protected XOX_X509Certificate m_xQc;
 
@@ -98,10 +100,10 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	 * @param _ctx
 	 */
 	public CertificateRevocation_IT(XComponentContext _ctx) {
-		m_aLogger = new DynamicLogger(this, _ctx);
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
-//
+//		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLazyLogger();
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}

@@ -28,14 +28,55 @@
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
-/** This service can be used to access a X509 Certificate.
+/** This service is used to represent a X509 Certificate.
 	<p>Besides the interfaces documented here, it exports the interfaces needed to interact with OpenOffice.org API, they are not shown here.</p>
+	<p>The instantiation sequence is the following (a Java code example):<br>
+	<br>
+		<listing>
+		XMultiComponentfactory 				m_xMFC;
+		XComponentContext					m_xCC;
+		java.security.cert.X509Certificate 	aCert;
+		...
+		...
+		Object oACCObj = m_xMCF.createInstanceWithContext("your.compliance.checker.component", m_xCC);
+		Object oCertPath = m_xMCF.createInstanceWithContext("your.certification.path.checker.component", m_xCC);
+		Object oCertRev = m_xMCF.createInstanceWithContext("your.certificate.revocation.checker.component", m_xCC);
+		Object oCertDisp = m_xMCF.createInstanceWithContext("your.certificate.display.formatter.component", m_xCC);										
+		//prepare objects for subordinate service
+		Object[] aArguments = new Object[6];
+		byte[] aCert = cert.getEncoded();
+		//set the certificate raw value
+		aArguments[0] = aCert.getEncoded();//DER encoded certificate
+		aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
+
+		//the order used for the following three certificate check objects
+		//is the same that will be used for a full check of the certificate
+		//if one of your checker object implements more than one interface
+		//you need to assign it to another aArguments array element, eg. two array position
+		//for the same object
+
+		aArguments[2] = oACCObj; //the compliance checker object, which implements the needed interface
+		aArguments[3] = oCertPath;//the certification path checker
+		aArguments[4] = oCertRev; //the revocation state checker
+
+		//the display formatter can be passed in any order, here it's the last one
+		aArguments[5] = oCertDisp;
+
+		Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext("it.plio.ext.oxsit.security.cert.X509Certificate",
+				aArguments, m_xCC);
+		</listing>		
+		If you have a single object implementing all three interfaces, you need to pass the object three times.<br>
+		In this case the sequence of checks obtained by calling XOX_X509Certificate.verifyCertificate() is:<br>
+		check compliance <br>
+		check certification path<br>
+		check revocation state<br>
  */
-	service X509Certificate 
+	service X509Certificate
 	{
 		/** Additional interface used to instantiate the service and connect it to the UNO components used to
 		check the X509 certificate state. <br>
-		See OpenOfficeOrg API for a description.
+		See OpenOfficeOrg API for a description of the interface.<br>
+		This interface accept an array of argument as parameter.
 		*/
 		interface com::sun::star::lang::XInitialization;
 		/** This interface gives access to the X509 qualified certificate this service represents.

@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -189,8 +190,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 * @param _ctx
 	 */
 	public X509CertDisplayBase_IT(XComponentContext _ctx) {
-		m_aLogger = new DynamicLogger(this, _ctx);
-//
+//		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLazyLogger();
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_xContext = _ctx;

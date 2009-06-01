@@ -27,7 +27,8 @@
 
 package it.plio.ext.oxsit.comp.security.cert;
 
-import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
@@ -94,7 +95,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
 
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 
 	protected XOX_X509Certificate m_xQc;
 
@@ -107,8 +108,9 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	 * @param _ctx
 	 */
 	public CertificateCompliance_IT(XComponentContext _ctx) {
-		m_aLogger = new DynamicLogger(this, _ctx);
-//		m_aLogger.enableLogging();
+//		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLazyLogger();
+		m_aLogger.enableLogging();
     	m_aLogger.ctor();    	
 	}
 
@@ -227,11 +229,13 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	@Override
 	public CertificateState verifyCertificateCompliance(XFrame _xFrame,
 			XComponent arg0) throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
+		
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
 			throw (new IllegalArgumentException("XOX_CertificateComplianceProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		m_aCertificateState = CertificateState.OK;
+		m_aLogger.log("verifyCertificateCompliance");
+
 		//convert the certificate to java internal representation
         java.security.cert.CertificateFactory cf;
 		try {

@@ -28,6 +28,7 @@
 package it.plio.ext.oxsit.comp.security.ca;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -129,7 +130,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	public CertificationPathCache_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
-		m_aLogger = new DynamicLogger(this, _ctx);
+//		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLazyLogger();
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
     	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
@@ -220,7 +222,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#configureOptions(com.sun.star.frame.XFrame, com.sun.star.uno.XComponentContext)
 	 */
 	@Override
 	public void configureOptions(XFrame arg0, XComponentContext arg1) {
@@ -229,7 +231,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorityState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAuthorityState()
 	 */
 	@Override
 	public CertificationAuthorityState getCertificationAuthorityState() {
@@ -237,7 +239,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#verifyCertificationPath(com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame _aFrame, XComponent arg0)
@@ -254,7 +256,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initializeProcedure(com.sun.star.frame.XFrame)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#initializeProcedure(com.sun.star.frame.XFrame)
 	 */
 	@Override
 	public void initializeProcedure(XFrame arg0) {
@@ -262,7 +264,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#initialize(boolean)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#initialize(boolean)
 	 */
 	private void initializeCADataBase(XFrame _aFrame) {
         XStatusIndicator xStatusIndicator = null;
@@ -433,7 +435,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure#getCertificateState()
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificateState()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificateState()
 	 */
 	@Override
 	public CertificateState getCertificateState() {
@@ -518,17 +520,17 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAutorities()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAutorities()
 	 */
 	@Override
-	public int getCertificationAutorities() {
+	public int getCertificationAuthoritiesNumber() {
 		if(m_aCADbData != null)
 			return m_aCADbData.getCANumber();
 		return -1;
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathControlProcedure#getCertificationAuthorities()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAuthorities()
 	 */
 	@Override
 	public XComponent[] getCertificationAuthorities(XFrame _aFrame) {
@@ -562,8 +564,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 						Object oCertCompl = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT, m_xCC);
 						aArguments[0] = cert.getEncoded();
 						aArguments[1] = new Boolean(false);//FIXME change according to UI (true) or not UI (false)
-						aArguments[2] = oCertDisp; //the compliance checker object, which implements the needed interface
-						aArguments[3] = oCertCompl; //the compliance checker object, which implements the needed interface
+						aArguments[2] = oCertDisp; //the certificate display
+						aArguments[3] = oCertCompl; //the compliance
 
 						Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
 								aArguments, m_xCC);

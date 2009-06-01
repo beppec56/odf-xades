@@ -144,7 +144,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 		        		xStatusIndicator = xFact.createStatusIndicator();
 		        		if(xStatusIndicator != null)
 		        			xStatusIndicator.start(m_sDlgListCACertStatus, 
-		        					aCtl.getCertificationAutorities()); //meaning 100%
+		        					aCtl.getCertificationAuthoritiesNumber()); //meaning 100%
 		        	}
 		        }
 

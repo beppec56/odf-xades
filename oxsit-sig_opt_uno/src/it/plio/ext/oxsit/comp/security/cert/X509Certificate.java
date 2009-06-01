@@ -98,6 +98,10 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	private int m_nCertificateStateConditions;
 	
 	private int m_nCAState;
+	
+	//used internally in initialization
+	private int			m_nElementPosition;
+	private	Object[]	m_oTheProcedures = new Object[3];
 
 	//the certificate representation
 	private X509CertificateStructure m_aX509;
@@ -177,29 +181,36 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 
 	private void initializeHelper(Object _arg) throws IllegalArgumentException {
 		//check the type of elements we have, can be CRL or CP control
-		XOX_CertificationPathProcedure xCert =
-			(XOX_CertificationPathProcedure)UnoRuntime.queryInterface(
-							XOX_CertificationPathProcedure.class, _arg);
-		if(xCert != null && m_xoxCertificationPathProcedure == null) {
-			m_xoxCertificationPathProcedure = xCert;
-		}
 		XOX_CertificateComplianceProcedure xCert1 =
 			(XOX_CertificateComplianceProcedure)UnoRuntime.queryInterface(
 					XOX_CertificateComplianceProcedure.class, _arg);
-		if(xCert1 != null && m_xoxCertificateComplianceProcedure == null) {
+		if(xCert1 != null && m_xoxCertificateComplianceProcedure == null
+				&& m_nElementPosition < 3) {
 			m_xoxCertificateComplianceProcedure = xCert1;
+			m_oTheProcedures[m_nElementPosition++] = xCert1;
+		}
+		XOX_CertificationPathProcedure xCert =
+			(XOX_CertificationPathProcedure)UnoRuntime.queryInterface(
+							XOX_CertificationPathProcedure.class, _arg);
+		if(xCert != null && m_xoxCertificationPathProcedure == null
+				&& m_nElementPosition < 3) {
+			m_xoxCertificationPathProcedure = xCert;
+			m_oTheProcedures[m_nElementPosition++] = xCert;
 		}
 		XOX_CertificateRevocationStateProcedure xCert2 =
 			(XOX_CertificateRevocationStateProcedure)UnoRuntime.queryInterface(
 					XOX_CertificateRevocationStateProcedure.class, _arg);
-		if(xCert2 != null && m_xoxCertificateRevocationProcedure == null) {
+		if(xCert2 != null && m_xoxCertificateRevocationProcedure == null
+				&& m_nElementPosition < 3) {
 			m_xoxCertificateRevocationProcedure = xCert2;
+			m_oTheProcedures[m_nElementPosition++] = xCert2;
 		}
 		XOX_X509CertificateDisplay xCert3 =
 			(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(
 					XOX_X509CertificateDisplay.class, _arg);
 		if(xCert3 != null && m_xoxCertificateDisplayString == null) {
 			m_xoxCertificateDisplayString = xCert3;
+			return;
 		}
 		if(xCert == null &&
 				xCert1 == null &&
@@ -223,6 +234,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		if(argsLen < 1)
 			throw(new com.sun.star.lang.IllegalArgumentException("X509Certificate#initialize: missing arguments"));
 
+		m_nElementPosition = 0; 
 		for (int idx = 1; idx <argsLen;idx++) {
 			switch(idx) {
 			case 1:
@@ -235,7 +247,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 				initializeHelper(_arg[idx]);				
 				break;
 			default:
-				break;
+				throw(new com.sun.star.lang.IllegalArgumentException("X509Certificate#initialize: too many arguments"));
 			}
 		}
 		setDEREncoded((byte[]) _arg[0]);		
@@ -450,15 +462,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		return m_sDisplayObjectKO;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificate(com.sun.star.frame.XFrame)
-	 */
-	@Override
-	public void verifyCertificate(XFrame _aFrame) {
-		//FIXME add the reset of states: certificate, CA, and the respective  state conditions
-		m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
-		m_nCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
-
+	private void verifyCertificateHelper(XFrame _aFrame) {
+		//grab the array of checkers
 		//check the certificate for the compliance
 		try {
 			verifyCertificateCompliance(_aFrame);
@@ -472,6 +477,49 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}		
+
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#verifyCertificate(com.sun.star.frame.XFrame)
+	 */
+	@Override
+	public void verifyCertificate(XFrame _aFrame) {
+		//FIXME add the reset of states: certificate, CA, and the respective  state conditions
+		m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
+		m_nCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
+
+		for(int i = 0; i <3; i++) {
+			Object oProc = m_oTheProcedures[i];
+			
+			if(oProc instanceof XOX_CertificateComplianceProcedure) {
+				try {
+					verifyCertificateCompliance(_aFrame);
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
+			if(oProc instanceof XOX_CertificationPathProcedure) {
+				try {
+					verifyCertificationPath(_aFrame);
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
+			if(oProc instanceof XOX_CertificateRevocationStateProcedure) {
+				try {
+					verifyCertificateRevocationState(_aFrame);
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
+				} catch (Exception e) {
+					m_aLogger.severe(e);
+				}
+			}
 		}		
 	}
 

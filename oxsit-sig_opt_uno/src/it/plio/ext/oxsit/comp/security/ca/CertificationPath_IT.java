@@ -29,7 +29,9 @@ package it.plio.ext.oxsit.comp.security.ca;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
+import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -75,7 +77,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	private XComponentContext	m_xCC;
 	private XMultiComponentFactory m_xMCF;
 
-	private DynamicLogger m_aLogger;
+	private IDynamicLogger m_aLogger;
 
 	private XOX_X509Certificate m_xQc;
 	
@@ -88,8 +90,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 
 	private CertificationAuthorityState m_aLastCAState;
 	private	XComponent		m_xaCertificationAutorities;
-	
-	
+
 	//service to hold a certification path checker cache, used for Italian custom implementation 
 	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = GlobConstant.m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
 
@@ -102,8 +103,8 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	public CertificationPath_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
-		m_aLogger = new DynamicLogger(this, m_xCC);
-//
+//		m_aLogger = new DynamicLogger(this, m_xCC);
+		m_aLogger = new DynamicLazyLogger();
 		m_aLogger.enableLogging();
     	m_aLogger.ctor();
 	}
@@ -280,7 +281,6 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, XComponent arg0)
 			throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
 		m_aLogger.log("verifyCertificationPath");
 		//see if our singleton has the object
 		// grab the certificate and save it
@@ -344,16 +344,15 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 		return null;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAutorities()
 	 */
 	@Override
-	public int getCertificationAutorities() {
+	public int getCertificationAuthoritiesNumber() {
 		try {
 			if(checkSubComponent())
 				if(m_axoxChildProc != null) {
-					return m_axoxChildProc.getCertificationAutorities();
+					return m_axoxChildProc.getCertificationAuthoritiesNumber();
 				}
 				else
 					m_aLogger.info("CANNOT execute child");
