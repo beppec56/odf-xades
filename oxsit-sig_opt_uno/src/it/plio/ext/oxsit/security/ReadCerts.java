@@ -36,7 +36,8 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
-import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
+//import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
+import it.plio.ext.oxsit.pkcs11.PKCS11SignerOOo;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -58,7 +59,7 @@ public class ReadCerts {
 	private ArrayList signersList;
 	private CardInReaderInfo cIr;
 	private IDynamicLogger m_aLogger;
-	private PKCS11Signer helper;
+	private PKCS11SignerOOo helper;
     private java.lang.String cryptokiLib = null;
     private long[] certs;
     private String cardDescription;
@@ -102,7 +103,7 @@ public class ReadCerts {
         certs = null;
         helper = null;
         m_aLogger.info("Helper Class Loader: "
-                + PKCS11Signer.class.getClassLoader());
+                + PKCS11SignerOOo.class.getClassLoader());
         try {
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
@@ -113,7 +114,7 @@ public class ReadCerts {
             // setStatus(SIGN_INIT_SESSION, "Accesso alla
             // carta...\n"+SIGN_INIT_SESSION+" "+
             // differentCerts);
-            helper = new PKCS11Signer(m_aLogger, pkcs11WrapLib, cryptokiLib);
+            helper = new PKCS11SignerOOo(m_aLogger, pkcs11WrapLib, cryptokiLib);
 
             // int indexToken = 0;
             // if (tokens.length > 1) {
