@@ -360,8 +360,8 @@ public class TestOnCertificates {
 						+ ci.m_sDescription);
 				m_aLogger.log("\tManufacturer:\t"
 						+ ci.m_sManufacturer);
-				m_aLogger.log("\tATR:\t\t" + ci.m_sATRCode);
-				m_aLogger.log("\tCriptoki:\t" + ci.m_sOsLib);
+				m_aLogger.log("\tATR:\t\t" + ci.getATRCode());
+				m_aLogger.log("\tCriptoki:\t" + ci.getOsLib());
 
 				m_aLogger.log("\tLettura certificati");
 				

@@ -46,10 +46,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -58,10 +58,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>cvp11_M4.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -70,10 +70,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>cvp11_M4.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -103,10 +103,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -115,10 +115,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>SI_PKCS11.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -127,10 +127,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>SI_PKCS11.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -160,10 +160,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>libincryptoki2.so</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -172,10 +172,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>incryptoki2.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -184,10 +184,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -217,10 +217,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -229,10 +229,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>gclib.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -241,10 +241,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>gclib.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -274,10 +274,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -286,10 +286,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>SI_PKCS11.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -298,10 +298,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>SI_PKCS11.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -329,16 +329,13 @@
 					<node oor:name="OsLinux" oor:op="replace">
 						<!-- the PKCS#11 library name, the path is detected by the extension -->
 						<prop oor:name="LibName" oor:type="xs:string">
-							<!-- some test on library detection -->
-							<!-- OK value>libbit4p11.so.0</value -->
-							<!-- KO value>libbit4ihpki.so</value -->
+							<value>libincryptoki2.so</value>
+						</prop>
+						<!-- needed for new version of DiKe 4.2 on Linux -->
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value>libbit4ipki.so</value>
-							<!-- OK value>libincryptoki2.so</value -->
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
-							<value></value>
-						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -347,10 +344,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>incryptoki2.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -359,10 +356,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>incryptoki2.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -392,10 +389,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>libincryptoki2.so</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -404,10 +401,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpkilc.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -416,10 +413,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpkilc.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -449,10 +446,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -461,10 +458,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -473,10 +470,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -506,10 +503,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>libincryptoki2.so</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -518,10 +515,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>incryptoki2.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -530,10 +527,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -563,10 +560,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>libincryptoki2.so</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -575,10 +572,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -587,10 +584,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -620,10 +617,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -632,10 +629,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -644,10 +641,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>ipmpki32.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -677,10 +674,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -689,10 +686,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>gclib.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>
@@ -701,10 +698,10 @@
 						<prop oor:name="LibName" oor:type="xs:string">
 							<value>gclib.dll</value>
 						</prop>
-						<prop oor:name="res1" oor:type="xs:string">
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>
 						</prop>
-						<prop oor:name="res2" oor:type="xs:string">
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
 							<value></value>
 						</prop>
 					</node>

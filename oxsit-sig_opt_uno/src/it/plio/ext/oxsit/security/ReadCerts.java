@@ -29,15 +29,6 @@
 
 package it.plio.ext.oxsit.security;
 
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-
-import com.sun.star.task.XStatusIndicator;
-
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import it.plio.ext.oxsit.logging.DynamicLazyLogger;
@@ -46,6 +37,15 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
+
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+
+import com.sun.star.task.XStatusIndicator;
 
 /**
  * @author beppec56

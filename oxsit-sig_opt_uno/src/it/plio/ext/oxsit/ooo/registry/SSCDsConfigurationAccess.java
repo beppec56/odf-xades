@@ -22,6 +22,8 @@
 
 package it.plio.ext.oxsit.ooo.registry;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -62,7 +64,7 @@ public class SSCDsConfigurationAccess extends ConfigurationAccess {
 		// TODO Auto-generated constructor stub
 		
 		m_aLogger = new DynamicLogger(this,_xContext);
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
 		
         String osName = System.getProperty("os.name");
         if (osName.toLowerCase().indexOf("win") > -1) {
@@ -103,7 +105,7 @@ public class SSCDsConfigurationAccess extends ConfigurationAccess {
 		      for (int i=0; i< aElementNames.length; ++i) {
 		    	  m_aLogger.info(aElementNames[i]);
 		    	  CardInfoOOo aCardInfo = new CardInfoOOo();
-		    	  aCardInfo.m_sATRCode = aElementNames[i];
+		    	  aCardInfo.setATRCode(aElementNames[i]);
 		          Object aChild = xChildAccess.getByName(aElementNames[i]);
 
 		          // is it a structural element (object) ...
@@ -139,31 +141,44 @@ public class SSCDsConfigurationAccess extends ConfigurationAccess {
 										 fill.m_sCardType = value_.toString();
 									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibName") &&
 											 isLinux)
-										 fill.m_sOsLib = value_.toString();
+										 fill.setOsLib(value_.toString());
+									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibNameAlt1") &&
+											 isLinux)
+										 fill.setOsLibAlt1(value_.toString());
+									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibNameAlt2") &&
+											 isLinux)
+										 fill.setOsLibAlt2(value_.toString());
 /*									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/res1") )
 										 fill.m_sOsRes1[CardInfoOOo.m_sOS_LINUX] = value_.toString();
 									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/res2") )
 										 fill.m_sOsRes2[CardInfoOOo.m_sOS_LINUX] = value_.toString();*/
 									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibName") &&
 											 isWindows)
-										 fill.m_sOsLib = value_.toString();
-/*									 else if (path_.endsWith("]/OsData/OsType['OsWindows']/res1") )
-										 fill.m_sOsRes1[CardInfoOOo.m_sOS_WINDOWS] = value_.toString();
-									 else if (path_.endsWith("]/OsData/OsType['OsWindows']/res2") )
-										 fill.m_sOsRes2[CardInfoOOo.m_sOS_WINDOWS] = value_.toString();*/
+										 fill.setOsLib(value_.toString());
+									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibNameAlt1") &&
+											 isWindows)
+										 fill.setOsLibAlt1(value_.toString());
+									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibNameAlt2") &&
+											 isWindows)
+										 fill.setOsLibAlt2(value_.toString());
 									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibName") &&
 											 isMac)
-										 fill.m_sOsLib = value_.toString();
-/*									 else if (path_.endsWith("]/OsData/OsType['OsMac']/res1") )
-										 fill.m_sOsRes1[CardInfoOOo.m_sOS_MAC] = value_.toString();
-									 else if (path_.endsWith("]/OsData/OsType['OsMac']/res2") )
-										 fill.m_sOsRes2[CardInfoOOo.m_sOS_MAC] = value_.toString();*/
+										 fill.setOsLib(value_.toString());
+									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibNameAlt1") &&
+											 isMac)
+										 fill.setOsLibAlt1(value_.toString());
+									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibNameAlt2") &&
+											 isMac)
+										 fill.setOsLibAlt2(value_.toString());
 								}},
 								aCardInfo);
 		          }
 
-//browse recursively this element
-		          retElements[i] = aCardInfo;  
+		          //check and set the library available on system
+		          String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xContext, PKCS11Implementation.getPKCS11_WRAPPER());
+		          aCardInfo.detectDefaulttLib(Pkcs11WrapperLocal);
+		          m_aLogger.log(aCardInfo.toString());
+		          retElements[i] = aCardInfo;
 		      }
 			
 		      ((XComponent) UnoRuntime.queryInterface(XComponent.class,xViewRoot)).dispose();			

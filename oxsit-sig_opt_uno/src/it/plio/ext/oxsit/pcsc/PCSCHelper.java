@@ -29,6 +29,8 @@
 
 package it.plio.ext.oxsit.pcsc;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
@@ -156,7 +158,7 @@ public class PCSCHelper {
     	CardInfoOOo[] aCardList = aConf.readSSCDConfiguration();
     	if(aCardList != null) {            
             for(int i =0; i< aCardList.length;i++)
-            	m_CardInfosOOo.put(aCardList[i].m_sATRCode, aCardList[i]);
+            	m_CardInfosOOo.put(aCardList[i].getATRCode(), aCardList[i]);
     	}
     }
 
@@ -195,8 +197,10 @@ public class PCSCHelper {
 	                    cIr = new CardInReaderInfo(currReader, ci);
 	                    cIr.setIndexToken(indexToken);
 	                    cIr.setSlotId(indexToken);
-	                    cIr.setLib(ci.m_sOsLib);
-	                    indexToken++;                    	
+
+	                    cIr.setLib(ci.getDefaultLib());
+	                    m_aLogger.log("For: "+cIr.getCard().getATRCode()+" library: "+cIr.getLib());
+	                    indexToken++;
                     } catch (NullPointerException e) {
                     	m_aLogger.severe(e);
 	                    cIr = new CardInReaderInfo(currReader, null);

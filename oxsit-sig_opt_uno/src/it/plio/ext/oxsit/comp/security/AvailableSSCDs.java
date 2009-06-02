@@ -329,13 +329,12 @@ public class AvailableSSCDs extends ComponentBase
 				Iterator<CardInReaderInfo> it = infos.iterator();
 				int indexToken = 0;
 				int indexReader = 0;
-		
+
 				while (it.hasNext()) {
 					m_aLogger.log("Reader " + indexReader + ")");
 		
 					CardInReaderInfo cIr = it.next();
 					String currReader = cIr.getReader();
-		
 					ci = cIr.getCard();
 					
 					if (ci != null) {
@@ -350,10 +349,17 @@ public class AvailableSSCDs extends ComponentBase
 
 							xSSCDevice.setDescription(ci.m_sDescription);
 							xSSCDevice.setManufacturer(ci.m_sManufacturer);
-							xSSCDevice.setATRcode(ci.m_sATRCode);
-							m_aLogger.log("ATR code: "+ci.m_sATRCode);
-							xSSCDevice.setCryptoLibraryUsed(ci.m_sOsLib);
-		
+							xSSCDevice.setATRcode(ci.getATRCode());
+							m_aLogger.log("ATR code: "+ci.getATRCode());
+							String sLibs = ci.getDefaultLib()+
+								" ("+
+								((ci.getOsLib().length() > 0) ?  (ci.getOsLib()) : "" )+
+								((ci.getOsLibAlt1().length() > 0) ?  (", "+ci.getOsLibAlt1()) : "" )+
+								((ci.getOsLibAlt2().length() > 0) ?  (", "+ci.getOsLibAlt2()) : "" )+		
+								((ci.getOsLibAlt3().length() > 0) ?  (", "+ci.getOsLibAlt3()) : "" )+ ")";
+
+							xSSCDevice.setCryptoLibraryUsed(sLibs);
+
 							m_aLogger.log("\tLettura certificati");
 							if(xStatusIndicator != null) {
 								xStatusIndicator.setText("Lettura certificati");
@@ -364,8 +370,9 @@ public class AvailableSSCDs extends ComponentBase
 							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
 							
 							m_aLogger.info(Pkcs11WrapperLocal);
-							
+
 							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
+
 							Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
 							if (certsOnToken != null) {
 								Iterator<X509Certificate> certIt = certsOnToken.iterator();
@@ -390,9 +397,9 @@ public class AvailableSSCDs extends ComponentBase
 							addSSCDevice(xSSCDevice);
 						} catch (java.io.IOException e) {
 							//thrown when there is something wrong on the pkcs#11 library...
-							m_aLogger.severe("scanDevices: ATR code:\n"+ci.m_sATRCode+"\n", e);
+							m_aLogger.severe("scanDevices: ATR code:\n"+ci.getATRCode()+"\n", e);
 						} catch (java.lang.Exception e) {
-							m_aLogger.severe("scanDevices: ATR code: "+ci.m_sATRCode, e);
+							m_aLogger.severe("scanDevices: ATR code: "+ci.getATRCode(), e);
 						}
 					} else {
 						m_aLogger.log("No card in reader '" + currReader + "'!");

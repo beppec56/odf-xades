@@ -44,12 +44,17 @@
 					<desc></desc>
 				</info>
 			</prop>
-			<prop oor:name="res1" oor:type="xs:string" oor:localized="true">
+			<prop oor:name="LibNameAlt1" oor:type="xs:string" oor:localized="true">
 				<info>
 					<desc></desc>
 				</info>
 			</prop>
-			<prop oor:name="res2" oor:type="xs:string">
+			<prop oor:name="LibNameAlt2" oor:type="xs:string">
+				<info>
+					<desc></desc>
+				</info>
+			</prop>
+			<prop oor:name="LibNameAlt3" oor:type="xs:string">
 				<info>
 					<desc></desc>
 				</info>
