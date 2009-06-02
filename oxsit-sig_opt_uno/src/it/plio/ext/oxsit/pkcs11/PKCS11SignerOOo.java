@@ -32,11 +32,15 @@ package it.plio.ext.oxsit.pkcs11;
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_ATTRIBUTE;
 import iaik.pkcs.pkcs11.wrapper.CK_INFO;
+import iaik.pkcs.pkcs11.wrapper.CK_MECHANISM;
+import iaik.pkcs.pkcs11.wrapper.CK_MECHANISM_INFO;
 import iaik.pkcs.pkcs11.wrapper.CK_SLOT_INFO;
+import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
+import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLazyLogger;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
@@ -69,6 +73,11 @@ public class PKCS11SignerOOo {
      * The java object wrapping criptoki library functionalities.
      */
     private PKCS11 pkcs11Module = null;
+
+    /**
+     * PKCS#11 identifier for the signature algorithm.
+     */
+    private CK_MECHANISM signatureMechanism = null;
 
     /**
      * The PKCS#11 token identifier. Value is -1 if there is no current token.
@@ -257,15 +266,43 @@ public class PKCS11SignerOOo {
         }
     }
 
-    /**
-     * Gets the current token.
-     *
-     * @return Returns the token handle
-     */
-    public long getTokenHandle() {
-        return tokenHandle;
+    public CK_TOKEN_INFO getTokenInfo(long _lTheToken) throws PKCS11Exception {
+    	CK_TOKEN_INFO ret = null;
+    	ret = pkcs11Module.C_GetTokenInfo(_lTheToken);
+    	return ret;
     }
+    
+    /**
+     * Lists currently inserted tokens and relative infos.
+     *
+     * @throws PKCS11Exception
+     */
 
+    public long[] getTokenList() {
+        m_aLogger.info("\ngetting token list");
+        long[] tokenIDs = null;
+        //get only slots with a token present
+        try {
+            tokenIDs = pkcs11Module.C_GetSlotList(true);
+        } catch (PKCS11Exception ex) {
+            m_aLogger.severe(ex);
+        }
+        CK_TOKEN_INFO tokenInfo;
+        m_aLogger.info(tokenIDs.length + " tokens found.");
+        for (int i = 0; i < tokenIDs.length; i++) {
+            m_aLogger.info(i + ") Info for token with handle: " + tokenIDs[i]);
+            tokenInfo = null;
+            try {
+                tokenInfo = pkcs11Module.C_GetTokenInfo(tokenIDs[i]);
+            } catch (PKCS11Exception ex1) {
+                m_aLogger.severe(ex1);
+            }
+            m_aLogger.info(tokenInfo.toString());
+        }
+
+        return tokenIDs;
+    }
+    
     public String getSlotDescription(long slotID) {
         try {
             CK_SLOT_INFO slotInfo = pkcs11Module.C_GetSlotInfo(slotID);
@@ -274,6 +311,15 @@ public class PKCS11SignerOOo {
         } catch (PKCS11Exception ex) {
             return null;
         }
+    }
+
+    /**
+     * Gets the current token.
+     *
+     * @return Returns the token handle
+     */
+    public long getTokenHandle() {
+        return tokenHandle;
     }
 
     /**
@@ -325,6 +371,46 @@ public class PKCS11SignerOOo {
         CK_INFO moduleInfo = pkcs11Module.C_GetInfo();
         m_aLogger.info(moduleInfo.toString());
     }
+
+
+    public void setMechanism(long mechanism, Object pParameter) {
+        this.signatureMechanism = new CK_MECHANISM();
+
+        this.signatureMechanism.mechanism = mechanism;
+        this.signatureMechanism.pParameter = pParameter;
+
+    }
+
+    public void setMechanism(long mechanism) {
+        this.setMechanism(mechanism, null);
+
+    }
+
+    /**
+     * Gets informations on cryptographic operations supported by the tokens.
+     *
+     * @throws PKCS11Exception
+     */
+    public void getMechanismInfo() throws PKCS11Exception {
+        CK_MECHANISM_INFO mechanismInfo;
+
+        m_aLogger.info("\ngetting mechanism list...");
+        long[] slotIDs = getTokenList();
+        for (int i = 0; i < slotIDs.length; i++) {
+            m_aLogger.info("getting mechanism list for slot " + slotIDs[i]);
+            long[] mechanismIDs = pkcs11Module.C_GetMechanismList(slotIDs[i]);
+            for (int j = 0; j < mechanismIDs.length; j++) {
+                m_aLogger.info("mechanism info for mechanism id "
+                            + mechanismIDs[j] + "->"
+                            + Helpers.mechanismCodeToString(mechanismIDs[j])
+                            + ": ");
+                mechanismInfo = pkcs11Module.C_GetMechanismInfo(slotIDs[i],
+                        mechanismIDs[j]);
+                m_aLogger.info(mechanismInfo.toString());
+            }
+        }
+
+    }    
 
     /**
 	 * @param logger

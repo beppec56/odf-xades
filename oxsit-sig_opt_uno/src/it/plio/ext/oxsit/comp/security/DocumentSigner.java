@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.comp.security;
 
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_INFO;
+import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
@@ -222,6 +223,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 //center the dialog
 			short test = aDialog1.executeDialog();
 			String sThePin = aDialog1.getThePin();
+			char[] chPin = sThePin.toCharArray();
 			if( sThePin.length() > 0) {
 				m_aLogger.log("sign!");
 				PKCS11SignerOOo helper;
@@ -238,6 +240,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 					
 					long[] nTokens = null;
 					try {
+						nTokens = helper.getTokenList();
 						nTokens = helper.getTokens();
 					} catch (PKCS11Exception ex3) {
 						m_aLogger.severe("detectTokens, PKCS11Exception "
@@ -249,13 +252,19 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 						for(int i=0;i<nTokens.length;i++) {
 							m_aLogger.log("token: "+nTokens[i]);
 						}
+						helper.getModuleInfo();
 
+						helper.getMechanismInfo();
 						//open se
 						helper.setTokenHandle(nTokens[0]);
-						helper.openSession();
+
+				        helper.openSession();
 					//find slots in first token only
+
+						CK_TOKEN_INFO tokenInfo = helper.getTokenInfo(nTokens[0]);
+
+						m_aLogger.log(tokenInfo.toString());
 						
-						helper.getModuleInfo();
 						
 					
 					//from the certificate get the mechanism needed (the subject signature algor)

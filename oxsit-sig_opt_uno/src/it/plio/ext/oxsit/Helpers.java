@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
@@ -56,10 +57,249 @@ import java.util.*;
  * @author beppe
  */
 public class Helpers {
+	  /**
+	   * Maps mechanism codes as Long to their names as Strings.
+	   */
+	  protected static Hashtable mechansimNames_;
+
+	  /**
+	   * For converting numbers to their hex presentation.
+	   */
+	  protected static final char HEX_DIGITS[] = {
+	      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	      'A', 'B', 'C', 'D', 'E', 'F' };
+
+	  /**
+	   * Converts a long value to a hexadecimal String of length 16. Includes
+	   * leading zeros if necessary.
+	   *
+	   * @param value The long value to be converted.
+	   * @return The hexadecimal string representation of the long value.
+	   */
+	  public static String toFullHexString(long value) {
+	    long currentValue = value;
+	    StringBuffer stringBuffer = new StringBuffer(16);
+	    for(int j = 0; j < 16; j++) {
+	      int currentDigit = (int) currentValue & 0xf;
+	      stringBuffer.append(HEX_DIGITS[currentDigit]);
+	      currentValue >>>= 4;
+	    }
+
+	    return stringBuffer.reverse().toString();
+	  }
+
+
+	
 	protected Helpers() {
 	}
 
-    public static String getCRLCacheSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {
+	  /**
+	   * Converts the long value code of a mechanism to a name.
+	   *
+	   * @param mechansimCode The code of the mechanism to be converted to a string.
+	   * @return The string representation of the mechanism.
+	   */
+	  public static String mechanismCodeToString(long mechansimCode) {
+	    if (mechansimNames_ == null) {
+	      Hashtable mechansimNames = new Hashtable(160);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_RSA_PKCS_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS), PKCS11Constants.NAME_CKM_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_9796), PKCS11Constants.NAME_CKM_RSA_9796);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_X_509), PKCS11Constants.NAME_CKM_RSA_X_509);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_RSA_PKCS), PKCS11Constants.NAME_CKM_MD2_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD5_RSA_PKCS), PKCS11Constants.NAME_CKM_MD5_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA1_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA1_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD128_RSA_PKCS), PKCS11Constants.NAME_CKM_RIPEMD128_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160_RSA_PKCS), PKCS11Constants.NAME_CKM_RIPEMD160_RSA_PKCS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS_OAEP), PKCS11Constants.NAME_CKM_RSA_PKCS_OAEP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_X9_31_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_RSA_X9_31_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_X9_31), PKCS11Constants.NAME_CKM_RSA_X9_31);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA1_RSA_X9_31), PKCS11Constants.NAME_CKM_SHA1_RSA_X9_31);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_RSA_PKCS_PSS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA1_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA1_RSA_PKCS_PSS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DSA_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_DSA_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DSA), PKCS11Constants.NAME_CKM_DSA);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DSA_SHA1), PKCS11Constants.NAME_CKM_DSA_SHA1);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DH_PKCS_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_DH_PKCS_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DH_PKCS_DERIVE), PKCS11Constants.NAME_CKM_DH_PKCS_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_X9_42_DH_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_DERIVE), PKCS11Constants.NAME_CKM_X9_42_DH_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_HYBRID_DERIVE), PKCS11Constants.NAME_CKM_X9_42_DH_HYBRID_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_MQV_DERIVE), PKCS11Constants.NAME_CKM_X9_42_MQV_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_KEY_GEN), PKCS11Constants.NAME_CKM_RC2_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_ECB), PKCS11Constants.NAME_CKM_RC2_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_CBC), PKCS11Constants.NAME_CKM_RC2_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_MAC), PKCS11Constants.NAME_CKM_RC2_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_MAC_GENERAL), PKCS11Constants.NAME_CKM_RC2_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_CBC_PAD), PKCS11Constants.NAME_CKM_RC2_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC4_KEY_GEN), PKCS11Constants.NAME_CKM_RC4_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC4), PKCS11Constants.NAME_CKM_RC4);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_KEY_GEN), PKCS11Constants.NAME_CKM_DES_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_ECB), PKCS11Constants.NAME_CKM_DES_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_CBC), PKCS11Constants.NAME_CKM_DES_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_MAC), PKCS11Constants.NAME_CKM_DES_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_MAC_GENERAL), PKCS11Constants.NAME_CKM_DES_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_CBC_PAD), PKCS11Constants.NAME_CKM_DES_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES2_KEY_GEN), PKCS11Constants.NAME_CKM_DES2_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_KEY_GEN), PKCS11Constants.NAME_CKM_DES3_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_ECB), PKCS11Constants.NAME_CKM_DES3_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_CBC), PKCS11Constants.NAME_CKM_DES3_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_MAC), PKCS11Constants.NAME_CKM_DES3_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_MAC_GENERAL), PKCS11Constants.NAME_CKM_DES3_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_CBC_PAD), PKCS11Constants.NAME_CKM_DES3_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_KEY_GEN), PKCS11Constants.NAME_CKM_CDMF_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_ECB), PKCS11Constants.NAME_CKM_CDMF_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_CBC), PKCS11Constants.NAME_CKM_CDMF_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_MAC), PKCS11Constants.NAME_CKM_CDMF_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_MAC_GENERAL), PKCS11Constants.NAME_CKM_CDMF_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_CBC_PAD), PKCS11Constants.NAME_CKM_CDMF_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD2), PKCS11Constants.NAME_CKM_MD2);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_HMAC), PKCS11Constants.NAME_CKM_MD2_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_HMAC_GENERAL), PKCS11Constants.NAME_CKM_MD2_HMAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD5), PKCS11Constants.NAME_CKM_MD5);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD5_HMAC), PKCS11Constants.NAME_CKM_MD5_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD5_HMAC_GENERAL), PKCS11Constants.NAME_CKM_MD5_HMAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA_1), PKCS11Constants.NAME_CKM_SHA_1);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA_1_HMAC), PKCS11Constants.NAME_CKM_SHA_1_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA_1_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA_1_HMAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD128), PKCS11Constants.NAME_CKM_RIPEMD128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD128_HMAC), PKCS11Constants.NAME_CKM_RIPEMD128_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD128_HMAC_GENERAL), PKCS11Constants.NAME_CKM_RIPEMD128_HMAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160), PKCS11Constants.NAME_CKM_RIPEMD160);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC_GENERAL), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_KEY_GEN), PKCS11Constants.NAME_CKM_CAST_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_ECB), PKCS11Constants.NAME_CKM_CAST_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_CBC), PKCS11Constants.NAME_CKM_CAST_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_MAC), PKCS11Constants.NAME_CKM_CAST_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_MAC_GENERAL), PKCS11Constants.NAME_CKM_CAST_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_CBC_PAD), PKCS11Constants.NAME_CKM_CAST_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_KEY_GEN), PKCS11Constants.NAME_CKM_CAST3_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_ECB), PKCS11Constants.NAME_CKM_CAST3_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_CBC), PKCS11Constants.NAME_CKM_CAST3_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_MAC), PKCS11Constants.NAME_CKM_CAST3_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_MAC_GENERAL), PKCS11Constants.NAME_CKM_CAST3_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST3_CBC_PAD), PKCS11Constants.NAME_CKM_CAST3_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_KEY_GEN), PKCS11Constants.NAME_CKM_CAST5_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_KEY_GEN), PKCS11Constants.NAME_CKM_CAST128_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_ECB), PKCS11Constants.NAME_CKM_CAST5_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_ECB), PKCS11Constants.NAME_CKM_CAST128_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_CBC), PKCS11Constants.NAME_CKM_CAST5_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_CBC), PKCS11Constants.NAME_CKM_CAST128_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_MAC), PKCS11Constants.NAME_CKM_CAST5_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_MAC), PKCS11Constants.NAME_CKM_CAST128_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_MAC_GENERAL), PKCS11Constants.NAME_CKM_CAST5_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_MAC_GENERAL), PKCS11Constants.NAME_CKM_CAST128_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST5_CBC_PAD), PKCS11Constants.NAME_CKM_CAST5_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CAST128_CBC_PAD), PKCS11Constants.NAME_CKM_CAST128_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_KEY_GEN), PKCS11Constants.NAME_CKM_RC5_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_ECB), PKCS11Constants.NAME_CKM_RC5_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_CBC), PKCS11Constants.NAME_CKM_RC5_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_MAC), PKCS11Constants.NAME_CKM_RC5_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_MAC_GENERAL), PKCS11Constants.NAME_CKM_RC5_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_RC5_CBC_PAD), PKCS11Constants.NAME_CKM_RC5_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_KEY_GEN), PKCS11Constants.NAME_CKM_IDEA_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_ECB), PKCS11Constants.NAME_CKM_IDEA_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_CBC), PKCS11Constants.NAME_CKM_IDEA_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_MAC), PKCS11Constants.NAME_CKM_IDEA_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_MAC_GENERAL), PKCS11Constants.NAME_CKM_IDEA_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_IDEA_CBC_PAD), PKCS11Constants.NAME_CKM_IDEA_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_GENERIC_SECRET_KEY_GEN), PKCS11Constants.NAME_CKM_GENERIC_SECRET_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CONCATENATE_BASE_AND_KEY), PKCS11Constants.NAME_CKM_CONCATENATE_BASE_AND_KEY);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CONCATENATE_BASE_AND_DATA), PKCS11Constants.NAME_CKM_CONCATENATE_BASE_AND_DATA);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_CONCATENATE_DATA_AND_BASE), PKCS11Constants.NAME_CKM_CONCATENATE_DATA_AND_BASE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_XOR_BASE_AND_DATA), PKCS11Constants.NAME_CKM_XOR_BASE_AND_DATA);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_EXTRACT_KEY_FROM_KEY), PKCS11Constants.NAME_CKM_EXTRACT_KEY_FROM_KEY);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_PRE_MASTER_KEY_GEN), PKCS11Constants.NAME_CKM_SSL3_PRE_MASTER_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_MASTER_KEY_DERIVE), PKCS11Constants.NAME_CKM_SSL3_MASTER_KEY_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_SSL3_KEY_AND_MAC_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_MASTER_KEY_DERIVE_DH), PKCS11Constants.NAME_CKM_SSL3_MASTER_KEY_DERIVE_DH);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_TLS_PRE_MASTER_KEY_GEN), PKCS11Constants.NAME_CKM_TLS_PRE_MASTER_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_TLS_MASTER_KEY_DERIVE), PKCS11Constants.NAME_CKM_TLS_MASTER_KEY_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_TLS_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_TLS_KEY_AND_MAC_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_TLS_MASTER_KEY_DERIVE_DH), PKCS11Constants.NAME_CKM_TLS_MASTER_KEY_DERIVE_DH);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_MD5_MAC), PKCS11Constants.NAME_CKM_SSL3_MD5_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SSL3_SHA1_MAC), PKCS11Constants.NAME_CKM_SSL3_SHA1_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD5_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD5_KEY_DERIVATION);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD2_KEY_DERIVATION);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA1_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA1_KEY_DERIVATION);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD2_DES_CBC), PKCS11Constants.NAME_CKM_PBE_MD2_DES_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_DES_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_DES_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_CAST_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_CAST_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_CAST3_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_CAST3_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_CAST5_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_CAST5_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_CAST128_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_CAST128_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_CAST5_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_CAST5_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_CAST128_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_CAST128_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC4_128), PKCS11Constants.NAME_CKM_PBE_SHA1_RC4_128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC4_40), PKCS11Constants.NAME_CKM_PBE_SHA1_RC4_40);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_DES3_EDE_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_DES3_EDE_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_DES2_EDE_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_DES2_EDE_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC2_128_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_RC2_128_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC2_40_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_RC2_40_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PKCS5_PBKD2), PKCS11Constants.NAME_CKM_PKCS5_PBKD2);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_PBA_SHA1_WITH_SHA1_HMAC), PKCS11Constants.NAME_CKM_PBA_SHA1_WITH_SHA1_HMAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_KEY_WRAP_LYNKS), PKCS11Constants.NAME_CKM_KEY_WRAP_LYNKS);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_KEY_WRAP_SET_OAEP), PKCS11Constants.NAME_CKM_KEY_WRAP_SET_OAEP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_KEY_GEN), PKCS11Constants.NAME_CKM_SKIPJACK_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_ECB64), PKCS11Constants.NAME_CKM_SKIPJACK_ECB64);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CBC64), PKCS11Constants.NAME_CKM_SKIPJACK_CBC64);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_OFB64), PKCS11Constants.NAME_CKM_SKIPJACK_OFB64);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CFB64), PKCS11Constants.NAME_CKM_SKIPJACK_CFB64);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CFB32), PKCS11Constants.NAME_CKM_SKIPJACK_CFB32);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CFB16), PKCS11Constants.NAME_CKM_SKIPJACK_CFB16);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CFB8), PKCS11Constants.NAME_CKM_SKIPJACK_CFB8);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_WRAP), PKCS11Constants.NAME_CKM_SKIPJACK_WRAP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_PRIVATE_WRAP), PKCS11Constants.NAME_CKM_SKIPJACK_PRIVATE_WRAP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_RELAYX), PKCS11Constants.NAME_CKM_SKIPJACK_RELAYX);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_KEA_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_KEA_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_KEA_KEY_DERIVE), PKCS11Constants.NAME_CKM_KEA_KEY_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_FORTEZZA_TIMESTAMP), PKCS11Constants.NAME_CKM_FORTEZZA_TIMESTAMP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_KEY_GEN), PKCS11Constants.NAME_CKM_BATON_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_ECB128), PKCS11Constants.NAME_CKM_BATON_ECB128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_ECB96), PKCS11Constants.NAME_CKM_BATON_ECB96);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_CBC128), PKCS11Constants.NAME_CKM_BATON_CBC128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_COUNTER), PKCS11Constants.NAME_CKM_BATON_COUNTER);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_SHUFFLE), PKCS11Constants.NAME_CKM_BATON_SHUFFLE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_BATON_WRAP), PKCS11Constants.NAME_CKM_BATON_WRAP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECDSA_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_ECDSA_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_EC_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_EC_KEY_PAIR_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECDSA), PKCS11Constants.NAME_CKM_ECDSA);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECDSA_SHA1), PKCS11Constants.NAME_CKM_ECDSA_SHA1);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECDH1_DERIVE), PKCS11Constants.NAME_CKM_ECDH1_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECDH1_COFACTOR_DERIVE), PKCS11Constants.NAME_CKM_ECDH1_COFACTOR_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_ECMQV_DERIVE), PKCS11Constants.NAME_CKM_ECMQV_DERIVE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_KEY_GEN), PKCS11Constants.NAME_CKM_JUNIPER_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_ECB128), PKCS11Constants.NAME_CKM_JUNIPER_ECB128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_CBC128), PKCS11Constants.NAME_CKM_JUNIPER_CBC128);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_COUNTER), PKCS11Constants.NAME_CKM_JUNIPER_COUNTER);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_SHUFFLE), PKCS11Constants.NAME_CKM_JUNIPER_SHUFFLE);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_JUNIPER_WRAP), PKCS11Constants.NAME_CKM_JUNIPER_WRAP);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_FASTHASH), PKCS11Constants.NAME_CKM_FASTHASH);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_KEY_GEN), PKCS11Constants.NAME_CKM_AES_KEY_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_ECB), PKCS11Constants.NAME_CKM_AES_ECB);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_CBC), PKCS11Constants.NAME_CKM_AES_CBC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_MAC), PKCS11Constants.NAME_CKM_AES_MAC);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_MAC_GENERAL), PKCS11Constants.NAME_CKM_AES_MAC_GENERAL);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_CBC_PAD), PKCS11Constants.NAME_CKM_AES_CBC_PAD);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DSA_PARAMETER_GEN), PKCS11Constants.NAME_CKM_DSA_PARAMETER_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_DH_PKCS_PARAMETER_GEN), PKCS11Constants.NAME_CKM_DH_PKCS_PARAMETER_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_PARAMETER_GEN), PKCS11Constants.NAME_CKM_X9_42_DH_PARAMETER_GEN);
+	      mechansimNames.put(new Long(PKCS11Constants.CKM_VENDOR_DEFINED), PKCS11Constants.NAME_CKM_VENDOR_DEFINED);
+	      mechansimNames_ = mechansimNames;
+	    }
+
+	    Long mechansimCodeObject = new Long(mechansimCode);
+	    Object entry = mechansimNames_.get(mechansimCodeObject);
+
+	    String mechanismName = (entry != null)
+	                           ? entry.toString()
+	                           : "Unknwon mechanism with code: 0x" + toFullHexString(mechansimCode);
+
+	    return mechanismName ;
+	  }
+
+	public static String getCRLCacheSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {
 		String filesep = System.getProperty("file.separator");
 		return Helpers.getExtensionStorageSystemPath(_xCC)+
 								filesep+GlobConstant.m_sCRL_CACHE_PATH;
