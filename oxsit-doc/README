@@ -335,6 +335,15 @@ It may be possible that the connection can't be fetched at the first
 time because OOo starts the JVM only when it's needed. After a first
 run, the started JVM won't be stopped and the port will still be opened.
 
+Detecting the PKCS#11 library on Linux
+======================================
+Some notes, not yet cleaned up....
+
+Use:
+
+root@nbklnx:/usr/lib# nm --demangle <lib name> | grep "T C_GetTokenInfo"
+
+
 The repository
 ==============
 The repository is divided into the following sections.

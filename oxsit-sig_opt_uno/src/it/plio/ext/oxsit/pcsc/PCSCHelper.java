@@ -113,6 +113,10 @@ public class PCSCHelper {
             }
             pcsc = new OCFPCSC1();
 
+            //TODO
+            //FIXME it seems that sometimes it's returned an empty string
+            //when there is no reader, happens in Ubuntu 8.04
+            //may be the library needs checking?
             readers = pcsc.SCardListReaders(null);
 
             this.type = "PCSC10";
