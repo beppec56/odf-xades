@@ -31,6 +31,7 @@ package it.plio.ext.oxsit.pkcs11;
 
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_ATTRIBUTE;
+import iaik.pkcs.pkcs11.wrapper.CK_INFO;
 import iaik.pkcs.pkcs11.wrapper.CK_SLOT_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
@@ -192,6 +193,34 @@ public class PKCS11SignerOOo {
     }
 
     /**
+     * Logs in to the current session; login is usually necessary to see and use
+     * private key objects on the token.
+     *
+     * @param pwd
+     *            password as a char[].
+     * @throws PKCS11Exception
+     */
+    public void login(char[] pwd) throws PKCS11Exception {
+        if (getSession() < 0) {
+            return;
+        }
+        // log in as the normal user...
+
+        pkcs11Module.C_Login(getSession(), PKCS11Constants.CKU_USER, pwd);
+        m_aLogger.info("\nUser logged into session.");
+    }
+    
+    /**
+     * Opens a session on the token, logging in the user.
+     *
+     * @throws TokenException
+     */
+    public void openSession(char[] password) throws TokenException {
+        openSession();
+        login(password);
+    }
+    
+    /**
      * Gets the current session handle.
      *
      * @return the <code>long</code> identifying the current session.
@@ -286,6 +315,17 @@ public class PKCS11SignerOOo {
         m_aLogger.info("initialized.");
     }
 	
+    /**
+     * Gets currently loaded cryptoky description.
+     *
+     * @throws PKCS11Exception
+     */
+    public void getModuleInfo() throws PKCS11Exception {
+        m_aLogger.info("getting PKCS#11 module info");
+        CK_INFO moduleInfo = pkcs11Module.C_GetInfo();
+        m_aLogger.info(moduleInfo.toString());
+    }
+
     /**
 	 * @param logger
 	 */

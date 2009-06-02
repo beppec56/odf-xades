@@ -26,6 +26,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.CertificateElementState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -120,6 +121,8 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	private XOX_X509CertificateDisplay		m_xoxCertificateDisplayString;
 
 	private XOX_X509Certificate m_xoxCertificationPath;
+	
+	private XOX_SSCDevice			m_oSSCDevice;
 
 	private String m_sDisplayObjectKO = "Subordinate display UNO object missing!";
 
@@ -1045,5 +1048,21 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	@Override
 	public XOX_X509CertificateDisplay getCertificateDisplayObj() {
 		return this;//it's implemented as well
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSSCDevice()
+	 */
+	@Override
+	public Object getSSCDevice() {
+		return m_oSSCDevice;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setSSCDevice(com.sun.star.lang.XComponent)
+	 */
+	@Override
+	public void setSSCDevice(Object _SSCD) {
+		m_oSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, _SSCD);
 	}
 }

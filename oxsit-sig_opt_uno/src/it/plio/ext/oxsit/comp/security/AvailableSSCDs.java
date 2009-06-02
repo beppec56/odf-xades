@@ -358,7 +358,8 @@ public class AvailableSSCDs extends ComponentBase
 								((ci.getOsLibAlt2().length() > 0) ?  (", "+ci.getOsLibAlt2()) : "" )+		
 								((ci.getOsLibAlt3().length() > 0) ?  (", "+ci.getOsLibAlt3()) : "" )+ ")";
 
-							xSSCDevice.setCryptoLibraryUsed(sLibs);
+							xSSCDevice.setCryptoLibrariesConfigured(sLibs);
+							xSSCDevice.setCryptoLibraryUsed(ci.getDefaultLib());
 
 							m_aLogger.log("\tLettura certificati");
 							if(xStatusIndicator != null) {

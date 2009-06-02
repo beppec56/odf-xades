@@ -22,15 +22,23 @@
 
 package it.plio.ext.oxsit.comp.security;
 
+import iaik.pkcs.pkcs11.TokenException;
+import iaik.pkcs.pkcs11.wrapper.CK_INFO;
+import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
+import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
+import it.plio.ext.oxsit.pkcs11.PKCS11SignerOOo;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 import it.plio.ext.oxsit.security.XOX_DocumentSigner;
+import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +55,7 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
@@ -174,14 +183,21 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 	 */
 	@Override
 	public boolean signDocumentStandard(XFrame xFrame, XStorage xStorage,
-			XOX_X509Certificate[] arg1) throws IllegalArgumentException,
+			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
 			Exception {
 		// TODO Auto-generated method stub
+		//for the time being only the first certificate is used
+		XOX_X509Certificate aCert = _aCertArray[0];
+		//get the device this was seen on
+		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(
+				XOX_SSCDevice.class, aCert.getSSCDevice());
+
 		
-		//to see if all is all rught, examine the document structure
+		//to see if all is all right, examine the document structure
 		
+		String cryptolibrary = xSSCD.getCryptoLibraryUsed();
 		
-		m_aLogger.log("signDocument");
+		m_aLogger.log("signDocument with: " +xSSCD.getDescription()+ " cryptolib: "+cryptolibrary);
 		//just for test, analyze the document package structure
 		DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xMCF,m_xCC);
 		
@@ -190,6 +206,8 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 		//try to get a pin from the user
 		DialogQueryPIN aDialog1 =
 			new DialogQueryPIN( xFrame, m_xCC, m_xMCF );
+		//set the device description, can be used to display information on the device the PIN is asked for
+		
 		try {
 			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
 			//get the parente window data
@@ -203,10 +221,71 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 			aDialog1.initialize(BiasX,BiasY);
 //center the dialog
 			short test = aDialog1.executeDialog();
-			m_aLogger.log("return: "+test+ " "+aDialog1.getThePin());
 			String sThePin = aDialog1.getThePin();
 			if( sThePin.length() > 0) {
 				m_aLogger.log("sign!");
+				PKCS11SignerOOo helper;
+				try {
+		            SecurityManager sm = System.getSecurityManager();
+		            if (sm != null) {
+		            	m_aLogger.info("SecurityManager: " + sm);
+		            } else {
+		            	m_aLogger.info("no SecurityManager.");
+		            }
+					String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+					helper = new PKCS11SignerOOo(m_aLogger,Pkcs11WrapperLocal,cryptolibrary);
+//try to sign something simple
+					
+					long[] nTokens = null;
+					try {
+						nTokens = helper.getTokens();
+					} catch (PKCS11Exception ex3) {
+						m_aLogger.severe("detectTokens, PKCS11Exception "
+								+ cryptolibrary, ex3);
+					}
+
+					if(nTokens != null) {
+						
+						for(int i=0;i<nTokens.length;i++) {
+							m_aLogger.log("token: "+nTokens[i]);
+						}
+
+						//open se
+						helper.setTokenHandle(nTokens[0]);
+						helper.openSession();
+					//find slots in first token only
+						
+						helper.getModuleInfo();
+						
+					
+					//from the certificate get the mechanism needed (the subject signature algor)
+					//this will be the mechanism used to sign ??
+					
+					//open again the token, using the saved library
+					// search the private key of the certificate at hand
+
+
+						helper.closeSession();
+					}
+					helper.libFinalize();					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TokenException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NullPointerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 				return true;
 			}
 		}

@@ -35,6 +35,8 @@
 #include "XOX_CertificateComplianceProcedure.idl"
 #include "XOX_CertificateRevocationStateProcedure.idl"
 #include "XOX_X509CertificateDisplay.idl"
+#include <com/sun/star/lang/XComponent.idl>
+#include <com/sun/star/uno/XInterface.idl> 
 
   module it { module plio { module ext { module oxsit { module security { module cert {
 
@@ -50,6 +52,12 @@ XOX_AvailableSSCDs interface or</p>
 		/** the DER encoded form of the certificate.
 		 */
 		[attribute] sequence< byte > DEREncoded ;
+
+		/** The SSCD device where this certificate resides.
+		In the same SSCD there is a corresponding private key used to sign.
+		*/
+		[attribute]  com::sun::star::uno::XInterface SSCDevice ;
+
 		/** the state of the certificate, for general and string indications.
 		<p>It's an integer in the form of <type scope="it::plio::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
 		not the enum (e.g. CertificateState.OK_value).</p>

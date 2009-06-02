@@ -49,6 +49,10 @@
 
 		/** the low level crypto library used
 		*/
+		[attribute] string CryptoLibrariesConfigured;
+
+		/** the low level crypto library used
+		*/
 		[attribute] string CryptoLibraryUsed;
 
 		/** The number of available certificate on the token

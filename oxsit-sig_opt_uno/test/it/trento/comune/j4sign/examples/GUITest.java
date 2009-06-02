@@ -338,8 +338,8 @@ public class GUITest extends JFrame implements java.awt.event.ActionListener {
 
 		Security.insertProviderAt(new BouncyCastleProvider(), 3);
 
-		String cryptoki = (args.length == 1) ? args[0] : null;
-		
+		String cryptoki = "libbit4ipki.so";//(args.length == 1) ? args[0] : null;
+
 		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (UnsupportedLookAndFeelException ex) {

@@ -217,6 +217,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void selectButtonPressed() {
 		//select the certificate on tree for signature
+		//FIXME: need to filter out the certificates already used to sign the current document
+		
 		m_aLogger.info("Seleziona dispositivo");
 //		addOneCertificate();
 		//instantiate the SSCDs service

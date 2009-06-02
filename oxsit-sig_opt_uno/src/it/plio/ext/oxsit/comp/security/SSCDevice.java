@@ -87,6 +87,7 @@ public class SSCDevice extends ComponentBase
 	private String m_sDescription;
 
 	private String m_sManufacturer;
+	private String m_sCryptoLibrariesConfigured;
 
 	/**
 	 * This Class implements the SSCDevice service
@@ -280,6 +281,10 @@ public class SSCDevice extends ComponentBase
 			// get the main interface
 			XOX_X509Certificate xQualCert = (XOX_X509Certificate) UnoRuntime
 					.queryInterface(XOX_X509Certificate.class, oACertificate);
+			
+			//add this device as the source device for this certificate
+			//(will be handly if we sign with the corresponding private key)
+			xQualCert.setSSCDevice(this);
 
 			m_xQualCertList.add(xQualCert);
 		} catch (Exception e) {
@@ -347,6 +352,22 @@ public class SSCDevice extends ComponentBase
 	@Override
 	public void setCryptoLibraryUsed(String _sArg) {
 		m_sCryptoLibraryUsed = _sArg;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getCryptoLibrariesConfigured()
+	 */
+	@Override
+	public String getCryptoLibrariesConfigured() {
+		return m_sCryptoLibrariesConfigured;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setCryptoLibrariesConfigured(java.lang.String)
+	 */
+	@Override
+	public void setCryptoLibrariesConfigured(String arg0) {
+		m_sCryptoLibrariesConfigured = arg0;
 	}
 
 	/* (non-Javadoc)
