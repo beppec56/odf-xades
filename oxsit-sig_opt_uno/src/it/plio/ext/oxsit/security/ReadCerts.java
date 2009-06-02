@@ -131,7 +131,7 @@ public class ReadCerts {
             // log.println(PKCS11Helper.decodeError(te.getCode()));
             // setStatus(ERROR, PKCS11Helper.decodeError(-1));
             setStatus(ERROR, "Errore");
-            m_aLogger.severe(te);
+            m_aLogger.severe("TokenException",te);
 
             /*
              * catch (UnsatisfiedLinkError ule) { setStatus(ERROR, "Occorre
@@ -140,7 +140,7 @@ public class ReadCerts {
              */
         } catch (Exception e) {
             setStatus(ERROR, "Eccezione: " + e);
-            m_aLogger.severe(e);
+            m_aLogger.severe("Exception",e);
         }
     }
 
@@ -156,6 +156,7 @@ public class ReadCerts {
         try {
             tokens = helper.getTokens();
         } catch (PKCS11Exception ex3) {
+        	m_aLogger.severe("detectTokens, PKCS11Exception "+cryptokiLib,ex3);
         }
         m_aLogger.info(tokens.length + " token rilevati con la lib "
                         + cryptokiLib);

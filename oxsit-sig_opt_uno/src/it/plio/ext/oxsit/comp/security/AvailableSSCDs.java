@@ -351,6 +351,7 @@ public class AvailableSSCDs extends ComponentBase
 							xSSCDevice.setDescription(ci.m_sDescription);
 							xSSCDevice.setManufacturer(ci.m_sManufacturer);
 							xSSCDevice.setATRcode(ci.m_sATRCode);
+							m_aLogger.log("ATR code: "+ci.m_sATRCode);
 							xSSCDevice.setCryptoLibraryUsed(ci.m_sOsLib);
 		
 							m_aLogger.log("\tLettura certificati");
@@ -387,8 +388,11 @@ public class AvailableSSCDs extends ComponentBase
 							}
 							//add the token to the list
 							addSSCDevice(xSSCDevice);
-						} catch (Exception e) {
-							m_aLogger.severe("scanDevices",e);
+						} catch (java.io.IOException e) {
+							//thrown when there is something wrong on the pkcs#11 library...
+							m_aLogger.severe("scanDevices: ATR code:\n"+ci.m_sATRCode+"\n", e);
+						} catch (java.lang.Exception e) {
+							m_aLogger.severe("scanDevices: ATR code: "+ci.m_sATRCode, e);
 						}
 					} else {
 						m_aLogger.log("No card in reader '" + currReader + "'!");

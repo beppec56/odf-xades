@@ -329,7 +329,11 @@
 					<node oor:name="OsLinux" oor:op="replace">
 						<!-- the PKCS#11 library name, the path is detected by the extension -->
 						<prop oor:name="LibName" oor:type="xs:string">
-							<value>libincryptoki2.so</value>
+							<!-- some test on library detection -->
+							<!-- OK value>libbit4p11.so.0</value -->
+							<!-- KO value>libbit4ihpki.so</value -->
+							<value>libbit4ipki.so</value>
+							<!-- OK value>libincryptoki2.so</value -->
 						</prop>
 						<prop oor:name="res1" oor:type="xs:string">
 							<value></value>
