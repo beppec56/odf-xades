@@ -20,11 +20,11 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.cust_it.ooo.test;
+package it.plio.ext.oxsit.cust_it.test.ooo;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.cust_it.security.crl.CertificationAuthorities;
-import it.plio.ext.oxsit.test.ooo.OOoServerInfo;
+import it.plio.ext.oxsit.cust_it.test.ooo.OOoServerInfo;
 
 import java.net.URL;
 

@@ -20,7 +20,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.cust_it.ooo.test;
+package it.plio.ext.oxsit.cust_it.test.ooo;
 
 import com.sun.star.beans.Property;
 import com.sun.star.container.XHierarchicalNameAccess;

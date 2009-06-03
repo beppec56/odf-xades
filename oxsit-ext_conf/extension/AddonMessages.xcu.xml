@@ -612,6 +612,12 @@ Roberto Resoli, developer
 				<value xml:lang="it">eIl data base CA manca.</value>
 			</prop>
 		</node>
+		<node oor:name="err_txt_ca_sign_invalid" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">eThe CA signature of the certificate is invalid.</value>
+				<value xml:lang="it">eLa firma della CA sul certificato non è valida.</value>
+			</prop>
+		</node>
 		<!--
 		    Document signature state
 		-->

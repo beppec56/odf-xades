@@ -70,6 +70,10 @@
 		*/
 		CORE_CERTIFICATE_ELEMENT_INVALID,
 
+		/** The certificate appears wrongly signed or
+		 */
+		CA_CERTIFICATE_SIGNATURE_INVALID, 
+
 		/** The certificate cannot be verified.
 		 */
 		NOT_VERIFIABLE, 

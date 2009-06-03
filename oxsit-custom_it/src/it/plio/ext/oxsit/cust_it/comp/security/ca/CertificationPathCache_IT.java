@@ -49,6 +49,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -294,6 +298,14 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			xStatusIndicator.setValue(5);
 		}
 		//fill the list of certificate authorities available
+		//FIXME, this should be changed to a general algorithm:
+		// 1) load the first file it finds into "ca-list-signed-p7m-it" in
+		//    extension directory verify the file against the signature,
+		//    if ok get the signing date
+		// 2) check if there is a file downloaded in the "store" directory
+		// if a file exists there, then get the date when the file in "store" was
+		// signed and compare it with the
+		// 
 		if(m_aCADbData == null) {
 //prepare file path
 			URL aURL;
@@ -341,29 +353,46 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
             boolean isPathValid = false;
 			while (!certChild.getIssuerDN().equals(
                     certChild.
-                    getSubjectDN())) {
-                //until CA is self signed
-	            boolean isInCA = false;
+                    getSubjectDN())) { //until CA is self signed
 
                 try {
                     certParent = m_aCADbData.getCACertificate(certChild.getIssuerX500Principal());
-                    isInCA = true;
                 } catch (GeneralSecurityException ex) {
-                    //la CA non è presente nella root
                 	//set 'CA unknown to Italian PA'
                 	//set the current XOX_X509Certificate state as well
                 	//this can be an intermediate certificate, it's the last one that should be ok
                 	//we need to set the certificate path of the current
                 	//main XOX_X509Certificate as invalid for italian signature
-                	m_xQc.setCertificateElementErrorState(
-        					GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
-        					CertificateElementState.INVALID_value);
-                	m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(CertificateElementID.CERTIFICATION_PATH,
-                			"The Certification Authority is NOT trusted.\r\rIt does NOT exist in the data base of the trusted Entities.");
+                	setCertPathErrorStateHelper("The Certification Authority is NOT trusted.\r\r" +
+                			"It does NOT exist in the data base of the trusted Entities.");
                 	return isPathValid;
                 }
                 //set the main user certificate certification authority as trusted
                 m_aCAState = CertificationAuthorityState.TRUSTED;
+                //check the child certificate to see if it's correctly verified
+                //use the public CA key
+                String sNoCAPKey = 	"The Certification Authority Public Key cannot be used\r\r" +
+    								"to verify this certificate";
+                try {
+					certChild.verify(certParent.getPublicKey());
+				} catch (InvalidKeyException e) {
+					m_aLogger.severe(e);
+                	setCertPathErrorStateHelper(sNoCAPKey);
+                	return isPathValid;
+				} catch (NoSuchAlgorithmException e) {
+					m_aLogger.severe(e);
+                	setCertPathErrorStateHelper(sNoCAPKey);
+                	return isPathValid;
+				} catch (NoSuchProviderException e) {
+					m_aLogger.severe(e);
+					// alert the user the certificate cannot be verified against the public key of
+					// the 
+				} catch (SignatureException e) {
+					m_aLogger.severe(e);
+					//finish off, the path starts ok, but the child certificate is
+					//incorrectly signed, set it as malformed, add a note to explain the reason
+				}
+                
                 certChild = certParent;
 //instantiate a qualified certificate to represent the parent,
                 certParent.getEncoded();
@@ -424,13 +453,19 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
             ;
             return isPathValid;
 		} catch (CertificateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			m_aLogger.severe(e);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_aLogger.severe(e);
 		}
 		return false;
+	}
+
+	private void setCertPathErrorStateHelper(String string) {
+    	m_xQc.setCertificateElementErrorState(
+				GlobConstant.m_sX509_CERTIFICATE_CERTPATH,
+				CertificateElementState.INVALID_value);
+    	m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(
+    			CertificateElementID.CERTIFICATION_PATH, string);
 	}
 
 	/* (non-Javadoc)

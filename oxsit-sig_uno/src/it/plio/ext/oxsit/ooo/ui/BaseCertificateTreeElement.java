@@ -106,6 +106,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 		m_aCERTIFICATE_STATE.put(CertificateState.NOT_COMPLIANT, "err_txt_cert_noconf");
 		m_aCERTIFICATE_STATE.put(CertificateState.ERROR_IN_EXTENSION, "err_txt_cert_ko_extension");
 		m_aCERTIFICATE_STATE.put(CertificateState.MISSING_EXTENSION, "err_txt_cert_miss_ext");
+		m_aCERTIFICATE_STATE.put(CertificateState.CA_CERTIFICATE_SIGNATURE_INVALID, "err_txt_ca_sign_invalid");
 		m_aCERTIFICATE_STATE.put(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID, "err_txt_cert_ko_core");
 		m_aCERTIFICATE_STATE.put(CertificateState.MALFORMED_CERTIFICATE, "err_txt_cert_no_read");
 	};
