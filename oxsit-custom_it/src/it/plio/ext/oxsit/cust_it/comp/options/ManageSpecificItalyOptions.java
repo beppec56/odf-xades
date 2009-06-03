@@ -20,8 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.options;
+package it.plio.ext.oxsit.cust_it.comp.options;
 
+import it.plio.ext.oxsit.comp.options.ManageOptions;
 import it.plio.ext.oxsit.ooo.ui.DialogAbout;
 import it.plio.ext.oxsit.options.SingleControlDescription;
 import it.plio.ext.oxsit.options.SingleControlDescription.ControlTypeCode;
@@ -30,7 +31,6 @@ import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XControlModel;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.script.BasicErrorException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 

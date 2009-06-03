@@ -30,16 +30,7 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
  * @author beppe
  * 
  */
-public class GlobConstant {
-	/**
-	 * this boolean field indicates from where the program flow originates.
-	 * false if from inside extension (e.g. called from ProtocolHandler service
-	 * implementation) true if called from class MainStandAloneDebug the idea is
-	 * to use this flag as a kind of software multiplex to use the
-	 * implementation from net (true) or from the handler (false)
-	 */
-	public static boolean		m_bCalledOutsideExtention				= false;
-	
+public class GlobConstant {	
 	/// base of configuration item
 	public static final String m_sWEBIDENTBASE = "it.plio.ext"; // extension owner, used in building it,
 																// same name, same meaning in extension_conf_files/build.xml
@@ -144,8 +135,6 @@ public class GlobConstant {
 	// standard OOo, with functionality similar to some stock OOo interfaces declared unpublished
 	public static final String m_sDOCUMENT_SIGNATURES_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.security.DocumentSignatures";
 
-	public static final String m_sDOCUMENT_SIGNER_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.security.DocumentSigner";
-
 	//service to hold a single certificate
 	public static final String m_sX509_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.X509Certificate";
 	//names used to exchange extensions state
@@ -167,31 +156,18 @@ public class GlobConstant {
 	////////// the following UNO service names should go to the registry
 
 	// service to hold all the information available from SSCD devices (PKCS 11 tokens) available on system.
-	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.AvailableSSCDs";
-
-	// service to hold all the information available for a single SSCD device available on system.
-	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
+	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 
 	//services to display data of a certificate in a human readable way
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplaySubj_IT";
+	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplaySubj_IT";
 
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplayIssuer_IT";
-	//service to hold a certificate compliance checker, for CA certificate
-	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceCA_IT";
-	//service to hold a certification path checker, for CA certificate
-	//The italian version is the same UNO object
-	public static final String m_sCERTIFICATE_PATH_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateComplianceCA_IT";
+	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplayIssuer_IT";
 
-	//////////////// services to check Italian user certificates (ussued to 'Natural Persons').
-	//service to hold a certificate compliance checker, for user certificate
-	public static final String m_sCERTIFICATE_COMPLIANCE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateCompliance_IT";
-	//service to hold a certification path checker 
-	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPath_IT";
-	//service to hold a certification revocation state checker 
-	public static final String m_sCERTIFICATE_REVOCATION_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateRevocation_IT";
+	//service to hold a certification path checker, used by a dialog to list available CA
+	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
 
-	//service to hold a certification path checker cache moved to CertificationPath_IT class, specific of Italian implementation 
-//	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
+	public static final String m_sDOCUMENT_SIGNER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
+	
 	/////////// end of service to be moved to registryS
 
 	//service to implement a dispatch interceptor

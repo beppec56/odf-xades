@@ -25,15 +25,14 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.cert;
+package it.plio.ext.oxsit.cust_it.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
+import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
@@ -79,7 +78,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 	public static final String			m_sImplementationName	= CertificateRevocation_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT };
+	public static final String[]		m_sServiceNames			= { ConstantCustomIT.m_sCERTIFICATE_REVOCATION_SERVICE_IT };
 
 	protected IDynamicLogger m_aLogger;
 
@@ -243,7 +242,7 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -254,12 +253,12 @@ public class CertificateRevocation_IT extends ComponentBase //help class, implem
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificateRevocationStateProcedure)
 								UnoRuntime.queryInterface(XOX_CertificateRevocationStateProcedure.class, xComp);
 				}

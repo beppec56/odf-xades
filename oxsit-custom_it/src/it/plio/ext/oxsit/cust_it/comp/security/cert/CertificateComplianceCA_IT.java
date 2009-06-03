@@ -25,11 +25,12 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.cert;
+package it.plio.ext.oxsit.cust_it.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.comp.security.ca.CertificationPath_IT;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
+import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
@@ -44,13 +45,9 @@ import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.Vector;
 
@@ -64,12 +61,8 @@ import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
 import org.bouncycastle.asn1.x509.qualified.QCStatement;
-import org.bouncycastle.i18n.filter.TrustedInput;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
@@ -111,7 +104,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 	public static final String			m_sImplementationName	= CertificateComplianceCA_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT };
+	public static final String[]		m_sServiceNames			= { ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_CA_IT };
 
 	protected DynamicLogger m_aLogger;
 
@@ -556,7 +549,7 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				axoxChildProc = 
@@ -567,12 +560,12 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(CertificationPath_IT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					axoxChildProc = (XOX_CertificateRevocationStateProcedure)
 								UnoRuntime.queryInterface(XOX_CertificateRevocationStateProcedure.class, xComp);
 				}

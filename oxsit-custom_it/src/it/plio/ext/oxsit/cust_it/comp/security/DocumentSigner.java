@@ -79,7 +79,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 	// the name of the class implementing this object
 	public static final String			m_sImplementationName	= DocumentSigner.class.getName();
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNER_SERVICE };
+	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT };
 
 	protected DynamicLogger m_aLogger;
 

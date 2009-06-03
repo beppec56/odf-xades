@@ -26,7 +26,10 @@ import it.plio.ext.oxsit.cust_it.comp.security.AvailableSSCDs;
 import it.plio.ext.oxsit.cust_it.comp.security.DocumentSigner;
 import it.plio.ext.oxsit.cust_it.comp.security.SSCDevice;
 import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPathCache_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateComplianceCA_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateCompliance_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateRevocation_IT;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
@@ -54,22 +57,22 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( DocumentSigner.class, DocumentSigner.m_sServiceNames );
 	//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
-/*		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
+		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateComplianceCA_IT.class, CertificateComplianceCA_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+CertificateCompliance_IT.m_sImplementationName);
-		}*/
+		}
 		else if ( sImplementationName.equals( CertificateCompliance_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateCompliance_IT.class, CertificateCompliance_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+CertificateCompliance_IT.m_sImplementationName);
 		}
-/*		else if ( sImplementationName.equals( CertificateRevocation_IT.m_sImplementationName ) ) {
+		else if ( sImplementationName.equals( CertificateRevocation_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateRevocation_IT.class, CertificateRevocation_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+CertificateRevocation_IT.m_sImplementationName);
-	}
+		}
 		else if ( sImplementationName.equals( CertificationPath_IT.m_sImplementationName ) ) {
 				xFactory = Factory.createComponentFactory( CertificationPath_IT.class, CertificationPath_IT.m_sServiceNames );
 	//DEBUG		System.out.println("__getComponentFactory: "+CertificationPath_IT.m_sImplementationName);
-		}*/
+		}
 		else if ( sImplementationName.equals( CertificationPathCache_IT.m_sImplementationName ) ) {
 					xFactory = Factory.createComponentFactory( CertificationPathCache_IT.class, CertificationPathCache_IT.m_sServiceNames );
 		//DEBUG		System.out.println("__getComponentFactory: "+CertificationPathCache_IT.m_sImplementationName);
@@ -115,18 +118,18 @@ public class RegisterServices {
 		boolean retDocumSigner = 
 			Factory.writeRegistryServiceInfo( DocumentSigner.m_sImplementationName, DocumentSigner.m_sServiceNames, xRegistryKey );
 
-/*		boolean retCertifComplCA = 
+		boolean retCertifComplCA = 
 			Factory.writeRegistryServiceInfo( CertificateComplianceCA_IT.m_sImplementationName, CertificateComplianceCA_IT.m_sServiceNames, xRegistryKey );
-*/
+
 		boolean retCertifCompl = 
 			Factory.writeRegistryServiceInfo( CertificateCompliance_IT.m_sImplementationName, CertificateCompliance_IT.m_sServiceNames, xRegistryKey );
 
-/*		boolean retCertifRevoc = 
+		boolean retCertifRevoc = 
 			Factory.writeRegistryServiceInfo( CertificateRevocation_IT.m_sImplementationName, CertificateRevocation_IT.m_sServiceNames, xRegistryKey );
 
 		boolean retCertifPath = 
 			Factory.writeRegistryServiceInfo( CertificationPath_IT.m_sImplementationName, CertificationPath_IT.m_sServiceNames, xRegistryKey );
-*/
+
 		boolean retCertifPathCache = 
 			Factory.writeRegistryServiceInfo( CertificationPathCache_IT.m_sImplementationName, CertificationPathCache_IT.m_sServiceNames, xRegistryKey );
 
@@ -151,15 +154,15 @@ public class RegisterServices {
 */		if (!retDocumSigner)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSigner.m_sImplementationName + "failed");		
 
-/*		if (!retCertifComplCA)
+		if (!retCertifComplCA)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateComplianceCA_IT.m_sImplementationName + "failed");
-		*/
+
 		if (!retCertifCompl)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateCompliance_IT.m_sImplementationName + "failed");
-/*		if (!retCertifPath)
+		if (!retCertifPath)
 			System.out.println("__writeRegistryServiceInfo: "+CertificationPath_IT.m_sImplementationName + "failed");		
 		if (!retCertifRevoc)
-			System.out.println("__writeRegistryServiceInfo: "+CertificateRevocation_IT.m_sImplementationName + "failed");*/
+			System.out.println("__writeRegistryServiceInfo: "+CertificateRevocation_IT.m_sImplementationName + "failed");
 		if (!retCertifPathCache)
 			System.out.println("__writeRegistryServiceInfo: "+CertificationPathCache_IT.m_sImplementationName + "failed");		
 
@@ -167,7 +170,7 @@ public class RegisterServices {
 			System.out.println("__writeRegistryServiceInfo: "+CertificateExtension.m_sImplementationName + "failed");		
 
 		if (!retCertifDispIssIT)
-			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplayCA_IT.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplayCA_IT.m_sImplementationName + "failed");
 		if (!retCertifDispSubjIT)
 			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplaySubject_IT.m_sImplementationName + "failed");		
 
@@ -183,8 +186,8 @@ public class RegisterServices {
 		return (/*retGeneral && retLogging && retDigitalSignatures &&
 					retQualCertif &&*/ retSSCDevice && retAvailSSCDs &&
 					/*retSSCDOpts && retCertifExt &&*/ retCertifCompl &&
-					/*retCertifPath &&*/ retCertifPathCache /*&&
-					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
-					retCertifComplCA*/);
+					retCertifPath && retCertifPathCache &&
+					retCertifRevoc /*&& retCertifDispIssIT && retCertifDispSubjIT*/ &&
+					retCertifComplCA);
 	}
 }

@@ -25,16 +25,15 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.ca;
+package it.plio.ext.oxsit.cust_it.comp.security.ca;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.CertificateState;
+import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
@@ -72,7 +71,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	public static final String			m_sImplementationName	= CertificationPath_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT };
+	public static final String[]		m_sServiceNames			= { ConstantCustomIT.m_sCERTIFICATION_PATH_SERVICE_IT };
 	
 	private XComponentContext	m_xCC;
 	private XMultiComponentFactory m_xMCF;
@@ -90,10 +89,6 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 
 	private CertificationAuthorityState m_aLastCAState;
 	private	XComponent		m_xaCertificationAutorities;
-
-	//service to hold a certification path checker cache, used for Italian custom implementation 
-	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = GlobConstant.m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
-
 
 	/**
 	 * 
@@ -236,7 +231,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -248,12 +243,12 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificationPathProcedure)UnoRuntime.queryInterface(XOX_CertificationPathProcedure.class, xComp);
 					return true;
 				}
@@ -293,7 +288,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			XOX_SingletonDataAccess xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
 
 			try {
-				XComponent xComp = xSingletonDataAccess.getUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
+				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
 				m_aLogger.info("Cache found!");
 				m_axoxChildProc = 
@@ -304,12 +299,12 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				//no, instantiate it and add to the singleton 
 				m_aLogger.info("Cache NOT found!");
 				//create the object
-				Object oCertPath = m_xMCF.createInstanceWithContext(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
+				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
 				//now use it
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, oCertPath); 
 				if(xComp != null) {
-					xSingletonDataAccess.addUNOComponent(m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
+					xSingletonDataAccess.addUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, xComp);
 					m_axoxChildProc = (XOX_CertificationPathProcedure)UnoRuntime.queryInterface(XOX_CertificationPathProcedure.class, xComp);
 				}
 				else
