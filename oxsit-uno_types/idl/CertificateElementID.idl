@@ -26,7 +26,6 @@
   module it { module plio { module ext { module oxsit { module security { module cert {
 
 /** ID for certificate elements that don't have an OID. Used for display, value string, error string, etc...
-<p>The lower, the better, meaning that the code nearer to LAST_STATE is the worst</p>
  */
 	enum CertificateElementID
 	{

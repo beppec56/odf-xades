@@ -99,9 +99,11 @@ The build.xml properties are the following:
 4)  After that you can continue to checkout the needed subprojects in the order given below, the subprojects
 	contain the files Eclipse needs for correct project initialization, so use the default provided.
 
-	The Eclipse projects are (the order is the order you need to check them out):
+	The Eclipse projects are (the order is the order you should check them out):
 
-	oxsit-ext_conf, oxsit-uno_types, oxsit-sig_opt_uno, oxsit-sing_var_uno, oxsit-sig_uno, oxsit-sjob_uno,
+	oxsit-ext_conf, oxsit-uno_types, oxsit-sig_opt_uno, oxsit-sing_var_uno,
+	
+	oxsit-sig_uno, oxsit-sjob_uno, oxsit-custom_it
 	
 	After that, if all is ok and 'Build Automatically' is checked, Eclipse will compile the Java projects
 	as soon as they are checked-out.
@@ -145,11 +147,14 @@ The build.xml properties are the following:
 								full installed OOo SDK installed and configured in order to be built
 								from scratch. See the README file in the subproject for further details.
 
+	oxsit-custom_it				the custom part for Italy, where the specific UNO components
+								are contained.
+
 	oxsit-web					Contains the web pages for the project at forge.osor.eu
 
 	oxsit-l10n					contains the localization source data, used to generate the correct
    								xml structured file to be used in the extension.
-   								
+
 	oxsit-scratch				contains stuff used to carry on the developing job. 						   								
 
 5) To build from the operating system command line (if you checked out as explained in a
