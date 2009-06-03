@@ -20,11 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.cert;
+package it.plio.ext.oxsit.cust_it.comp.security.cert;
 
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.Utilities;
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -59,7 +58,6 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
 import com.sun.star.awt.Size;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.container.XIndexAccess;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;

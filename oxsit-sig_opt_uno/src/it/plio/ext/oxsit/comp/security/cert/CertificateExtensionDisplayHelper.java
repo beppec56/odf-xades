@@ -101,9 +101,9 @@ public class CertificateExtensionDisplayHelper {
 
 	private boolean m_bDisplayOID;
 	XComponentContext m_xCC;
-	
+
 	private Locale m_lTheLocale;
-	
+
 	private String m_sTimeLocaleString;
 
 	private String m_sLocaleDateOfBirth;
@@ -258,7 +258,6 @@ Superior references
 		return stx;
 	}
 
-	
 	/**
 	 * @param aext
 	 * @return
@@ -329,7 +328,7 @@ Superior references
 		DERGeneralizedTime from = pku.getNotBefore();
 		DERGeneralizedTime to = pku.getNotAfter();
 		String stx = "";
-		
+
 		try {
 			stx = stx+" Not Before: "+getDateStringHelper(from.getDate())+term;
 			stx = stx+" Not After: "+getDateStringHelper(to.getDate());

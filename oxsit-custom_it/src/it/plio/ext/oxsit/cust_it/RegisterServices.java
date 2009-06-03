@@ -22,14 +22,16 @@
 
 package it.plio.ext.oxsit.cust_it;
 
-import it.plio.ext.oxsit.cust_it.comp.security.AvailableSSCDs;
-import it.plio.ext.oxsit.cust_it.comp.security.DocumentSigner;
-import it.plio.ext.oxsit.cust_it.comp.security.SSCDevice;
+import it.plio.ext.oxsit.cust_it.comp.security.AvailableSSCDs_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.DocumentSigner_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.SSCDevice_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPathCache_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateComplianceCA_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateCompliance_IT;
 import it.plio.ext.oxsit.cust_it.comp.security.cert.CertificateRevocation_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.cert.X509CertDisplayCA_IT;
+import it.plio.ext.oxsit.cust_it.comp.security.cert.X509CertDisplaySubject_IT;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
@@ -53,8 +55,8 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( ManageSSCDOptions.class, ManageSSCDOptions.m_sServiceNames );
 //DEBUG			System.out.println("__getComponentFactory: "+ManageSSCDOptions.m_sImplementationName);
 		}*/
-		if ( sImplementationName.equals( DocumentSigner.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( DocumentSigner.class, DocumentSigner.m_sServiceNames );
+		if ( sImplementationName.equals( DocumentSigner_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( DocumentSigner_IT.class, DocumentSigner_IT.m_sServiceNames );
 	//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
@@ -80,7 +82,7 @@ public class RegisterServices {
 /*		else if ( sImplementationName.equals( CertificateExtension.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateExtension.class, CertificateExtension.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
-		}
+		}*/
 		else if ( sImplementationName.equals( X509CertDisplayCA_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( X509CertDisplayCA_IT.class, X509CertDisplayCA_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+X509CertDisplayCA_IT.m_sImplementationName);
@@ -88,14 +90,14 @@ public class RegisterServices {
 		else if ( sImplementationName.equals( X509CertDisplaySubject_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( X509CertDisplaySubject_IT.class, X509CertDisplaySubject_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+X509CertDisplaySubject_IT.m_sImplementationName);
-		}*/
-		else if ( sImplementationName.equals( SSCDevice.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( SSCDevice.class, SSCDevice.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+SSCDevice.m_sImplementationName);
 		}
-		else if ( sImplementationName.equals( AvailableSSCDs.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( AvailableSSCDs.class, AvailableSSCDs.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+AvailableSSCDs.m_sImplementationName);
+		else if ( sImplementationName.equals( SSCDevice_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( SSCDevice_IT.class, SSCDevice_IT.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+SSCDevice_IT.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( AvailableSSCDs_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( AvailableSSCDs_IT.class, AvailableSSCDs_IT.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+AvailableSSCDs_IT.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -116,7 +118,7 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( ManageSSCDOptions.m_sImplementationName, ManageSSCDOptions.m_sServiceNames, xRegistryKey );
 */
 		boolean retDocumSigner = 
-			Factory.writeRegistryServiceInfo( DocumentSigner.m_sImplementationName, DocumentSigner.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( DocumentSigner_IT.m_sImplementationName, DocumentSigner_IT.m_sServiceNames, xRegistryKey );
 
 		boolean retCertifComplCA = 
 			Factory.writeRegistryServiceInfo( CertificateComplianceCA_IT.m_sImplementationName, CertificateComplianceCA_IT.m_sServiceNames, xRegistryKey );
@@ -134,25 +136,24 @@ public class RegisterServices {
 			Factory.writeRegistryServiceInfo( CertificationPathCache_IT.m_sImplementationName, CertificationPathCache_IT.m_sServiceNames, xRegistryKey );
 
 /*		boolean retCertifExt = 
-			Factory.writeRegistryServiceInfo( CertificateExtension.m_sImplementationName, CertificateExtension.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( CertificateExtension.m_sImplementationName, CertificateExtension.m_sServiceNames, xRegistryKey );*/
 
 		boolean retCertifDispIssIT = 
 			Factory.writeRegistryServiceInfo( X509CertDisplayCA_IT.m_sImplementationName, X509CertDisplayCA_IT.m_sServiceNames, xRegistryKey );
 		boolean retCertifDispSubjIT = 
 			Factory.writeRegistryServiceInfo( X509CertDisplaySubject_IT.m_sImplementationName, X509CertDisplaySubject_IT.m_sServiceNames, xRegistryKey );
 
-*/
 		boolean retSSCDevice = 
-			Factory.writeRegistryServiceInfo( SSCDevice.m_sImplementationName, SSCDevice.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( SSCDevice_IT.m_sImplementationName, SSCDevice_IT.m_sServiceNames, xRegistryKey );
 
 		boolean retAvailSSCDs = 
-			Factory.writeRegistryServiceInfo( AvailableSSCDs.m_sImplementationName, AvailableSSCDs.m_sServiceNames, xRegistryKey );
+			Factory.writeRegistryServiceInfo( AvailableSSCDs_IT.m_sImplementationName, AvailableSSCDs_IT.m_sServiceNames, xRegistryKey );
 
 /*		if (!retSSCDOpts)
 			System.out.println("__writeRegistryServiceInfo: "+ManageSSCDOptions.m_sImplementationName + "failed");		
 
 */		if (!retDocumSigner)
-			System.out.println("__writeRegistryServiceInfo: "+DocumentSigner.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+DocumentSigner_IT.m_sImplementationName + "failed");		
 
 		if (!retCertifComplCA)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateComplianceCA_IT.m_sImplementationName + "failed");
@@ -167,27 +168,27 @@ public class RegisterServices {
 			System.out.println("__writeRegistryServiceInfo: "+CertificationPathCache_IT.m_sImplementationName + "failed");		
 
 /*		if (!retCertifExt)
-			System.out.println("__writeRegistryServiceInfo: "+CertificateExtension.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+CertificateExtension.m_sImplementationName + "failed");*/
 
 		if (!retCertifDispIssIT)
 			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplayCA_IT.m_sImplementationName + "failed");
 		if (!retCertifDispSubjIT)
 			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplaySubject_IT.m_sImplementationName + "failed");		
 
-		if (!retQualCertif)
+/*		if (!retQualCertif)
 			System.out.println("__writeRegistryServiceInfo: "+X509Certificate.m_sImplementationName + "failed");		
 */
 		if (!retSSCDevice)
-			System.out.println("__writeRegistryServiceInfo: "+SSCDevice.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+SSCDevice_IT.m_sImplementationName + "failed");		
 
 		if (!retAvailSSCDs)
-			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs.m_sImplementationName + "failed");		
+			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs_IT.m_sImplementationName + "failed");		
 
 		return (/*retGeneral && retLogging && retDigitalSignatures &&
 					retQualCertif &&*/ retSSCDevice && retAvailSSCDs &&
 					/*retSSCDOpts && retCertifExt &&*/ retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
-					retCertifRevoc /*&& retCertifDispIssIT && retCertifDispSubjIT*/ &&
+					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
 					retCertifComplCA);
 	}
 }

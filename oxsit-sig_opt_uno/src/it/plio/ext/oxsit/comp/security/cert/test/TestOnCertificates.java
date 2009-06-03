@@ -22,7 +22,6 @@
 
 package it.plio.ext.oxsit.comp.security.cert.test;
 
-import it.infocamere.freesigner.gui.ReadCertsTask;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;

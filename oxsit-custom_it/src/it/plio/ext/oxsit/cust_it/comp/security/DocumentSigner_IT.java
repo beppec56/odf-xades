@@ -68,7 +68,7 @@ import com.sun.star.util.XChangesListener;
  * @author beppec56
  *
  */
-public class DocumentSigner extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
+public class DocumentSigner_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
 			implements 
 			XServiceInfo,
 			XComponent,
@@ -77,7 +77,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 			 {
 
 	// the name of the class implementing this object
-	public static final String			m_sImplementationName	= DocumentSigner.class.getName();
+	public static final String			m_sImplementationName	= DocumentSigner_IT.class.getName();
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT };
 
@@ -96,7 +96,7 @@ public class DocumentSigner extends ComponentBase //help class, implements XType
 	 * 
 	 * @param _ctx the UNO context
 	 */
-	public DocumentSigner(XComponentContext _ctx) {
+	public DocumentSigner_IT(XComponentContext _ctx) {
 		m_xCC = _ctx;
 		m_xMCF = _ctx.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);

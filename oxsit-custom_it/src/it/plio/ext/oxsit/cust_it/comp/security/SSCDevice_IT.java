@@ -57,7 +57,7 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppec56
  * 
  */
-public class SSCDevice extends ComponentBase
+public class SSCDevice_IT extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
 		XOX_SSCDevice {
@@ -66,7 +66,7 @@ public class SSCDevice extends ComponentBase
 	protected XMultiComponentFactory m_xMCF;
 	
 	// the name of the class implementing this object
-	public static final String m_sImplementationName = SSCDevice.class
+	public static final String m_sImplementationName = SSCDevice_IT.class
 			.getName();
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[] m_sServiceNames = { ConstantCustomIT.m_sSSCD_SERVICE };
@@ -88,12 +88,12 @@ public class SSCDevice extends ComponentBase
 	private String m_sCryptoLibrariesConfigured;
 
 	/**
-	 * This Class implements the SSCDevice service
+	 * This Class implements the SSCDevice_IT service
 	 * 
 	 * @param _ctx
 	 *            the UNO context
 	 */
-	public SSCDevice(XComponentContext _ctx) {
+	public SSCDevice_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLogger(this, _ctx);
 		m_xCC = _ctx;
 		m_xMCF = _ctx.getServiceManager();	

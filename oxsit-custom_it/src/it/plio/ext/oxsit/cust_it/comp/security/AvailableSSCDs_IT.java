@@ -75,7 +75,7 @@ import com.sun.star.util.XChangesNotifier;
  * @author beppec56
  * 
  */
-public class AvailableSSCDs extends ComponentBase
+public class AvailableSSCDs_IT extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
 		XOX_SSCDManagement {
@@ -85,7 +85,7 @@ public class AvailableSSCDs extends ComponentBase
 	protected XFrame				m_xFrame;
 
 	// the name of the class implementing this object
-	public static final String m_sImplementationName = AvailableSSCDs.class
+	public static final String m_sImplementationName = AvailableSSCDs_IT.class
 			.getName();
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[] m_sServiceNames = { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
@@ -106,7 +106,7 @@ public class AvailableSSCDs extends ComponentBase
 	 * @param _ctx
 	 *            the UNO context
 	 */
-	public AvailableSSCDs(XComponentContext _ctx) {
+	public AvailableSSCDs_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLoggerDialog(this, _ctx);
 		m_xCC = _ctx;
 		m_xMCF = m_xCC.getServiceManager();
@@ -337,7 +337,7 @@ public class AvailableSSCDs extends ComponentBase
 					ci = cIr.getCard();
 					
 					if (ci != null) {
-		//instantiate a SSCDevice service object to hold the token device information and
+		//instantiate a SSCDevice_IT service object to hold the token device information and
 						//the detected certificates
 						
 						Object oAnSSCD = null;

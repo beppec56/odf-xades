@@ -159,9 +159,9 @@ public class GlobConstant {
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 
 	//services to display data of a certificate in a human readable way
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplaySubj_IT";
+/*	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplaySubj_IT";
 
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplayIssuer_IT";
+	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplayIssuer_IT";*/
 
 	//service to hold a certification path checker, used by a dialog to list available CA
 	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
