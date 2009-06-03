@@ -27,7 +27,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.security.crl;
+package it.plio.ext.oxsit.cust_it.security.crl;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
@@ -100,7 +100,7 @@ import com.sun.star.uno.XComponentContext;
  *
  */
 public class X509CertRL {
-	
+
 	private String CRLerror;
 	private boolean debug;
 	private CertificationAuthorities certAuths;

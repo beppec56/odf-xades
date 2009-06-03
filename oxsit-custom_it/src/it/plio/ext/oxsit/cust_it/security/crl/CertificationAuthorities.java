@@ -27,7 +27,7 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.security.crl;
+package it.plio.ext.oxsit.cust_it.security.crl;
 
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -75,14 +75,14 @@ public class CertificationAuthorities {
 
     private HashMap<X500Principal, X509Certificate> authorities;
 
-    private X509CertRL crls;
+//    private X509CertRL crls;
 
     private String message;
-    
+
     private	IDynamicLogger	m_aLogger;
 
 	private XComponentContext m_xCC;
-	
+
 	private XStatusIndicator m_xStatus;
 
     static {
