@@ -20,11 +20,12 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security;
+package it.plio.ext.oxsit.cust_it.comp.security;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -36,8 +37,6 @@ import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-//import it.trento.comune.j4sign.pcsc.PCSCHelper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -84,7 +83,7 @@ public class AvailableSSCDs extends ComponentBase
 	protected XComponentContext m_xCC;
 	protected XMultiComponentFactory m_xMCF;
 	protected XFrame				m_xFrame;
-	
+
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = AvailableSSCDs.class
 			.getName();
@@ -98,7 +97,7 @@ public class AvailableSSCDs extends ComponentBase
 
 	//the list of available devices
 	protected Vector<XOX_SSCDevice>	m_aSSCDList; 
-	
+
 	protected IDynamicLogger m_aLogger;
 
 	/**
@@ -344,7 +343,7 @@ public class AvailableSSCDs extends ComponentBase
 						Object oAnSSCD = null;
 						XOX_SSCDevice xSSCDevice = null;
 						try {
-							oAnSSCD = m_xMCF.createInstanceWithContext(GlobConstant.m_sSSCD_SERVICE, m_xCC);
+							oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
 							xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
 							xSSCDevice.setDescription(ci.m_sDescription);

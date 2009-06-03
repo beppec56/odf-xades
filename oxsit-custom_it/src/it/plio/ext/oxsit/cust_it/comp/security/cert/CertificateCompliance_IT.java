@@ -25,9 +25,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security.cert;
+package it.plio.ext.oxsit.cust_it.comp.security.cert;
 
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -37,7 +37,6 @@ import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
@@ -60,7 +59,6 @@ import org.bouncycastle.asn1.x509.qualified.QCStatement;
 
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
@@ -68,7 +66,6 @@ import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.uno.XInterface;
 
 /**
  *  This service implements the CertificationPath_IT service, used to check the
@@ -95,7 +92,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 	public static final String			m_sImplementationName	= CertificateCompliance_IT.class.getName();
 
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[]		m_sServiceNames			= { GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
+	public static final String[]		m_sServiceNames			= { ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT };
 
 	protected IDynamicLogger m_aLogger;
 

@@ -20,10 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security;
+package it.plio.ext.oxsit.cust_it.comp.security;
 
 import iaik.pkcs.pkcs11.TokenException;
-import iaik.pkcs.pkcs11.wrapper.CK_INFO;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
@@ -33,18 +32,14 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
 import it.plio.ext.oxsit.pkcs11.PKCS11SignerOOo;
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
@@ -59,7 +54,6 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
-import com.sun.star.util.XChangesNotifier;
 
 /**
  * This service implements the real document signer.

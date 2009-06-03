@@ -146,12 +146,6 @@ public class GlobConstant {
 
 	public static final String m_sDOCUMENT_SIGNER_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.security.DocumentSigner";
 
-	// service to hold all the information available from SSCD devices available on system.
-	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.AvailableSSCDs";
-
-	// service to hold all the information available for a single SSCD device available on system.
-	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
-	
 	//service to hold a single certificate
 	public static final String m_sX509_CERTIFICATE_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.X509Certificate";
 	//names used to exchange extensions state
@@ -171,6 +165,13 @@ public class GlobConstant {
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 
 	////////// the following UNO service names should go to the registry
+
+	// service to hold all the information available from SSCD devices (PKCS 11 tokens) available on system.
+	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.AvailableSSCDs";
+
+	// service to hold all the information available for a single SSCD device available on system.
+	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.SSCDevice";
+
 	//services to display data of a certificate in a human readable way
 	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.X509CertDisplaySubj_IT";
 
@@ -191,9 +192,8 @@ public class GlobConstant {
 
 	//service to hold a certification path checker cache moved to CertificationPath_IT class, specific of Italian implementation 
 //	public static final String m_sCERTIFICATION_PATH_CACHE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificationPathCache_IT";
-	/////////// end of service to be mocved to registryS
-	
-	
+	/////////// end of service to be moved to registryS
+
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
 	

@@ -22,9 +22,6 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.comp.security.AvailableSSCDs;
-import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 
 import com.sun.star.awt.PushButtonType;
@@ -38,7 +35,6 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
-import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
@@ -193,8 +189,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		
 //dirty trick, do not instantiate the UNO component this way !
 		// this is just for test !
-		AvailableSSCDs aSSCDS = new AvailableSSCDs(m_xContext);
-		aSSCDS.testCertificateDisplay();
+/*		AvailableSSCDs aSSCDS = new AvailableSSCDs(m_xContext);
+		aSSCDS.testCertificateDisplay();*/
 	}
 
 	/* (non-Javadoc)

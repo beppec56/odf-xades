@@ -20,17 +20,15 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp.security;
+package it.plio.ext.oxsit.cust_it.comp.security;
 
-import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Vector;
 
 import com.sun.star.lang.XComponent;
@@ -71,7 +69,7 @@ public class SSCDevice extends ComponentBase
 	public static final String m_sImplementationName = SSCDevice.class
 			.getName();
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[] m_sServiceNames = { GlobConstant.m_sSSCD_SERVICE };
+	public static final String[] m_sServiceNames = { ConstantCustomIT.m_sSSCD_SERVICE };
 
 	protected String m_sSSCDLibraryPath;
 	protected boolean m_bSSCDAutomaticDetection;
@@ -241,14 +239,14 @@ public class SSCDevice extends ComponentBase
 		try {
 			Object oCertCompl;
 			oCertCompl = m_xMCF.createInstanceWithContext(
-					GlobConstant.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+					ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
 			// now the certification path control
 			Object oCertPath = m_xMCF.createInstanceWithContext(
-					GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+					ConstantCustomIT.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
 			Object oCertRev = m_xMCF.createInstanceWithContext(
-					GlobConstant.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+					ConstantCustomIT.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
 			Object oCertDisp = m_xMCF.createInstanceWithContext(
-					GlobConstant.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
+					ConstantCustomIT.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
 					m_xCC);
 
 			// prepare objects for subordinate service
