@@ -27,11 +27,17 @@
 
   module it { module plio { module ext { module oxsit { module security {
 
-	/** this interface represents the main interface to hold data
+	/** This interface is the main interface to hold data
 	  of a single SSCD element on system (called token).
-	  <p>The attributes described here can be retrieved using getters, for example the QualifiedCertificates attribute can be retrieved using:</p>
-	  <p>getQualifiedCertificates(), which returns a sequence of XOX_QualifiedCertificate objects.</p>
-	  <p>It needs to be expanded</p>
+	  <p>The attributes described here can be retrieved using getters,
+	   for example the XOX_X509Certificates attribute can be retrieved using:</p>
+	  <p>getX509Certificate(), which returns a sequence of
+	  XOX_X509Certificate objects.</p>
+	  <p>Every XOX_X509Certificate that comes from a cryptographic token
+	  has a pointer to the XOX_SSCDevice that represent the token it came from.<br>
+	  It can be used in the signature process to retrieve the private key handle
+	  from the cryptographic token (see PKCS 11 specification for further details
+	  on how this is handled).</p>
 	 */
   interface XOX_SSCDevice
   {
