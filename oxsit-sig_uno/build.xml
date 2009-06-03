@@ -113,7 +113,7 @@ the default target must be removed
 	<target name="compile" depends="init" description="compile the source ">
 		<property name="my_ooo_classes_path3" value="${src}/../../${project_friendly_name}-sig_opt_uno/dist/lib" />
 		<available file="${my_ooo_classes_path3}" type="dir" property="my_ooo_classes_path3.available" value="false" />
-		<fail message="No singleton_var_comp classes available. Please edit the build file to correct it. (${my_ooo_classes_path3})">
+		<fail message="No ${project_friendly_name}-sig_opt_uno classes available. Please edit the build file to correct it. (${my_ooo_classes_path3})">
 			<condition>
 				<not>
 					<isset property="my_ooo_classes_path3.available" />
@@ -122,7 +122,7 @@ the default target must be removed
 		</fail>
 		<property name="my_ooo_classes_path" value="${src}/../../${project_friendly_name}-sing_var_uno/dist/lib" />
 		<available file="${my_ooo_classes_path}" type="dir" property="my_ooo_classes_path.available" value="false" />
-		<fail message="No signature_option_comp classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
+		<fail message="No ${project_friendly_name}-sing_var_uno classes available. Please edit the build file to correct it.(${my_ooo_classes_path})">
 			<condition>
 				<not>
 					<isset property="my_ooo_classes_path.available" />
@@ -132,7 +132,7 @@ the default target must be removed
 		<!-- new uno types -->
 		<property name="my_uno_types_path" value="${src}/../../${project_friendly_name}-uno_types/dist/lib" />
 		<available file="${my_uno_types_path}" type="dir" property="my_uno_types_path.available" value="false" />
-		<fail message="No new uno types classes available. Please edit the build file to correct it.(${my_uno_types_path})">
+		<fail message="No ${project_friendly_name}-uno_types classes available. Please edit the build file to correct it.(${my_uno_types_path})">
 			<condition>
 				<not>
 					<isset property="my_uno_types_path.available" />

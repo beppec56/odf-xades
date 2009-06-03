@@ -131,6 +131,12 @@ build-extension
 	<property name="job_comp_dir" value="${job_comp}/dist"/>
 	<property name="job_comp_jar" value="${job_comp}.uno.jar"/>	
 
+	<!-- specific custom part for Italian implementation -->
+	<property name="cust_it_uno" value="${project_friendly_name}-custom_it"/>
+	<property name="cust_it_uno_dir" value="${cust_it_uno}/dist"/>
+	<property name="cust_it_uno_jar" value="${cust_it_uno}.uno.jar"/>
+	<!-- end specifica Italian subproject definition -->
+
 	<target name="build-jar" description="generate the subproject jar">
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
@@ -168,7 +174,16 @@ build-extension
 				<file name="${job_comp}/build.xml" />
 			</filelist>
 		</subant>
-		
+
+		<!-- start the Italian specific part -->
+		<echo>======== *** =========</echo>
+		<subant target="build-jar">
+			<filelist dir="${basedir}/../">
+				<file name="${cust_it_uno}/build.xml" />
+			</filelist>
+		</subant>
+		<!-- end Italian specific part -->
+
 	</target>
 
 	<target name="prepare-extension" depends="build-jar" description="copy the jar to the extension and builds the extension package">
@@ -186,6 +201,8 @@ build-extension
 		<!-- ROB copy BC libs -->
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcmail_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcprov_jar}" todir="${extension_dest_dir}" />
+
+		
 		<!--beppec56 for pkcs#11 wrapper native libraries -->
 		<!-- GNU/Linux libraries-->
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/libOCFPCSC1.so" todir="${extension_dest_dir}" />
@@ -195,9 +212,16 @@ build-extension
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/OCFPCSC1.dll" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/pkcs11wrapper.dll" todir="${extension_dest_dir}" />
 
+		<!-- the end part of the main jar files -->
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${job_comp_dir}/lib/${job_comp_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sing_comp_dir}/lib/${sing_comp_jar}" todir="${extension_dest_dir}" />
+		
+		<!-- copy the specific Italian part-->
+		<copy file="${basedir}/../${cust_it_uno_dir}/lib/${cust_it_uno_jar}" todir="${extension_dest_dir}" />
+
+		<!-- -->
+
 		<copy todir="${extension_dest_dir}${ico}">
 			<!-- the icons files -->
 			<fileset dir="${extension_dir}${ico}">
@@ -467,6 +491,17 @@ build-extension
 
 	<!-- cleans all, reverse order wrt build -->
 	<target name="clean" description="clean up the project">
+
+		<!-- start clean Italian specific part -->
+		<echo>======== *** =========</echo>
+		<subant target="clean">
+			<filelist dir="${basedir}/../">
+				<file name="${cust_it_uno}/build.xml" />
+			</filelist>
+		</subant>
+		<!-- end of clean Italian specific part -->
+
+		<echo>======== *** =========</echo>
 		<subant target="clean">
 			<filelist dir="${basedir}/../">
 				<file name="${job_comp}/build.xml" />
@@ -478,18 +513,21 @@ build-extension
 			</filelist>
 		</subant>
 
+		<echo>======== *** =========</echo>
 		<subant target="clean">
 			<filelist dir="${basedir}/../">
 				<file name="${sig_options_comp}/build.xml" />
 			</filelist>
 		</subant>
 
+		<echo>======== *** =========</echo>
 		<subant target="clean">
 			<filelist dir="${basedir}/../">
 				<file name="${sing_comp}/build.xml" />
 			</filelist>
 		</subant>
 
+		<echo>======== *** =========</echo>
 		<subant target="clean">
 			<filelist dir="${basedir}/../">
 				<file name="${uno_types}/build.xml" />
