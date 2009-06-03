@@ -106,10 +106,13 @@ public class CertificateExtensionDisplayHelper {
 	
 	private String m_sTimeLocaleString;
 
+	private String m_sLocaleDateOfBirth;
+
 	public CertificateExtensionDisplayHelper(XComponentContext _context, Locale _aLocale, 
-						String _timeloc, boolean _bDisplayOID, IDynamicLogger _aLogger ) {
+						String _timeloc, String _date_of_birth_locale, boolean _bDisplayOID, IDynamicLogger _aLogger ) {
 		m_lTheLocale = _aLocale;
 		m_sTimeLocaleString = _timeloc;
+		m_sLocaleDateOfBirth = _date_of_birth_locale;
 		m_bDisplayOID = _bDisplayOID;
 		m_xCC = _context;
 		if(_aLogger != null)
@@ -293,9 +296,22 @@ Superior references
 			for(int y=0; y<asns.size();y++) {
 				if(atrb.getAttrType().equals(X509Name.DATE_OF_BIRTH)) {
 					DERGeneralizedTime dgt = DERGeneralizedTime.getInstance(asns.getObjectAt(y));
-					stx = stx+"DateOfBirth"+
-						((m_bDisplayOID) ? " (OID: "+atrb.getAttrType().getId()+")":"")+
-						term+" "+dgt.getTime();
+					// as per CNIPA print the date of birth in localized mode
+					TimeZone gmt = TimeZone.getTimeZone("UTC");
+					GregorianCalendar calendar = new GregorianCalendar(gmt,m_lTheLocale);
+					try {
+						calendar.setTime(dgt.getDate());
+						//string with time only
+						//the locale should be the one of the extension not the Java one.
+						String time = String.format(m_lTheLocale,m_sLocaleDateOfBirth, calendar);
+						stx = stx +time;
+/*						stx = term+stx+"Original value"+
+							((m_bDisplayOID) ? " (OID: "+atrb.getAttrType().getId()+")":"")+
+							term+" "+dgt.getTime();*/
+					} catch (ParseException e) {
+						m_aLogger.severe(e);
+						stx = stx + term +e.toString();
+					}	
 				}
 				else
 					stx= stx+(atrb.getAttrType().getId()+" "+asns.getObjectAt(y).toString());

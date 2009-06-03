@@ -737,6 +737,17 @@ Confermate Salva  con nuovo nome?
 			</prop>
 		</node>
 		<!--
+		    String for date of birth, the time is not meaningful; so not shown. Only date is shown.
+		-->
+		<node oor:name="id_date_of_birth_locale" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Date of birth:
+%1$tb, %1$td %1$tY</value>
+				<value xml:lang="it">Data di nascita:
+%1$td %1$tB %1$tY</value>
+			</prop>
+		</node>
+		<!--
 		    Labels for certificate elements
 		-->
 		<node oor:name="id_cert_version" oor:op="replace">

@@ -112,6 +112,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	protected String m_sTimeLocaleString = "id_validity_time_locale";//"%1$td %1$tB %1$tY %1$tH:%1$tM:%1$tS (%1$tZ)";
 	protected String m_sLocaleLanguage = "id_iso_lang_code"; //"it";
+	protected String m_sLocaleDateOfBirth = "id_date_of_birth_locale"; //specific locale, special for italy;
 	//Strings used for certificate elements
 
 	protected IDynamicLogger m_aLogger;
@@ -216,6 +217,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		try {
 			m_sTimeLocaleString = m_aRegAcc.getStringFromRegistry( m_sTimeLocaleString );			
 			m_sLocaleLanguage = m_aRegAcc.getStringFromRegistry( m_sLocaleLanguage );
+			m_sLocaleDateOfBirth = m_aRegAcc.getStringFromRegistry( m_sLocaleDateOfBirth );
 
 //strings for certificate tree control display
 			//directly inserted into a Hashmap
@@ -405,7 +407,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
 			IDynamicLogger aDlgH = null;
 			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_lTheLocale,
-									m_sTimeLocaleString, m_bDisplayOID, m_aLogger);
+									m_sTimeLocaleString, m_sLocaleDateOfBirth, m_bDisplayOID, m_aLogger);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();
@@ -676,7 +678,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
 			IDynamicLogger aDlgH = null;
 			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext, m_lTheLocale,
-										m_sTimeLocaleString,m_bDisplayOID, m_aLogger);
+										m_sTimeLocaleString,m_sLocaleDateOfBirth, m_bDisplayOID, m_aLogger);
 
 			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
 				DERObjectIdentifier aDERId = enume.nextElement();
