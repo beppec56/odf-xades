@@ -58,6 +58,7 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
@@ -125,6 +126,9 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	private XOX_SSCDevice			m_oSSCDevice;
 
 	private String m_sDisplayObjectKO = "Subordinate display UNO object missing!";
+	
+	private XOX_CertificateExtension[] m_xCritExt = null;
+	private XOX_CertificateExtension[] m_xExt = null;
 
 	/**
 	 * 
@@ -806,11 +810,39 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 		return null;
 	}
 
+	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCritical) {
+		XOX_CertificateExtension[] retValue = new XOX_CertificateExtension[critOIDs.length];
+//		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
+		//fill the retValue
+		for(int i=0;i< critOIDs.length;i++) {
+			Object[] aArguments = new Object[4];
+			aArguments[0] = new String(critOIDs[i]);//aExts.getExtension(new DERObjectIdentifier(critOIDs[i])).getValue().getOctets();
+			aArguments[1] = new String(getCertificateExtensionLocalizedName(critOIDs[i]));
+			aArguments[2] = new String(getCertificateExtensionValueString(critOIDs[i]));
+			aArguments[3] = new Boolean(_bIsCritical);
+
+			try {
+				Object	aExt = m_xMCF.createInstanceWithArgumentsAndContext(
+							GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE, aArguments, m_xContext);
+				retValue[i] = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, aExt);
+			} catch (Exception e) {
+				m_aLogger.severe("getExtensionsHelper", e);
+			} catch (RuntimeException e) {
+				m_aLogger.severe("getExtensionsHelper", e);
+			}
+		}
+		return retValue;		
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCriticalExtensions()
 	 */
-	@Override
+/*	@Override
 	public XOX_CertificateExtension[] getCriticalExtensions() {
+		
+		
+		
+		
 		try {
 			checkDisplayed();
 			return 	m_xoxCertificateDisplayString.getCriticalExtensions();
@@ -818,6 +850,19 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			m_aLogger.severe(e);
 		}
 		return null;
+	}*/
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCriticalExtensions()
+	 */
+	@Override
+	public XOX_CertificateExtension[] getCriticalExtensions() {
+		//build all the critical extensions, returns the array
+		if(m_xCritExt == null) {
+			String[] critOIDs = getCriticalCertificateExtensionOIDs();
+			m_xCritExt = getExtensionsHelper(critOIDs,true);
+		}
+		return m_xCritExt;
 	}
 
 	/* (non-Javadoc)
@@ -825,13 +870,12 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public XOX_CertificateExtension[] getNotCriticalExtensions() {
-		try {
-			checkDisplayed();
-			return 	m_xoxCertificateDisplayString.getNotCriticalExtensions();
-		} catch (Exception e) {
-			m_aLogger.severe(e);
+		//build all the not critical extensions, returns the array
+		if(m_xExt == null) {
+			String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
+			m_xExt = getExtensionsHelper(critOIDs,false);
 		}
-		return null;
+		return m_xExt;
 	}
 
 	/* (non-Javadoc)

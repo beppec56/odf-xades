@@ -29,6 +29,7 @@ package it.plio.ext.oxsit.cust_it.comp.security.ca;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
+import it.plio.ext.oxsit.cust_it.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
@@ -42,7 +43,6 @@ import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
-import it.plio.ext.oxsit.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.security.crl.X509CertRL;
 
 import java.io.IOException;

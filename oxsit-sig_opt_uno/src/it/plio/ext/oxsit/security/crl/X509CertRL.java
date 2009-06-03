@@ -33,7 +33,6 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.cert.CertificateState;
 import it.plio.ext.oxsit.security.cert.CertificateStateConditions;

@@ -27,26 +27,18 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.security.crl;
+package it.plio.ext.oxsit.cust_it.security.crl;
 
-import it.infocamere.freesigner.crl.CertificationAuthorities;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
-import it.plio.ext.oxsit.ooo.ui.DialogQuery;
 import it.plio.ext.oxsit.ooo.ui.DialogRootVerify;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -56,18 +48,14 @@ import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-
-import javax.swing.JOptionPane;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 
-import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;

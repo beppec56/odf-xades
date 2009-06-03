@@ -20,14 +20,13 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.test.ooo;
-
-import java.net.URL;
+package it.plio.ext.oxsit.cust_it.ooo.test;
 
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.security.crl.CertificationAuthorities;
-import it.plio.ext.oxsit.security.crl.RootsVerifier;
 import it.plio.ext.oxsit.test.ooo.OOoServerInfo;
+
+import java.net.URL;
 
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;

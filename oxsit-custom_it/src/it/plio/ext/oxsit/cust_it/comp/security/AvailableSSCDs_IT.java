@@ -24,7 +24,6 @@ package it.plio.ext.oxsit.cust_it.comp.security;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
-import it.plio.ext.oxsit.comp.security.cert.test.TestOnCertificates;
 import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
@@ -88,7 +87,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	public static final String m_sImplementationName = AvailableSSCDs_IT.class
 			.getName();
 	// the Object name, used to instantiate it inside the OOo API
-	public static final String[] m_sServiceNames = { GlobConstant.m_sAVAILABLE_SSCD_SERVICE };
+	public static final String[] m_sServiceNames = { ConstantCustomIT.m_sAVAILABLE_SSCD_SERVICE };
 
 	protected String m_sExtensionSystemPath;
 
@@ -317,7 +316,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 	        }
 	
 			PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
-	//		PCSCHelper pcsc = new PCSCHelper(true, null);
 	
 			m_aLogger.log("After 'new PCSCHelper'");
 			
@@ -412,11 +410,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 		}
 		if(xStatusIndicator != null)
 			xStatusIndicator.end();
-	}
-
-	public void testCertificateDisplay() {
-		TestOnCertificates xtest = new TestOnCertificates(m_xCC);
-		xtest.testMethod();
 	}
 
 	/* (non-Javadoc)

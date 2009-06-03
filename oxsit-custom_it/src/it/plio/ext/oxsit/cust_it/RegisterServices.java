@@ -79,10 +79,6 @@ public class RegisterServices {
 					xFactory = Factory.createComponentFactory( CertificationPathCache_IT.class, CertificationPathCache_IT.m_sServiceNames );
 		//DEBUG		System.out.println("__getComponentFactory: "+CertificationPathCache_IT.m_sImplementationName);
 		}
-/*		else if ( sImplementationName.equals( CertificateExtension.m_sImplementationName ) ) {
-			xFactory = Factory.createComponentFactory( CertificateExtension.class, CertificateExtension.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
-		}*/
 		else if ( sImplementationName.equals( X509CertDisplayCA_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( X509CertDisplayCA_IT.class, X509CertDisplayCA_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+X509CertDisplayCA_IT.m_sImplementationName);
@@ -135,9 +131,6 @@ public class RegisterServices {
 		boolean retCertifPathCache = 
 			Factory.writeRegistryServiceInfo( CertificationPathCache_IT.m_sImplementationName, CertificationPathCache_IT.m_sServiceNames, xRegistryKey );
 
-/*		boolean retCertifExt = 
-			Factory.writeRegistryServiceInfo( CertificateExtension.m_sImplementationName, CertificateExtension.m_sServiceNames, xRegistryKey );*/
-
 		boolean retCertifDispIssIT = 
 			Factory.writeRegistryServiceInfo( X509CertDisplayCA_IT.m_sImplementationName, X509CertDisplayCA_IT.m_sServiceNames, xRegistryKey );
 		boolean retCertifDispSubjIT = 
@@ -167,26 +160,19 @@ public class RegisterServices {
 		if (!retCertifPathCache)
 			System.out.println("__writeRegistryServiceInfo: "+CertificationPathCache_IT.m_sImplementationName + "failed");		
 
-/*		if (!retCertifExt)
-			System.out.println("__writeRegistryServiceInfo: "+CertificateExtension.m_sImplementationName + "failed");*/
-
 		if (!retCertifDispIssIT)
 			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplayCA_IT.m_sImplementationName + "failed");
 		if (!retCertifDispSubjIT)
 			System.out.println("__writeRegistryServiceInfo: "+X509CertDisplaySubject_IT.m_sImplementationName + "failed");		
 
-/*		if (!retQualCertif)
-			System.out.println("__writeRegistryServiceInfo: "+X509Certificate.m_sImplementationName + "failed");		
-*/
 		if (!retSSCDevice)
 			System.out.println("__writeRegistryServiceInfo: "+SSCDevice_IT.m_sImplementationName + "failed");		
 
 		if (!retAvailSSCDs)
 			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs_IT.m_sImplementationName + "failed");		
 
-		return (/*retGeneral && retLogging && retDigitalSignatures &&
-					retQualCertif &&*/ retSSCDevice && retAvailSSCDs &&
-					/*retSSCDOpts && retCertifExt &&*/ retCertifCompl &&
+		return (retDocumSigner && retSSCDevice && retAvailSSCDs &&
+					retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
 					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
 					retCertifComplCA);

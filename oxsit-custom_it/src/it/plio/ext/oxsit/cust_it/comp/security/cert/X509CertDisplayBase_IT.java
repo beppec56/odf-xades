@@ -26,7 +26,6 @@ import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.comp.security.cert.CertificateExtensionDisplayHelper;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.security.cert.CertificateElementID;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
@@ -81,7 +80,6 @@ import com.sun.star.text.XTextViewCursor;
 import com.sun.star.text.XTextViewCursorSupplier;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
-import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -162,9 +160,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	private Locale m_lTheLocale;
 
-	private XOX_CertificateExtension[] m_xCritExt = null;
 	private String 				m_sLabelCritExtension = "id_cert_crit_ext";
-	private XOX_CertificateExtension[] m_xExt = null;
 	private String 				m_sLabelNotCritExtension = "id_cert_notcrit_ext";
 	private String 				m_sLabelCertPath = "id_cert_certif_path";
 
@@ -248,7 +244,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 	
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectDisplayName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSubjectDisplayName()
 	 */
 	@Override
 	public String getSubjectDisplayName() {
@@ -256,7 +252,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getVersion()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getVersion()
 	 */
 	@Override
 	public String getVersion() {
@@ -264,7 +260,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotValidAfter()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getNotValidAfter()
 	 */
 	@Override
 	public String getNotValidAfter() {
@@ -272,7 +268,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotValidBefore()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getNotValidBefore()
 	 */
 	@Override
 	public String getNotValidBefore() {
@@ -280,7 +276,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getIssuerDisplayName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getIssuerDisplayName()
 	 */
 	@Override
 	public String getIssuerDisplayName() {
@@ -289,7 +285,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	/* (non-Javadoc)
 
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getIssuerName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getIssuerName()
 	 */
 	@Override
 	public String getIssuerName() {
@@ -305,7 +301,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getMD5Thumbprint()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getMD5Thumbprint()
 	 */
 	@Override
 	public String getMD5Thumbprint() {
@@ -313,7 +309,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSHA1Thumbprint()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSHA1Thumbprint()
 	 */
 	@Override
 	public String getSHA1Thumbprint() {
@@ -321,7 +317,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSerialNumber()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSerialNumber()
 	 */
 	@Override
 	public String getSerialNumber() {
@@ -329,7 +325,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSignatureAlgorithm()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSignatureAlgorithm()
 	 */
 	@Override
 	public String getSignatureAlgorithm() {
@@ -337,7 +333,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectName()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSubjectName()
 	 */
 	@Override
 	public String getSubjectName() {
@@ -345,7 +341,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectPublicKeyAlgorithm()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSubjectPublicKeyAlgorithm()
 	 */
 	@Override
 	public String getSubjectPublicKeyAlgorithm() {
@@ -353,85 +349,11 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getSubjectPublicKeyValue()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getSubjectPublicKeyValue()
 	 */
 	@Override
 	public String getSubjectPublicKeyValue() {
 		return m_sSubjectPublicKeyValue;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setDEREncoded(byte[])
-	 * 
-	 * When this method is called, the DER image passed will be used as the new certificate representation
-	 * and the certificate extensions will be evaluated again. 
-	 */
-//	@Override
-	private void setDEREncoded(byte[] _DEREncoded) {
-		//
-		m_aX509 = null; //remove old certificate
-						//remove old data from HashMaps
-		m_aExtensions.clear();
-		m_aExtensionLocalizedNames.clear();
-		m_aExtensionDisplayValues.clear();
-		m_aCriticalExtensions.clear();
-		m_aNotCriticalExtensions.clear();
-
-		ByteArrayInputStream as = new ByteArrayInputStream(_DEREncoded); 
-		ASN1InputStream aderin = new ASN1InputStream(as);
-		DERObject ado;
-		try {
-			ado = aderin.readObject();
-			m_aX509 = new X509CertificateStructure((ASN1Sequence) ado);
-//initializes the certificate display information
-			initSubjectName();
-			m_sVersion = String.format("V%d", m_aX509.getVersion());
-			m_sSerialNumber = new String(""+m_aX509.getSerialNumber().getValue());
-			initIssuerName();
-			m_sNotValidBefore = initCertDate(m_aX509.getStartDate().getDate());
-			m_sNotValidAfter =  initCertDate(m_aX509.getEndDate().getDate());
-			m_sSubjectPublicKeyAlgorithm = initPublicKeyAlgorithm();
-			m_sSubjectPublicKeyValue = initPublicKeyData();
-			m_sSignatureAlgorithm = initSignatureAlgorithm();
-			initThumbPrints();
-			//now initializes the Extension listing			
-			X509Extensions aX509Exts = m_aX509.getTBSCertificate().getExtensions();
-			//fill the internal extension HashMaps
-			//at the same time we'll get the extension localized name from resources and
-			//fill the display data
-			MessageConfigurationAccess m_aRegAcc = null;
-			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
-//FIXME: may be we need to adapt this to the context: the following is valid ONLY if this
-			//object is instantiated from within a dialog, is not true if instantiated from a not UI method (e.g. from basic for example).
-			IDynamicLogger aDlgH = null;
-			CertificateExtensionDisplayHelper aHelper = new CertificateExtensionDisplayHelper(m_xContext,m_lTheLocale,
-									m_sTimeLocaleString, m_sLocaleDateOfBirth, m_bDisplayOID, m_aLogger);
-
-			for(Enumeration<DERObjectIdentifier> enume = aX509Exts.oids(); enume.hasMoreElements();) {
-				DERObjectIdentifier aDERId = enume.nextElement();
-				String aTheOID = aDERId.getId();
-				X509Extension aext = aX509Exts.getExtension(aDERId);
-				m_aExtensions.put(aTheOID, aext);
-				//now grab the localized description
-				try {
-					m_aExtensionLocalizedNames.put(aTheOID, m_aRegAcc.getStringFromRegistry( aTheOID )+
-							((m_bDisplayOID) ? (" (OID: "+aTheOID.toString()+")" ): ""));
-				} catch (com.sun.star.uno.Exception e) {
-					m_aLogger.severe("setDEREncoded", e);
-					m_aExtensionLocalizedNames.put(aTheOID, aTheOID);
-				}
-				//and decode this extension
-				m_aExtensionDisplayValues.put(aTheOID, aHelper.examineExtension(aext, aDERId, null));
-
-				if(aext.isCritical())
-					m_aCriticalExtensions.put(aTheOID, aext);
-				else
-					m_aNotCriticalExtensions.put(aTheOID, aext);					
-			}
-			m_aRegAcc.dispose();
-		} catch (IOException e) {
-			m_aLogger.severe("setDEREncoded", e);
-		}
 	}
 
 	protected void initThumbPrints() {
@@ -499,7 +421,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	///////////////// area for extension display management
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionStringValue(java.lang.String)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateExtensionStringValue(java.lang.String)
 	 */
 	@Override
 	public String getCertificateExtensionValueString(String _oid) {
@@ -507,7 +429,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		return (ret == null) ? "": ret;
 	}
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getCertificateExtensionOIDs() {
@@ -519,7 +441,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCriticalCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCriticalCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getCriticalCertificateExtensionOIDs() {
@@ -531,11 +453,10 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotCriticalCertificateExtensionOIDs()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getNotCriticalCertificateExtensionOIDs()
 	 */
 	@Override
 	public String[] getNotCriticalCertificateExtensionOIDs() {
-		// TODO Auto-generated method stub
 		if(m_aNotCriticalExtensions.isEmpty())
 			return null;
 		Set<String> aTheOIDs = m_aNotCriticalExtensions.keySet();
@@ -543,54 +464,20 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		return aTheOIDs.toArray(ret);
 	}
 
-	private XOX_CertificateExtension[] getExtensionsHelper(String[] critOIDs, boolean _bIsCritical) {
-		XOX_CertificateExtension[] retValue = new XOX_CertificateExtension[critOIDs.length];
-//		X509Extensions aExts = m_aX509.getTBSCertificate().getExtensions();
-		//fill the retValue
-		for(int i=0;i< critOIDs.length;i++) {
-			Object[] aArguments = new Object[4];
-			aArguments[0] = new String(critOIDs[i]);//aExts.getExtension(new DERObjectIdentifier(critOIDs[i])).getValue().getOctets();
-			aArguments[1] = new String(getCertificateExtensionLocalizedName(critOIDs[i]));
-			aArguments[2] = new String(getCertificateExtensionValueString(critOIDs[i]));
-			aArguments[3] = new Boolean(_bIsCritical);
-
-			try {
-				Object	aExt = m_xMCF.createInstanceWithArgumentsAndContext(
-							GlobConstant.m_sCERTIFICATE_EXTENSION_SERVICE, aArguments, m_xContext);
-				retValue[i] = (XOX_CertificateExtension)UnoRuntime.queryInterface(XOX_CertificateExtension.class, aExt);
-			} catch (Exception e) {
-				m_aLogger.severe("getExtensionsHelper", e);
-			} catch (RuntimeException e) {
-				m_aLogger.severe("getExtensionsHelper", e);
-			}
-		}
-		return retValue;		
-	}
-
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCriticalExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getCriticalExtensions()
 	 */
 	@Override
 	public XOX_CertificateExtension[] getCriticalExtensions() {
-		//build all the critical extensions, returns the array
-		if(m_xCritExt == null) {
-			String[] critOIDs = getCriticalCertificateExtensionOIDs();
-			m_xCritExt = getExtensionsHelper(critOIDs,true);
-		}
-		return m_xCritExt;
+		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getNotCriticalExtensions()
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay#getNotCriticalExtensions()
 	 */
 	@Override
 	public XOX_CertificateExtension[] getNotCriticalExtensions() {
-		//build all the not critical extensions, returns the array
-		if(m_xExt == null) {
-			String[] critOIDs = getNotCriticalCertificateExtensionOIDs();
-			m_xExt = getExtensionsHelper(critOIDs,false);
-		}
-		return m_xExt;
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -771,13 +658,13 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 				XText.class, xTable.getCellByName(sCellName));
 
 		// create a text cursor from the cells XText interface
-		XTextCursor xCellCursor = xCellText.createTextCursor();
+/*		XTextCursor xCellCursor = xCellText.createTextCursor();
 
 		// Get the property set of the cell's TextCursor
 		XPropertySet xCellCursorProps = (XPropertySet)UnoRuntime.queryInterface(
 				XPropertySet.class, xCellCursor);
 
-		/*    try {
+		    try {
         // Set the color of the text to white
         xCellCursorProps.setPropertyValue("CharColor", new Integer(16777215));
     } catch (Exception e) {

@@ -130,7 +130,7 @@ public class GlobConstant {
 	public static final int	m_nLOG_LEVEL_INFO									= 1;
 	public static final int	m_nLOG_LEVEL_WARNING								= 2;
 	public static final int	m_nLOG_LEVEL_SEVERE									= 3;
-	
+
 	//service for document signatures, this service implements specific interfaces, not available in
 	// standard OOo, with functionality similar to some stock OOo interfaces declared unpublished
 	public static final String m_sDOCUMENT_SIGNATURES_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.security.DocumentSignatures";
@@ -145,34 +145,32 @@ public class GlobConstant {
 	public static final String m_sX509_CERTIFICATE_CEXT = "CritExt";	
 	public static final String m_sX509_CERTIFICATE_NCEXT = "NotCritExt";	
 	public static final String m_sX509_CERTIFICATE_CERTPATH = "CertifPath";	
-	
+
 	//this path is the path to the temporary CRL storage cache in OOo
-	//should be used together with the current user OOo temporary path 
+	//it's used with the OpenOffic.org user store area
+	//(in 3.0 in GNU/Linux it's <OOo user directory> )/3/user/store 
 	public	static	final	String		m_sCRL_CACHE_PATH		= "crlc";
 
 	//service to hold a single certificate extension
 	public static final String m_sCERTIFICATE_EXTENSION_SERVICE = m_sWEBIDENTBASE + ".oxsit.security.cert.CertificateExtension";
 
+	//service to implement a dispatch interceptor
+	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";	
+	
 	////////// the following UNO service names should go to the registry
-
+	// under a key tree specifying the current signature profile
 	// service to hold all the information available from SSCD devices (PKCS 11 tokens) available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
-
-	//services to display data of a certificate in a human readable way
-/*	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplaySubj_IT";
-
-	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_CA_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplayIssuer_IT";*/
 
 	//service to hold a certification path checker, used by a dialog to list available CA
 	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
 
 	public static final String m_sDOCUMENT_SIGNER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
-	
-	/////////// end of service to be moved to registryS
 
-	//service to implement a dispatch interceptor
-	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
-	
+	//to be implemented
+	public static final String m_sDOCUMENT_VERIFER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentVerifier_IT";
+
+	/////////// end of service to be moved to registryS
 	
 	public static final String m_sPKCS11_WRAPPER_NATIVE = PKCS11Implementation.getPKCS11_WRAPPER();
 	
