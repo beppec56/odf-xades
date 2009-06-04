@@ -123,6 +123,7 @@ public class X509CertRL {
 	private	boolean	m_bAlwaysDownloadCRL;
 
 	protected OptionsParametersAccess m_xOptionsConfigAccess;
+	private boolean m_bDisableOCSPControl;
 	
 	//FIXME some text inside the class needs localization
 	
@@ -163,10 +164,115 @@ public class X509CertRL {
 	private void getConfiguration() {
 		m_xOptionsConfigAccess = new OptionsParametersAccess(m_xCC);
 		m_bOffLineOperation = m_xOptionsConfigAccess.getBoolean("OperationOffLine");
+		m_bDisableOCSPControl = m_xOptionsConfigAccess.getBoolean("DisableOCSPControl");
 		m_bDisableCRLControl = m_xOptionsConfigAccess.getBoolean("DisableCRLControl");
 		m_bAlwaysDownloadCRL = m_xOptionsConfigAccess.getBoolean("ForceDownloadCRL");
 		m_xOptionsConfigAccess.dispose();		
 	}
+
+    public void isNotRevokedOCSP(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
+    	//first get the issuer certificate from the root CA data base
+		getConfiguration();    	
+    	Principal issuer = null;   	
+		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
+		//Check if internet is enabled
+		if(m_bOffLineOperation) {
+            setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED);
+    		setCertificateState(CertificateState.NOT_VERIFIABLE);
+			return;
+		}
+
+		if(m_bDisableOCSPControl) {
+			m_aLogger.log("OCSP control disabled, will try CRL");
+			//simply return,
+            setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED);
+    		setCertificateState(CertificateState.NOT_YET_VERIFIED);
+    		//try the CRL
+        	isNotRevokedCRL(_aStatus, userCert, date);
+			return;
+		}
+
+        try {
+        	issuer = (Principal) userCert.getIssuerX500Principal();
+		} catch (Throwable e) {
+//        	m_aLogger.severe(e);
+        	//we drop here if the CA was not found, so, set error not verifiable
+        	//and exit
+        	return;
+		}
+
+        try {
+			X509Certificate issuerCert = certAuths.getCACertificate(issuer);
+			OCSPQuery aQuery = new OCSPQuery(null, issuerCert);
+			
+			aQuery.addCertificate(userCert);
+			
+			m_aLogger.log("OCSP request sent...");
+			aQuery.execute();
+			
+			int status = aQuery.certStatus(userCert);
+			
+			m_aLogger.log("OSCP query status returned: "+status+ " "+OCSPQuery.reasonText(status));
+
+            setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROLLED_OK);
+			switch (status) {
+			case OCSPQuery.GOOD:
+                setCertificateState(CertificateState.OK);
+                break;
+			default:
+			case OCSPQuery.UNKNOWN:
+                setCertificateState(CertificateState.NOT_YET_VERIFIED);
+				break;
+			case OCSPQuery.REVOKED:
+	            setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.KEYCOMPROMISE:
+                setCertificateState(CertificateState.REVOKED);
+                break;
+			case OCSPQuery.CACOMPROMISE:
+                setCertificateState(CertificateState.REVOKED);
+                break;
+			case OCSPQuery.AFFILIATIONCHANGED:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.SUPERSEDED:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.CESSATIONOFOPERATION:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.CERTIFICATEHOLD:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.REMOVEFROMCRL:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.PRIVILEGEWITHDRAWN:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			case OCSPQuery.AACOMPROMISE:
+                setCertificateState(CertificateState.REVOKED);
+				break;
+			}
+        } catch (GeneralSecurityException e) {
+        	m_aLogger.severe(e);
+        	//got here if no OCSP or an error was found, try with CRL
+        	isNotRevokedCRL(_aStatus, userCert, date);
+        	return;
+		} catch (OCSPQueryException e) {
+        	m_aLogger.severe(e);
+        	//got here if no OCSP or an error was found, try with CRL
+        	isNotRevokedCRL(_aStatus, userCert, date);
+        	return;
+		} catch (NullPointerException e) {
+        	m_aLogger.severe(e);
+        	//got here if no OCSP or an error was found, try with CRL
+        	isNotRevokedCRL(_aStatus, userCert, date);
+        	return;
+		} catch (Throwable e) {
+        	m_aLogger.severe(e);
+		}
+    }
 
 	/**
      *  Controls if the given certificate is revoked at the current date.<br><br>
@@ -174,9 +280,9 @@ public class X509CertRL {
      * @param userCert certificate to verify
      * @return true if certificate is not revoked
      */
-	public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert) {
+	public boolean isNotRevokedCRL(XStatusIndicator _aStatus, X509Certificate userCert) {
 //reread the configuration parameters
-        return isNotRevoked(_aStatus,userCert, new Date());
+        return isNotRevokedCRL(_aStatus,userCert, new Date());
 	}
 
     /**
@@ -188,7 +294,7 @@ public class X509CertRL {
      * @param date Date
      * @return true if certificate is not revoked
      */
-    public boolean isNotRevoked(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
+    public boolean isNotRevokedCRL(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
 
 		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
     	

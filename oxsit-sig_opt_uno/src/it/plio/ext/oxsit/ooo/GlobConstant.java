@@ -162,8 +162,9 @@ public class GlobConstant {
 	// service to hold all the information available from SSCD devices (PKCS 11 tokens) available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 
-	//service to hold a certification path checker, used by a dialog to list available CA
-	public static final String m_sCERTIFICATION_PATH_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
+	//service to manage the trusted entities used to validate the user certificate and the certification chain
+	//This service implements the interface XOX_TrustedEntities
+	public static final String m_sTRUSTED_ENTITIES_MANAGEMENT_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
 
 	public static final String m_sDOCUMENT_SIGNER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
 

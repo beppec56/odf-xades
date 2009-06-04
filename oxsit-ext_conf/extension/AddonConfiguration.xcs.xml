@@ -118,10 +118,17 @@
 				</info>
 				<value>false</value>
 			</prop>
+			<prop  oor:name="DisableOCSPControl" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>True to disable OCSP check mode on certificate revocation</desc>
+				</info>
+				<value>false</value>
+			</prop>
 			<prop  oor:name="DisableCRLControl" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
-					<desc>True to disable CRL check on certificates</desc>
+					<desc>True to disable CRL check mode on certificate revocation</desc>
 				</info>
 				<value>false</value>
 			</prop>

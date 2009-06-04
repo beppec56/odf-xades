@@ -73,9 +73,15 @@ public class CertificationAuthorities {
 
     private String auth = null;
 
+    //these are the CNIPA trusted root Certification Autorities, e.g. the one
+    //that usually are at the top of the trust chain in certification path
     private HashMap<X500Principal, X509Certificate> authorities;
 
-//    private X509CertRL crls;
+    //these are the certification authority imported by the user
+    //but not 
+    private HashMap<X500Principal, X509Certificate> m_aOtherCertificationAuthorities;
+
+    //private X509CertRL crls;
 
     private String message;
 
@@ -100,7 +106,10 @@ public class CertificationAuthorities {
      * le CA volute.
      */
     public CertificationAuthorities(XStatusIndicator _xStatus, XComponentContext _cc) {
-        authorities = new HashMap();
+        authorities = new HashMap<X500Principal, X509Certificate>();
+
+        m_aOtherCertificationAuthorities = new HashMap<X500Principal, X509Certificate>();
+
         debug = false;
         // debug = true;
         alwaysCrlUpdate = false;
@@ -157,6 +166,7 @@ public class CertificationAuthorities {
                 }
             }
         } catch (IOException ie) {
+        	//FIXME may be we can continue on loading the other CAs ?
             trace("Fallita lettura dello ZIP: " + ie.getMessage());
             throw ie;
         } finally {
@@ -165,9 +175,12 @@ public class CertificationAuthorities {
             } catch (IOException ie) {
             }
         }
-        if (authorities.isEmpty()) {
-            trace("Nessuna CA caricata");
-            throw new GeneralSecurityException("Nessuna CA caricata");
+
+        //Please note: if authorities is empty, that means that we are not bound
+        //to Italian law wrt the user certificate validity
+        if (authorities.isEmpty() && m_aOtherCertificationAuthorities.isEmpty()) {
+            trace("No CA was loaded");
+            throw new GeneralSecurityException("No CA was loaded");
         }
         trace("Inseriti " + authorities.size() + " certificati CA");
     }
@@ -327,6 +340,25 @@ public class CertificationAuthorities {
         return cert;
     }
 
+    /**
+     * Verifies the the given certificate is issued by a trusted CA
+     * 
+     * Verifica se il certificato e' stato emesso da una delle CA
+     * riconosciute
+     * 
+     * @param userCert
+     *            certificate to verify
+     * @return true if the given certificate is issued by a CA, false otherwise
+     */
+    public boolean isAccepted(X509Certificate userCert) {
+        try {
+            return authorities.containsKey((userCert).getIssuerX500Principal());
+        } catch (Exception e) {
+            trace("isAccepted: " + e.getMessage());
+            return false;
+        }
+    }
+    
     /**
      * Activate or deactivate debug messages
      * 

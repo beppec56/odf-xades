@@ -71,14 +71,21 @@ import com.sun.star.uno.XComponentContext;
  *  This service implements the CertificationPath_IT service, used to check the
  *  certificate for compliance on Italian law.
  *  
- *  The conformance will be checked for the certificate dates, certificate configuration
- *  and for extension  that are mandatori according to the following criteria/Norms,
+ *  The compliance will be checked for the certificate dates, certificate configuration
+ *  and for extension  that are mandatory according to the following criteria/Norms,
  *  listed in ascending order, the precedence order is from top to below:
+ *  
  *  - Deliberazione CNIPA del 17 febbraio 2005 n 4
  *  - ETSI TS 102 280 V1.1.1
  *  - ETSI TS 101 862 V1.3.2
  *  
  * @author beppec56
+ * 
+ * FIXME
+ * TODO
+ * verify the following:
+ * for ETSI TS 102 280 V1.1.1:
+ * 5.4 and following, check if the certificate extensions are as requested
  *
  */
 public class CertificateCompliance_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak

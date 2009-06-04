@@ -129,7 +129,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 //			Utilities.showNames(m_xDlgModelNameContainer);
 			//instantiate the control to get the certificate list
 			try {
-				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sCERTIFICATION_PATH_SERVICE_IT, m_xContext);
+				Object oCertPath = m_xMCF.createInstanceWithContext(GlobConstant.m_sTRUSTED_ENTITIES_MANAGEMENT_SERVICE_IT, m_xContext);
 //object created, we can procced
 				XOX_CertificationPathProcedure aCtl =
 					(XOX_CertificationPathProcedure)

@@ -60,7 +60,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
     private int m_nDisableCRLControlCB = 0;
     private int m_nForceCRLDownloadCB = 0;
 
-    private static final int m_nNumberOfControls = 5;
+    private static final int m_nNumberOfControls = 6;
 
     /**
      * 
@@ -77,6 +77,10 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 //checkbox
 		aControl = 
 			new SingleControlDescription("OffLineCB", ControlTypeCode.CHECK_BOX, -1, "OperationOffLine", 0, 0, true);
+		ArrayOfControls[iter++] = aControl;
+
+		aControl = 
+			new SingleControlDescription("DisableOCSPCB", ControlTypeCode.CHECK_BOX, -1, "DisableOCSPControl", 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 
 		aControl = 

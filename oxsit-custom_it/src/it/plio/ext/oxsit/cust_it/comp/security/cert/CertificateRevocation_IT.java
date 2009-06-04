@@ -30,7 +30,6 @@ package it.plio.ext.oxsit.cust_it.comp.security.cert;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
 import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
-import it.plio.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.security.cert.CertificateState;
@@ -54,15 +53,8 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- *  This service implements the CertificationPath_IT service, used to check the
- *  certificate for compliance on Italian law.
- *  
- *  The conformance will be checked for the certificate dates, certificate configuration
- *  and for extension  that are mandatori according to the following criteria/Norms,
- *  listed in ascending order, the precedence order is from top to below:
- *  - Deliberazione CNIPA del 17 febbraio 2005 n 4
- *  - ETSI TS 102 280 V1.1.1
- *  - ETSI TS 101 862 V1.3.2
+ *  This service implements the CertificateRevocation_IT service, used to check the
+ *  certificate for its revocation state.
  *  
  * @author beppec56
  *

@@ -57,6 +57,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -334,8 +335,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 			xStatusIndicator.end();
 	}
 
-	//FIXME: a big one, needs to set state for certificate in graphic...
 	//FIXME: another one, see behavior of this with a longer certification path
+	// at the moment it doesn't function well...
 	//FIXME: check with cert path problem
 	private boolean checkPathValidity() {
 		//convert the certificate to java internal representation
@@ -362,8 +363,14 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 	//set the current XOX_X509Certificate state as well
                 	//this can be an intermediate certificate, it's the last one that should be ok
                 	//we need to set the certificate path of the current
-                	//main XOX_X509Certificate as invalid for italian signature
-                	setCertPathErrorStateHelper("The Certification Authority is NOT trusted.\r\r" +
+                	//main XOX_X509Certificate as invalid for Italian signature
+                	
+                	//FIXME
+                	//TODO we should add the possibility to check for an alternative CA
+                	//in order to see if the certificate is still ok
+                	// in the end is the root CA of the certification path that rules
+                	// all
+                	setCertPathErrorStateHelper("The Certification Authority is NOT CNIPA trusted.\r\r" +
                 			"It does NOT exist in the data base of the trusted Entities.");
                 	return isPathValid;
                 }
@@ -386,13 +393,18 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				} catch (NoSuchProviderException e) {
 					m_aLogger.severe(e);
 					// alert the user the certificate cannot be verified against the public key of
-					// the 
+					setCertificateStateHelper(CertificateState.CA_CERTIFICATE_SIGNATURE_INVALID);
+					return isPathValid;
 				} catch (SignatureException e) {
 					m_aLogger.severe(e);
 					//finish off, the path starts ok, but the child certificate is
 					//incorrectly signed, set it as malformed, add a note to explain the reason
+					setCertificateStateHelper(CertificateState.CA_CERTIFICATE_SIGNATURE_INVALID);
+					return isPathValid;
 				}
-                
+
+				//still need to check if the certificate of 
+				
                 certChild = certParent;
 //instantiate a qualified certificate to represent the parent,
                 certParent.getEncoded();
@@ -435,6 +447,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				XOX_X509Certificate xQualCert = 
 					(XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, oACertificate);
 
+				//FIXME we need to do what the RFC 3280 explains in chapter 6 
 				xQualCert.verifyCertificateCompliance(null);
 				xQualCert.verifyCertificationPath(null);
 				//we don't check the revocation state of the CA, if the CA is in the CA root, then it's supposed to be valid and not revoked
@@ -450,6 +463,10 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 qCertChild = xQualCert;
                 m_aLogger.info("added a certificate");
             }
+			//FIXME
+			//arrive here if the current child certificate is sels signed
+			// need to see if the certificate is not revoked (or something similar)
+
             ;
             return isPathValid;
 		} catch (CertificateException e) {
@@ -466,6 +483,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				CertificateElementState.INVALID_value);
     	m_xQc.getCertificateDisplayObj().setCertificateElementCommentString(
     			CertificateElementID.CERTIFICATION_PATH, string);
+		setCertificateStateHelper(CertificateState.CA_CERTIFICATE_SIGNATURE_INVALID);
 	}
 
 	/* (non-Javadoc)
@@ -530,7 +548,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
             	}
             }
             
-            CRL.isNotRevoked(xStatusIndicator,m_JavaCert);
+//            CRL.isNotRevokedCRL(xStatusIndicator,m_JavaCert);
+            CRL.isNotRevokedOCSP(xStatusIndicator, m_JavaCert, new Date());
             xStatusIndicator.end();
 
     		//grab certificate state and conditions
