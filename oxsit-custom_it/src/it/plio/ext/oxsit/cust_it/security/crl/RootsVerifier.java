@@ -79,6 +79,8 @@ public class RootsVerifier {
     private XFrame				m_xFrame;
     private XMultiComponentFactory m_xMCF;
 
+	private X509Certificate m_aRootSignatureCert;
+
     public RootsVerifier(XFrame _xFrame, XComponentContext _xContext) {
 //        conf = Configuration.getInstance();
     	m_xCC = _xContext;
@@ -125,6 +127,8 @@ public class RootsVerifier {
 			}
     }
 
+    //FIXME, add certificate revocation check for CNIPA cert
+    //
     private byte[] getFingerprint() {
 
         byte[] fingerprint = null;
@@ -172,12 +176,15 @@ public class RootsVerifier {
                         certCollection = certs.getCertificates(signer.getSID());
 
                         if (certCollection.size() == 1) {
-                            fingerprint = getCertFingerprint((X509Certificate) certCollection
-                                    .toArray()[0]);
-                        } else
+                        	m_aRootSignatureCert = (X509Certificate)certCollection
+                            .toArray()[0];
+                            fingerprint = getCertFingerprint(m_aRootSignatureCert);
+                        } else {
+                        	//FIXME print an error?
                         	m_aLogger.severe("getFingerprint","There is not exactly one certificate for this signer!");
-
+                        }
                     } catch (CertStoreException ex1) {
+                    	//FIXME print an error?
                     	m_aLogger.severe("Errore nel CertStore",ex1);
                     }
                 }
@@ -269,11 +276,9 @@ public class RootsVerifier {
             fingerprint = md.digest();
 
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	m_aLogger.severe(e);
         } catch (CertificateException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	m_aLogger.severe(e);
         }
 
         return fingerprint;
@@ -282,4 +287,11 @@ public class RootsVerifier {
     public byte[] getUserApprovedFingerprint() {
         return userApprovedFingerprint;
     }
+
+	/**
+	 * @return the m_aRootSignatureCert
+	 */
+	public X509Certificate getRootSignatureCert() {
+		return m_aRootSignatureCert;
+	}
 }

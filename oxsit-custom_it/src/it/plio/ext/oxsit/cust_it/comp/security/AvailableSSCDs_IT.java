@@ -365,7 +365,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 							}
 
 							// set the library to be used, locally
-							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, 
+									iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.getPKCS11_WRAPPER());
 							
 							m_aLogger.info(Pkcs11WrapperLocal);
 

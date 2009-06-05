@@ -144,6 +144,7 @@ the default target must be removed
 				</not>
 			</condition>
 		</fail>
+		<echo>"${my_ooo_classes_path3}/${project_friendly_name}-sig_opt_uno.uno.jar"</echo>
 		<property name="bc_classes_path" value="${lib}" />
 		<available file="${bc_classes_path}" type="dir" property="bc_classes_path.available" value="false" />
 		<fail message="No ${project_friendly_name}-sig_opt_uno classes available. Please edit the build file to correct it. (${bc_classes_path})">

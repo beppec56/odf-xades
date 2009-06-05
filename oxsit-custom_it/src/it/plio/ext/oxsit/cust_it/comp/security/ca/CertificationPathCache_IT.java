@@ -290,6 +290,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		//init the root authority elements,
 		if( m_aRootVerifier == null)
 			m_aRootVerifier = new RootsVerifier(_aFrame,m_xCC);
+			X509Certificate aCert = m_aRootVerifier.getRootSignatureCert();
 /* the following needs implementation, do we need it?
  * 		else
 			if(m_aRootVerifier.getUserApprovedFingerprint() == null)
@@ -307,7 +308,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		// if a file exists there, then get the date when the file in "store" was
 		// signed and compare it with the
 		// 
-		if(m_aCADbData == null) {
+		if(m_aCADbData == null && aCert != null) {
 //prepare file path
 			URL aURL;
 			try {
@@ -321,6 +322,8 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, 
 						false //to display debug data
 						);
+				X509CertRL aCrl = new X509CertRL(_aFrame,m_xCC,m_aCADbData);
+				aCrl.isNotRevokedOCSP(xStatusIndicator, aCert, new Date());
 			} catch (MalformedURLException e) {
 				m_aLogger.severe(e);
 			} catch (GeneralSecurityException e) {
