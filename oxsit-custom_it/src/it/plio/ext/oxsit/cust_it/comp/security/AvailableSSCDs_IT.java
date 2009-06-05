@@ -316,7 +316,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	        }
 	
 			PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
-	
+
 			m_aLogger.log("After 'new PCSCHelper'");
 			
 			if(pcsc.getReaders() != null ) {
@@ -365,9 +365,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 							}
 
 							// set the library to be used, locally
-							String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, 
-									iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.getPKCS11_WRAPPER());
-							
+							String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+
 							m_aLogger.info(Pkcs11WrapperLocal);
 
 							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);

@@ -175,8 +175,12 @@ public class SSCDsConfigurationAccess extends ConfigurationAccess {
 		          }
 
 		          //check and set the library available on system
-		          String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xContext, PKCS11Implementation.getPKCS11_WRAPPER());
-		          aCardInfo.detectDefaulttLib(Pkcs11WrapperLocal);
+		          String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xContext);
+		          try {
+		        	  aCardInfo.detectDefaultLib(Pkcs11WrapperLocal);
+					} catch (NoSuchMethodError e) {
+						m_aLogger.severe(e);
+					}
 		          m_aLogger.log(aCardInfo.toString());
 		          retElements[i] = aCardInfo;
 		      }

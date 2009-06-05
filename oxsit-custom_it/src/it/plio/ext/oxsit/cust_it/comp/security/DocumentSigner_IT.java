@@ -228,7 +228,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		            } else {
 		            	m_aLogger.info("no SecurityManager.");
 		            }
-					String Pkcs11WrapperLocal = Helpers.getLocalNativeLibraryPath(m_xCC, PKCS11Implementation.getPKCS11_WRAPPER());
+					String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
 					helper = new PKCS11SignerOOo(m_aLogger,Pkcs11WrapperLocal,cryptolibrary);
 //try to sign something simple
 					

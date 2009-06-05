@@ -97,9 +97,13 @@ public class PKCS11SignerOOo {
 
 		m_aLogger.info("Trying to connect to PKCS#11 module: '"
 				+ cryptokiLibrary + "' ...");
+		//this strange way of calling
+		//depends from the value returned
+		if(pkcs11WrapLib != null && pkcs11WrapLib.length() > 0)
+			pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary,pkcs11WrapLib);
+		else
+			pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary);							
 
-		pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary,
-				pkcs11WrapLib);
 		m_aLogger.info("connected");
 
 		initializeLibrary();

@@ -23,6 +23,7 @@
 package it.plio.ext.oxsit.pcsc;
 
 import java.io.IOException;
+import java.security.CodeSource;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 
@@ -78,7 +79,7 @@ public class CardInfoOOo {
 	}
 
 	//choose a library
-	public String detectDefaulttLib(String pkcs11WrapLib) {
+	public String detectDefaultLib(String pkcs11WrapLib) {
 		//return one of the library available on system, e.g. linked
 		//try in sequence.
 		//The one returned
@@ -93,7 +94,10 @@ public class CardInfoOOo {
 			for(int i =0; i<sLibs.length;i++) {
 				try {
 					if(sLibs[i].length() > 0) {
-						PKCS11Connector.connectToPKCS11Module(sLibs[i],pkcs11WrapLib);
+						if(pkcs11WrapLib.length() > 0)
+							PKCS11Connector.connectToPKCS11Module(sLibs[i],pkcs11WrapLib);
+						else
+							PKCS11Connector.connectToPKCS11Module(sLibs[i]);							
 						sLibOk = sLibs[i];
 						break;
 					}
@@ -101,6 +105,10 @@ public class CardInfoOOo {
 //					e.printStackTrace();
 				} catch (SecurityException e) {
 	//				e.printStackTrace();
+				} catch (NoSuchMethodError e) {
+					//thrown when the native wrapper library
+					//is in the wrong place
+//					throw (new NoSuchMethodError("Wrapper library "+pkcs11WrapLib+" not found! ") );
 				} catch (UnsatisfiedLinkError e) {
 		//			e.printStackTrace();
 				} catch (NullPointerException e) {

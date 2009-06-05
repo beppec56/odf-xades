@@ -22,6 +22,7 @@
 
 package it.plio.ext.oxsit;
 
+import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.IllegalFormatException;
@@ -323,8 +325,29 @@ public class Helpers {
 		else
 			throw (new Exception("The PathSetting service can not be retrieved") );
 	}
+
+	//This works only for OCPS
+	public static String getPKCS11WrapperNativeLibraryPath(XComponentContext _xContext)
+	throws URISyntaxException, IOException, java.lang.NullPointerException
+		{
+			//detect the PKCS11 library class path 
+			CodeSource aCs = PKCS11Connector.class.getProtectionDomain().getCodeSource();
+			if(aCs != null) {
+				URL aURL = aCs.getLocation(); // where this class is 'seen' by the java runtime
+				URI aUri = new URI(aURL.toString());
+				File aFile = new File(aUri);
+				String classPath = aFile.getCanonicalPath();
+				String sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_xContext)+System.getProperty("file.separator");
+				if(classPath.startsWith(sExtensionSystemPath))
+					return getLocalNativeLibraryPath(_xContext, GlobConstant.PKCS11_WRAPPER);
+				
+			}
+			return ""; 
+		}
+
 	/**
 	 * Returns the complete path to the native binary library in the root extension directory
+	 * 
 	 * 
 	 * @param _xContext
 	 * @param _libName
@@ -336,7 +359,7 @@ public class Helpers {
 	public static String getLocalNativeLibraryPath(XComponentContext _xContext, String _libName)
 					throws URISyntaxException, IOException, java.lang.NullPointerException
 						{
-		String sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_xContext)+System.getProperty("file.separator");
+		String sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_xContext)+System.getProperty("file.separator");		
 		//now add the library name depending on os
         String osName = System.getProperty("os.name");
         if(osName.toLowerCase().indexOf("windows") != -1){

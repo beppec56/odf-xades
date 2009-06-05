@@ -1537,12 +1537,4 @@ public class PKCS11Implementation implements PKCS11 {
     disconnect();
     super.finalize();
   }
-
-	/**
-	 * @return the pKCS11_WRAPPER
-	 */
-	public static String getPKCS11_WRAPPER() {
-		return PKCS11_WRAPPER;
-	}
-
 }

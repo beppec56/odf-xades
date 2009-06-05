@@ -70,7 +70,7 @@ public class OCFPCSC1 {
   }
 
   /* load the Wrapper-DLL */
-  static public void loadLibZZ() {
+  static private void loadLibZZ() {
 	  boolean ret = false;
     try {
     	System.out.println("loading library...");

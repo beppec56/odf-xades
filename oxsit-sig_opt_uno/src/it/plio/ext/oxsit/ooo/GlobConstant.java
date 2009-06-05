@@ -172,8 +172,11 @@ public class GlobConstant {
 	public static final String m_sDOCUMENT_VERIFER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentVerifier_IT";
 
 	/////////// end of service to be moved to registryS
-	
-	public static final String m_sPKCS11_WRAPPER_NATIVE = PKCS11Implementation.getPKCS11_WRAPPER();
-	
+
+	/////// this string comes from
+	/// iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.WRAPPER
+	// pay attention when changing it !
+	public static final String PKCS11_WRAPPER = "pkcs11wrapper";
+
 	public static final String m_sPCSC_WRAPPER_NATIVE = "OCFPCSC1";
 }
