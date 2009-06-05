@@ -38,6 +38,9 @@ import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
 import com.sun.star.embed.XStorage;
@@ -215,23 +218,37 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 //			XWindowPeer xPeer = xWindow.
 			aDialog1.initialize(BiasX,BiasY);
 //center the dialog
-			short test = aDialog1.executeDialog();
-			String sThePin = aDialog1.getThePin();
-			char[] chPin = sThePin.toCharArray();
-			if( sThePin.length() > 0) {
+			aDialog1.executeDialog();
+			char[] myPin = aDialog1.getPin();
+			if( myPin.length > 0) {
 				m_aLogger.log("sign!");
+				//convert certificate in Java format
+
+				X509Certificate signatureCert = Helpers.getCertificate(aCert);
+				
 				PKCS11SignerOOo helper;
 				try {
 		            SecurityManager sm = System.getSecurityManager();
-		            if (sm != null) {
-		            	m_aLogger.info("SecurityManager: " + sm);
-		            } else {
-		            	m_aLogger.info("no SecurityManager.");
-		            }
-					String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-					helper = new PKCS11SignerOOo(m_aLogger,Pkcs11WrapperLocal,cryptolibrary);
-//try to sign something simple
-					
+					if (sm != null) {
+						m_aLogger.info("SecurityManager: " + sm);
+					} else {
+						m_aLogger.info("no SecurityManager.");
+					}
+					String Pkcs11WrapperLocal = Helpers
+							.getPKCS11WrapperNativeLibraryPath(m_xCC);
+					helper = new PKCS11SignerOOo(m_aLogger, Pkcs11WrapperLocal,
+							cryptolibrary);
+
+					byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0,
+							(byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC,
+							(byte) 0xF7, (byte) 0x6F, (byte) 0xF2, (byte) 0x09,
+							(byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2,
+							(byte) 0xF1, 0x31 };
+					// try to sign something simple
+					/*
+					 * String sTest = "Y6pN0POPYtz3b/IJp1sBTnjy8TE="
+					 */
+
 					long[] nTokens = null;
 					try {
 						nTokens = helper.getTokenList();
@@ -241,51 +258,111 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								+ cryptolibrary, ex3);
 					}
 
-					if(nTokens != null) {
-						
-						for(int i=0;i<nTokens.length;i++) {
-							m_aLogger.log("token: "+nTokens[i]);
+					if (nTokens != null) {
+						// search in the available tokens the one with the
+						// certificate
+						// selected
+						for (int i = 0; i < nTokens.length; i++) {
+							m_aLogger.log("token: " + nTokens[i]);
 						}
-						helper.getModuleInfo();
+//						helper.getModuleInfo(); info on pkcs#11 library
 
 						helper.getMechanismInfo();
-						//open se
+						// open session on this token
 						helper.setTokenHandle(nTokens[0]);
+						try {
+//							helper.openSession(myPin);
+							helper.openSession();
 
-				        helper.openSession();
-					//find slots in first token only
+							// find private key and certificate in first token only
+							try {
+								CK_TOKEN_INFO tokenInfo = helper
+										.getTokenInfo(nTokens[0]);
 
-						CK_TOKEN_INFO tokenInfo = helper.getTokenInfo(nTokens[0]);
+								m_aLogger.log(tokenInfo.toString());
 
-						m_aLogger.log(tokenInfo.toString());
-						
-						
-					
-					//from the certificate get the mechanism needed (the subject signature algor)
-					//this will be the mechanism used to sign ??
-					
-					//open again the token, using the saved library
-					// search the private key of the certificate at hand
+							// from the certificate get the mechanism needed
+							// (the subject signature algor)
+							// this will be the mechanism used to sign ??
 
+							// from the certificate get the certificate handle
+								try {
+									long certHandle = helper.findCertificate(signatureCert);
 
-						helper.closeSession();
+							// then the certificate handle get the corresponding
+							// private key handle
+//									long sigKeyHandle = helper.findSignatureKeyFromCertificateHandle(certHandle);
+							// get key label as well								
+								} catch (PKCS11Exception e) {
+									m_aLogger.severe(e);
+								} catch (CertificateEncodingException e) {
+									m_aLogger.severe(e);
+								} catch (IOException e) {
+									m_aLogger.severe(e);
+								}
+							} catch (Throwable e) {
+								m_aLogger.severe(e);
+							}
+//							helper.logout();
+							helper.closeSession();
+						} catch (TokenException ex) {
+							m_aLogger.log("Messaggio helper.openSession(): "
+									+ ex.getMessage());
+							if (ex
+									.toString()
+									.startsWith(
+											"iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT")
+									|| ex.toString().startsWith(
+											"CKR_PIN_INCORRECT")) {
+								// errorPresent = true;
+								m_aLogger.log("PIN sbagliato.");
+								// current = ERROR;
+
+							}
+
+							else if (ex.getMessage().startsWith(
+									"CKR_PIN_LOCKED")) {
+								// errorPresent = true;
+								m_aLogger.log("PIN bloccato.");
+							} else if (ex.getMessage().startsWith(
+									"CKR_PIN_LEN_RANGE")) {
+								// errorPresent = true;
+								m_aLogger
+										.log("PIN sbagliato: Lunghezza sbagliata.");
+							} else if (ex.getMessage().startsWith(
+									"CKR_TOKEN_NOT_RECOGNIZED")) {
+								// errorPresent = true;
+								m_aLogger.log("CKR_TOKEN_NOT_RECOGNIZED.");
+							} else if (ex.getMessage().startsWith(
+									"CKR_FUNCTION_FAILED")) {
+								// errorPresent = true;
+								m_aLogger.log("CKR_FUNCTION_FAILED.");
+							}
+
+							else if (ex.getMessage().startsWith(
+									"CKR_ARGUMENTS_BAD")) {
+								// errorPresent = true;
+								m_aLogger.log("CKR_ARGUMENTS_BAD.");
+							} else {
+								// inserisci tutte le TokenException!!!
+								// errorPresent = true;
+								// errorMsg =
+								// "PKCS11Exception:\n"+ex.getMessage()+".";
+							}
+						}
+
 					}
 					helper.libFinalize();					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.severe(e);
 				} catch (TokenException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.severe(e);
 				} catch (NullPointerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.severe(e);
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.severe(e);
 				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.severe(e);
 				}
 				
 				
@@ -298,6 +375,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_aLogger.severe(e);
 		} catch (Exception e) {
 			m_aLogger.severe(e);
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return false;
 	}

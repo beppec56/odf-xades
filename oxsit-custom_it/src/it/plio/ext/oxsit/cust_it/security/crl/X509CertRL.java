@@ -110,21 +110,21 @@ public class X509CertRL {
 	private XMultiComponentFactory	m_xMCF;
 	private XFrame	m_xFrame;
 	private	XStatusIndicator	m_xStatusIndicator;
-	
+
 	private IDynamicLogger	m_aLogger;
 	private IDynamicLogger	m_aLoggerDialog;
 	private String reasonCode;
 	private String auth;
 	private CertificateState m_aCertificateState;
 	private CertificateStateConditions m_aCertificateStateConditions;
-	
+
 	private	boolean	m_bOffLineOperation;
 	private	boolean	m_bDisableCRLControl;
 	private	boolean	m_bAlwaysDownloadCRL;
 
 	protected OptionsParametersAccess m_xOptionsConfigAccess;
 	private boolean m_bDisableOCSPControl;
-	
+
 	//FIXME some text inside the class needs localization
 	
 	/**
@@ -297,8 +297,8 @@ public class X509CertRL {
     public boolean isNotRevokedCRL(XStatusIndicator _aStatus, X509Certificate userCert, Date date) {
 
 		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
-    	
-        X509CRL crl = null;
+
+		X509CRL crl = null;
         //check if we have a status indicator
         m_xStatusIndicator = _aStatus;
 		getConfiguration();        
@@ -308,7 +308,7 @@ public class X509CertRL {
     		setCertificateState(CertificateState.NOT_VERIFIABLE);
         	return false;
         }
-        
+
         try {
             // devo fare l'update per compatibilita' all'indietro!
             if (!update(userCert, date, m_bAlwaysDownloadCRL)) {
@@ -836,6 +836,7 @@ public class X509CertRL {
     public X509CRL download(X509Certificate userCert) throws
             CertificateParsingException {
         X509CRL crl = null;
+        String sMex = "Download CRL: "+ userCert.getIssuerX500Principal().getName();
         trace("Inizio download CRL per il cert: " + userCert.getSerialNumber() +
               ", emesso da: " + userCert.getIssuerDN());
         // URL[] dp = getCrlDistributionPointOLD(userCert);
@@ -859,7 +860,7 @@ public class X509CertRL {
             try {
                 trace("Try to access the CRL Distribution Point = " +
                       dp[i]);
-                statusText("Try to access the CRL Distribution Point in Internet...");
+                statusText(sMex+" in Internet...");
 
                 crl = download(dp[i], userCert.getIssuerDN());
                 // il primo protocollo che dia esiti positivi interrompe il ciclo

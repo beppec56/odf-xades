@@ -36,6 +36,7 @@ import iaik.pkcs.pkcs11.wrapper.CK_MECHANISM;
 import iaik.pkcs.pkcs11.wrapper.CK_MECHANISM_INFO;
 import iaik.pkcs.pkcs11.wrapper.CK_SLOT_INFO;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
+import iaik.pkcs.pkcs11.wrapper.Functions;
 import iaik.pkcs.pkcs11.wrapper.PKCS11;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
@@ -46,8 +47,16 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
 
 /**
  * @author beppe
@@ -177,6 +186,464 @@ public class PKCS11SignerOOo {
     }
 
     /**
+     * Finds a certificate matching the one passed as parameter.
+     *
+     * @param _aCertificate
+     * @return the handle of the certificate, or -1 if not found.
+     * @throws PKCS11Exception
+     * @throws CertificateEncodingException 
+     * @throws IOException 
+     */
+    public long findCertificate(X509Certificate _aCertificate) throws PKCS11Exception, CertificateEncodingException, IOException {
+
+        long sessionHandle = getSession();
+        long certificateHandle = -1L;
+
+        if (sessionHandle < 0 || _aCertificate == null) {
+            return -1L;
+        }
+
+        m_aLogger.info("find certificate.");
+		ByteArrayInputStream as = new ByteArrayInputStream(_aCertificate.getEncoded()); 
+		ASN1InputStream aderin = new ASN1InputStream(as);
+		DERObject ado;
+		ado = aderin.readObject();
+		X509CertificateStructure m_aX509 = new X509CertificateStructure((ASN1Sequence) ado);
+
+        // now get the certificate with the same ID as the signature key
+        int idx = 0;
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[4];
+
+        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_CLASS;
+        attributeTemplateList[idx++].pValue = new Long(
+                PKCS11Constants.CKO_CERTIFICATE);
+
+        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_SUBJECT;
+        attributeTemplateList[idx++].pValue =  m_aX509.getTBSCertificate().getSubject().getDEREncoded();
+        
+        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_ISSUER;
+        attributeTemplateList[idx++].pValue =  m_aX509.getTBSCertificate().getIssuer().getDEREncoded();
+        
+        byte[] ar = m_aX509.getTBSCertificate().getSerialNumber().getDEREncoded();
+        byte[] sn = new byte[3];
+        
+        sn[0] = ar[2];
+        sn[1] = ar[3];
+        sn[2] = ar[4];
+        
+        ar = m_aX509.getTBSCertificate().getSerialNumber().getEncoded();
+
+        ar = m_aX509.getTBSCertificate().getSerialNumber().getEncoded("BER");
+
+        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_SERIAL_NUMBER;
+        attributeTemplateList[idx++].pValue =  sn;
+
+/*        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_SUBJECT;
+        attributeTemplateList[idx++].pValue =  _aCertificate.getSubjectX500Principal().getEncoded();*/
+        
+/*        attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_ISSUER;
+        attributeTemplateList[idx++].pValue =  _aCertificate.getIssuerX500Principal().getEncoded();
+
+        //now we need to get the serial number of the certificate, we need the DER
+        // version
+		ByteArrayInputStream as = new ByteArrayInputStream(_aCertificate.getEncoded()); 
+		ASN1InputStream aderin = new ASN1InputStream(as);
+		DERObject ado;
+		ado = aderin.readObject();
+		X509CertificateStructure m_aX509 = new X509CertificateStructure((ASN1Sequence) ado);
+
+		attributeTemplateList[idx] = new CK_ATTRIBUTE();
+        attributeTemplateList[idx].type = PKCS11Constants.CKA_SERIAL_NUMBER;
+        attributeTemplateList[idx++].pValue =  m_aX509.getTBSCertificate().toASN1Object().getObjectAT(1);//getSerialNumber().getDERObject().getDEREncoded();// getEncoded(); //getDEREncoded(); no
+        
+*/        
+        pkcs11Module.C_FindObjectsInit(getSession(), attributeTemplateList);
+
+        long[] availableCertificates = pkcs11Module.C_FindObjects(getSession(),
+                100);
+        //maximum of 100 at once
+        if (availableCertificates == null || availableCertificates.length == 0) {
+        	m_aLogger.info("null returned - no certificate found");
+        } else {
+        	m_aLogger.info("found " + availableCertificates.length
+                        + " certificates with matching attributes.");
+            for (int i = 0; i < availableCertificates.length; i++) {
+                if (i == 0) { // the first we find, we take as our certificate
+                    certificateHandle = availableCertificates[i];
+                    if(certificateHandle > 0L) {
+                        // now get the certificate with the same ID as the signature key
+                        CK_ATTRIBUTE[] attributeTemplateListR = new CK_ATTRIBUTE[3];
+
+                        attributeTemplateListR[0] = new CK_ATTRIBUTE();
+                        attributeTemplateListR[0].type = PKCS11Constants.CKA_SERIAL_NUMBER;
+                    	
+                        attributeTemplateListR[1] = new CK_ATTRIBUTE();
+                        attributeTemplateListR[1].type = PKCS11Constants.CKA_LABEL;
+
+                        attributeTemplateListR[2] = new CK_ATTRIBUTE();
+                        attributeTemplateListR[2].type = PKCS11Constants.CKA_ID;
+
+                        pkcs11Module.C_GetAttributeValue(getSession(), certificateHandle,
+                                attributeTemplateListR);
+                        byte[] certificateSN = null;
+                        if(attributeTemplateListR[0].pValue != null) {
+	                        certificateSN = (byte[]) attributeTemplateListR[0].pValue;
+	                        if(certificateSN != null) {
+	                        	m_aLogger.log("CKA_SERIAL_NUMBER "+Helpers.printHexBytes(certificateSN));
+	                        }
+                        }
+                        if(attributeTemplateListR[1].pValue != null) {
+                        	
+                        	attributeTemplateListR[1].pValue.toString();
+                        	String aLabel = new String((char[]) attributeTemplateListR[1].pValue);
+	                        	m_aLogger.log("CKA_LABEL '"+aLabel+"'");
+                        }
+                        if(attributeTemplateListR[2].pValue != null) {
+	                        certificateSN = (byte[]) attributeTemplateListR[2].pValue;
+	                        if(certificateSN != null) {
+	                        	m_aLogger.log("CKA_ID "+Helpers.printHexBytes(certificateSN));
+	                        }
+                        }
+                    }
+                }
+                m_aLogger.info("certificate " + i);
+            }
+        }
+        pkcs11Module.C_FindObjectsFinal(getSession());
+//get serial number of this certificate
+        
+        
+        
+        return certificateHandle;
+    }
+
+    /**
+     * Finds a certificate matching the given byte[] id.
+     *
+     * @param id
+     * @return the handle of the certificate, or -1 if not found.
+     * @throws PKCS11Exception
+     */
+    public long findCertificateFromID(byte[] id) throws PKCS11Exception {
+
+        long sessionHandle = getSession();
+        long certificateHandle = -1L;
+
+        if (sessionHandle < 0 || id == null) {
+            return -1L;
+        }
+
+        m_aLogger.info("find certificate from id.");
+
+        // now get the certificate with the same ID as the signature key
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
+
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_CLASS;
+        attributeTemplateList[0].pValue = new Long(
+                PKCS11Constants.CKO_CERTIFICATE);
+        attributeTemplateList[1] = new CK_ATTRIBUTE();
+        attributeTemplateList[1].type = PKCS11Constants.CKA_ID;
+        attributeTemplateList[1].pValue = id;
+
+        pkcs11Module.C_FindObjectsInit(getSession(), attributeTemplateList);
+        long[] availableCertificates = pkcs11Module.C_FindObjects(getSession(),
+                100);
+        //maximum of 100 at once
+        if (availableCertificates == null) {
+        	m_aLogger.info("null returned - no certificate found");
+        } else {
+        	m_aLogger.info("found " + availableCertificates.length
+                        + " certificates with matching ID");
+            for (int i = 0; i < availableCertificates.length; i++) {
+                if (i == 0) { // the first we find, we take as our certificate
+                    certificateHandle = availableCertificates[i];
+                    System.out.print("for verification we use ");
+                    
+                    
+                    
+                }
+                m_aLogger.info("certificate " + i);
+            }
+        }
+        pkcs11Module.C_FindObjectsFinal(getSession());
+        return certificateHandle;
+    }
+
+    /**
+     * Finds a certificate matching the given textual label.
+     *
+     * @param label
+     * @return the handle of the certificate, or -1 if not found.
+     * @throws PKCS11Exception
+     */
+    public long findCertificateFromLabel(char[] label) throws PKCS11Exception {
+
+        long sessionHandle = getSession();
+        long certificateHandle = -1L;
+
+        if (sessionHandle < 0 || label == null) {
+            return -1L;
+        }
+
+        m_aLogger.log("find certificate from label.");
+
+        // now get the certificate with the same ID as the signature key
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
+
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_CLASS;
+        attributeTemplateList[0].pValue = new Long(
+                PKCS11Constants.CKO_CERTIFICATE);
+        attributeTemplateList[1] = new CK_ATTRIBUTE();
+        attributeTemplateList[1].type = PKCS11Constants.CKA_LABEL;
+        attributeTemplateList[1].pValue = label;
+
+        pkcs11Module.C_FindObjectsInit(getSession(), attributeTemplateList);
+        long[] availableCertificates = pkcs11Module.C_FindObjects(getSession(),
+                100);
+        //maximum of 100 at once
+        if (availableCertificates == null) {
+        	m_aLogger.log("null returned - no certificate found");
+        } else {
+        	m_aLogger.log("found " + availableCertificates.length
+                        + " certificates with matching ID");
+            for (int i = 0; i < availableCertificates.length; i++) {
+                if (i == 0) { // the first we find, we take as our certificate
+                    certificateHandle = availableCertificates[i];
+                    System.out.print("for verification we use ");
+                }
+                m_aLogger.log("certificate " + i);
+            }
+        }
+        pkcs11Module.C_FindObjectsFinal(getSession());
+
+        return certificateHandle;
+    }
+
+    /**
+     * Searches the certificate corresponding to the private key identified by
+     * the given handle; this method assumes that corresponding certificates and
+     * private keys are sharing the same byte[] IDs.
+     *
+     * @param signatureKeyHandle
+     *            the handle of a private key.
+     * @return the handle of the certificate corrisponding to the given key.
+     * @throws PKCS11Exception
+     */
+    public long findCertificateFromSignatureKeyHandle(long signatureKeyHandle) throws
+            PKCS11Exception {
+
+        long sessionHandle = getSession();
+        long certificateHandle = -1L;
+
+        if (sessionHandle < 0) {
+            return -1L;
+        }
+
+        m_aLogger.log("\nFind certificate from signature key handle: "
+                    + signatureKeyHandle);
+
+        // first get the ID of the signature key
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_ID;
+
+        pkcs11Module.C_GetAttributeValue(getSession(), signatureKeyHandle,
+                                         attributeTemplateList);
+
+        byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
+        m_aLogger.log("ID of signature key: "
+                    + Functions.toHexString(keyAndCertificateID));
+
+        return findCertificateFromID(keyAndCertificateID);
+    }
+
+
+    /**
+     * Searches the private key corresponding to the certificate identified by
+     * the given handle; this method assumes that corresponding certificates and
+     * private keys are sharing the same byte[] IDs.
+     *
+     * @param certHandle
+     *            the handle of a certificate.
+     * @return the handle of the private key corrisponding to the given
+     *         certificate.
+     * @throws PKCS11Exception
+     */
+    public long findSignatureKeyFromCertificateHandle(long certHandle) throws
+            PKCS11Exception {
+
+        long sessionHandle = getSession();
+        long keyHandle = -1L;
+
+        if (sessionHandle < 0) {
+            return -1L;
+        }
+
+        m_aLogger.log("\nFind signature key from certificate with handle: "
+                    + certHandle);
+
+        // first get the ID of the signature key
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_ID;
+
+        pkcs11Module.C_GetAttributeValue(getSession(), certHandle,
+                                         attributeTemplateList);
+
+        byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
+
+        m_aLogger.log("ID of cert: "
+                         + Functions.toHexString(keyAndCertificateID));
+
+        return findSignatureKeyFromID(keyAndCertificateID);
+    }
+
+    // look for a RSA key and encrypt ...
+    public byte[] encryptDigest(String label, byte[] digest) throws
+            PKCS11Exception, IOException {
+
+        byte[] encryptedDigest = null;
+
+        long sessionHandle = getSession();
+        if (sessionHandle < 0) {
+            return null;
+        }
+
+        long signatureKeyHandle = findSignatureKeyFromLabel(label);
+
+        if (signatureKeyHandle > 0) {
+            m_aLogger.log("\nStarting digest encryption...");
+            encryptedDigest = signDataSinglePart(signatureKeyHandle, digest);
+        } else {
+            //         we have not found a suitable key, we cannot contiue
+        }
+
+        return encryptedDigest;
+    }
+
+
+    /**
+     * Returns the private key handle, on current token, corresponding to the
+     * given textual label.
+     *
+     * @param label
+     *            the string label to search.
+     * @return the integer identifier of the private key, or -1 if no key was
+     *         found.
+     * @throws PKCS11Exception
+     */
+    public long findSignatureKeyFromLabel(String label) throws PKCS11Exception {
+
+        long signatureKeyHandle = -1L;
+
+        if (getSession() < 0) {
+            return -1L;
+        }
+
+        m_aLogger.log("finding signature key with label: '" + label + "'");
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
+        //CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
+
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_CLASS;
+        attributeTemplateList[0].pValue = new Long(
+                PKCS11Constants.CKO_PRIVATE_KEY);
+
+        attributeTemplateList[1] = new CK_ATTRIBUTE();
+
+        attributeTemplateList[1].type = PKCS11Constants.CKA_LABEL;
+        attributeTemplateList[1].pValue = label.toCharArray();
+
+        pkcs11Module.C_FindObjectsInit(getSession(), attributeTemplateList);
+        long[] availableSignatureKeys = pkcs11Module.C_FindObjects(
+                getSession(), 100);
+        //maximum of 100 at once
+
+        if (availableSignatureKeys == null) {
+        	m_aLogger.log("null returned - no signature key found");
+        } else {
+        	m_aLogger.log("found " + availableSignatureKeys.length
+                        + " signature keys, picking first.");
+            for (int i = 0; i < availableSignatureKeys.length; i++) {
+                if (i == 0) { // the first we find, we take as our signature key
+                    signatureKeyHandle = availableSignatureKeys[i];
+                    m_aLogger.log(
+                                    "for signing we use signature key with handle: "
+                                    + signatureKeyHandle);
+                }
+            }
+        }
+        pkcs11Module.C_FindObjectsFinal(getSession());
+
+        return signatureKeyHandle;
+    }
+    
+    /**
+     * Returns the private key handle, on current token, corresponding to the
+     * given byte[]. ID is often the byte[] version of the label.
+     *
+     * @param id
+     *            the byte[] id to search.
+     * @return the integer identifier of the private key, or -1 if no key was
+     *         found.
+     * @throws PKCS11Exception
+     * @see PKCS11Signer#findSignatureKeyFromLabel(String)
+     */
+    public long findSignatureKeyFromID(byte[] id) throws PKCS11Exception {
+
+        long signatureKeyHandle = -1L;
+
+        if (getSession() < 0) {
+            return -1L;
+        }
+
+        m_aLogger.log("finding signature key from id.");
+        CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
+
+        attributeTemplateList[0] = new CK_ATTRIBUTE();
+        attributeTemplateList[0].type = PKCS11Constants.CKA_CLASS;
+        attributeTemplateList[0].pValue = new Long(
+                PKCS11Constants.CKO_PRIVATE_KEY);
+
+        attributeTemplateList[1] = new CK_ATTRIBUTE();
+
+        attributeTemplateList[1].type = PKCS11Constants.CKA_ID;
+        attributeTemplateList[1].pValue = id;
+
+        pkcs11Module.C_FindObjectsInit(getSession(), attributeTemplateList);
+        long[] availableSignatureKeys = pkcs11Module.C_FindObjects(
+                getSession(), 100);
+        //maximum of 100 at once
+
+        if (availableSignatureKeys == null) {
+            m_aLogger.log(
+                            "null returned - no signature key found with matching ID");
+        } else {
+            m_aLogger.log("found " + availableSignatureKeys.length
+                        + " signature keys, picking first.");
+            for (int i = 0; i < availableSignatureKeys.length; i++) {
+                if (i == 0) { // the first we find, we take as our signature key
+                    signatureKeyHandle = availableSignatureKeys[i];
+                    m_aLogger.log("returning signature key with handle: "
+                                + signatureKeyHandle);
+                }
+
+            }
+        }
+        pkcs11Module.C_FindObjectsFinal(getSession());
+
+        return signatureKeyHandle;
+    }
+
+    /**
      * Closes the default PKCS#11 session.
      *
      * @throws PKCS11Exception
@@ -220,7 +687,21 @@ public class PKCS11SignerOOo {
         // log in as the normal user...
 
         pkcs11Module.C_Login(getSession(), PKCS11Constants.CKU_USER, pwd);
-        m_aLogger.info("\nUser logged into session.");
+        m_aLogger.log("User logged into session.");
+    }
+
+    /**
+     * Logs out the current user.
+     *
+     * @throws PKCS11Exception
+     */
+    public void logout() throws PKCS11Exception {
+        if (getSession() < 0) {
+            return;
+        }
+        // log in as the normal user...
+        pkcs11Module.C_Logout(getSession());
+        m_aLogger.info("User logged out.");
     }
     
     /**
@@ -232,7 +713,7 @@ public class PKCS11SignerOOo {
         openSession();
         login(password);
     }
-    
+
     /**
      * Gets the current session handle.
      *
@@ -305,6 +786,43 @@ public class PKCS11SignerOOo {
         }
 
         return tokenIDs;
+    }
+    
+    /**
+     * Sign (here means encrypting with private key) the provided data with a
+     * single operation. This is the only modality supported by the (currently
+     * fixed) RSA_PKCS mechanism.
+     *
+     * @param signatureKeyHandle
+     *            handle of the private key to use for signing.
+     * @param data
+     *            the data to sign.
+     * @return a byte[] containing signed data.
+     * @throws IOException
+     * @throws PKCS11Exception
+     */
+    public byte[] signDataSinglePart(long signatureKeyHandle, byte[] data) throws
+            IOException, PKCS11Exception {
+
+        byte[] signature = null;
+        if (getSession() < 0) {
+            return null;
+        }
+
+        m_aLogger.log("\nStart single part sign operation...");
+        pkcs11Module.C_SignInit(getSession(), this.signatureMechanism,
+                                signatureKeyHandle);
+
+        if ((data.length > 0) && (data.length < 1024)) {
+        	m_aLogger.log("Signing ...");
+            signature = pkcs11Module.C_Sign(getSession(), data);
+            m_aLogger.log("FINISHED.");
+        } else {
+        	m_aLogger.log("Error in data length!");
+        }
+
+        return signature;
+
     }
     
     public String getSlotDescription(long slotID) {
@@ -406,7 +924,7 @@ public class PKCS11SignerOOo {
             for (int j = 0; j < mechanismIDs.length; j++) {
                 m_aLogger.info("mechanism info for mechanism id "
                             + mechanismIDs[j] + "->"
-                            + Helpers.mechanismCodeToString(mechanismIDs[j])
+                            + Functions.mechanismCodeToString(mechanismIDs[j])
                             + ": ");
                 mechanismInfo = pkcs11Module.C_GetMechanismInfo(slotIDs[i],
                         mechanismIDs[j]);

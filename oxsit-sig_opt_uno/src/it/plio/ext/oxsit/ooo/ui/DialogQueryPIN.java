@@ -60,6 +60,7 @@ public class DialogQueryPIN extends BasicDialog {
 	private String m_sEditField = "editfld";
 	private String				m_sPinError = "";
 	private String				m_sPinCharOnly = "id_mex_err_only_num";
+	private	char[]				m_cPin;
 
 	public DialogQueryPIN(XFrame _xFrame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
@@ -216,6 +217,12 @@ public class DialogQueryPIN extends BasicDialog {
 				}
 				//yes, transfer to the internal var and exit.
 				setThePin(sThePin);
+
+	            char[] p = new char[sThePin.length()];
+	            for (int i = 0; i < sThePin.length(); i++) {
+	                p[i] = sThePin.charAt(i);
+	            }
+	            setPin(p);
 				endDialog();
 			}
 		} catch (com.sun.star.uno.Exception ex) {
@@ -241,6 +248,20 @@ public class DialogQueryPIN extends BasicDialog {
 	 */
 	public String getThePin() {
 		return m_sThePin;
+	}
+
+	/**
+	 * @param m_cPin the m_cPin to set
+	 */
+	public void setPin(char[] m_cPin) {
+		this.m_cPin = m_cPin;
+	}
+
+	/**
+	 * @return the m_cPin
+	 */
+	public char[] getPin() {
+		return m_cPin;
 	}
 
 
