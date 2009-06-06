@@ -744,7 +744,7 @@ public class PKCS11Driver {
      *
      * @throws TokenException
      */
-    public void openSession(char[] password) throws TokenException {
+    public void openSession(char[] password) throws TokenException, PKCS11Exception {
         openSession();
         login(password);
     }
@@ -982,5 +982,19 @@ public class PKCS11Driver {
         			m_aLogger = (DynamicLoggerDialog)aLogger;
     	}
     	m_aLogger.enableLogging();
+	}
+
+	/**
+	 * @param manufacturer
+	 * @param description
+	 * @param tokenSerialNumber
+	 * @return TODO
+	 */
+	public boolean isTokenPresent(String manufacturer, String description,
+			String tokenSerialNumber) {
+		// TODO Auto-generated method stub
+		//scan the token present
+		
+		return false;
 	}	
 }

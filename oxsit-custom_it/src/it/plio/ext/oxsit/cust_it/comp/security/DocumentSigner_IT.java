@@ -33,6 +33,7 @@ import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
 import it.plio.ext.oxsit.pkcs11.PKCS11Driver;
 import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
+import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -93,6 +94,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	protected XStorage		m_xDocumentStorage;
 	protected XComponentContext	m_xCC;
 	private 	XMultiComponentFactory m_xMCF;
+
+	private ReadCerts		m_sHelperCerts;
+	private PKCS11Driver	m_sHelperPkcs11;
+	private String m_sPkcs11WrapperLocal;
+	private String m_sPkcs11CryptoLib;
+
 	// this document signature state
 
 	/**
@@ -184,6 +191,252 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	public boolean signDocumentStandard(XFrame xFrame, XStorage xStorage,
 			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
 			Exception {
+
+		signAsCMSFile(xFrame, xStorage, _aCertArray);
+/*
+ * The procedure should be the following:
+ * 
+ * form a digest for any of the document substorage (files) the document has
+ * according to the decided standard 
+ * 
+ * when the digests are done, iterate through the certificate list to be used to sign:
+ * for every certificate
+ *     check to see if the token where the certificate is contained is 'on-line'
+ *     the check is performed using data that where retrieve when looking
+ *     for available certificates
+ *       if not, alert the user:
+ *         - user 'next' go to next certificate
+ *     	   - user 'cancel' abort the sign process
+ *     	   - user 'retry' check again the token  
+ * 		token is ready, ask the user for a PIN code to access the private key
+ * 		the dialog shows token ids (description, model, serial number):
+ * 		the dialog expect the right number of characters for PIN, that should come
+ * 		from the token data, even though the right number of characters depends on 
+ * 		the token supplier (e.g. the one that initialized it).
+ * 			- user abort, go to next certificate 
+ * 			- user confirm, then proceed
+ * 
+ * 		open a login session to the token using the provided PIN
+ * 		if something goes wrong, alert the user:
+ * 			- user retry, goto the PIN input step
+ * 			- user abort, go to the next certificate
+ * 		all is ok, retrieve the private key id using the certificate data that came
+ * 		from the available certificate search,
+ * 		for every hash computed:
+ * 			sign the hash, get the signed has and attach it to the document substorage URL
+ * 
+ * 		goto next certificate
+ * 
+ */
+		return false;
+	}
+
+	private boolean signAsCMSFile(XFrame xFrame, XStorage xStorage,
+			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
+			Exception {
+		// TODO Auto-generated method stub
+		// for the time being only the first certificate is used
+		/*
+		 * The procedure should be the following:
+		 * 
+		 * form a digest for any of the document substorage (files) the document
+		 * has according to the decided standard
+		 */
+
+		//A dumy digest
+		byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0,
+				(byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC,
+				(byte) 0xF7, (byte) 0x6F, (byte) 0xF2, (byte) 0x09,
+				(byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2,
+				(byte) 0xF1, 0x31 };
+		// try to sign something simple
+		/*
+		 * String sTest = "Y6pN0POPYtz3b/IJp1sBTnjy8TE="
+		 */
+
+		 /* 
+		 * 
+		 * when the digests are done, iterate through the certificate list to be
+		 * used to sign: for every certificate check to see if the token where
+		 * the certificate is contained is 'on-line'
+		 * the check is performed using data that where retrieve when looking for available
+		 * certificates
+		 */
+		for(int certIDX = 0; certIDX<_aCertArray.length; certIDX++) {
+			 /*for every certificate check to see if the token where
+			 * the certificate is contained is 'on-line'
+			 * the check is performed using data that where retrieve when looking for available
+			 * certificates
+			 */
+
+			XOX_X509Certificate aCert = _aCertArray[certIDX];
+
+			m_aLogger.log("cert label: "
+					+ aCert.getCertificateAttributes().getLabel());
+
+			// get the device this was seen on
+			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(
+					XOX_SSCDevice.class, aCert.getSSCDevice());
+
+			m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
+
+			m_aLogger.log("signDocument with: " + xSSCD.getDescription()
+					+ " cryptolib: " + m_sPkcs11CryptoLib);
+			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD
+					.getManufacturer(), // from device description
+					xSSCD.getDescription(), // from device description
+					xSSCD.getTokenSerialNumber(), // from token
+					xSSCD.getTokenMaximumPINLenght()); // from token
+
+			try {
+				SecurityManager sm = System.getSecurityManager();
+				if (sm != null) {
+					m_aLogger.info("SecurityManager: " + sm);
+				} else {
+					m_aLogger.info("no SecurityManager.");
+				}
+				{
+					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+					if(m_sHelperCerts == null)
+						m_sHelperPkcs11 = new PKCS11Driver(m_aLogger,m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
+					boolean bRetry = true;
+					while(bRetry) {
+						if(isTokenPresent(xSSCD.getTokenLabel(), // from device description
+								xSSCD.getTokenManufacturerID(), // from device description
+								xSSCD.getTokenSerialNumber())) {
+							/* the token is present and initialized in, go on with job
+							 * check again the token token is ready, ask the user for a PIN code to
+							 * access the private key the dialog shows token ids (description,
+							 * model, serial number):
+							 * the dialog expect the right number of characters for PIN, that should come from the token data, even though
+							 * the right number of characters depends on the token supplier (e.g.
+							 * the one that initialized it).
+							 * - user abort, go to next certificate
+							 * - user confirm, then proceed
+							*/
+							// try to get a pin from the user
+							DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+							int BiasX = 100;
+							int BiasY = 30;
+							aDialog1.initialize(BiasX, BiasY);
+							aDialog1.executeDialog();
+							char[] myPin = aDialog1.getPin();
+							if (myPin != null && myPin.length > 0) {
+								//user confirmed, check opening the session
+								m_aLogger.log("sign!");
+								try {
+									m_sHelperPkcs11.openSession(myPin);
+
+									m_sHelperPkcs11.closeSession();
+								} catch (PKCS11Exception e) {
+									// TODO: handle exception
+								} catch (TokenException e) {
+									// TODO: handle exception when 
+									// session can not be opened
+								}
+							}
+							else {
+								//no pin, then next
+								bRetry = false;
+							}
+							bRetry = false;
+						}
+						else {
+							 /* if not, alert the user: 
+							 * - user 'Ok' go to next certificate 
+							 * - user 'cancel' abort the sign process
+							 * - user 'retry' go back and retry
+							 */
+
+							//in case of cancel
+							// return false;
+
+							//this should be adapted
+							bRetry = false;
+						}
+					}
+				}
+				if(m_sHelperPkcs11 != null) {
+					m_sHelperPkcs11.libFinalize();
+					m_sHelperPkcs11 = null;
+				}
+			} catch (IOException e) {
+				m_aLogger.severe(e);
+			} catch (TokenException e) {
+				m_aLogger.severe(e);
+			} catch (NullPointerException e) {
+				m_aLogger.severe(e);
+			} catch (URISyntaxException e) {
+				m_aLogger.severe(e);
+			} catch (Throwable e) {
+				m_aLogger.severe(e);
+			}
+		} //next certificate
+
+		 /* 
+		 * check again the token token is ready, ask the user for a PIN code to
+		 * access the private key the dialog shows token ids (description,
+		 * model, serial number):
+		 * the dialog expect the right number of characters for PIN, that should come from the token data, even though
+		 * the right number of characters depends on the token supplier (e.g.
+		 * the one that initialized it).
+		 * - user abort, go to next certificate
+		 * - user confirm, then proceed
+		 * 
+		 * open a login session to the token using the provided PIN if something
+		 * goes wrong, alert the user:
+		 * - user retry, goto the PIN input step
+		 * - user abort, go to the next certificate all is ok, retrieve the
+		 * private key id using the certificate data that came from the
+		 * available certificate search, for every hash computed:
+		 * sign the hash, get the signed has and attach it to the document substorage URL
+		 * 
+		 * goto next certificate
+		 */
+		// just for test, analyze the document package structure
+		return false;
+	}
+	
+	/**
+	 * @param manufacturer
+	 * @param description
+	 * @param tokenSerialNumber
+	 * @return
+	 * @throws TokenException 
+	 * @throws IOException 
+	 */
+	private boolean isTokenPresent(String _sTokenLabel, String _sTokenManufID,
+			String _sTokenSerialNumber) throws IOException, TokenException {
+		//the same as certificate search, examine the tokens present for a correct information
+		long[] tokens = null;
+		try {
+			tokens = m_sHelperPkcs11.getTokens();
+//grab all the tokens
+			for (int i = 0; i < tokens.length; i++) {
+				//select a token and look for the indication requested
+				CK_TOKEN_INFO aTkInfo = m_sHelperPkcs11.getTokenInfo(tokens[i]);
+				String sString = new String(aTkInfo.label);
+				String aLabel = sString.trim();
+				sString = new String(aTkInfo.manufacturerID);
+				String aManID = sString.trim();
+				sString = new String(aTkInfo.serialNumber);
+				String aSerial = sString.trim();
+
+				if(aLabel.equals(_sTokenLabel) && aManID.equals(_sTokenManufID) &&
+						aSerial.equals(_sTokenSerialNumber)) {
+					//token found, set it to work, return true
+					m_sHelperPkcs11.setTokenHandle(tokens[i]);
+					return true;
+				}
+			}
+		} catch (PKCS11Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
+
+
+	private boolean dummyCodeParking(XStorage xStorage, XFrame xFrame, XOX_X509Certificate[] _aCertArray) {
 		// TODO Auto-generated method stub
 		// for the time being only the first certificate is used
 		XOX_X509Certificate aCert = _aCertArray[0];
@@ -431,6 +684,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return false;		
 	}
 }
