@@ -31,7 +31,8 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
-import it.plio.ext.oxsit.pkcs11.PKCS11SignerOOo;
+import it.plio.ext.oxsit.pkcs11.PKCS11Driver;
+import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
 import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -194,7 +195,43 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				XOX_SSCDevice.class, aCert.getSSCDevice());
 
 		// to see if all is all right, examine the document structure
-
+/*
+ * The procedure should be the following:
+ * 
+ * form a digest for any of the document substorage (files) the document has
+ * according to the decided standard 
+ * 
+ * when the digests are done, iterate through the certificate list to be used to sign:
+ * for every certificate
+ *     check to see if the token where the certificate is contained is 'on-line'
+ *     the check is performed using data that where retrieve when looking
+ *     for available certificates
+ *       if not, alert the user:
+ *         - user 'next' go to next certificate
+ *     	   - user 'cancel' abort the sign process
+ *     	   - user 'retry' check again the token  
+ * 		token is ready, ask the user for a PIN code to access the private key
+ * 		the dialog shows token ids (description, model, serial number):
+ * 		the dialog expect the right number of characters for PIN, that should come
+ * 		from the token data, even though the right number of characters depends on 
+ * 		the token supplier (e.g. the one that initialized it).
+ * 			- user abort, go to next certificate 
+ * 			- user confirm, then proceed
+ * 
+ * 		open a login session to the token using the provided PIN
+ * 		if something goes wrong, alert the user:
+ * 			- user retry, goto the PIN input step
+ * 			- user abort, go to the next certificate
+ * 		all is ok, retrieve the private key id using the certificate data that came
+ * 		from the available certificate search,
+ * 		for every hash computed:
+ * 			sign the hash, get the signed has and attach it to the document substorage URL
+ * 
+ * 		goto next certificate
+ * 
+ */
+		
+		
 		String cryptolibrary = xSSCD.getCryptoLibraryUsed();
 
 		m_aLogger.log("signDocument with: " + xSSCD.getDescription()
@@ -204,8 +241,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		dg.verifyDocumentSignature(xStorage, null);
 
+		PKCS11TokenAttributes aTk = new PKCS11TokenAttributes(
+				xSSCD.getManufacturer(), //from device description
+				xSSCD.getDescription(), // from device description
+				xSSCD.getTokenSerialNumber(), //from token
+				xSSCD.getTokenMaximumPINLenght()); //from token
 		// try to get a pin from the user
-		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF);
+		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTk);
 		// set the device description, can be used to display information on the
 		// device the PIN is asked for
 
@@ -227,13 +269,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			// center the dialog
 			aDialog1.executeDialog();
 			char[] myPin = aDialog1.getPin();
-			if (myPin.length > 0) {
+			if (myPin != null && myPin.length > 0) {
 				m_aLogger.log("sign!");
 				// convert certificate in Java format
 
 				X509Certificate signatureCert = Helpers.getCertificate(aCert);
 
-				PKCS11SignerOOo helper;
+				PKCS11Driver helper;
 				try {
 					SecurityManager sm = System.getSecurityManager();
 					if (sm != null) {
@@ -243,7 +285,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					}
 					String Pkcs11WrapperLocal = Helpers
 							.getPKCS11WrapperNativeLibraryPath(m_xCC);
-					helper = new PKCS11SignerOOo(m_aLogger, Pkcs11WrapperLocal,
+					helper = new PKCS11Driver(m_aLogger, Pkcs11WrapperLocal,
 							cryptolibrary);
 
 					byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0,

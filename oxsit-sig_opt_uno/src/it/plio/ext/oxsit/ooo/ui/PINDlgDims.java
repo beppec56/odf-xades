@@ -29,12 +29,12 @@ package it.plio.ext.oxsit.ooo.ui;
  * @author beppe
  *
  */
-public class DigPasswdDlgDims {
+public class PINDlgDims {
 	private static int nDs_Width = ControlDims.RSC_SP_DLG_INNERBORDER_LEFT+
 								(ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2)+
 								ControlDims.RSC_SP_CTRL_DESC_X+
-								ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT;
-	private static int nDs_Heigh = 50;
+								ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT+40;
+	private static int nDs_Heigh = 90;
 
 	public static int DLGS_WIDTH() {
 		return nDs_Width;
@@ -45,6 +45,7 @@ public class DigPasswdDlgDims {
 	}
 
 	public static int ED_WIDTH () {
-		return DLGS_WIDTH()-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT-ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
+		return ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2;
+//		return DLGS_WIDTH()-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT-ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
 	}
 }

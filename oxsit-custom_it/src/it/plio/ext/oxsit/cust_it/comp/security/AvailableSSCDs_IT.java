@@ -391,7 +391,13 @@ public class AvailableSSCDs_IT extends ComponentBase
 								while (certIt.hasNext()) {
 			//add this certificate to our structure
 									CertificatePKCS11Attributes cert = certIt.next();
+									m_aLogger.log("found on token: "+cert.getToken().toString());
 									//all seems right, add the device the certificate
+									xSSCDevice.setTokenLabel(cert.getToken().getLabel());
+									xSSCDevice.setTokenSerialNumber(cert.getToken().getSerialNumber());
+									xSSCDevice.setTokenManufacturerID(cert.getToken().getManufacturerID());
+									xSSCDevice.setTokenMinimumPINLenght((int)cert.getToken().getMinPinLen());
+									xSSCDevice.setTokenMaximumPINLenght((int)cert.getToken().getMaxPinLen());
 									setDEREncoded(cert.getCertificateValueDEREncoded());
 									setID(cert.getCertificateID());
 									setLabel(cert.getCertificateLabel());

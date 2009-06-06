@@ -1124,6 +1124,21 @@ Impronta del Presidente CNIPA.</value>
 				<value xml:lang="it">Il PIN è errato.</value>
 			</prop>
 		</node>
+		<node oor:name="id_mex_pin_token" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Inserite il PIN per il seguente dispositivo (SSCD)
+Costruttore: %1$s
+Modello: %2$s
+Numero di serie: %3$s
+Massima lunghezza PIN: %4$d caratteri.</value>
+			</prop>
+		</node>
+		<node oor:name="id_mex_max_pin_len" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Massima lunghezza per il PIN superata.
+Sono ammessi fino a un massimo di %1d caratteri.</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

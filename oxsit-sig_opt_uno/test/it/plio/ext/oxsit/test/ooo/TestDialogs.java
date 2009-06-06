@@ -80,8 +80,9 @@ public class TestDialogs {
 //                Object desktop = SvrInfo.getFactory().createInstanceWithContext("com.sun.star.frame.Desktop", xCC);
                 
         		DialogQueryPIN aDialog1 =
-        			new DialogQueryPIN( null, xCC, xMCF );
+        			new DialogQueryPIN( null, xCC, xMCF, null );
         		try {
+       
         			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
         			//get the parente window data
 //        			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
@@ -96,6 +97,7 @@ public class TestDialogs {
         			short test = aDialog1.executeDialog();
         			trace("return: "+test+ " "+aDialog1.getThePin());
         		}
+        		
         		catch (com.sun.star.uno.RuntimeException e) {
         			e.printStackTrace();
         		} catch (BasicErrorException e) {
@@ -107,6 +109,8 @@ public class TestDialogs {
         		}
             }
         }
+        
+       
         catch(Exception e) {
             System.out.println("WARNING: exception thrown !\nJob aborted:\n"+e.toString());
         } catch (java.lang.Exception e) {
@@ -124,4 +128,3 @@ public class TestDialogs {
 		System.exit(0);
 	}	
 }
-

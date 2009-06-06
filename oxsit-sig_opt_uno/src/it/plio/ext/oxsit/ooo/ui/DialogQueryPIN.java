@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.ooo.ui;
 
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;
@@ -60,13 +61,20 @@ public class DialogQueryPIN extends BasicDialog {
 	private String m_sEditField = "editfld";
 	private String				m_sPinError = "";
 	private String				m_sPinCharOnly = "id_mex_err_only_num";
+	private int					m_nMaxPinLen = 0;
 	private	char[]				m_cPin;
+	
+	private PKCS11TokenAttributes	m_aTokenAttributes;
+	private String m_sTokenDescriptionFormat = "id_mex_pin_token";
+	private String	m_sTokenDescriptioMessage;
+	private String	m_sMaxPINLenFormat = "id_mex_max_pin_len";
 
 	public DialogQueryPIN(XFrame _xFrame, XComponentContext context,
-			XMultiComponentFactory _xmcf) {
+			XMultiComponentFactory _xmcf, PKCS11TokenAttributes _Token) {
 		super( _xFrame, context, _xmcf );
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
+		m_aTokenAttributes = _Token;
 
 		m_aLogger.enableLogging();
 
@@ -75,9 +83,19 @@ public class DialogQueryPIN extends BasicDialog {
 			m_sBtnOKLabel = m_aRegAcc.getStringFromRegistry( "id_ok" );
 			m_sBtnCancLabel = m_aRegAcc.getStringFromRegistry( "id_cancel" );
 			m_sPinCharOnly = m_aRegAcc.getStringFromRegistry( m_sPinCharOnly );
+			m_sTokenDescriptionFormat = m_aRegAcc.getStringFromRegistry( m_sTokenDescriptionFormat );
+			m_sMaxPINLenFormat = m_aRegAcc.getStringFromRegistry( m_sMaxPINLenFormat );
 		} catch (com.sun.star.uno.Exception e) {
 			m_aLogger.severe("", "", e);
 		}
+		if(_Token == null)
+			_Token = new PKCS11TokenAttributes();
+		m_nMaxPinLen = (int)_Token.getMaxPinLen();
+		m_sTokenDescriptioMessage = String.format(m_sTokenDescriptionFormat, 
+				_Token.getLabel(),
+				_Token.getModel(),
+				_Token.getSerialNumber(),
+				_Token.getMaxPinLen());
 		m_aRegAcc.dispose();
 	}
 	
@@ -88,7 +106,7 @@ public class DialogQueryPIN extends BasicDialog {
 	public void initialize(XWindowPeer _xParentWindow, int _nPosX, int _nPosY)
 			throws Exception {
 
-		super.initialize( DLG_QUERY_PIN_NAME, m_sTitle, DigPasswdDlgDims.DS_HEIGHT(), DigPasswdDlgDims.DLGS_WIDTH(), _nPosX, _nPosY );
+		super.initialize( DLG_QUERY_PIN_NAME, m_sTitle, PINDlgDims.DS_HEIGHT(), PINDlgDims.DLGS_WIDTH(), _nPosX, _nPosY );
 //set white backgroung
 //we need to set the property BackgroundColor del modello della dialog
         // From the control we get the model, which in turn supports the
@@ -100,16 +118,21 @@ public class DialogQueryPIN extends BasicDialog {
         if (xProp != null)
         	xProp.setPropertyValue(new String("BackgroundColor"),
         		new Integer(ControlDims.DLG_ABOUT_BACKG_COLOR));*/
+		
+		//insert a fixed text for message
 
-		int _nPosButton = DigPasswdDlgDims.DS_HEIGHT() - ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4 / 3;
+		int _nPosButton = PINDlgDims.DS_HEIGHT() - ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4 / 3;
+		int _nPosEdit   = _nPosButton - ControlDims.RSC_CD_PUSHBUTTON_HEIGHT-ControlDims.RSC_SP_CTRL_X;
 		m_xParentWindow = _xParentWindow;
 
 			m_oEdit = insertEditFieldModel( this, /*this*/null, 
-					DigPasswdDlgDims.DLGS_WIDTH() - DigPasswdDlgDims.ED_WIDTH() -
-					 ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,
-					 ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM,
+					(PINDlgDims.DLGS_WIDTH() - PINDlgDims.ED_WIDTH()) /2,
+/*					PINDlgDims.DLGS_WIDTH() - PINDlgDims.ED_WIDTH() -
+					 ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,*/
+					 _nPosEdit,
+//					 ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM,
 					 ControlDims.RSC_CD_EDIT_FIELD_HEIGHT,
-					 DigPasswdDlgDims.ED_WIDTH(), 0, "", m_sEditField,
+					 PINDlgDims.ED_WIDTH(), 0, "", m_sEditField,
 				false,
 				false,
 				false,	//Vscroll, should be auto
@@ -131,24 +154,34 @@ public class DialogQueryPIN extends BasicDialog {
 				"EchoChar"}, new Object[] { 
 				new Integer( ControlDims.DLG_ABOUT_BACKG_COLOR ),
 				new Short((short)0x2a) } );
-
+		
 		// OK button
+		int _PosXOK = ((PINDlgDims.DLGS_WIDTH() - (ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2+ControlDims.RSC_SP_CTRL_DESC_X))) / 2;
 		insertButton( this,
-				( DigPasswdDlgDims.DLGS_WIDTH() - ControlDims.RSC_CD_PUSHBUTTON_WIDTH -
-						ControlDims.RSC_SP_CTRL_DESC_X -
-						ControlDims.RSC_CD_PUSHBUTTON_WIDTH - 
-						ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT), 
-				// button
+				_PosXOK,
+/*						( PINDlgDims.DLGS_WIDTH() - ControlDims.RSC_CD_PUSHBUTTON_WIDTH -
+								ControlDims.RSC_SP_CTRL_DESC_X -
+								ControlDims.RSC_CD_PUSHBUTTON_WIDTH - 
+								ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT), 
+*/
+						// button
 				_nPosButton, ControlDims.RSC_CD_PUSHBUTTON_WIDTH, m_sCONFIRM_PB, m_sBtnOKLabel,
 				(short) PushButtonType.STANDARD_value );
 
 		// Cancel button
 		insertButton( this,
-				( DigPasswdDlgDims.DLGS_WIDTH() - ControlDims.RSC_CD_PUSHBUTTON_WIDTH - ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT), //right
+				_PosXOK+ControlDims.RSC_SP_CTRL_DESC_X+ControlDims.RSC_CD_PUSHBUTTON_WIDTH,
 				// button
 				_nPosButton, ControlDims.RSC_CD_PUSHBUTTON_WIDTH, "cancb", m_sBtnCancLabel,
 				(short) PushButtonType.CANCEL_value );
 
+		insertFixedText(this, 
+				ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM,
+				ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
+				80,
+				PINDlgDims.DLGS_WIDTH()-ControlDims.RSC_SP_DLG_INNERBORDER_LEFT-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,
+				0, m_sTokenDescriptioMessage,"fixmex");
+		
 		xDialog = (XDialog) UnoRuntime.queryInterface( XDialog.class,
 				super.m_xDialogControl );
 		createWindowPeer();
@@ -197,6 +230,13 @@ public class DialogQueryPIN extends BasicDialog {
 
 	    		if(sThePin.length() == 0)
 	    			return;
+	    		if(sThePin.length() > m_nMaxPinLen) {
+	    			String mex = String.format(m_sMaxPINLenFormat, m_nMaxPinLen);
+                    MessageError	aMex = new MessageError(null,m_xMCF,m_xContext);
+                    aMex.executeDialogLocal(mex);
+    				setThePin("");	    			
+	    			return;
+	    		}
 				//check if it's composed only of numbers
 	    		//FIXME: force charset to std iso
 	    		byte[] thes = sThePin.getBytes();

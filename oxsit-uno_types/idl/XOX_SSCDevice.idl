@@ -54,6 +54,26 @@
 		*/
 		[attribute] string ATRcode;
 
+		/** Information from token
+		*/
+		[attribute] string TokenLabel;
+
+		/** Information from token
+		*/
+		[attribute] string TokenSerialNumber;
+
+		/** Information from token
+		*/
+		[attribute] string TokenManufacturerID;
+
+		/** Information from token
+		*/
+		[attribute] long TokenMaximumPINLenght;
+
+		/** Information from token
+		*/
+		[attribute] long TokenMinimumPINLenght;
+
 		/** the low level crypto library used
 		*/
 		[attribute] string CryptoLibrariesConfigured;

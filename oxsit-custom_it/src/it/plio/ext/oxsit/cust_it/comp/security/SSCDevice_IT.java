@@ -87,6 +87,11 @@ public class SSCDevice_IT extends ComponentBase
 
 	private String m_sManufacturer;
 	private String m_sCryptoLibrariesConfigured;
+	private String m_sTokenLabel;
+	private String m_sTokenManufID;
+	private int m_nTokenMaxPinL;
+	private int m_nTokenMinPinL;
+	private String m_sTokenSerialNumber;
 
 	/**
 	 * This Class implements the SSCDevice_IT service
@@ -401,5 +406,85 @@ public class SSCDevice_IT extends ComponentBase
 	@Override
 	public void setManufacturer(String _sArg) {
 		m_sManufacturer = _sArg;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getLabel()
+	 */
+	@Override
+	public String getTokenLabel() {
+		return m_sTokenLabel;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getManufacturerID()
+	 */
+	@Override
+	public String getTokenManufacturerID() {
+		return m_sTokenManufID;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getMaximumPINLenght()
+	 */
+	@Override
+	public int getTokenMaximumPINLenght() {
+		return m_nTokenMaxPinL;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getMinimumPINLenght()
+	 */
+	@Override
+	public int getTokenMinimumPINLenght() {
+		return m_nTokenMinPinL;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getSerialNumber()
+	 */
+	@Override
+	public String getTokenSerialNumber() {
+		return m_sTokenSerialNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setLabel(java.lang.String)
+	 */
+	@Override
+	public void setTokenLabel(String arg0) {
+		m_sTokenLabel = arg0;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setManufacturerID(java.lang.String)
+	 */
+	@Override
+	public void setTokenManufacturerID(String arg0) {
+		m_sTokenManufID = arg0;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setMaximumPINLenght(int)
+	 */
+	@Override
+	public void setTokenMaximumPINLenght(int arg0) {
+		m_nTokenMaxPinL = arg0;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setMinimumPINLenght(int)
+	 */
+	@Override
+	public void setTokenMinimumPINLenght(int arg0) {
+		m_nTokenMinPinL = arg0;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#setSerialNumber(java.lang.String)
+	 */
+	@Override
+	public void setTokenSerialNumber(String arg0) {
+		m_sTokenSerialNumber = arg0;
 	}
 }

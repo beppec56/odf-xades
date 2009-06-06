@@ -442,6 +442,63 @@ public class BasicDialog implements XTextListener, XSpinListener, XActionListene
 
 	// / overloading: testo con nome aggiunto
 	public XFixedText insertFixedText(XActionListener _xMouseListener, int _nPosX,
+			int _nPosY, int Height, int _nWidth, int _nStep, String _sLabel, String _sName) {
+		XFixedText xFixedText = null;
+		try {
+			// create a unique name by means of an own implementation...
+			// String sName = createUniqueName(m_xDlgModelNameContainer,
+			// "Label");
+
+			// create a controlmodel at the multiservicefactory of the dialog
+			// model...
+			Object oFTModel = m_xMSFDialogModel
+					.createInstance( "com.sun.star.awt.UnoControlFixedTextModel" );
+			XMultiPropertySet xFTModelMPSet = (XMultiPropertySet) UnoRuntime
+					.queryInterface( XMultiPropertySet.class, oFTModel );
+			// Set the properties at the model - keep in mind to pass the
+			// property names in alphabetical order!
+
+			xFTModelMPSet.setPropertyValues( new String[] { "FontPitch", "FontWeight",
+					"Height", "Name", "PositionX", "PositionY", "TabIndex", "Width" },
+					new Object[] { new Short( (short) com.sun.star.awt.FontPitch.FIXED ),
+					(float) 100, new Integer( Height ),
+							_sName, new Integer( _nPosX ), new Integer( _nPosY ),
+							new Short( (short)_nStep ), new Integer( _nWidth ) } );
+			// add the model to the NameContainer of the dialog model
+			m_xDlgModelNameContainer.insertByName( _sName, oFTModel );
+
+			// The following property may also be set with XMultiPropertySet but
+			// we
+			// use the XPropertySet interface merely for reasons of
+			// demonstration
+			XPropertySet xFTPSet = (XPropertySet) UnoRuntime.queryInterface(
+					XPropertySet.class, oFTModel );
+			xFTPSet.setPropertyValue( "Label", _sLabel );
+
+			// reference the control by the Name
+			XControl xFTControl = m_xDlgContainer.getControl( _sName );
+			xFixedText = (XFixedText) UnoRuntime.queryInterface( XFixedText.class,
+					xFTControl );
+/*			XWindow xWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
+					xFTControl );*/
+//			xWindow.addMouseListener( _xMouseListener );
+		} catch (com.sun.star.uno.Exception ex) {
+			/*
+			 * perform individual exception handling here. Possible exception
+			 * types are: com.sun.star.lang.IllegalArgumentException,
+			 * com.sun.star.lang.WrappedTargetException,
+			 * com.sun.star.container.ElementExistException,
+			 * com.sun.star.beans.PropertyVetoException,
+			 * com.sun.star.beans.UnknownPropertyException,
+			 * com.sun.star.uno.Exception
+			 */
+			ex.printStackTrace( System.out );
+		}
+		return xFixedText;
+	}
+
+	// / overloading: testo con nome aggiunto
+	public XFixedText insertFixedText(XActionListener _xMouseListener, int _nPosX,
 			int _nPosY, int _nWidth, int _nStep, String _sLabel, String _sName) {
 		return insertFixedText( _xMouseListener, _nPosX, _nPosY, _nWidth, _nStep,
 				_sLabel, _sName, (float) 100 );

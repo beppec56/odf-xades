@@ -22,6 +22,8 @@
 
 package it.plio.ext.oxsit.pkcs11;
 
+import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
+
 import java.security.cert.X509Certificate;
 
 /** Contains the additional information about a certificate that are
@@ -43,6 +45,9 @@ public class CertificatePKCS11Attributes {
 	//of the certificate
 	private byte[]			m_aCertificateID;
 	
+	//the token where the certificate was found
+	private PKCS11TokenAttributes	m_aTheToken;
+
 	public	CertificatePKCS11Attributes() {
 		m_oCertificateValue = null;
 		m_aCertificateValueDEREncoded = null;
@@ -105,5 +110,19 @@ public class CertificatePKCS11Attributes {
 	 */
 	public byte[] getCertificateID() {
 		return m_aCertificateID;
+	}
+
+	/**
+	 * @param m_aTheToken the m_aTheToken to set
+	 */
+	public void setToken(PKCS11TokenAttributes m_aTheToken) {
+		this.m_aTheToken = m_aTheToken;
+	}
+
+	/**
+	 * @return the m_aTheToken
+	 */
+	public PKCS11TokenAttributes getToken() {
+		return m_aTheToken;
 	}
 }

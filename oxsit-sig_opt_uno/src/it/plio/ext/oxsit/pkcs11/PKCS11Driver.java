@@ -1,7 +1,7 @@
 /*************************************************************************
  * 
  *  This code is derived from
- *  it.trento.comune.j4sign.pcsc.PCSCHelper class in j4sign
+ *  it.trento.comune.j4sign.pcsc.PKCS11Signer class in j4sign
  *  adapted to be used in OOo UNO environment
  *	Copyright (c) 2004 Roberto Resoli - Servizio Sistema Informativo - Comune di Trento.
  *
@@ -62,7 +62,7 @@ import org.bouncycastle.asn1.x509.X509CertificateStructure;
  * @author beppe
  *
  */
-public class PKCS11SignerOOo {
+public class PKCS11Driver {
 
     private IDynamicLogger m_aLogger;
 
@@ -93,7 +93,7 @@ public class PKCS11SignerOOo {
      */
     private long tokenHandle = -1L;
 
-	public PKCS11SignerOOo(IDynamicLogger aLogger, String pkcs11WrapLib, String cryptokiLib) throws
+	public PKCS11Driver(IDynamicLogger aLogger, String pkcs11WrapLib, String cryptokiLib) throws
     IOException, TokenException {
 		super(); // ????
 
@@ -102,7 +102,7 @@ public class PKCS11SignerOOo {
 		// log = out;
 		cryptokiLibrary = cryptokiLib;
 
-		m_aLogger.info("Initializing PKCS11SignerOOo...");
+		m_aLogger.info("Initializing PKCS11Driver...");
 
 		m_aLogger.info("Trying to connect to PKCS#11 module: '"
 				+ cryptokiLibrary + "' ...");
