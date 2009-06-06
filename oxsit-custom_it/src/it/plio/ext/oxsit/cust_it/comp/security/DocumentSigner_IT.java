@@ -184,51 +184,58 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
 			Exception {
 		// TODO Auto-generated method stub
-		//for the time being only the first certificate is used
+		// for the time being only the first certificate is used
 		XOX_X509Certificate aCert = _aCertArray[0];
-		//get the device this was seen on
+		
+		m_aLogger.log("cert label: "+aCert.getCertificateAttributes().getLabel());
+
+		// get the device this was seen on
 		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(
 				XOX_SSCDevice.class, aCert.getSSCDevice());
 
-		
-		//to see if all is all right, examine the document structure
-		
+		// to see if all is all right, examine the document structure
+
 		String cryptolibrary = xSSCD.getCryptoLibraryUsed();
-		
-		m_aLogger.log("signDocument with: " +xSSCD.getDescription()+ " cryptolib: "+cryptolibrary);
-		//just for test, analyze the document package structure
-		DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xMCF,m_xCC);
-		
-		dg.verifyDocumentSignature(xStorage,null);
-		
-		//try to get a pin from the user
-		DialogQueryPIN aDialog1 =
-			new DialogQueryPIN( xFrame, m_xCC, m_xMCF );
-		//set the device description, can be used to display information on the device the PIN is asked for
-		
+
+		m_aLogger.log("signDocument with: " + xSSCD.getDescription()
+				+ " cryptolib: " + cryptolibrary);
+		// just for test, analyze the document package structure
+		DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xMCF, m_xCC);
+
+		dg.verifyDocumentSignature(xStorage, null);
+
+		// try to get a pin from the user
+		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF);
+		// set the device description, can be used to display information on the
+		// device the PIN is asked for
+
 		try {
-			//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
-			//get the parente window data
-//			com.sun.star.awt.XWindow xCompWindow = m_xFrame.getComponentWindow();
-//			com.sun.star.awt.Rectangle xWinPosSize = xCompWindow.getPosSize();
+			// PosX e PosY devono essere ricavati dalla finestra genetrice (in
+			// questo caso la frame)
+			// get the parente window data
+			// com.sun.star.awt.XWindow xCompWindow =
+			// m_xFrame.getComponentWindow();
+			// com.sun.star.awt.Rectangle xWinPosSize =
+			// xCompWindow.getPosSize();
 			int BiasX = 100;
 			int BiasY = 30;
-//			System.out.println("Width: "+xWinPosSize.Width+ " height: "+xWinPosSize.Height);
-//			XWindow xWindow = m_xFrame.getContainerWindow();
-//			XWindowPeer xPeer = xWindow.
-			aDialog1.initialize(BiasX,BiasY);
-//center the dialog
+			// System.out.println("Width: "+xWinPosSize.Width+
+			// " height: "+xWinPosSize.Height);
+			// XWindow xWindow = m_xFrame.getContainerWindow();
+			// XWindowPeer xPeer = xWindow.
+			aDialog1.initialize(BiasX, BiasY);
+			// center the dialog
 			aDialog1.executeDialog();
 			char[] myPin = aDialog1.getPin();
-			if( myPin.length > 0) {
+			if (myPin.length > 0) {
 				m_aLogger.log("sign!");
-				//convert certificate in Java format
+				// convert certificate in Java format
 
 				X509Certificate signatureCert = Helpers.getCertificate(aCert);
-				
+
 				PKCS11SignerOOo helper;
 				try {
-		            SecurityManager sm = System.getSecurityManager();
+					SecurityManager sm = System.getSecurityManager();
 					if (sm != null) {
 						m_aLogger.info("SecurityManager: " + sm);
 					} else {
@@ -265,34 +272,39 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						for (int i = 0; i < nTokens.length; i++) {
 							m_aLogger.log("token: " + nTokens[i]);
 						}
-//						helper.getModuleInfo(); info on pkcs#11 library
+						// helper.getModuleInfo(); info on pkcs#11 library
 
 						helper.getMechanismInfo();
 						// open session on this token
 						helper.setTokenHandle(nTokens[0]);
 						try {
-//							helper.openSession(myPin);
+							// helper.openSession(myPin);
 							helper.openSession();
 
-							// find private key and certificate in first token only
+							// find private key and certificate in first token
+							// only
 							try {
 								CK_TOKEN_INFO tokenInfo = helper
 										.getTokenInfo(nTokens[0]);
 
 								m_aLogger.log(tokenInfo.toString());
 
-							// from the certificate get the mechanism needed
-							// (the subject signature algor)
-							// this will be the mechanism used to sign ??
+								// from the certificate get the mechanism needed
+								// (the subject signature algor)
+								// this will be the mechanism used to sign ??
 
-							// from the certificate get the certificate handle
+								// from the certificate get the certificate
+								// handle
 								try {
-									long certHandle = helper.findCertificate(signatureCert);
+									long certHandle = helper
+											.findCertificate(signatureCert);
 
-							// then the certificate handle get the corresponding
-							// private key handle
-//									long sigKeyHandle = helper.findSignatureKeyFromCertificateHandle(certHandle);
-							// get key label as well								
+									// then the certificate handle get the
+									// corresponding
+									// private key handle
+									// long sigKeyHandle =
+									// helper.findSignatureKeyFromCertificateHandle(certHandle);
+									// get key label as well
 								} catch (PKCS11Exception e) {
 									m_aLogger.severe(e);
 								} catch (CertificateEncodingException e) {
@@ -303,7 +315,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							} catch (Throwable e) {
 								m_aLogger.severe(e);
 							}
-//							helper.logout();
+							// helper.logout();
 							helper.closeSession();
 						} catch (TokenException ex) {
 							m_aLogger.log("Messaggio helper.openSession(): "
@@ -352,7 +364,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						}
 
 					}
-					helper.libFinalize();					
+					helper.libFinalize();
 				} catch (IOException e) {
 					m_aLogger.severe(e);
 				} catch (TokenException e) {
@@ -364,12 +376,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				} catch (Throwable e) {
 					m_aLogger.severe(e);
 				}
-				
-				
+
 				return true;
 			}
-		}
-		catch (com.sun.star.uno.RuntimeException e) {
+		} catch (com.sun.star.uno.RuntimeException e) {
 			m_aLogger.severe(e);
 		} catch (BasicErrorException e) {
 			m_aLogger.severe(e);

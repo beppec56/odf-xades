@@ -347,7 +347,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		try {
 			cf = java.security.cert.CertificateFactory.getInstance("X.509");
 			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            bais = new java.io.ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded());
             X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             XOX_X509Certificate qCertChild = m_xQc;
 
@@ -537,7 +537,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		try {
 			cf = java.security.cert.CertificateFactory.getInstance("X.509");
 			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            bais = new java.io.ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded());
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             XStatusIndicator xStatusIndicator = null;
             if (_aFrame != null) {

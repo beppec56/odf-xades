@@ -535,7 +535,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		m_aCriticalExtensions.clear();
 		m_aNotCriticalExtensions.clear();
 
-		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
+		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado;
 		try {

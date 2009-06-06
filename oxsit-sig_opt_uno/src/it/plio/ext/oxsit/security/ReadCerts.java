@@ -37,6 +37,7 @@ import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 //import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
+import it.plio.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
 import it.plio.ext.oxsit.pkcs11.PKCS11SignerOOo;
 
 import java.security.cert.CertificateException;
@@ -55,7 +56,7 @@ import com.sun.star.task.XStatusIndicator;
 public class ReadCerts {
 
     private boolean isDownloadCRLForced;
-	private Hashtable certsOnToken;
+	private Hashtable<Integer, CertificatePKCS11Attributes> certsOnToken;
 	private ArrayList signersList;
 	private CardInReaderInfo cIr;
 	private IDynamicLogger m_aLogger;
@@ -94,7 +95,7 @@ public class ReadCerts {
 
     	setLogger(aLogger);
         this.isDownloadCRLForced = isDownloadCRLForced;
-        certsOnToken = new Hashtable();
+        certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
         signersList = new ArrayList();
         // pcsc = new PCSCHelper(true);
         setCryptokiLib(cIr.getLib());
@@ -202,14 +203,16 @@ public class ReadCerts {
     }
 
     /**
-     * Return a Collection of certificates present in token<br>
+     * Return a Collection of certificate present in token<br>
+     * In the form of a 
      * <br>
-     * restituisce una Collection dei certificato presenti nel token
+     * restituisce una Collection dei certificati presenti nel token
      * 
      * @return Collection
      */
-    public Collection<X509Certificate> getCertsOnToken() {
+    public Collection<CertificatePKCS11Attributes> getCertsOnToken() {
         byte[] certBytes = null;
+        CertificatePKCS11Attributes oCertificate = null;
 
         java.security.cert.X509Certificate javaCert = null;
         CertificateFactory cf = null;
@@ -228,18 +231,23 @@ public class ReadCerts {
 
                 try {
                     certBytes = helper.getDEREncodedCertificate(certs[i]);
+                	oCertificate = new CertificatePKCS11Attributes();
+                	oCertificate.setCertificateValueDEREncoded(certBytes);
+                    bais = new java.io.ByteArrayInputStream(certBytes);
+                    try {
+                        javaCert = (java.security.cert.X509Certificate) cf
+                                .generateCertificate(bais);
+                        oCertificate.setCertificateValue(javaCert);
+                    } catch (CertificateException ex1) {
+                    }
+                    //now get the additional certificate attribute from PKCS11 interface
+                    oCertificate.setCertificateID(helper.getCertificateID(certs[i]));
+                    oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certs[i])));
+                    m_aLogger.info(javaCert.getSubjectDN().toString());
                 } catch (PKCS11Exception ex2) {
                 }
-                bais = new java.io.ByteArrayInputStream(certBytes);
-                try {
-                    javaCert = (java.security.cert.X509Certificate) cf
-                            .generateCertificate(bais);
-                } catch (CertificateException ex1) {
-                }
-                m_aLogger.info(javaCert.getSubjectDN().toString());
-
-                certsOnToken.put(new Integer(i), javaCert);
-
+                if(oCertificate != null)
+                	certsOnToken.put(new Integer(i), oCertificate);
             }
         } else {
             return null;

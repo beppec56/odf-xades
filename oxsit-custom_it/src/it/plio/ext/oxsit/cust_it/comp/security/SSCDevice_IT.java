@@ -27,6 +27,7 @@ import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Vector;
@@ -229,10 +230,10 @@ public class SSCDevice_IT extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addCertificate(byte[])
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#addCertificate(it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes)
 	 */
 	@Override
-	public void addCertificate(byte[] _aDERencoded) {
+	public void addCertificate(XOX_CertificatePKCS11Attributes aCertificateAttributes) {
 		// instantiate the components needed to check this certificate
 		// create the Certificate Control UNO objects
 		// first the certificate compliance control
@@ -253,7 +254,7 @@ public class SSCDevice_IT extends ComponentBase
 			Object[] aArguments = new Object[6];
 			// byte[] aCert = cert.getEncoded();
 			// set the certificate raw value
-			aArguments[0] = _aDERencoded;// aCert;
+			aArguments[0] = aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
 			aArguments[1] = new Boolean(false);// FIXME change according to UI
 												// (true) or not UI (false)
 			// the order used for the following three certificate check objects
@@ -283,6 +284,8 @@ public class SSCDevice_IT extends ComponentBase
 			//add this device as the source device for this certificate
 			//(will be handly if we sign with the corresponding private key)
 			xQualCert.setSSCDevice(this);
+			
+			xQualCert.setCertificateAttributes(aCertificateAttributes);
 
 			m_xQualCertList.add(xQualCert);
 		} catch (Exception e) {
@@ -313,10 +316,10 @@ public class SSCDevice_IT extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getHasQualifiedCertificates()
+	 * @see it.plio.ext.oxsit.security.XOX_SSCDevice#getHasCertificates()
 	 */
 	@Override
-	public int getHasX509Certificates() {
+	public int getHasCertificates() {
 		return m_xQualCertList.size();
 	}
 

@@ -24,6 +24,7 @@
 #define __it_plio_ext_oxsit_security_cert_X509Certificate_idl__
 
 #include <com/sun/star/lang/XInitialization.idl>
+#include "XOX_CertificatePKCS11Attributes.idl"
 #include "XOX_X509Certificate.idl"
 
   module it { module plio { module ext { module oxsit { module security { module cert {
@@ -79,6 +80,9 @@
 		This interface accept an array of argument as parameter.
 		*/
 		interface com::sun::star::lang::XInitialization;
+		/** This interface gives access to the X509 certificate PKCS11 attributes this service represents.
+		*/
+		interface it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes;
 		/** This interface gives access to the X509 qualified certificate this service represents.
 		*/
 		interface it::plio::ext::oxsit::security::cert::XOX_X509Certificate;

@@ -33,9 +33,11 @@ import it.plio.ext.oxsit.options.OptionsParametersAccess;
 import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
+import it.plio.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
 import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -77,6 +79,10 @@ import com.sun.star.util.XChangesNotifier;
 public class AvailableSSCDs_IT extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
+		XOX_CertificatePKCS11Attributes, //added for convenience
+										//so we use this UNO component to pass
+										//certificate incormation when addig a certificate
+										//to the list
 		XOX_SSCDManagement {
 
 	protected XComponentContext m_xCC;
@@ -98,6 +104,14 @@ public class AvailableSSCDs_IT extends ComponentBase
 	protected Vector<XOX_SSCDevice>	m_aSSCDList; 
 
 	protected IDynamicLogger m_aLogger;
+	
+	//the new three fields are the one needed
+	//to pass data when instantiating the sscd device
+	//to make the SSCD able to retrieve certificate PKCS11 attributes
+	//without the need to create a new service
+	private byte[] m_aDEREncoded;
+	private byte[] m_aCertID;
+	private String m_sCertLabel;
 
 	/**
 	 * 
@@ -371,21 +385,17 @@ public class AvailableSSCDs_IT extends ComponentBase
 
 							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
 
-							Collection<X509Certificate> certsOnToken = rt.getCertsOnToken();
+							Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken();
 							if (certsOnToken != null) {
-								Iterator<X509Certificate> certIt = certsOnToken.iterator();
+								Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
 								while (certIt.hasNext()) {
 			//add this certificate to our structure
-									X509Certificate cert = (X509Certificate) certIt.next();
-									try {
-										//this try will only check for correctness, before
-										//instantiating the services
-										cert.getEncoded();
-										//all seems right, add the device the certificate
-										xSSCDevice.addCertificate(cert.getEncoded());
-									} catch (CertificateEncodingException e) {
-										m_aLogger.severe("scanDevices",e);
-									}	
+									CertificatePKCS11Attributes cert = certIt.next();
+									//all seems right, add the device the certificate
+									setDEREncoded(cert.getCertificateValueDEREncoded());
+									setID(cert.getCertificateID());
+									setLabel(cert.getCertificateLabel());
+									xSSCDevice.addCertificate(this);
 								}
 								rt.closeSession();
 								rt.libFinalize();
@@ -419,8 +429,56 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 */
 	@Override
 	public void addSSCDevice(XOX_SSCDevice _aSSCD) {
-		// TODO Auto-generated method stub
 		// the single device
 		m_aSSCDList.add(_aSSCD);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#getDEREncoded()
+	 */
+	@Override
+	public byte[] getDEREncoded() {
+		return m_aDEREncoded;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#setDEREncoded(byte[])
+	 */
+	@Override
+	public void setDEREncoded(byte[] aEncoding) {
+		m_aDEREncoded = aEncoding;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#getID()
+	 */
+	@Override
+	public byte[] getID() {
+		return m_aCertID;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#setID(char[])
+	 */
+	@Override
+	public void setID(byte[] aID) {
+		m_aCertID = aID;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#getLabel()
+	 */
+	@Override
+	public String getLabel() {
+		return m_sCertLabel;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#setLabel(java.lang.String)
+	 */
+	@Override
+	public void setLabel(String sLabel) {
+		m_sCertLabel = sLabel;
 	}
 }

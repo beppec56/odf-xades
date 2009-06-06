@@ -34,6 +34,7 @@ import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
 import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -79,6 +80,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			implements 
 			XServiceInfo,
 			XInitialization,
+			XOX_CertificatePKCS11Attributes,
 			XOX_X509Certificate,
 			XOX_X509CertificateDisplay
 			 {
@@ -129,6 +131,10 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	
 	private XOX_CertificateExtension[] m_xCritExt = null;
 	private XOX_CertificateExtension[] m_xExt = null;
+
+	private String m_sCertficateLabel;
+
+	private byte[] m_aCertificateID;
 
 	/**
 	 * 
@@ -1065,7 +1071,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			throws IllegalArgumentException, Exception {
 		m_xoxCertificateRevocationProcedure = arg0;
 	}
-	
+
 	/**
 	 * set the certificate state according to the new value, as enum,
 	 * mapped to numerical
@@ -1108,5 +1114,55 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	@Override
 	public void setSSCDevice(Object _SSCD) {
 		m_oSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, _SSCD);
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#getCertificateAttributes()
+	 */
+	@Override
+	public XOX_CertificatePKCS11Attributes getCertificateAttributes() {
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_X509Certificate#setCertificateAttributes(it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes)
+	 */
+	@Override
+	public void setCertificateAttributes(XOX_CertificatePKCS11Attributes _Attributes) {
+		setID(_Attributes.getID());
+		setLabel(_Attributes.getLabel());
+		setDEREncoded(_Attributes.getDEREncoded());
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#getID()
+	 */
+	@Override
+	public byte[] getID() {
+		return m_aCertificateID;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#setID(byte[])
+	 */
+	@Override
+	public void setID(byte[] _ID) {
+		m_aCertificateID = _ID;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#getLabel()
+	 */
+	@Override
+	public String getLabel() {
+		return m_sCertficateLabel;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes#setLabel(java.lang.String)
+	 */
+	@Override
+	public void setLabel(String _Label) {
+		m_sCertficateLabel = _Label;
 	}
 }

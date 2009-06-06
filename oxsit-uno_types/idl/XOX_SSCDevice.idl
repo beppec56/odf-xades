@@ -23,6 +23,7 @@
 #ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 #define __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 
+#include "XOX_CertificatePKCS11Attributes.idl"
 #include "XOX_X509Certificate.idl"
 
   module it { module plio { module ext { module oxsit { module security {
@@ -63,16 +64,16 @@
 
 		/** The number of available certificate on the token
 		*/
-		[attribute,readonly]  long HasX509Certificates;
+		[attribute,readonly]  long HasCertificates;
 
 		/** The certificates this device contains.
 		*/
 		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
 
 		/** Adds this certificate to the list of certificates available on this token.
-		@param DERencoded the DER encoded byte array of the certificate to add.
+		@param a UNO object implementing the XOX_CertificatePKCS11Attributes interface.
 		*/
-		void	addCertificate( [in] sequence< byte > DERencoded);
+		void	addCertificate( [in]  it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes CertificateAttribute);
 //		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
   };
  

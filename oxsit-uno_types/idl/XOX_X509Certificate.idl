@@ -34,6 +34,7 @@
 #include "XOX_CertificationPathProcedure.idl"
 #include "XOX_CertificateComplianceProcedure.idl"
 #include "XOX_CertificateRevocationStateProcedure.idl"
+#include "XOX_CertificatePKCS11Attributes.idl"
 #include "XOX_X509CertificateDisplay.idl"
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/XInterface.idl> 
@@ -51,7 +52,12 @@ XOX_AvailableSSCDs interface or</p>
 	{
 		/** the DER encoded form of the certificate.
 		 */
-		[attribute] sequence< byte > DEREncoded ;
+//		[attribute] sequence< byte > DEREncoded ;
+
+		/**
+		this is a simple way to obtain an interface usefull to set certificate data
+		*/
+		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes;
 
 		/** The SSCD device where this certificate resides.
 		In the same SSCD there is a corresponding private key used to sign.
@@ -63,7 +69,7 @@ XOX_AvailableSSCDs interface or</p>
 		not the enum (e.g. CertificateState.OK_value).</p>
 
 	 	*/
-		/* @see it::plio::ext::module::oxsit::security::cert::CertificateState
+		/* @see it::plio::ext::oxsit::security::cert::CertificateState
 		*/
 		[attribute, readonly] long CertificateState;
 		/** conditions observed in checking the certificate state
@@ -92,6 +98,11 @@ XOX_AvailableSSCDs interface or</p>
 		tree.
 		*/
 		[attribute] it::plio::ext::oxsit::security::cert::XOX_X509Certificate CertificationPath ;
+
+		/** Copies the certificate attributes from the parameters to internal representation.<br>
+		They can be retrieved by means of getCertificateAttributes method.
+		*/
+		void	setCertificateAttributes([in] it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes ) ;
 
 		/** Returns the error state of an extension, in value of
 		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value

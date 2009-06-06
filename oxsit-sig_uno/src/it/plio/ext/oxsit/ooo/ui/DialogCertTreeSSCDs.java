@@ -245,7 +245,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 						XOX_SSCDevice oSSCDev = xDevices[idx];
 // add this node to the tree
 						XMutableTreeNode xCertifNode = addSSCDToTreeRootHelper(oSSCDev);
-						if(oSSCDev.getHasX509Certificates() > 0) {
+						if(oSSCDev.getHasCertificates() > 0) {
 							XOX_X509Certificate[] oCertifs = oSSCDev.getX509Certificates();
 							for(int idx1=0; idx1<oCertifs.length;idx1++) {
 								//perform certificate verification (a full one!)

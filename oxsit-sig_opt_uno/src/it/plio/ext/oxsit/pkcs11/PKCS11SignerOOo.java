@@ -131,7 +131,7 @@ public class PKCS11SignerOOo {
     public byte[] getDEREncodedCertificate(long certHandle) throws
             PKCS11Exception {
 
-        System.out.println("reading certificate bytes");
+        m_aLogger.log("reading certificate bytes");
 
         byte[] certBytes = null;
         CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
@@ -143,6 +143,41 @@ public class PKCS11SignerOOo {
         return certBytes;
     }
 
+    /**
+     * 
+     * @param certHandle
+     * @return the certificare ID as returned by CKA_ID attribute query
+     * @throws PKCS11Exception
+     */
+    public byte[] getCertificateID(long certHandle) throws PKCS11Exception {
+
+    	m_aLogger.log("reading certificate ID (CKA_ID)");
+
+		byte[] certID = null;
+		CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
+		template[0] = new CK_ATTRIBUTE();
+		template[0].type = PKCS11Constants.CKA_ID;
+		pkcs11Module.C_GetAttributeValue(getSession(), certHandle, template);
+		if(template[0].pValue != null)
+			certID = (byte[]) template[0].pValue;
+
+		return certID;
+	}
+
+    public char[] getCertificateLabel(long certHandle) throws PKCS11Exception {
+
+    	m_aLogger.log("reading certificate Label (CKA_LABEL)");
+
+		char[] certLabel = null;
+		CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
+		template[0] = new CK_ATTRIBUTE();
+		template[0].type = PKCS11Constants.CKA_LABEL;
+		pkcs11Module.C_GetAttributeValue(getSession(), certHandle, template);
+		if(template[0].pValue != null)
+			certLabel = (char[]) template[0].pValue;
+
+		return certLabel;
+	}
     /**
      * Trova un'array di certHandle di tutti i certificati presenti sulla carta
      * senza che la sessione sia aperta (no password). La length dell'array corrisponde

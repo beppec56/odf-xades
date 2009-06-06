@@ -66,7 +66,7 @@ public class Helpers {
 		java.security.cert.CertificateFactory cf;
 		cf = java.security.cert.CertificateFactory.getInstance("X.509");
 		java.io.ByteArrayInputStream bais = null;
-		bais = new java.io.ByteArrayInputStream(_aCert.getDEREncoded());
+		bais = new java.io.ByteArrayInputStream(_aCert.getCertificateAttributes().getDEREncoded());
 		X509Certificate certJava = (java.security.cert.X509Certificate) cf
 				.generateCertificate(bais);
 		return certJava;

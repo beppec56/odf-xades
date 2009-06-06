@@ -247,7 +247,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		try {
 			cf = java.security.cert.CertificateFactory.getInstance("X.509");
 			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(m_xQc.getDEREncoded());
+            bais = new java.io.ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded());
             m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             //check for version, if version is not 3, exits, certificate cannot be used
             if(m_JavaCert.getVersion() != 3) {
@@ -297,7 +297,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 		}
 
 //convert to Bouncy Castle representation		
-		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getDEREncoded()); 
+		ByteArrayInputStream as = new ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado = null;
 		try {
