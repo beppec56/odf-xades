@@ -329,7 +329,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	        	}
 	        }
 	
-			PCSCHelper pcsc = new PCSCHelper(m_xCC,true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
+			PCSCHelper pcsc = new PCSCHelper(_aFrame,m_xCC, true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 
 			m_aLogger.log("After 'new PCSCHelper'");
 			

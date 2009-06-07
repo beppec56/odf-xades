@@ -702,6 +702,9 @@ public class PKCS11Driver {
      */
     public void libFinalize() throws Throwable {
         m_aLogger.info("finalizing PKCS11 module...");
+        if(getSession() != -1L) {
+        	closeSession();
+        }
        // getPkcs11().finalize();
         pkcs11Module.C_Finalize(null);
         m_aLogger.info("finalized.");
@@ -784,6 +787,10 @@ public class PKCS11Driver {
         } else {
             m_aLogger.info("No token found!");
         }
+        //for testing wrong login
+        //0x000000A0 = CKR_PIN_INCORRECT
+        //0x00000007 = CKR_ARGUMENTS_BAD
+        throw	(new PKCS11Exception(0x000000A0));
     }
 
     public CK_TOKEN_INFO getTokenInfo(long _lTheToken) throws PKCS11Exception {

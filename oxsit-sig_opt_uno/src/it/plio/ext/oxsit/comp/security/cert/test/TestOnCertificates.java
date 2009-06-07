@@ -333,7 +333,7 @@ public class TestOnCertificates {
 		// TODO Auto-generated method stub
 		m_aLogger.entering("testMethod");
 
-		PCSCHelper pcsc = new PCSCHelper(null,true, null, m_aLogger);
+		PCSCHelper pcsc = new PCSCHelper(null,null, true, null, m_aLogger);
 
 		m_aLogger.log("After 'new PCSCHelper'");
 

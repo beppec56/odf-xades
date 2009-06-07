@@ -28,9 +28,14 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.logging.DynamicLogger;
+import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
+import it.plio.ext.oxsit.logging.IDynamicLogger;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
+import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
+import it.plio.ext.oxsit.ooo.ui.MessageNoSignatureToken;
+import it.plio.ext.oxsit.ooo.ui.MessageSSCDPINError;
 import it.plio.ext.oxsit.pkcs11.PKCS11Driver;
 import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
 import it.plio.ext.oxsit.security.ReadCerts;
@@ -86,7 +91,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT };
 
-	protected DynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLogger;
 
 	// these are the listeners on this document signatures changes
 	public HashMap<XChangesListener,XChangesListener> m_aListeners = new HashMap<XChangesListener, XChangesListener>(10);
@@ -94,11 +99,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	protected XStorage		m_xDocumentStorage;
 	protected XComponentContext	m_xCC;
 	private 	XMultiComponentFactory m_xMCF;
-
+	private		XFrame			m_xFrame;
 	private ReadCerts		m_sHelperCerts;
 	private PKCS11Driver	m_sHelperPkcs11;
 	private String m_sPkcs11WrapperLocal;
 	private String m_sPkcs11CryptoLib;
+	private String m_sPINIsLocked = "";
 
 	// this document signature state
 
@@ -111,6 +117,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		m_xCC = _ctx;
 		m_xMCF = _ctx.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);
+		m_aLogger = new DynamicLoggerDialog(this, _ctx);
     	m_aLogger.enableLogging();
     	m_aLogger.ctor();
 	}
@@ -191,7 +198,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	public boolean signDocumentStandard(XFrame xFrame, XStorage xStorage,
 			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
 			Exception {
+//init some localized error text
 
+		m_xFrame = xFrame;
 		signAsCMSFile(xFrame, xStorage, _aCertArray);
 /*
  * The procedure should be the following:
@@ -231,59 +240,49 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return false;
 	}
 
-	private boolean signAsCMSFile(XFrame xFrame, XStorage xStorage,
-			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
-			Exception {
+	private boolean signAsCMSFile(XFrame xFrame, XStorage xStorage, XOX_X509Certificate[] _aCertArray)
+			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		// for the time being only the first certificate is used
 		/*
 		 * The procedure should be the following:
 		 * 
-		 * form a digest for any of the document substorage (files) the document
-		 * has according to the decided standard
+		 * form a digest for any of the document substorage (files) the document has according to the decided standard
 		 */
 
-		//A dumy digest
-		byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0,
-				(byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC,
-				(byte) 0xF7, (byte) 0x6F, (byte) 0xF2, (byte) 0x09,
-				(byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2,
-				(byte) 0xF1, 0x31 };
+		// A dumy digest
+		byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0, (byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC, (byte) 0xF7,
+				(byte) 0x6F, (byte) 0xF2, (byte) 0x09, (byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2, (byte) 0xF1, 0x31 };
 		// try to sign something simple
 		/*
 		 * String sTest = "Y6pN0POPYtz3b/IJp1sBTnjy8TE="
 		 */
 
-		 /* 
+		/*
 		 * 
-		 * when the digests are done, iterate through the certificate list to be
-		 * used to sign: for every certificate check to see if the token where
-		 * the certificate is contained is 'on-line'
-		 * the check is performed using data that where retrieve when looking for available
-		 * certificates
+		 * when the digests are done, iterate through the certificate list to be used to sign: for every certificate check to see if
+		 * the token where the certificate is contained is 'on-line' the check is performed using data that where retrieve when
+		 * looking for available certificates
 		 */
-		for(int certIDX = 0; certIDX<_aCertArray.length; certIDX++) {
-			 /*for every certificate check to see if the token where
-			 * the certificate is contained is 'on-line'
-			 * the check is performed using data that where retrieve when looking for available
-			 * certificates
+		for (int certIDX = 0; certIDX < _aCertArray.length; certIDX++) {
+			/*
+			 * for every certificate check to see if the token where the certificate is contained is 'on-line' the check is
+			 * performed using data that where retrieve when looking for available certificates
 			 */
 
 			XOX_X509Certificate aCert = _aCertArray[certIDX];
 
-			m_aLogger.log("cert label: "
-					+ aCert.getCertificateAttributes().getLabel());
+			m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
 
 			// get the device this was seen on
-			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(
-					XOX_SSCDevice.class, aCert.getSSCDevice());
+			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
 
 			m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
 
-			m_aLogger.log("signDocument with: " + xSSCD.getDescription()
-					+ " cryptolib: " + m_sPkcs11CryptoLib);
-			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD
-					.getManufacturer(), // from device description
+			m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
+			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
+					// device
+					// description
 					xSSCD.getDescription(), // from device description
 					xSSCD.getTokenSerialNumber(), // from token
 					xSSCD.getTokenMaximumPINLenght()); // from token
@@ -297,68 +296,120 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				}
 				{
 					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-					if(m_sHelperCerts == null)
-						m_sHelperPkcs11 = new PKCS11Driver(m_aLogger,m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
+					if (m_sHelperCerts == null)
+						m_sHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
 					boolean bRetry = true;
-					while(bRetry) {
-						if(isTokenPresent(xSSCD.getTokenLabel(), // from device description
-								xSSCD.getTokenManufacturerID(), // from device description
-								xSSCD.getTokenSerialNumber())) {
-							/* the token is present and initialized in, go on with job
-							 * check again the token token is ready, ask the user for a PIN code to
-							 * access the private key the dialog shows token ids (description,
-							 * model, serial number):
-							 * the dialog expect the right number of characters for PIN, that should come from the token data, even though
-							 * the right number of characters depends on the token supplier (e.g.
-							 * the one that initialized it).
-							 * - user abort, go to next certificate
-							 * - user confirm, then proceed
-							*/
-							// try to get a pin from the user
-							DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
-							int BiasX = 100;
-							int BiasY = 30;
-							aDialog1.initialize(BiasX, BiasY);
-							aDialog1.executeDialog();
-							char[] myPin = aDialog1.getPin();
-							if (myPin != null && myPin.length > 0) {
-								//user confirmed, check opening the session
-								m_aLogger.log("sign!");
-								try {
-									m_sHelperPkcs11.openSession(myPin);
-
-									m_sHelperPkcs11.closeSession();
-								} catch (PKCS11Exception e) {
-									// TODO: handle exception
-								} catch (TokenException e) {
-									// TODO: handle exception when 
-									// session can not be opened
+					while (bRetry) {
+						try {
+							if (isTokenPresent(xSSCD.getTokenLabel(), // from
+									// device
+									// description
+									xSSCD.getTokenManufacturerID(), // from
+									// device
+									// description
+									xSSCD.getTokenSerialNumber())) {
+								/*
+								 * the token is present and initialized in, go on with job check again the token token is ready, ask
+								 * the user for a PIN code to access the private key
+								 * the dialog shows token ids (description, model,
+								 * serial number):
+								 * the dialog expect the right number of characters for PIN, that should come from
+								 * the token data, even though the right number of characters depends on the token supplier (e.g.
+								 * the one that initialized it).
+								 * - user abort, go to next certificate
+								 * - user confirm, then proceed
+								 */
+								// try to get a pin from the user
+								DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+								int BiasX = 100;
+								int BiasY = 30;
+								aDialog1.initialize(BiasX, BiasY);
+								aDialog1.executeDialog();
+								char[] myPin = aDialog1.getPin();
+								if (myPin != null && myPin.length > 0) {
+									// user confirmed, check opening the session
+									m_aLogger.log("sign!");
+									try {
+										// m_sHelperPkcs11.openSession(myPin);
+										m_sHelperPkcs11.openSession();
+										try {
+											//now here start the true signature code, we sign the SHA1 sums we goto from
+											//digesting process.
+											
+											
+										} catch (Throwable e) {
+											// TODO: handle exception
+											//any exception thrown during signing process comes here
+											//
+											m_sHelperPkcs11.closeSession();
+											throw(e);
+										} 
+										m_sHelperPkcs11.closeSession();
+									} catch (TokenException e) {
+										// session can not be opened
+										m_aLogger.warning("",">TokenException",e);
+										throw(e);
+									} catch (Throwable e) {
+										// session can not be opened
+										m_aLogger.severe(e);
+										bRetry = false;
+										continue;
+									}
+								} else {
+									// no pin or cancel
+									//so go to next certificate
+									bRetry = false;
+									continue;
 								}
-							}
-							else {
-								//no pin, then next
 								bRetry = false;
+							} else {
+								//0x000000E0 = CKR_TOKEN_NOT_PRESENT
+								//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
+								throw (new PKCS11Exception(0x000000E0));
 							}
-							bRetry = false;
-						}
-						else {
-							 /* if not, alert the user: 
-							 * - user 'Ok' go to next certificate 
+						} catch (TokenException e) {
+							/*
+							 * if not, alert the user:
+							 * - user 'Ok' go to next certificate
 							 * - user 'cancel' abort the sign process
 							 * - user 'retry' go back and retry
 							 */
+							m_aLogger.warning("","!TokenException",e);
+							MessageNoSignatureToken aDlg = new MessageNoSignatureToken(m_xFrame,m_xMCF,m_xCC);
+							String aMex = e.getMessage().trim();
+							short ret = aDlg.executeDialogLocal(aTka.getLabel(),
+									aTka.getModel(), aTka.getSerialNumber(), (aMex == null) ? "<no message>":aMex);
+							switch(ret) {
+							//Retry (Riprova) = 4 =-> retry same certificate
+							default:
+							case 4:
+								continue;
 
-							//in case of cancel
+							//Ignore (Ignora) = 5 =-> next certificate
+							case 5:
+								bRetry = false;								
+								break;
+							//Abort (Interrompi) = 0 =-> back to certificate selection
+							case 0:
+								if (m_sHelperPkcs11 != null) {
+									m_sHelperPkcs11.libFinalize();
+									m_sHelperPkcs11 = null;
+								}
+								return false;
+							}
+							// in case of cancel
 							// return false;
-
-							//this should be adapted
+							// this should be adapted
+						} catch (Throwable e) {
+							// TODO: handle exception
+							m_aLogger.warning("", ">Throwable", e);
 							bRetry = false;
 						}
 					}
-				}
-				if(m_sHelperPkcs11 != null) {
-					m_sHelperPkcs11.libFinalize();
-					m_sHelperPkcs11 = null;
+					if (m_sHelperPkcs11 != null) {
+						m_sHelperPkcs11.libFinalize();
+						m_sHelperPkcs11 = null;
+					}
 				}
 			} catch (IOException e) {
 				m_aLogger.severe(e);
@@ -371,25 +422,18 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			} catch (Throwable e) {
 				m_aLogger.severe(e);
 			}
-		} //next certificate
+		} // next certificate
 
-		 /* 
-		 * check again the token token is ready, ask the user for a PIN code to
-		 * access the private key the dialog shows token ids (description,
-		 * model, serial number):
-		 * the dialog expect the right number of characters for PIN, that should come from the token data, even though
-		 * the right number of characters depends on the token supplier (e.g.
-		 * the one that initialized it).
-		 * - user abort, go to next certificate
-		 * - user confirm, then proceed
+		/*
+		 * check again the token token is ready, ask the user for a PIN code to access the private key the dialog shows token ids
+		 * (description, model, serial number): the dialog expect the right number of characters for PIN, that should come from the
+		 * token data, even though the right number of characters depends on the token supplier (e.g. the one that initialized it).
+		 * - user abort, go to next certificate - user confirm, then proceed
 		 * 
-		 * open a login session to the token using the provided PIN if something
-		 * goes wrong, alert the user:
-		 * - user retry, goto the PIN input step
-		 * - user abort, go to the next certificate all is ok, retrieve the
-		 * private key id using the certificate data that came from the
-		 * available certificate search, for every hash computed:
-		 * sign the hash, get the signed has and attach it to the document substorage URL
+		 * open a login session to the token using the provided PIN if something goes wrong, alert the user: - user retry, goto the
+		 * PIN input step - user abort, go to the next certificate all is ok, retrieve the private key id using the certificate data
+		 * that came from the available certificate search, for every hash computed: sign the hash, get the signed has and attach it
+		 * to the document substorage URL
 		 * 
 		 * goto next certificate
 		 */
@@ -430,7 +474,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				}
 			}
 		} catch (PKCS11Exception e) {
-			// TODO: handle exception
+			m_aLogger.warning("","",e);
+			throw (e);
 		}
 		return false;
 	}

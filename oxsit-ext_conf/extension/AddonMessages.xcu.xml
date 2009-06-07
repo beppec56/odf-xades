@@ -1118,12 +1118,6 @@ Impronta del Presidente CNIPA.</value>
 				<value xml:lang="it">Introdurre il PIN</value>
 			</prop>
 		</node>
-		<node oor:name="id_mex_err_wrong_pin" oor:op="replace">
-			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">The PIN appears wrong</value>
-				<value xml:lang="it">Il PIN è errato.</value>
-			</prop>
-		</node>
 		<node oor:name="id_mex_pin_token" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">Inserite il PIN per il seguente dispositivo (SSCD)
@@ -1137,6 +1131,55 @@ Massima lunghezza PIN: %4$d caratteri.</value>
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">Massima lunghezza per il PIN superata.
 Sono ammessi fino a un massimo di %1d caratteri.</value>
+			</prop>
+		</node>
+		<node oor:name="id_mex_sign_no_token" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Ci sono problemi per l'accesso al dispositivo di firma:
+Costruttore: %1$s
+Modello: %2$s
+Numero di serie: %3$s
+
+Verificate se:
+- il dispositivo è inserito;
+- il dispositivo è lo stesso che contiene il certificato
+selezionato per la firma.
+
+Errore rilevato:
+%4$s.
+Codice: (%5$s).
+
+Il tasto 'Interrompi' torna alla finestra di selezione certificati.
+Il tasto 'Riprova' riprova l'accesso per lo stesso certificato.
+il tasto 'Ignora' ingora questo certificato e passa al prossimo certificato selezionato.</value>
+			</prop>
+		</node>
+		<node oor:name="id_mex_err_pin" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Errore durante l'accesso al dispositivo di firma:
+
+%1$s.</value>
+			</prop>
+		</node>
+		<!--
+		    Errors from SSCD (PKCS11 level)
+		-->
+		<node oor:name="CKR_PIN_INCORRECT" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The specified PIN is incorrect, i.e., does not match
+the PIN stored on the token.
+More generally-- when authentication to the token
+involves something other than a PIN –
+the attempt to authenticate the user has failed</value>
+				<value xml:lang="it">Il PIN è errato.
+Non corrisponde al PIN presente sul dispositivo
+di firma</value>
+			</prop>
+		</node>
+		<node oor:name="CKR_TOKEN_NOT_PRESENT" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The token was not present in its slot.</value>
+				<value xml:lang="it">Il dispositivo di firma non è presente</value>
 			</prop>
 		</node>
 		<!--

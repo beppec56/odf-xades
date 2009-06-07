@@ -35,37 +35,37 @@ import com.sun.star.uno.XComponentContext;
  * @author beppe
  *
  */
-public class MessageError extends DialogGeneralMessage {
-
-	public static String	m_sTitle;
-	
+public class MessageSSCDPINError extends DialogGeneralMessage {
 	/**
 	 * @param frame
 	 * @param _axmcf
 	 * @param _xcc
+	 * 
+	 * 
 	 */
-	public MessageError(XFrame frame, XMultiComponentFactory _axmcf,
+	public MessageSSCDPINError(XFrame frame, XMultiComponentFactory _axmcf,
 			XComponentContext _xcc) {
 		super(frame, _axmcf, _xcc);
 	}
-	
-	public short executeDialogLocal(String _theError) {
-		//read strings from resource
-		if(m_sTitle == null) {
-			MessageConfigurationAccess m_aRegAcc = null;
-			m_aRegAcc = new MessageConfigurationAccess( m_xCC, m_axMCF );		
-			try {
-				m_sTitle = m_aRegAcc.getStringFromRegistry( "id_error_extension" );
-			} catch (Exception e) {
-				m_aLogger.severe(e);
-			}			
-			m_aRegAcc.dispose();
-		}
 
-		return super.executeDialog((m_sTitle == null) ? "Error! ": m_sTitle, 
-				_theError,
-				MessageBoxButtons.BUTTONS_OK ,
-				MessageBoxButtons.DEFAULT_BUTTON_OK,
-				"errorbox");
+	public short executeDialogLocal(String _PKCS11ErrorCode) {
+		//read strings from resource
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess( m_xCC, m_axMCF );		
+		String sTitle = "id_error_extension";
+		String sPINErr = "id_mex_err_pin";
+		String sPinErrDescr = "";
+		try {
+			sTitle = m_aRegAcc.getStringFromRegistry( sTitle );
+			sPINErr = m_aRegAcc.getStringFromRegistry( sPINErr );			
+			sPinErrDescr = m_aRegAcc.getStringFromRegistry( _PKCS11ErrorCode );			
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}			
+		m_aRegAcc.dispose();
+
+		return super.executeDialog(sTitle,
+				String.format(sPINErr, sPinErrDescr),
+				MessageBoxButtons.BUTTONS_RETRY_CANCEL , MessageBoxButtons.DEFAULT_BUTTON_RETRY, "errorbox");
 	}
 }

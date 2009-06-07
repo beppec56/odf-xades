@@ -23,8 +23,6 @@
 package it.plio.ext.oxsit.pcsc;
 
 import java.io.IOException;
-import java.security.CodeSource;
-
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 
 /** A helper class to store the information about a SSCD retrieved

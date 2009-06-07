@@ -47,6 +47,7 @@ import com.ibm.opencard.terminal.pcsc10.OCFPCSC1;
 import com.ibm.opencard.terminal.pcsc10.Pcsc10Constants;
 import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
+import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
@@ -85,10 +86,13 @@ public class PCSCHelper {
     
     private 	XComponentContext m_xCC;
     private		XMultiComponentFactory m_xMCF;
+
+	private XFrame m_xFrame;
     
-    public PCSCHelper(XComponentContext _xContext, boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
+    public PCSCHelper(XFrame _xFrame, XComponentContext _xContext, boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
     	m_xCC = _xContext;
     	m_xMCF = m_xCC.getServiceManager();
+    	m_xFrame = _xFrame;
     	if(aLogger == null)
     		m_aLogger = new DynamicLazyLogger();
     	else {
@@ -134,7 +138,7 @@ public class PCSCHelper {
 	        m_aLogger.severe("","Missing a library ? ",e);
         } catch (PcscException e) {
         	//Give the user some feedback
-        	MessageNoSSCDReaders aMex = new MessageNoSSCDReaders(null,m_xMCF,m_xCC);      	
+        	MessageNoSSCDReaders aMex = new MessageNoSSCDReaders(m_xFrame,m_xMCF,m_xCC);      	
         	aMex.executeDialogLocal();
 	        m_aLogger.log(e, false);
         } catch (NoSuchMethodError e) {
@@ -210,7 +214,7 @@ public class PCSCHelper {
                     cIr = new CardInReaderInfo(currReader, null);
                     cIr.setLib(null);
                     //give the user some feedback
-                    MessageNoSSCD	aMex = new MessageNoSSCD(null,m_xMCF,m_xCC);
+                    MessageNoSSCD	aMex = new MessageNoSSCD(m_xFrame,m_xMCF,m_xCC);
                     aMex.executeDialogLocal(currReader);
                 }
                 cardsAndReaders.add(cIr);

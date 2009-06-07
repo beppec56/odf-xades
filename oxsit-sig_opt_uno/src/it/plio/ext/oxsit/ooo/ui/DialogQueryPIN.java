@@ -248,7 +248,7 @@ public class DialogQueryPIN extends BasicDialog {
 					}
 				}
 				if(!bOk) {
-					//no, alert with a dialog, then exits
+					//no, alert with a dialog, then continue with pin request
                     //give the user some feedback
                     MessageError	aMex = new MessageError(null,m_xMCF,m_xContext);
                     aMex.executeDialogLocal(m_sPinCharOnly);
@@ -293,7 +293,7 @@ public class DialogQueryPIN extends BasicDialog {
 	/**
 	 * @param m_cPin the m_cPin to set
 	 */
-	public void setPin(char[] m_cPin) {
+	private void setPin(char[] m_cPin) {
 		this.m_cPin = m_cPin;
 	}
 

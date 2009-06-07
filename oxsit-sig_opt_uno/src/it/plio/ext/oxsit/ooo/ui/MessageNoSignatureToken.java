@@ -35,37 +35,41 @@ import com.sun.star.uno.XComponentContext;
  * @author beppe
  *
  */
-public class MessageError extends DialogGeneralMessage {
-
-	public static String	m_sTitle;
-	
+public class MessageNoSignatureToken extends DialogGeneralMessage {
 	/**
 	 * @param frame
 	 * @param _axmcf
 	 * @param _xcc
+	 * 
+	 * 
 	 */
-	public MessageError(XFrame frame, XMultiComponentFactory _axmcf,
-			XComponentContext _xcc) {
+	public MessageNoSignatureToken(XFrame frame, XMultiComponentFactory _axmcf, XComponentContext _xcc) {
 		super(frame, _axmcf, _xcc);
+		// TODO Auto-generated constructor stub
 	}
-	
-	public short executeDialogLocal(String _theError) {
-		//read strings from resource
-		if(m_sTitle == null) {
-			MessageConfigurationAccess m_aRegAcc = null;
-			m_aRegAcc = new MessageConfigurationAccess( m_xCC, m_axMCF );		
-			try {
-				m_sTitle = m_aRegAcc.getStringFromRegistry( "id_error_extension" );
-			} catch (Exception e) {
-				m_aLogger.severe(e);
-			}			
-			m_aRegAcc.dispose();
-		}
 
-		return super.executeDialog((m_sTitle == null) ? "Error! ": m_sTitle, 
-				_theError,
-				MessageBoxButtons.BUTTONS_OK ,
-				MessageBoxButtons.DEFAULT_BUTTON_OK,
-				"errorbox");
+	public short executeDialogLocal(String _SSCDManufacturer, String _SSCDModel, String _SSCDSerialNumber, String _CKR_error_found) {
+		//read strings from resource
+		MessageConfigurationAccess m_aRegAcc = null;
+		m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_axMCF);
+		String sTitle = "id_error_extension";
+		String sFormatErr = "id_mex_sign_no_token";
+		String sErrortext ="";
+		try {
+			sTitle = m_aRegAcc.getStringFromRegistry(sTitle);
+			sFormatErr = m_aRegAcc.getStringFromRegistry(sFormatErr);
+			sErrortext = m_aRegAcc.getStringFromRegistry(_CKR_error_found);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		}
+		m_aRegAcc.dispose();
+
+		return super.executeDialog(sTitle, String.format(sFormatErr,
+				_SSCDManufacturer,
+				_SSCDModel,
+				_SSCDSerialNumber,
+				sErrortext,
+				_CKR_error_found),
+				MessageBoxButtons.BUTTONS_ABORT_IGNORE_RETRY, MessageBoxButtons.DEFAULT_BUTTON_RETRY, "errorbox");
 	}
 }
