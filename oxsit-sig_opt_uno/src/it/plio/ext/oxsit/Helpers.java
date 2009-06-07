@@ -27,16 +27,27 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.IllegalFormatException;
+import java.util.Vector;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
@@ -59,6 +70,61 @@ import com.sun.star.util.XChangesListener;
 public class Helpers {
 
 	protected Helpers() {
+	}
+
+	public static String getIssuerName(X509Certificate _Cert) {
+		//convert to bouncycaste
+		String sRet = "";
+		
+		ByteArrayInputStream as;
+		try {
+			as = new ByteArrayInputStream(_Cert.getEncoded());
+			ASN1InputStream aderin = new ASN1InputStream(as);
+			DERObject ado;
+			ado = aderin.readObject();
+			X509CertificateStructure _aX509 = new X509CertificateStructure((ASN1Sequence) ado);
+//extract the name, same as in display			
+			X509Name aName = _aX509.getIssuer();
+			Vector<DERObjectIdentifier> oidv =  aName.getOIDs();
+			HashMap<DERObjectIdentifier, String> hm = new HashMap<DERObjectIdentifier, String>(20);
+			Vector<?> values = aName.getValues();
+			for(int i=0; i< oidv.size(); i++) {
+				hm.put(oidv.elementAt(i), values.elementAt(i).toString());
+			}
+			//look for givename (=nome di battesimo)
+			//see BC source code for details about DefaultLookUp behaviour
+			DERObjectIdentifier oix; 
+			if(sRet.length() == 0) {
+				//check for O
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("o")); 
+				if(hm.containsKey(oix)) {
+					sRet = hm.get(oix).toString();
+				}
+			}
+			if(sRet.length() == 0) {
+				//check for CN
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+				if(hm.containsKey(oix)) {
+					sRet = hm.get(oix).toString();
+				}
+			}
+			if(sRet.length() == 0) {
+				//if still not, check for pseudodym
+				oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("pseudonym"));
+				if(hm.containsKey(oix))
+					sRet = hm.get(oix).toString();						
+			}
+			//check for CN
+			oix = (DERObjectIdentifier)(X509Name.DefaultLookUp.get("cn")); 
+			if(hm.containsKey(oix)) {
+				sRet = sRet+((sRet.length()>0)? ", ":"")+hm.get(oix).toString();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		}
+		return sRet;
 	}
 
 	public static X509Certificate getCertificate(XOX_X509Certificate _aCert)

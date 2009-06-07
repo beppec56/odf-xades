@@ -101,7 +101,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private 	XMultiComponentFactory m_xMCF;
 	private		XFrame			m_xFrame;
 	private ReadCerts		m_sHelperCerts;
-	private PKCS11Driver	m_sHelperPkcs11;
+	private PKCS11Driver	m_aHelperPkcs11;
 	private String m_sPkcs11WrapperLocal;
 	private String m_sPkcs11CryptoLib;
 	private String m_sPINIsLocked = "";
@@ -250,6 +250,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		 * form a digest for any of the document substorage (files) the document has according to the decided standard
 		 */
 
+		boolean bRetValue = false;
+		boolean bCanCloseCertificateChooser = false;
 		// A dumy digest
 		byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0, (byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC, (byte) 0xF7,
 				(byte) 0x6F, (byte) 0xF2, (byte) 0x09, (byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2, (byte) 0xF1, 0x31 };
@@ -297,7 +299,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				{
 					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
 					if (m_sHelperCerts == null)
-						m_sHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
+						m_aHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
 					boolean bRetry = true;
 					while (bRetry) {
 						try {
@@ -330,21 +332,27 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									// user confirmed, check opening the session
 									m_aLogger.log("sign!");
 									try {
-										// m_sHelperPkcs11.openSession(myPin);
-										m_sHelperPkcs11.openSession();
+										// m_aHelperPkcs11.openSession(myPin);
+										m_aHelperPkcs11.openSession();
 										try {
 											//now here start the true signature code, we sign the SHA1 sums we goto from
 											//digesting process.
+											long privateKeyHandle = m_aHelperPkcs11
+			                                .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
+											m_aLogger.log("privateKeyHandle: "+privateKeyHandle);
 											
-											
+
+											//at list one certificate was signed
+											bRetValue = true;
+											bRetry = false;
 										} catch (Throwable e) {
-											// TODO: handle exception
 											//any exception thrown during signing process comes here
-											//
-											m_sHelperPkcs11.closeSession();
+											//close the pending session
+											m_aHelperPkcs11.closeSession();
 											throw(e);
 										} 
-										m_sHelperPkcs11.closeSession();
+										m_aHelperPkcs11.closeSession();
+										
 									} catch (TokenException e) {
 										// session can not be opened
 										m_aLogger.warning("",">TokenException",e);
@@ -371,7 +379,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							/*
 							 * if not, alert the user:
 							 * - user 'Ok' go to next certificate
-							 * - user 'cancel' abort the sign process
+							 * - user 'cancel' abort the sign process, return to the
+							 *   certificate chooser
 							 * - user 'retry' go back and retry
 							 */
 							m_aLogger.warning("","!TokenException",e);
@@ -391,9 +400,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								break;
 							//Abort (Interrompi) = 0 =-> back to certificate selection
 							case 0:
-								if (m_sHelperPkcs11 != null) {
-									m_sHelperPkcs11.libFinalize();
-									m_sHelperPkcs11 = null;
+								if (m_aHelperPkcs11 != null) {
+									m_aHelperPkcs11.libFinalize();
+									m_aHelperPkcs11 = null;
 								}
 								return false;
 							}
@@ -406,9 +415,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							bRetry = false;
 						}
 					}
-					if (m_sHelperPkcs11 != null) {
-						m_sHelperPkcs11.libFinalize();
-						m_sHelperPkcs11 = null;
+					if (m_aHelperPkcs11 != null) {
+						m_aHelperPkcs11.libFinalize();
+						m_aHelperPkcs11 = null;
 					}
 				}
 			} catch (IOException e) {
@@ -438,7 +447,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		 * goto next certificate
 		 */
 		// just for test, analyze the document package structure
-		return false;
+		return bRetValue;
 	}
 	
 	/**
@@ -454,11 +463,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		//the same as certificate search, examine the tokens present for a correct information
 		long[] tokens = null;
 		try {
-			tokens = m_sHelperPkcs11.getTokens();
+			tokens = m_aHelperPkcs11.getTokens();
 //grab all the tokens
 			for (int i = 0; i < tokens.length; i++) {
 				//select a token and look for the indication requested
-				CK_TOKEN_INFO aTkInfo = m_sHelperPkcs11.getTokenInfo(tokens[i]);
+				CK_TOKEN_INFO aTkInfo = m_aHelperPkcs11.getTokenInfo(tokens[i]);
 				String sString = new String(aTkInfo.label);
 				String aLabel = sString.trim();
 				sString = new String(aTkInfo.manufacturerID);
@@ -469,7 +478,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				if(aLabel.equals(_sTokenLabel) && aManID.equals(_sTokenManufID) &&
 						aSerial.equals(_sTokenSerialNumber)) {
 					//token found, set it to work, return true
-					m_sHelperPkcs11.setTokenHandle(tokens[i]);
+					m_aHelperPkcs11.setTokenHandle(tokens[i]);
 					return true;
 				}
 			}

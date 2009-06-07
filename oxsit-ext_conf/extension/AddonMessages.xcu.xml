@@ -1151,7 +1151,7 @@ Codice: (%5$s).
 
 Il tasto 'Interrompi' torna alla finestra di selezione certificati.
 Il tasto 'Riprova' riprova l'accesso per lo stesso certificato.
-il tasto 'Ignora' ingora questo certificato e passa al prossimo certificato selezionato.</value>
+il tasto 'Ignora' ignora questo certificato e passa al prossimo certificato selezionato.</value>
 			</prop>
 		</node>
 		<node oor:name="id_mex_err_pin" oor:op="replace">
@@ -1180,6 +1180,43 @@ di firma</value>
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">The token was not present in its slot.</value>
 				<value xml:lang="it">Il dispositivo di firma non è presente</value>
+			</prop>
+		</node>
+		<node oor:name="CKR_PIN_EXPIRED" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">CKR_PIN_EXPIRED</value>
+				<value xml:lang="it">CKR_PIN_EXPIRED</value>
+			</prop>
+		</node>
+		<node oor:name="CKR_PIN_LEN_RANGE" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Il numero dei caratteri nel pin è inferiore o superiore al valore permesso.
+Per dettagli, fate riferimento alla documentazione del fornitore del dispositivo di firma</value>
+			</prop>
+		</node>
+		<node oor:name="CKR_PIN_LOCKED" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">The specified PIN is “locked”, and cannot be used.
+That is, because some particular number of failed
+authentication attempts has been reached, the
+token is unwilling to permit further attempts at
+authentication. Depending on the token, the
+specified PIN may or may not remain locked
+indefinitely</value>
+				<value xml:lang="it">Il Pin è bloccato, e non potete usarlo.
+Probabilmente perché è stato raggiunto il massimo numero di tentativi di accesso senza esito
+favorevole.
+Fate riferimento alla documentazione del fonitore
+del dispositivo di firma per istruzioni su come
+sbloccare il PIN</value>
+			</prop>
+		</node>
+		<node oor:name="CKR_GENERAL_ERROR" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="en">Some horrible, unrecoverable error has occurred.
+In the worst case, it is possible that the function only
+partially succeeded, and that the computer and/or
+token is in an inconsistent state</value>
 			</prop>
 		</node>
 		<!--

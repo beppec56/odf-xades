@@ -522,7 +522,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("\nFind signature key from certificate with handle: "
+        m_aLogger.log("Find signature key from certificate with handle: "
                     + certHandle);
 
         // first get the ID of the signature key
@@ -790,7 +790,9 @@ public class PKCS11Driver {
         //for testing wrong login
         //0x000000A0 = CKR_PIN_INCORRECT
         //0x00000007 = CKR_ARGUMENTS_BAD
-        throw	(new PKCS11Exception(0x000000A0));
+        //0x000000A4 = CKR_PIN_LOCKED                        
+
+//        throw	(new PKCS11Exception(0x000000A4));
     }
 
     public CK_TOKEN_INFO getTokenInfo(long _lTheToken) throws PKCS11Exception {

@@ -836,7 +836,8 @@ public class X509CertRL {
     public X509CRL download(X509Certificate userCert) throws
             CertificateParsingException {
         X509CRL crl = null;
-        String sMex = "Download CRL: "+ userCert.getIssuerX500Principal().getName();
+        String sIssuer =Helpers.getIssuerName(userCert);
+        String sMex = "Download CRL: "+ sIssuer;
         trace("Inizio download CRL per il cert: " + userCert.getSerialNumber() +
               ", emesso da: " + userCert.getIssuerDN());
         // URL[] dp = getCrlDistributionPointOLD(userCert);
