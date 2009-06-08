@@ -24,6 +24,7 @@ package it.plio.ext.oxsit.cust_it.comp.security;
 
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
+import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
@@ -201,7 +202,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 //init some localized error text
 
 		m_xFrame = xFrame;
-		signAsCMSFile(xFrame, xStorage, _aCertArray);
+		return signAsCMSFile(xFrame, xStorage, _aCertArray);
 /*
  * The procedure should be the following:
  * 
@@ -237,7 +238,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
  * 		goto next certificate
  * 
  */
-		return false;
 	}
 
 	private boolean signAsCMSFile(XFrame xFrame, XStorage xStorage, XOX_X509Certificate[] _aCertArray)
@@ -288,6 +288,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					xSSCD.getDescription(), // from device description
 					xSSCD.getTokenSerialNumber(), // from token
 					xSSCD.getTokenMaximumPINLenght()); // from token
+			
 
 			try {
 				SecurityManager sm = System.getSecurityManager();
@@ -330,18 +331,28 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								char[] myPin = aDialog1.getPin();
 								if (myPin != null && myPin.length > 0) {
 									// user confirmed, check opening the session
+					                byte[] encDigestBytes = null;									
 									m_aLogger.log("sign!");
 									try {
-										// m_aHelperPkcs11.openSession(myPin);
-										m_aHelperPkcs11.openSession();
+//first get all supported mechanism (needed for logging, debug/tests
+										m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
+
+										m_aHelperPkcs11.setMechanism(PKCS11Constants.CKM_RSA_PKCS);
+//it.infocamere.freesigner.gui.DigestSignTask.DigestSigner.encryptDigestAndGetCertificate(certHandle, helper);
+
+										m_aHelperPkcs11.openSession(myPin);
+//										m_aHelperPkcs11.openSession();
 										try {
 											//now here start the true signature code, we sign the SHA1 sums we goto from
 											//digesting process.
 											long privateKeyHandle = m_aHelperPkcs11
-			                                .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
+			                                .findSignatureKeyFromID(aCert.getCertificateAttributes().getID());
+//			                                .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
 											m_aLogger.log("privateKeyHandle: "+privateKeyHandle);
-											
-
+											if (privateKeyHandle > 0) {
+												encDigestBytes = m_aHelperPkcs11.signDataSinglePart(
+					                                    privateKeyHandle, baSha1);
+											}
 											//at list one certificate was signed
 											bRetValue = true;
 											bRetry = false;

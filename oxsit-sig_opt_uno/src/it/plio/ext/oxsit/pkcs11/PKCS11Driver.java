@@ -853,7 +853,7 @@ public class PKCS11Driver {
             return null;
         }
 
-        m_aLogger.log("\nStart single part sign operation...");
+        m_aLogger.log("Start single part sign operation...");
         pkcs11Module.C_SignInit(getSession(), this.signatureMechanism,
                                 signatureKeyHandle);
 
@@ -978,7 +978,25 @@ public class PKCS11Driver {
 
     }    
 
-    /**
+	/**
+	 * @param tokenHandle2
+	 */
+	public void getMechanismInfo(long tokenHandle2) throws PKCS11Exception {
+		// TODO Auto-generated method stub
+		CK_MECHANISM_INFO mechanismInfo;
+
+		m_aLogger.info("Getting mechanism list...");
+		m_aLogger.info("getting mechanism list for token " + tokenHandle2);
+		long[] mechanismIDs = pkcs11Module.C_GetMechanismList(tokenHandle2);
+		for (int j = 0; j < mechanismIDs.length; j++) {
+			m_aLogger.info("mechanism info for mechanism id " + mechanismIDs[j] + "->"
+					+ Functions.mechanismCodeToString(mechanismIDs[j]) + ": ");
+			mechanismInfo = pkcs11Module.C_GetMechanismInfo(tokenHandle2, mechanismIDs[j]);
+			m_aLogger.info(mechanismInfo.toString());
+		}
+	}	
+
+	/**
 	 * @param logger
 	 */
 	private void setLogger(IDynamicLogger aLogger) {
@@ -1005,5 +1023,6 @@ public class PKCS11Driver {
 		//scan the token present
 		
 		return false;
-	}	
+	}
+
 }
