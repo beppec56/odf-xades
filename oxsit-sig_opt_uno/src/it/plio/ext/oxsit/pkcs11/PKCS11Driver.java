@@ -835,7 +835,7 @@ public class PKCS11Driver {
     /**
      * Sign (here means encrypting with private key) the provided data with a
      * single operation. This is the only modality supported by the (currently
-     * fixed) RSA_PKCS mechanism.
+     * fixed) RSA_PKCS mechanism in the PKCS#11 standard.
      *
      * @param signatureKeyHandle
      *            handle of the private key to use for signing.
@@ -982,7 +982,6 @@ public class PKCS11Driver {
 	 * @param tokenHandle2
 	 */
 	public void getMechanismInfo(long tokenHandle2) throws PKCS11Exception {
-		// TODO Auto-generated method stub
 		CK_MECHANISM_INFO mechanismInfo;
 
 		m_aLogger.info("Getting mechanism list...");

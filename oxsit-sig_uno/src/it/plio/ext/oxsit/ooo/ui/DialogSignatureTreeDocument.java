@@ -22,7 +22,10 @@
 
 package it.plio.ext.oxsit.ooo.ui;
 
+import it.plio.ext.oxsit.ooo.GlobConstant;
+import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
+import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
@@ -32,9 +35,11 @@ import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
@@ -145,28 +150,39 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void addButtonPressed() {
-		//add the certificate to ?? check the spec
-		DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs( m_xParentFrame, m_xContext, m_xMCF );
+		//before adding, check if the document can be signed with the current customization
+		//instantiate a DocumentSigner object
+		Object oDocumSigner;
 		try {
-			int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
-			int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT*4;//to see the underlying certificates already in the document
-			aDialog1.setDocumentStorage(getDocumentStorage());
-			aDialog1.initialize( BiasX, BiasY);
-			aDialog1.executeDialog();
-			aDialog1.disposeElements();
-		} catch (BasicErrorException e) {
-			m_aLogger.severe("actionPerformed", "", e);
+			oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
+			XOX_DocumentSigner xSigner = (XOX_DocumentSigner) UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
+			if (xSigner != null) {
+				try {
+					//Call the document verify pre-signature method
+					if (xSigner.verifyDocumentBeforeSigning(m_xParentFrame, getDocumentModel(), null)) {
+						DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs(m_xParentFrame, m_xContext, m_xMCF);
+						try {
+							int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
+							int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4;//to see the underlying certificates already in the document
+							aDialog1.setDocumentModel(getDocumentModel());
+							aDialog1.initialize(BiasX, BiasY);
+							aDialog1.executeDialog();
+							aDialog1.disposeElements();
+						} catch (BasicErrorException e) {
+							m_aLogger.severe("actionPerformed", "", e);
+						}
+					}
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe("actionPerformed", "", e);
+				} catch (Exception e) {
+					m_aLogger.severe("actionPerformed", "", e);
+				}
+			}
+		} catch (Exception e1) {
+			m_aLogger.severe("actionPerformed", "", e1);
+		} catch (Throwable e1) {
+			m_aLogger.severe("actionPerformed", "", e1);
 		}
-		try {
-			aDialog1.executeDialog();
-			return;
-		} catch (BasicErrorException e) {
-			// TODO Auto-generated catch block
-			m_aLogger.severe("actionPerformed", "", e);
-			return;
-		}
-	// Helper.setUnoPropertyValue(m_xMSFDialogModel, "Step", new
-	// Integer(1));
 	}
 
 	/* (non-Javadoc)

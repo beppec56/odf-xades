@@ -121,7 +121,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	protected boolean											m_bObjectActive;
 
 	private boolean 											m_bSignatureIsEnabled;
-	private XStorage											m_xDocumentStorage;
 
 	public ImplXAdESSignatureDispatchTB(XFrame xFrame, XComponentContext xContext,
 			XMultiComponentFactory xMCF, XDispatch unoSaveSlaveDispatch) {
@@ -261,12 +260,9 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * returned value: 1 2 0 = Cancel
 				 */
 				grabModel();
-				XStorageBasedDocument xDocStorage =
-							(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, m_xModel );
 
-				try {
-					m_xDocumentStorage = xDocStorage.getDocumentStorage(); 
-
+/*				try {
+*/
 					short ret;
 					ret = signatureDialog();
 					/**
@@ -313,11 +309,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					 * signature are left in place
 					 * 
 					 */
-				} catch (IOException e) {
+/*				} catch (IOException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
 					m_aLogger.severe(e);
-				}
+				}*/
 			} catch (RuntimeException e) {
 				m_aLogger.severe("impl_dispatch", "", e);
 			}
@@ -328,16 +324,15 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		DialogSignatureTreeDocument aDialog1 = new DialogSignatureTreeDocument( m_xFrame, m_xCC,
 				m_axMCF );
 		try {
-			aDialog1.setDocumentStorage(getDocumentStorage());
+			aDialog1.setDocumentModel(getDocumentModel());
 			aDialog1.initialize( 10, 10 );
 		} catch (BasicErrorException e) {
-			e.printStackTrace();
+			m_aLogger.severe("impl_dispatch", "", e);
 		}
 		try {
 			return aDialog1.executeDialog();
 		} catch (BasicErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_aLogger.severe("impl_dispatch", "", e);
 			return -1;
 		}
 	}
@@ -826,17 +821,10 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	}
 
 	/**
-	 * @param m_xDocumentStorage the m_xDocumentStorage to set
-	 */
-	public void setDocumentStorage(XStorage m_xDocumentStorage) {
-		this.m_xDocumentStorage = m_xDocumentStorage;
-	}
-
-	/**
 	 * @return the m_xDocumentStorage
 	 */
-	public XStorage getDocumentStorage() {
-		return m_xDocumentStorage;
+	public XModel getDocumentModel() {
+		return m_xModel;
 	}
 
 	/**

@@ -51,8 +51,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
+import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -196,13 +198,24 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * gets called from dialog when a document should be signed with independednt certificate signature
 	 */
 	@Override
-	public boolean signDocumentStandard(XFrame xFrame, XStorage xStorage,
-			XOX_X509Certificate[] _aCertArray) throws IllegalArgumentException,
+	public boolean signDocument(XFrame xFrame, XModel xDocumentModel,
+			XOX_X509Certificate[] _aCertArray, Object[] _oObjects) throws IllegalArgumentException,
 			Exception {
 //init some localized error text
 
 		m_xFrame = xFrame;
-		return signAsCMSFile(xFrame, xStorage, _aCertArray);
+		m_aLogger.log(this.getClass().getName()
+				+ "\n\t\tthe url of the document under signature is: "
+				+ xDocumentModel.getURL());
+
+//get the document storage,
+		XStorageBasedDocument xDocStorage =
+			(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
+
+		m_xDocumentStorage = xDocStorage.getDocumentStorage();
+
+		
+		return signAsCMSFile(xFrame, xDocumentModel, _aCertArray);
 /*
  * The procedure should be the following:
  * 
@@ -240,7 +253,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
  */
 	}
 
-	private boolean signAsCMSFile(XFrame xFrame, XStorage xStorage, XOX_X509Certificate[] _aCertArray)
+	private boolean signAsCMSFile(XFrame xFrame, XModel _documentModel, XOX_X509Certificate[] _aCertArray)
 			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		// for the time being only the first certificate is used
@@ -304,9 +317,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					boolean bRetry = true;
 					while (bRetry) {
 						try {
-							if (isTokenPresent(xSSCD.getTokenLabel(), // from
-									// device
-									// description
+							if (isTokenPresent(xSSCD.getTokenLabel(), // from device description
 									xSSCD.getTokenManufacturerID(), // from
 									// device
 									// description
@@ -606,6 +617,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					helper = new PKCS11Driver(m_aLogger, Pkcs11WrapperLocal,
 							cryptolibrary);
 
+					// these are 160 corresponding to a SHA1 hash (or digest)
 					byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0,
 							(byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC,
 							(byte) 0xF7, (byte) 0x6F, (byte) 0xF2, (byte) 0x09,
@@ -750,5 +762,14 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			e.printStackTrace();
 		}
 		return false;		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_DocumentSigner#verifyDocumentBeforeSigning(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
+	 */
+	@Override
+	public boolean verifyDocumentBeforeSigning(XFrame _xFrame, XModel _xModel, Object[] oObjects) throws IllegalArgumentException, Exception {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }

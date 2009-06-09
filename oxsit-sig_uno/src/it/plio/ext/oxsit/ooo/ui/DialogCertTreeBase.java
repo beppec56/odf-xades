@@ -36,6 +36,7 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -108,7 +109,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	protected String[]			m_sCertificateValidityGraphicName = new String[CertificateGraphicDisplayState.LAST_STATE_value]; 
 	private String[] 			m_sCertificateElementGraphicName = new String[CertificateElementState.LAST_STATE_value];
 
-	private XStorage			m_xDocumentStorage;	
+	private XModel			m_xDocumentModel;
+	
 	///////////// end of graphic name string
 
 	/**
@@ -1023,15 +1025,15 @@ public class DialogCertTreeBase extends BasicDialog implements
 	/**
 	 * @param m_xDocumentStorage the m_xDocumentStorage to set
 	 */
-	public void setDocumentStorage(XStorage m_xDocumentStorage) {
-		this.m_xDocumentStorage = m_xDocumentStorage;
+	public void setDocumentModel(XModel m_xDocumentModel) {
+		this.m_xDocumentModel = m_xDocumentModel;
 	}
 
 	/**
 	 * @return the m_xDocumentStorage
 	 */
-	public XStorage getDocumentStorage() {
-		return m_xDocumentStorage;
+	public XModel getDocumentModel() {
+		return m_xDocumentModel;
 	}
 
 	/* (non-Javadoc)

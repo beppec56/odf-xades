@@ -184,7 +184,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 						XOX_X509Certificate[] aCert = new XOX_X509Certificate[1]; 						
 						aCert[0] = ct.getCertificate();
 
-						if(xSigner.signDocumentStandard(m_xParentFrame,getDocumentStorage(), aCert))
+						if(xSigner.signDocument(m_xParentFrame,getDocumentModel(), aCert, null))
 							endDialog();
 						//mark signature status dirty if signed?
 						//TODO

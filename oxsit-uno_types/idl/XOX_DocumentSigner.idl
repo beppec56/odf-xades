@@ -30,6 +30,7 @@
 #include <com/sun/star/uno/XInterface.idl> 
 #include <com/sun/star/embed/XStorage.idl> 
 #include <com/sun/star/frame/XFrame.idl>
+#include <com/sun/star/frame/XModel.idl>
 #include "CertificateState.idl"
 #include "CertificateStateConditions.idl"
 #include "XOX_X509Certificate.idl"
@@ -40,16 +41,38 @@
  */
 	interface XOX_DocumentSigner
 	{
-		/**
-		@param xTheDocument the document to sign
+		/** Call this method to sign the document.<br>
+		The method should implement itself the messages to the user, if they are necessary.
+		@param xFrame the frame to be used as anchor for dialogs
+		@param xTheDocument the model of the document to be signed
 		@param xCertificates a sequence of certificates to use to sign the document.
+		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
 		@return true if the PIN was confirmed, false if the operation was cancelled
 		*/
-		boolean signDocumentStandard(	[in] com::sun::star::frame::XFrame xFrame,
-									[in] com::sun::star::embed::XStorage xTheDocument,
-						  			[in] sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates)
+		boolean signDocument([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::frame::XModel xTheDocumentModel,
+						  			[in] sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates,
+ 									[in] sequence<any> aArguments )
+
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
+
+		/** Used to check if the document can be signed, for example verify its content for presence of executable code (macro for example).<br>
+		The method should implement itself the messages to the user, if they are necessary.<br>
+		The method is called by the main implementation just before starting the dialog showing the list of certificate availables to sign (e.g. before
+		exploring the SSCDs on the system).
+		@param xFrame the frame to be used as anchor for dialogs
+		@param xTheDocument the model of the document to be signed
+		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
+		@return true if the document can be signed, false otherwise.
+		*/
+		boolean verifyDocumentBeforeSigning([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::frame::XModel xTheDocumentModel,
+ 									[in] sequence<any> aArguments )
+
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
 	} ;
 
   }; }; }; }; };
