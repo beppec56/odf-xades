@@ -28,12 +28,12 @@ import it.plio.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
+import it.plio.ext.oxsit.security.XOX_DocumentSigner;
 
 import java.util.HashMap;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.document.XStorageBasedDocument;
-import com.sun.star.embed.XStorage;
 import com.sun.star.frame.FeatureStateEvent;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatch;
@@ -41,7 +41,6 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStorable;
-import com.sun.star.io.IOException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -155,7 +154,39 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 			XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime
 					.queryInterface(XStorageBasedDocument.class, m_xModel);
 			short ret;
+			//first check if the document can be signed
+			if(m_xModel != null) {
+				Object oDocumSigner;
+				try {
+					//the object name is resident in configuration, should be loaded from there,
+					//getting it from the currently active signature type configuration
+					oDocumSigner = m_xCC.getServiceManager().createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xCC);
+					XOX_DocumentSigner xSigner = (XOX_DocumentSigner) UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
+					if (xSigner != null) {
+						try {
+							//Call the document verify pre-signature method
+							if (!xSigner.verifyDocumentBeforeSigning(m_xFrame, getDocumentModel(), null)) {
+								return;
+							}
+						} catch (IllegalArgumentException e) {
+							m_aLogger.severe("actionPerformed", "", e);
+						} catch (Exception e) {
+							m_aLogger.severe("actionPerformed", "", e);
+						}
+					}
+				} catch (Exception e1) {
+					m_aLogger.severe("actionPerformed", "", e1);
+				} catch (Throwable e1) {
+					m_aLogger.severe("actionPerformed", "", e1);
+				}
+			}
+			else
+				return;
+			
 			try {
+				
+				
+				
 				ret = signatureDialog();
 
 				// grab the frame configuration, point to the frame value
@@ -287,7 +318,7 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 		+ GlobConstant.m_sSIGN_DIALOG_PATH;
 		aState.FeatureURL.Protocol = GlobConstant.m_sSIGN_PROTOCOL_BASE_URL;
 		aState.FeatureURL.Path = GlobConstant.m_sSIGN_DIALOG_PATH;
-		aState.IsEnabled = (m_bHasLocation & !m_bIsModified); //Boolean.TRUE;
+		aState.IsEnabled = Boolean.TRUE;//always enabled, test done before performing the action (m_bHasLocation & !m_bIsModified); //Boolean.TRUE;
 		aState.Requery = Boolean.FALSE;
 		aState.Source = this;
 		return aState;

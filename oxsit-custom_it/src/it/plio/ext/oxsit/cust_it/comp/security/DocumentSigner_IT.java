@@ -28,6 +28,7 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.DynamicLogger;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.logging.IDynamicLogger;
@@ -35,6 +36,7 @@ import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
+import it.plio.ext.oxsit.ooo.ui.MessageError;
 import it.plio.ext.oxsit.ooo.ui.MessageNoSignatureToken;
 import it.plio.ext.oxsit.ooo.ui.MessageSSCDPINError;
 import it.plio.ext.oxsit.pkcs11.PKCS11Driver;
@@ -51,11 +53,21 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
+import javax.naming.ldap.UnsolicitedNotification;
+
+import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XPropertySet;
+import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.container.XNameAccess;
+import com.sun.star.datatransfer.XMimeContentType;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
+import com.sun.star.frame.XStorable;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
@@ -63,10 +75,14 @@ import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.text.XTextContent;
+import com.sun.star.text.XTextGraphicObjectsSupplier;
+import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
+import com.sun.star.util.XModifiable;
 
 /**
  * This service implements the real document signer.
@@ -108,8 +124,14 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String m_sPkcs11WrapperLocal;
 	private String m_sPkcs11CryptoLib;
 	private String m_sPINIsLocked = "";
-
-	// this document signature state
+	
+	private static final int IS_ODF10_OR_11		= 0;
+	private static final int IS_ODF12			= 2;
+	
+	private int		m_nTypeOfDocumentToBeSigned = -1;
+	private String	m_sErrorNoDocument;
+	private String	m_sErrorNotYetSaved;
+	private String	m_sErrorGraphicNotEmbedded;
 
 	/**
 	 * 
@@ -123,6 +145,25 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		m_aLogger = new DynamicLoggerDialog(this, _ctx);
     	m_aLogger.enableLogging();
     	m_aLogger.ctor();
+    	fillLocalizedStrings();
+	}
+
+	/**
+	 * 
+	 */
+	private void fillLocalizedStrings() {
+		MessageConfigurationAccess _aRegAcc = new MessageConfigurationAccess(m_xCC, m_xMCF);
+
+		m_aLogger.enableLogging();
+
+		try {
+			m_sErrorNoDocument = _aRegAcc.getStringFromRegistry( "id_wrong_format_document" );
+			m_sErrorNotYetSaved = _aRegAcc.getStringFromRegistry( "id_wrong_docum_not_saved" );
+			m_sErrorGraphicNotEmbedded = _aRegAcc.getStringFromRegistry( "id_url_linked_graphics" );
+		} catch (com.sun.star.uno.Exception e) {
+			m_aLogger.severe("", "", e);
+		}
+		_aRegAcc.dispose();
 	}
 
 	@Override
@@ -768,8 +809,156 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * @see it.plio.ext.oxsit.security.XOX_DocumentSigner#verifyDocumentBeforeSigning(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
 	 */
 	@Override
-	public boolean verifyDocumentBeforeSigning(XFrame _xFrame, XModel _xModel, Object[] oObjects) throws IllegalArgumentException, Exception {
+	public boolean verifyDocumentBeforeSigning(XFrame _xFrame, XModel _xDocumentModel, Object[] oObjects)
+			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
+
+		//check if the document is modified, e.g. not yet saved
+		//it must be saved
+		XStorable xStore = (XStorable) UnoRuntime.queryInterface(XStorable.class, _xDocumentModel);
+		// decide if new or already saved
+		XModifiable xMod = (XModifiable) UnoRuntime.queryInterface(XModifiable.class, _xDocumentModel);
+		if ((xMod != null && xMod.isModified()) || (xStore != null && !xStore.hasLocation())) {
+			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+			aMex.executeDialogLocal(m_sErrorNotYetSaved);
+			return false;
+		}
+
+		//check if the document is of the right type
+		PropertyValue[] aPVal = _xDocumentModel.getArgs();
+		if (aPVal == null || aPVal.length == 0) {
+			m_aLogger.warning("verifyDocumentBeforeSigning","no opened document task properties, cannot sign");
+			return false;
+		}
+
+		/////////////// for debug only
+		for (int i = 0; i < aPVal.length; i++) {
+			PropertyValue aVal = aPVal[i];
+			m_aLogger.log(Utilities.showPropertyValue(aVal));
+		}
+		//////////////////////
+
+		//check the filtername
+		boolean bFilterOK = false;
+		for (int i = 0; i < aPVal.length; i++) {
+			PropertyValue aVal = aPVal[i];
+			if (aVal.Name.equalsIgnoreCase("FilterName")) {
+				String sDocumentFilter = AnyConverter.toString(aVal.Value);
+				//the filters can be:
+				//writer8, draw8, impress8
+				if (sDocumentFilter.equalsIgnoreCase("writer8") || sDocumentFilter.equalsIgnoreCase("draw8")
+						|| sDocumentFilter.equalsIgnoreCase("impress8")) {
+					bFilterOK = true;
+					break;
+				}
+			}
+		}
+
+		if (!bFilterOK) {
+			m_aLogger.warning("verifyDocumentBeforeSigning",
+					"Only native Open Document Format for Writer or Draw or Impress can be signed.");
+			//detect the document main type (Writer, Calc, Impress, etc...
+			//and present a dialog explaining the reason why this can 't be signed
+			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+			aMex.executeDialogLocal(m_sErrorNoDocument);
+			return false;
+		}
+		m_aLogger.log("document type ok !");
+
+		//verify if the document has externally linked objects:
+		//It cannot have any
+		//first the images, this is for writer document only
+		XTextGraphicObjectsSupplier xGrf = (XTextGraphicObjectsSupplier) UnoRuntime.queryInterface(
+				XTextGraphicObjectsSupplier.class, _xDocumentModel);
+		if (xGrf != null) {
+			XNameAccess xNames = xGrf.getGraphicObjects();
+			if (xNames != null) {
+				//check all the names if they are linked rather then embedded
+				String[] sAllNames = xNames.getElementNames();
+				for (int i = 0; i < sAllNames.length; i++) {
+					Object aObj = xNames.getByName(sAllNames[i]);
+					//AnyConverter.getType(aObj).getTypeName();
+					try {
+						XTextContent xTc = (XTextContent) AnyConverter.toObject(XTextContent.class, aObj);
+						XPropertySet xPset = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xTc);
+						XPropertySetInfo xPsi = xPset.getPropertySetInfo();
+						if (xPsi.hasPropertyByName("GraphicURL")) {
+							//got the right property, check if linked
+							String sTheUrl = AnyConverter.toString(xPset.getPropertyValue("GraphicURL"));
+							if (!sTheUrl.startsWith("vnd.sun.star.GraphicObject:")) {
+								//that means it's not embedded, so, tell the user
+								MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+								aMex.executeDialogLocal(m_sErrorGraphicNotEmbedded);
+								return false;
+							}
+						}
+					} catch (Throwable e) {
+						m_aLogger.severe("while looking for GraphicURL property: ", e);
+					}
+					//				m_aLogger.log("graph: "+sAllNames[i]+" =-> "+AnyConverter.getType(aObj).getTypeName());				
+				}
+			}
+		}
+		else {
+			Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
+		}
+
+		//text sections? 
+
+		//then the embedded object, should be all embedded, and if embedded
+		//only Impress, Writer and Draw objects are allowed
+
+		//find the storage, and see if the storage contains macros
+		//get the document storage,
+		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
+				_xDocumentModel);
+
+//		Utilities.showInterfaces(xDocStorage, _xDocumentModel);
+		XPropertySet xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xDocStorage);
+		//		Utilities.showProperties(xDocStorage, xPropSet);
+		m_xDocumentStorage = xDocStorage.getDocumentStorage();
+
+		//		Utilities.showInterfaces(xDocStorage, m_xDocumentStorage);
+		xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, m_xDocumentStorage);
+		//		Utilities.showProperties(m_xDocumentStorage, xPropSet);
+
+		if (xPropSet != null) { // grab the version
+			String sVersion = "1.0";
+			try {
+				sVersion = (String) xPropSet.getPropertyValue("Version");
+			} catch (UnknownPropertyException e) {
+				m_aLogger.warning("makeTheElementList", "Version missing", e);
+				//no problem if not existent
+			} catch (WrappedTargetException e) {
+				m_aLogger.warning("makeTheElementList", "Version missing", e);
+			}
+			if (sVersion.length() > 0) {
+				m_aLogger.log("Version is: " + sVersion); // this should be 1.2 or more
+				if (sVersion.equalsIgnoreCase("1.2"))
+					m_nTypeOfDocumentToBeSigned = IS_ODF12;
+			} else {
+				m_aLogger.log("Version is 1.0 or 1.1");
+				m_nTypeOfDocumentToBeSigned = IS_ODF10_OR_11;
+			}
+			String sMediaType = "";
+			try {
+				sMediaType = (String) xPropSet.getPropertyValue("MediaType");
+				m_aLogger.log("main storage media type: " + sMediaType);
+			} catch (UnknownPropertyException e) {
+				m_aLogger.warning("makeTheElementList", "Mediatype missing", e);
+				//no problem if not existent
+			} catch (WrappedTargetException e) {
+				m_aLogger.warning("makeTheElementList", "Mediatype missing", e);
+			}
+		} else
+			m_aLogger.log("Version does not exists! May be this is not a ODF package?");
+
+		//display the structure
+		//		DigitalSignatureHelper aHelper = new DigitalSignatureHelper(m_xMCF,m_xCC);
+
+		//		aHelper.verifyDocumentSignature(m_xDocumentStorage, null);
+		//verify if there is a Basic substorage holding the basic script
+
 		return true;
 	}
 }

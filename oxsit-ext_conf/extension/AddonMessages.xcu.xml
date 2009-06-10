@@ -1220,6 +1220,39 @@ token is in an inconsistent state</value>
 			</prop>
 		</node>
 		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_wrong_format_document" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Tipo di documento non permesso.
+
+Potete firmare solo i documenti in Open Document Format di Writer, Draw, Impress.</value>
+			</prop>
+		</node>
+		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_wrong_docum_not_saved" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Dovete salvare il documento prima di poterlo firmare.
+
+Potete firmare solo i documenti in Open Document Format di Writer, Draw, Impress.</value>
+			</prop>
+		</node>
+		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_url_linked_graphics" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Alcuni elementi grafici contenuti nel documento sono
+collegati con l'esterno del documento.
+
+Potete firmare il documento solo quando tutti gli
+elementi grafici sono incorporati nel documento
+stesso.</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">

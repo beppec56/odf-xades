@@ -88,6 +88,42 @@ public class Utilities {
 		}
 	}
 
+	public static String showPropertyValue(PropertyValue aPropVal) {
+		String theMessage = aPropVal.Name + ",   ";
+		try {
+		if (AnyConverter.isObject(aPropVal)) {
+			Object obj = aPropVal.Value;
+			theMessage = theMessage + " isObject =-> " + obj.toString();
+		} else if (AnyConverter.isString(aPropVal)) {
+			String st = AnyConverter.toString(aPropVal.Value);
+			theMessage = theMessage + " isString =-> " + st;
+		} else if (AnyConverter.isByte(aPropVal)) {
+			byte byt = AnyConverter.toByte(aPropVal.Value);
+			theMessage = theMessage + " isByte =-> " + byt;
+		} else if (AnyConverter.isShort(aPropVal)) {
+			short sho = AnyConverter.toShort(aPropVal.Value);
+			theMessage = theMessage + " isShort =-> " + sho;
+		} else if (AnyConverter.isInt(aPropVal)) {
+			int sho = AnyConverter.toInt(aPropVal.Value);
+			theMessage = theMessage + " isInt =-> " + sho;
+		} else if (AnyConverter.isFloat(aPropVal)) {
+			float sho = AnyConverter.toFloat(aPropVal.Value);
+			theMessage = theMessage + " isFloat =-> " + sho;
+		} else if (AnyConverter.isBoolean(aPropVal)) {
+			boolean sho = AnyConverter
+					.toBoolean(aPropVal.Value);
+			theMessage = theMessage + " Boolean =-> " + sho;
+		} else
+			theMessage = theMessage + " getType =-> "
+					+ AnyConverter.getType(aPropVal)
+							.toString();
+
+		} catch (Throwable e) {
+			theMessage = theMessage + " EXCEPTION: " + e.getMessage();
+		}
+		return theMessage;
+	}
+
 	private static String showPropertyString(XPropertySet xPropSet, String pName) {
 		String theMessage = "";
 		try {
@@ -332,7 +368,7 @@ public class Utilities {
 					theMessage = theMessage + ("\n        " + i + " : "
 							+ aTypeList[i].getTypeName());
 			}
-		} catch (java.lang.Exception e) {
+		} catch (java.lang.Throwable e) {
 			System.out.println("caught exception in showInterfaces : " + e);
 		}
 		System.out.println(theMessage);

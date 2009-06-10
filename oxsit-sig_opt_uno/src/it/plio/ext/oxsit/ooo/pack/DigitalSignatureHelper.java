@@ -62,7 +62,8 @@ public class DigitalSignatureHelper {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
     	m_aLogger = new DynamicLogger(this, _context);
-//    	m_aLogger.enableLogging();
+//
+    	m_aLogger.enableLogging();
     	m_aLogger.info("ctor","");
     }
 
@@ -158,14 +159,17 @@ public class DigitalSignatureHelper {
     	if(_xStorage == null ){
     		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
     		m_aLogger.info("makeTheElementList", "use the URL storage");
-//    		Utilities.showInterfaces(this,xThePackage);
+    		Utilities.showInterfaces(this,xThePackage);
     	}
     	else {
     		xThePackage = _xStorage;
     		m_aLogger.info("makeTheElementList", "use the document storage");
     	}
- 
+    	
+		Utilities.showInterfaces(this,_othePackage);
     	XPropertySet xPropset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, _othePackage);
+    	
+    	//this chunk of code should be at the top package level
 		if(xPropset != null) { // grab the version
 			String sVersion = "1.0";
 			try {
@@ -181,6 +185,9 @@ public class DigitalSignatureHelper {
 			else
 				m_aLogger.log("Version is 1.0 or 1.1");
 		}
+/*		else
+			m_aLogger.log("Version does not exists! May be this is not a ODF package?");*/
+			
 
 		//if version <1.2 then all excluding META-INF
 		// else only the ones indicated

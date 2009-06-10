@@ -152,34 +152,19 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	public void addButtonPressed() {
 		//before adding, check if the document can be signed with the current customization
 		//instantiate a DocumentSigner object
-		Object oDocumSigner;
 		try {
-			oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
-			XOX_DocumentSigner xSigner = (XOX_DocumentSigner) UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
-			if (xSigner != null) {
-				try {
-					//Call the document verify pre-signature method
-					if (xSigner.verifyDocumentBeforeSigning(m_xParentFrame, getDocumentModel(), null)) {
-						DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs(m_xParentFrame, m_xContext, m_xMCF);
-						try {
-							int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
-							int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4;//to see the underlying certificates already in the document
-							aDialog1.setDocumentModel(getDocumentModel());
-							aDialog1.initialize(BiasX, BiasY);
-							aDialog1.executeDialog();
-							aDialog1.disposeElements();
-						} catch (BasicErrorException e) {
-							m_aLogger.severe("actionPerformed", "", e);
-						}
-					}
-				} catch (IllegalArgumentException e) {
-					m_aLogger.severe("actionPerformed", "", e);
-				} catch (Exception e) {
-					m_aLogger.severe("actionPerformed", "", e);
-				}
+			//Call the document verify pre-signature method
+			DialogCertTreeSSCDs aDialog1 = new DialogCertTreeSSCDs(m_xParentFrame, m_xContext, m_xMCF);
+			try {
+				int BiasX = 0;//(CertifTreeDlgDims.dsWidth()-CertifTreeDlgDims.dsWidth())/2;
+				int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4;//to see the underlying certificates already in the document
+				aDialog1.setDocumentModel(getDocumentModel());
+				aDialog1.initialize(BiasX, BiasY);
+				aDialog1.executeDialog();
+				aDialog1.disposeElements();
+			} catch (BasicErrorException e) {
+				m_aLogger.severe("actionPerformed", "", e);
 			}
-		} catch (Exception e1) {
-			m_aLogger.severe("actionPerformed", "", e1);
 		} catch (Throwable e1) {
 			m_aLogger.severe("actionPerformed", "", e1);
 		}
