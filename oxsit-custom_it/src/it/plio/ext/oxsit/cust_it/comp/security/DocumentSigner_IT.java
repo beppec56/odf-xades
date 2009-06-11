@@ -59,6 +59,7 @@ import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.datatransfer.XMimeContentType;
 import com.sun.star.document.XStorageBasedDocument;
@@ -76,6 +77,7 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.text.XTextContent;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextGraphicObjectsSupplier;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
@@ -129,7 +131,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private static final int IS_ODF12			= 2;
 	
 	private int		m_nTypeOfDocumentToBeSigned = -1;
-	private String	m_sErrorNoDocument;
+	private String	m_sErrorNoDocumentType;
 	private String	m_sErrorNotYetSaved;
 	private String	m_sErrorGraphicNotEmbedded;
 
@@ -157,7 +159,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		m_aLogger.enableLogging();
 
 		try {
-			m_sErrorNoDocument = _aRegAcc.getStringFromRegistry( "id_wrong_format_document" );
+			m_sErrorNoDocumentType = _aRegAcc.getStringFromRegistry( "id_wrong_format_document" );
 			m_sErrorNotYetSaved = _aRegAcc.getStringFromRegistry( "id_wrong_docum_not_saved" );
 			m_sErrorGraphicNotEmbedded = _aRegAcc.getStringFromRegistry( "id_url_linked_graphics" );
 		} catch (com.sun.star.uno.Exception e) {
@@ -805,62 +807,52 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return false;		
 	}
 
-	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.security.XOX_DocumentSigner#verifyDocumentBeforeSigning(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
+	/** Verify the text document only
+	 * 
+	 * @param _xFrame
+	 * @param _xDocumentModel
+	 * @return
 	 */
-	@Override
-	public boolean verifyDocumentBeforeSigning(XFrame _xFrame, XModel _xDocumentModel, Object[] oObjects)
-			throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
-
-		//check if the document is modified, e.g. not yet saved
-		//it must be saved
-		XStorable xStore = (XStorable) UnoRuntime.queryInterface(XStorable.class, _xDocumentModel);
-		// decide if new or already saved
-		XModifiable xMod = (XModifiable) UnoRuntime.queryInterface(XModifiable.class, _xDocumentModel);
-		if ((xMod != null && xMod.isModified()) || (xStore != null && !xStore.hasLocation())) {
-			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
-			aMex.executeDialogLocal(m_sErrorNotYetSaved);
-			return false;
-		}
-
-		//check if the document is of the right type
+	private boolean verifyTextDocumentBeforeSigning(XFrame _xFrame, XModel _xDocumentModel) {
+		//check the filtername
 		PropertyValue[] aPVal = _xDocumentModel.getArgs();
-		if (aPVal == null || aPVal.length == 0) {
-			m_aLogger.warning("verifyDocumentBeforeSigning","no opened document task properties, cannot sign");
-			return false;
-		}
-
 		/////////////// for debug only
 		for (int i = 0; i < aPVal.length; i++) {
 			PropertyValue aVal = aPVal[i];
 			m_aLogger.log(Utilities.showPropertyValue(aVal));
 		}
-		//////////////////////
-
-		//check the filtername
+		///////////////////////////
+		if (aPVal == null || aPVal.length == 0) {
+			m_aLogger.warning("verifyDocumentBeforeSigning","no opened document task properties, cannot sign");
+			return false;
+		}
 		boolean bFilterOK = false;
 		for (int i = 0; i < aPVal.length; i++) {
 			PropertyValue aVal = aPVal[i];
 			if (aVal.Name.equalsIgnoreCase("FilterName")) {
-				String sDocumentFilter = AnyConverter.toString(aVal.Value);
+				String sDocumentFilter;
+				try {
+					sDocumentFilter = AnyConverter.toString(aVal.Value);
 				//the filters can be:
 				//writer8, draw8, impress8
-				if (sDocumentFilter.equalsIgnoreCase("writer8") || sDocumentFilter.equalsIgnoreCase("draw8")
-						|| sDocumentFilter.equalsIgnoreCase("impress8")) {
-					bFilterOK = true;
-					break;
+					if (sDocumentFilter.equalsIgnoreCase("writer8")) {
+						bFilterOK = true;
+						break;
+					}
+				} catch (IllegalArgumentException e) {
+					m_aLogger.severe(e);
 				}
 			}
 		}
 
 		if (!bFilterOK) {
 			m_aLogger.warning("verifyDocumentBeforeSigning",
-					"Only native Open Document Format for Writer or Draw or Impress can be signed.");
+					"Only native Open Document Format for Writer can be signed.");
 			//detect the document main type (Writer, Calc, Impress, etc...
 			//and present a dialog explaining the reason why this can 't be signed
 			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
-			aMex.executeDialogLocal(m_sErrorNoDocument);
+			aMex.executeDialogLocal(new String(
+						String.format(m_sErrorNoDocumentType, "Writer")));
 			return false;
 		}
 		m_aLogger.log("document type ok !");
@@ -876,9 +868,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				//check all the names if they are linked rather then embedded
 				String[] sAllNames = xNames.getElementNames();
 				for (int i = 0; i < sAllNames.length; i++) {
-					Object aObj = xNames.getByName(sAllNames[i]);
-					//AnyConverter.getType(aObj).getTypeName();
+					Object aObj;
 					try {
+						aObj = xNames.getByName(sAllNames[i]);
+					//AnyConverter.getType(aObj).getTypeName();
 						XTextContent xTc = (XTextContent) AnyConverter.toObject(XTextContent.class, aObj);
 						XPropertySet xPset = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xTc);
 						XPropertySetInfo xPsi = xPset.getPropertySetInfo();
@@ -892,21 +885,66 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								return false;
 							}
 						}
-					} catch (Throwable e) {
-						m_aLogger.severe("while looking for GraphicURL property: ", e);
+					} catch (NoSuchElementException e1) {
+						m_aLogger.severe("while looking for GraphicURL property: ", e1);
+					} catch (WrappedTargetException e1) {
+						m_aLogger.severe("while looking for GraphicURL property: ", e1);
+					} catch (Throwable e1) {
+						m_aLogger.severe("while looking for GraphicURL property: ", e1);
 					}
 					//				m_aLogger.log("graph: "+sAllNames[i]+" =-> "+AnyConverter.getType(aObj).getTypeName());				
 				}
 			}
 		}
 		else {
-			Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
+			m_aLogger.severe("","Not found a needed service!");
+			return false;
 		}
 
 		//text sections? 
 
 		//then the embedded object, should be all embedded, and if embedded
-		//only Impress, Writer and Draw objects are allowed
+		//only the right type is allowed
+		
+		//the the forms, for now no forms are allowed in the text document.
+
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.plio.ext.oxsit.security.XOX_DocumentSigner#verifyDocumentBeforeSigning(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
+	 */
+	@Override
+	public boolean verifyDocumentBeforeSigning(XFrame _xFrame, XModel _xDocumentModel, Object[] oObjects)
+			throws IllegalArgumentException, Exception {
+
+		//check if the document is modified, e.g. not yet saved
+		//it must be saved
+		XStorable xStore = (XStorable) UnoRuntime.queryInterface(XStorable.class, _xDocumentModel);
+		// decide if new or already saved
+		XModifiable xMod = (XModifiable) UnoRuntime.queryInterface(XModifiable.class, _xDocumentModel);
+		if ((xMod != null && xMod.isModified()) || (xStore != null && !xStore.hasLocation())) {
+			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+			aMex.executeDialogLocal(m_sErrorNotYetSaved);
+			return false;
+		}
+//check the main document types interfaces
+		XTextDocument xText = (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, _xDocumentModel);		
+		if(xText != null) {
+			if(!verifyTextDocumentBeforeSigning(_xFrame, _xDocumentModel)) {
+				return false;
+			}
+		}
+		else {
+			Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
+			m_aLogger.warning("verifyDocumentBeforeSigning",
+			"Only native Open Document Format for Writer can be signed.");
+			//present a dialog explaining the reason why this can 't be signed
+			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+			aMex.executeDialogLocal(new String(
+						String.format(m_sErrorNoDocumentType, "Writer")));
+			return false;
+		}
 
 		//find the storage, and see if the storage contains macros
 		//get the document storage,

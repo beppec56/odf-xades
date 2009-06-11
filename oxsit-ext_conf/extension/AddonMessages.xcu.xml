@@ -1226,7 +1226,15 @@ token is in an inconsistent state</value>
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">Tipo di documento non permesso.
 
-Potete firmare solo i documenti in Open Document Format di Writer, Draw, Impress.</value>
+Potete firmare solo i documenti in Open Document Format di %1$s.</value>
+			</prop>
+		</node>
+		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_docum_type_not_signable" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Il documento di tipo %1$s non può essere firmato.</value>
 			</prop>
 		</node>
 		<!--
@@ -1234,9 +1242,7 @@ Potete firmare solo i documenti in Open Document Format di Writer, Draw, Impress
 		-->
 		<node oor:name="id_wrong_docum_not_saved" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">Dovete salvare il documento prima di poterlo firmare.
-
-Potete firmare solo i documenti in Open Document Format di Writer, Draw, Impress.</value>
+				<value xml:lang="it">Dovete salvare il documento prima di poterlo firmare.</value>
 			</prop>
 		</node>
 		<!--
