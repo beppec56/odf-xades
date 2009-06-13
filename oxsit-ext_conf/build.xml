@@ -139,11 +139,12 @@ build-extension
 
 	<target name="build-jar" description="generate the subproject jar">
 		<echo>======== *** =========</echo>
-		<subant target="build-jar">
+		<!--  disabled, alway built manually 
+		  subant target="build-jar">
 			<filelist dir="${basedir}/../">
 				<file name="${uno_types}/build.xml" />
 			</filelist>
-		</subant>
+		</subant -->
 
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
