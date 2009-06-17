@@ -175,7 +175,8 @@ public class X509CertRL {
 		getConfiguration();    	
     	Principal issuer = null;   	
 		setCertificateStateConditions(CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED);
-		//Check if internet is enabled
+		//Check if internet is enabled, if not enabled no control via OCSP or CRL
+		//FIXME may be should drop to CRL which in torn will alert the user?
 		if(m_bOffLineOperation) {
             setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED);
     		setCertificateState(CertificateState.NOT_VERIFIABLE);
@@ -204,12 +205,12 @@ public class X509CertRL {
         try {
 			X509Certificate issuerCert = certAuths.getCACertificate(issuer);
 			OCSPQuery aQuery = new OCSPQuery(null, issuerCert);
-			
+
 			aQuery.addCertificate(userCert);
 			
-			m_aLogger.log("OCSP request sent...");
+			m_aLogger.log("OCSP request sent for "+userCert.getSubjectX500Principal().getName("CANONICAL"));
 			aQuery.execute();
-			
+
 			int status = aQuery.certStatus(userCert);
 			
 			m_aLogger.log("OSCP query status returned: "+status+ " "+OCSPQuery.reasonText(status));
@@ -265,7 +266,8 @@ public class X509CertRL {
         	isNotRevokedCRL(_aStatus, userCert, date);
         	return;
 		} catch (NullPointerException e) {
-        	m_aLogger.severe(e);
+//        	m_aLogger.severe(e);
+			m_aLogger.log("OCSP info not found in certificate or error in trying, trying CRL...");
         	//got here if no OCSP or an error was found, try with CRL
         	isNotRevokedCRL(_aStatus, userCert, date);
         	return;
