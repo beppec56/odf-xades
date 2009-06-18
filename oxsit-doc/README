@@ -202,7 +202,8 @@ The build.xml properties are the following:
     Look for "Component Debugging"
     
     To enable the debug for multiple UNO object use the following, on two separate lines on
-    Tools > Options... Java, select the Java to be used and add to the parameters list dialog:
+    Tools > Options... Java, select the Java to be used and add to the parameters list dialog,
+    you should add the parameters in two part, as shown:
 
     -Xdebug
  	-Xrunjdwp:transport=dt_socket,server=y,suspend=n

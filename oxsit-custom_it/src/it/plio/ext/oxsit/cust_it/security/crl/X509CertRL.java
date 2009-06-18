@@ -199,16 +199,18 @@ public class X509CertRL {
 //        	m_aLogger.severe(e);
         	//we drop here if the CA was not found, so, set error not verifiable
         	//and exit
+    		setCertificateState(CertificateState.NOT_VERIFIABLE);
         	return;
 		}
 
         try {
+        	//FIXME: better exception subdivision
 			X509Certificate issuerCert = certAuths.getCACertificate(issuer);
 			OCSPQuery aQuery = new OCSPQuery(null, issuerCert);
 
 			aQuery.addCertificate(userCert);
 			
-			m_aLogger.log("OCSP request sent for "+userCert.getSubjectX500Principal().getName("CANONICAL"));
+			m_aLogger.log("OCSP request sent for "+userCert.getSubjectDN().toString());
 			aQuery.execute();
 
 			int status = aQuery.certStatus(userCert);

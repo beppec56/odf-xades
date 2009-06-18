@@ -355,6 +355,13 @@ public class AvailableSSCDs_IT extends ComponentBase
 						Object oAnSSCD = null;
 						XOX_SSCDevice xSSCDevice = null;
 						try {
+
+							// set the library to be used, locally
+							String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+
+							m_aLogger.info(Pkcs11WrapperLocal);
+							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);							
+
 							oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
 							xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
@@ -377,13 +384,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 								xStatusIndicator.setText("Lettura certificati");
 								xStatusIndicator.setValue(5);
 							}
-
-							// set the library to be used, locally
-							String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-
-							m_aLogger.info(Pkcs11WrapperLocal);
-
-							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
 
 							Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken();
 							if (certsOnToken != null) {

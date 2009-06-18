@@ -329,14 +329,14 @@
 					<node oor:name="OsLinux" oor:op="replace">
 						<!-- the PKCS#11 library name, the path is detected by the extension -->
 						<prop oor:name="LibName" oor:type="xs:string">
-							<value>libincryptoki2.so</value>
+							<value>opensc-pkcs11.so</value>
 						</prop>
 						<!-- needed for new version of DiKe 4.2 on Linux -->
 						<prop oor:name="LibNameAlt1" oor:type="xs:string">
-							<value>libbit4ipki.so</value>
+							<value>libincryptoki2.so</value>
 						</prop>
 						<prop oor:name="LibNameAlt2" oor:type="xs:string">
-							<value></value>
+							<value>libbit4ipki.so</value>
 						</prop>
 					</node>
 					<node oor:name="OsWindows" oor:op="replace">
