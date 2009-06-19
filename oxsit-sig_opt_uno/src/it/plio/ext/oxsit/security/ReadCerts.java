@@ -69,10 +69,9 @@ public class ReadCerts {
 	private int current;
 	private String statMessage;
     public static final int ERROR = -1;
-    private int differentCerts;
+	long[] m_nTokens;
     
-    private	Hashtable<Long, PKCS11TokenAttributes>		m_oTokens = new Hashtable<Long, PKCS11TokenAttributes>();
-
+    
     private XStatusIndicator m_aStatus;
     
 	/**
@@ -122,11 +121,11 @@ public class ReadCerts {
             helper = new PKCS11Driver(m_aLogger, pkcs11WrapLib, cryptokiLib);
 
             // int indexToken = 0;
-            // if (tokens.length > 1) {
+            // if (m_nTokens.length > 1) {
             // BufferedReader in = new BufferedReader(new InputStreamReader(
             // System.in));
             // System.out.print("Numero di token da usare
-            // [0-"+(tokens.length-1)+"] : ");
+            // [0-"+(m_nTokens.length-1)+"] : ");
             // indexToken = Integer.parseInt(in.readLine());
             // }
 
@@ -151,7 +150,7 @@ public class ReadCerts {
     }
 
     /**
-	 * Detect tokens with defined library<br>
+	 * Detect m_nTokens with defined library<br>
 	 * Limited to a coupled: one Reader =-> one token
 	 * 
 	 * So:
@@ -163,17 +162,17 @@ public class ReadCerts {
 	 * 
 	 */
 	public void detectTokens() {
-		long[] tokens = null;
+		m_nTokens = null;
 		try {
-			tokens = helper.getTokens();
-			m_aLogger.info(tokens.length + " token rilevati con la lib "
+			m_nTokens = helper.getTokens();
+			m_aLogger.info(m_nTokens.length + " token rilevati con la lib "
 					+ cryptokiLib);
 			// confronto tra la stringa reader di pcsc e quelle rilevate con la
 			// libreria da helper
-			for (int i = 0; i < tokens.length; i++) {
+			for (int i = 0; i < m_nTokens.length; i++) {
 				String readerFromCiR = cIr.getReader();
 				String readerFromPKCS11 = helper
-						.getSlotDescription((long) tokens[i]);
+						.getSlotDescription((long) m_nTokens[i]);
 				String readerFromPKCS112 = readerFromPKCS11.replaceAll(" ", "");
 				String readerFromCiR2 = readerFromCiR.replaceAll(" ", "");
 				readerFromPKCS11 = readerFromPKCS11.substring(0,
@@ -186,39 +185,14 @@ public class ReadCerts {
 				if ((readerFromPKCS11.startsWith(readerFromCiR))
 						|| (readerFromCiR2.endsWith(readerFromPKCS112))) {
 
-					PKCS11TokenAttributes aTk = new PKCS11TokenAttributes();
-
-					CK_TOKEN_INFO aTkInfo = helper.getTokenInfo(tokens[i]);
-					aTk.setTokenHandle(tokens[i]);
-					String sString = new String(aTkInfo.label);
-					aTk.setLabel(sString.trim());
-					
-					sString = new String(aTkInfo.manufacturerID);
-					aTk.setManufacturerID(sString.trim());
-					
-					sString = new String(aTkInfo.model);
-					aTk.setModel(sString.trim());
-
-					sString = new String(aTkInfo.serialNumber);
-					aTk.setSerialNumber(sString.trim());
-
-					aTk.setMaxPinLen(aTkInfo.ulMaxPinLen);
-					aTk.setMinPinLen(aTkInfo.ulMinPinLen);
-//					m_aLogger.log("Token set: "+aTk.toString());
-
-					helper.setTokenHandle(tokens[i]);
+					//FIXME the exceptions here need reworking
+					helper.setTokenHandle(m_nTokens[i]);
 					try {
 						helper.openSession();
-					} catch (TokenException ex1) {
-					}
-
-					try {
 						certs = helper.findCertificates();
 					} catch (CertificateException ex2) {
 					} catch (TokenException ex2) {
 					}
-					differentCerts = certs.length;
-					m_oTokens.put(new Long(aTk.getTokenHandle()), aTk);
 				}
 			}
 		} catch (PKCS11Exception ex3) {
@@ -227,7 +201,49 @@ public class ReadCerts {
 		}
 	}
 
-    /**
+	public PKCS11TokenAttributes getTokenAttributes(long _nToken) {
+		PKCS11TokenAttributes aTk = new PKCS11TokenAttributes();
+
+		CK_TOKEN_INFO aTkInfo;
+		try {
+			aTkInfo = helper.getTokenInfo(_nToken);
+			aTk.setTokenHandle(_nToken);
+			String sString = new String(aTkInfo.label);
+			aTk.setLabel(sString.trim());
+
+			sString = new String(aTkInfo.manufacturerID);
+			aTk.setManufacturerID(sString.trim());
+
+			sString = new String(aTkInfo.model);
+			aTk.setModel(sString.trim());
+
+			sString = new String(aTkInfo.serialNumber);
+			aTk.setSerialNumber(sString.trim());
+
+			aTk.setMaxPinLen(aTkInfo.ulMaxPinLen);
+			aTk.setMinPinLen(aTkInfo.ulMinPinLen);
+
+		} catch (PKCS11Exception e) {
+			m_aLogger.severe(e);
+		}
+		return aTk;
+	}
+	public void setTokenHandle(long aHandle) {
+		helper.setTokenHandle(aHandle);
+	}
+
+	public long[] getTokens() {
+		return m_nTokens;
+	}
+
+	/**
+	 * @return the helper
+	 */
+	public PKCS11Driver getHelper() {
+		return helper;
+	}
+
+	/**
      * Return a Collection of certificate present in token<br>
      * In the form of a 
      * <br>
@@ -259,9 +275,6 @@ public class ReadCerts {
                     certBytes = helper.getDEREncodedCertificate(certs[i]);
                 	oCertificate = new CertificatePKCS11Attributes();
                 	oCertificate.setCertificateValueDEREncoded(certBytes);
-                	//get current token description
-                	PKCS11TokenAttributes aTk = m_oTokens.get(new Long(helper.getTokenHandle()));
-                	oCertificate.setToken(aTk);
                     bais = new java.io.ByteArrayInputStream(certBytes);
                     try {
                         javaCert = (java.security.cert.X509Certificate) cf

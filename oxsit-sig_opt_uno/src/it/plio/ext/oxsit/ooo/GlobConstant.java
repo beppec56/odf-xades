@@ -159,7 +159,7 @@ public class GlobConstant {
 	
 	////////// the following UNO service names should go to the registry
 	// under a key tree specifying the current signature profile
-	// service to hold all the information available from SSCD devices (PKCS 11 tokens) available on system.
+	// service to hold all the information available from SSCD devices (PKCS 11 m_nTokens) available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 
 	//service to manage the trusted entities used to validate the user certificate and the certification chain

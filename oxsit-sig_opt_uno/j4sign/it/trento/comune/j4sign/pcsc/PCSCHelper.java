@@ -48,7 +48,7 @@ import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
 
 /**
- * A java class for detecting SmartCard tokens and readers via PCSC.
+ * A java class for detecting SmartCard m_nTokens and readers via PCSC.
  *
  * @author Roberto Resoli
  */

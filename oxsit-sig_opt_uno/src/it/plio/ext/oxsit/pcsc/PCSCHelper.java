@@ -52,7 +52,7 @@ import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
 
 /**
- * A java class for detecting SmartCard tokens and readers via PCSC.
+ * A java class for detecting SmartCard m_nTokens and readers via PCSC.
  *
  * @author Roberto Resoli
  */

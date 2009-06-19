@@ -342,7 +342,9 @@
 					<node oor:name="OsWindows" oor:op="replace">
 						<!-- the PKCS#11 library name, the path is detected by the extension -->
 						<prop oor:name="LibName" oor:type="xs:string">
+							<!-- value>opensc-pkcs11.dll</value -->
 							<value>incryptoki2.dll</value>
+							<!-- value>bit4ipki.dll</value -->
 						</prop>
 						<prop oor:name="LibNameAlt1" oor:type="xs:string">
 							<value></value>

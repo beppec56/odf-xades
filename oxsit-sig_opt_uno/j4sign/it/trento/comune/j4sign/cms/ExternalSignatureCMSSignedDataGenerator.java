@@ -66,7 +66,7 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
  * A class for generating a CMS (PKCS#7) signature message, where encryption
  * procedure is kept external.
  * <p>
- * This enables the use of cryptographic tokens, such as Smart Cards, where
+ * This enables the use of cryptographic m_nTokens, such as Smart Cards, where
  * private key is not extractable and encryption has to be done on the token.
  * <br>
  * This has also the effect of completely separate the digest encryption process

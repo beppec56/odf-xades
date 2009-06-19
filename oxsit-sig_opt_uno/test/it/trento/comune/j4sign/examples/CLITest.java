@@ -498,7 +498,7 @@ public class CLITest {
      */
 
     /**
-     * Test (possibly multiple) digital signatures using PKCS#11 tokens. After
+     * Test (possibly multiple) digital signatures using PKCS#11 m_nTokens. After
      * correct verification of all signatures, the CMS signed message is saved
      * on the filesystem under the users's home directory.
      *  

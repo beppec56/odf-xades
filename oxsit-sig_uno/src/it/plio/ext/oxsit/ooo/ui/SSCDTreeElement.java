@@ -45,6 +45,7 @@ public class SSCDTreeElement extends BaseGeneralNodeTreeElement {
 	// only for certificate
 	public final int m_nFIELD_SSCD_TITLE_DESCRIPTION	= 0;
 	public final int m_nFIELD_SSCD_DESCRIPTION			= 1;
+	public final int m_nFIELD_SSCD_DESCRIPTION2			= 2;
 
 	public final int m_nFIELD_SSCD_TITLE_MANUFACTURER	= 3;
 	public final int m_nFIELD_SSCD_MANUFACTURER			= 4;
@@ -88,7 +89,8 @@ public class SSCDTreeElement extends BaseGeneralNodeTreeElement {
 
 	//custom node init function
 	public void setSSCDDATA(XOX_SSCDevice _aSSCdev) {
-		m_sStringList[m_nFIELD_SSCD_DESCRIPTION] = "r" + _aSSCdev.getDescription();
+		m_sStringList[m_nFIELD_SSCD_DESCRIPTION] = "r" + _aSSCdev.getTokenLabel();
+		m_sStringList[m_nFIELD_SSCD_DESCRIPTION2] = "r" + _aSSCdev.getDescription();
 		m_sStringList[m_nFIELD_SSCD_MANUFACTURER] = "r" +  _aSSCdev.getManufacturer();
 		String sAtrCode = _aSSCdev.getATRcode();
 		if(sAtrCode.length() > 4) {
@@ -99,6 +101,6 @@ public class SSCDTreeElement extends BaseGeneralNodeTreeElement {
 			m_sStringList[m_nFIELD_SSCD_ATR1] = "r"+ sAtrCode;
 		}
 		m_sStringList[m_nFIELD_SSCD_LIB] = "r"+ _aSSCdev.getCryptoLibraryUsed();
-		setNodeName(_aSSCdev.getDescription());
+		setNodeName(_aSSCdev.getTokenLabel()+" - "+_aSSCdev.getDescription()+" ");
 	}
 }

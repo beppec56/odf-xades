@@ -172,11 +172,11 @@ public class ReadCertsTask extends AbstractTask {
             }
 
             // int indexToken = 0;
-            // if (tokens.length > 1) {
+            // if (m_nTokens.length > 1) {
             // BufferedReader in = new BufferedReader(new InputStreamReader(
             // System.in));
             // System.out.print("Numero di token da usare
-            // [0-"+(tokens.length-1)+"] : ");
+            // [0-"+(m_nTokens.length-1)+"] : ");
             // indexToken = Integer.parseInt(in.readLine());
             // }
             helper.setTokenHandle(tokens[indexToken]);
@@ -267,11 +267,11 @@ public class ReadCertsTask extends AbstractTask {
             helper = new PKCS11Signer(m_aLogger, pkcs11WrapLib, cryptokiLib);
 
             // int indexToken = 0;
-            // if (tokens.length > 1) {
+            // if (m_nTokens.length > 1) {
             // BufferedReader in = new BufferedReader(new InputStreamReader(
             // System.in));
             // System.out.print("Numero di token da usare
-            // [0-"+(tokens.length-1)+"] : ");
+            // [0-"+(m_nTokens.length-1)+"] : ");
             // indexToken = Integer.parseInt(in.readLine());
             // }
 
@@ -573,7 +573,7 @@ public class ReadCertsTask extends AbstractTask {
     }
 
     /**
-     * Detect tokens with defined library<br>
+     * Detect m_nTokens with defined library<br>
      * <br>
      * Rileva i token con la libreria definita
      * 

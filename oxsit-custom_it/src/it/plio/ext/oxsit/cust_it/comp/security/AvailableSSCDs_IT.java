@@ -34,6 +34,7 @@ import it.plio.ext.oxsit.pcsc.CardInReaderInfo;
 import it.plio.ext.oxsit.pcsc.CardInfoOOo;
 import it.plio.ext.oxsit.pcsc.PCSCHelper;
 import it.plio.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
+import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
 import it.plio.ext.oxsit.security.ReadCerts;
 import it.plio.ext.oxsit.security.XOX_SSCDManagement;
 import it.plio.ext.oxsit.security.XOX_SSCDevice;
@@ -331,7 +332,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	
 			PCSCHelper pcsc = new PCSCHelper(_aFrame,m_xCC, true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 
-			m_aLogger.log("After 'new PCSCHelper'");
+//			m_aLogger.log("After 'new PCSCHelper'");
 			
 			if(pcsc.getReaders() != null ) {
 				java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
@@ -360,60 +361,68 @@ public class AvailableSSCDs_IT extends ComponentBase
 							String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
 
 							m_aLogger.info(Pkcs11WrapperLocal);
-							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);							
+							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
+							//get the number of token/slot (1 token = 1 slot)
+							long[] availableToken = rt.getTokens();
 
-							oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
-							xSSCDevice = (XOX_SSCDevice)UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
+							if (availableToken != null) {
+								for (int i = 0; i < availableToken.length; i++) {
+									PKCS11TokenAttributes aTk = rt.getTokenAttributes(availableToken[i]);
+									oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
+									xSSCDevice = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
-							xSSCDevice.setDescription(ci.m_sDescription);
-							xSSCDevice.setManufacturer(ci.m_sManufacturer);
-							xSSCDevice.setATRcode(ci.getATRCode());
-							m_aLogger.log("ATR code: "+ci.getATRCode());
-							String sLibs = ci.getDefaultLib()+
-								" ("+
-								((ci.getOsLib().length() > 0) ?  (ci.getOsLib()) : "" )+
-								((ci.getOsLibAlt1().length() > 0) ?  (", "+ci.getOsLibAlt1()) : "" )+
-								((ci.getOsLibAlt2().length() > 0) ?  (", "+ci.getOsLibAlt2()) : "" )+		
-								((ci.getOsLibAlt3().length() > 0) ?  (", "+ci.getOsLibAlt3()) : "" )+ ")";
+									xSSCDevice.setDescription(ci.m_sDescription);
+									xSSCDevice.setManufacturer(ci.m_sManufacturer);
+									xSSCDevice.setATRcode(ci.getATRCode());
+									m_aLogger.log("ATR code: " + ci.getATRCode());
+									String sLibs = ci.getDefaultLib() + " ("
+											+ ((ci.getOsLib().length() > 0) ? (ci.getOsLib()) : "")
+											+ ((ci.getOsLibAlt1().length() > 0) ? (", " + ci.getOsLibAlt1()) : "")
+											+ ((ci.getOsLibAlt2().length() > 0) ? (", " + ci.getOsLibAlt2()) : "")
+											+ ((ci.getOsLibAlt3().length() > 0) ? (", " + ci.getOsLibAlt3()) : "") + ")";
 
-							xSSCDevice.setCryptoLibrariesConfigured(sLibs);
-							xSSCDevice.setCryptoLibraryUsed(ci.getDefaultLib());
+									xSSCDevice.setCryptoLibrariesConfigured(sLibs);
+									xSSCDevice.setCryptoLibraryUsed(ci.getDefaultLib());
 
-							m_aLogger.log("\tLettura certificati");
-							if(xStatusIndicator != null) {
-								xStatusIndicator.setText("Lettura certificati");
-								xStatusIndicator.setValue(5);
-							}
+									m_aLogger.log("\tLettura certificati");
+									if (xStatusIndicator != null) {
+										xStatusIndicator.setText("Lettura certificati");
+										xStatusIndicator.setValue(5);
+									}
 
-							Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken();
-							if (certsOnToken != null) {
-								Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
-								while (certIt.hasNext()) {
-			//add this certificate to our structure
-									CertificatePKCS11Attributes cert = certIt.next();
-									m_aLogger.log("found on token: "+cert.getToken().toString());
-									//all seems right, add the device the certificate
-									xSSCDevice.setTokenLabel(cert.getToken().getLabel());
-									xSSCDevice.setTokenSerialNumber(cert.getToken().getSerialNumber());
-									xSSCDevice.setTokenManufacturerID(cert.getToken().getManufacturerID());
-									xSSCDevice.setTokenMinimumPINLenght((int)cert.getToken().getMinPinLen());
-									xSSCDevice.setTokenMaximumPINLenght((int)cert.getToken().getMaxPinLen());
-									setDEREncoded(cert.getCertificateValueDEREncoded());
-									setID(cert.getCertificateID());
-									setLabel(cert.getCertificateLabel());
-									xSSCDevice.addCertificate(this);
+									rt.setTokenHandle(availableToken[i]);
+									Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken();
+									if (certsOnToken != null) {
+										Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
+										while (certIt.hasNext()) {
+											//add this certificate to our structure
+											CertificatePKCS11Attributes cert = certIt.next();
+						                	cert.setToken(aTk);
+											m_aLogger.log("found on token: " + cert.getToken().toString());
+											//all seems right, add the device the certificate
+											xSSCDevice.setTokenLabel(aTk.getLabel());
+											xSSCDevice.setTokenSerialNumber(aTk.getSerialNumber());
+											xSSCDevice.setTokenManufacturerID(aTk.getManufacturerID());
+											xSSCDevice.setTokenMinimumPINLenght((int) aTk.getMinPinLen());
+											xSSCDevice.setTokenMaximumPINLenght((int) aTk.getMaxPinLen());
+											setDEREncoded(cert.getCertificateValueDEREncoded());
+											setID(cert.getCertificateID());
+											setLabel(cert.getCertificateLabel());
+											xSSCDevice.addCertificate(this);
+										}
+										rt.closeSession();
+										rt.libFinalize();
+										indexToken++;
+									}
+									//add the token to the list
+									addSSCDevice(xSSCDevice);
 								}
-								rt.closeSession();
-								rt.libFinalize();
-								indexToken++;
 							}
-							//add the token to the list
-							addSSCDevice(xSSCDevice);
 						} catch (java.io.IOException e) {
 							//thrown when there is something wrong on the pkcs#11 library...
-							m_aLogger.severe("scanDevices: ATR code:\n"+ci.getATRCode()+"\n", e);
+							m_aLogger.severe("scanDevices: ATR code:\n" + ci.getATRCode() + "\n", e);
 						} catch (java.lang.Exception e) {
-							m_aLogger.severe("scanDevices: ATR code: "+ci.getATRCode(), e);
+							m_aLogger.severe("scanDevices: ATR code: " + ci.getATRCode(), e);
 						}
 					} else {
 						m_aLogger.log("No card in reader '" + currReader + "'!");

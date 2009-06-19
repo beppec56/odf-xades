@@ -1216,7 +1216,7 @@ public class PKCS11Signer {
     }
 
     /**
-     * Lists currently inserted tokens and relative infos.
+     * Lists currently inserted m_nTokens and relative infos.
      *
      * @throws PKCS11Exception
      */
@@ -1232,7 +1232,7 @@ public class PKCS11Signer {
             m_aLogger.severe(ex);
         }
         CK_TOKEN_INFO tokenInfo;
-        m_aLogger.info(tokenIDs.length + " tokens found.");
+        m_aLogger.info(tokenIDs.length + " m_nTokens found.");
         for (int i = 0; i < tokenIDs.length; i++) {
             m_aLogger.info(i + ") Info for token with handle: " + tokenIDs[i]);
             tokenInfo = null;
@@ -1248,7 +1248,7 @@ public class PKCS11Signer {
     }
 
     /**
-     * Lists currently inserted tokens.
+     * Lists currently inserted m_nTokens.
      * Questo metodo è public e utilizzato in ReadCertsTask
      *
      * @throws PKCS11Exception
@@ -1260,14 +1260,14 @@ public class PKCS11Signer {
         //get only slots with a token present
         tokenIDs = pkcs11Module.C_GetSlotList(true);
 
-        //m_aLogger.info(tokenIDs.length + " tokens found.");
+        //m_aLogger.info(tokenIDs.length + " m_nTokens found.");
 
         return tokenIDs;
     }
 
 
     /**
-     * Gets informations on cryptographic operations supported by the tokens.
+     * Gets informations on cryptographic operations supported by the m_nTokens.
      *
      * @throws PKCS11Exception
      */

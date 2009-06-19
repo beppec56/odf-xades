@@ -525,11 +525,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 */
 	private boolean isTokenPresent(String _sTokenLabel, String _sTokenManufID,
 			String _sTokenSerialNumber) throws IOException, TokenException {
-		//the same as certificate search, examine the tokens present for a correct information
+		//the same as certificate search, examine the m_nTokens present for a correct information
 		long[] tokens = null;
 		try {
 			tokens = m_aHelperPkcs11.getTokens();
-//grab all the tokens
+//grab all the m_nTokens
 			for (int i = 0; i < tokens.length; i++) {
 				//select a token and look for the indication requested
 				CK_TOKEN_INFO aTkInfo = m_aHelperPkcs11.getTokenInfo(tokens[i]);
@@ -681,7 +681,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					}
 
 					if (nTokens != null) {
-						// search in the available tokens the one with the
+						// search in the available m_nTokens the one with the
 						// certificate
 						// selected
 						for (int i = 0; i < nTokens.length; i++) {
