@@ -81,8 +81,7 @@ import com.sun.star.uno.XComponentContext;
  *  
  * @author beppec56
  * 
- * FIXME
- * TODO
+ * FIXME verify stuff 
  * verify the following:
  * for ETSI TS 102 280 V1.1.1:
  * 5.4 and following, check if the certificate extensions are as requested

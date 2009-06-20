@@ -139,7 +139,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		String sLoc = Helpers.getExtensionInstallationPath(m_xCC);
 		if(sLoc != null) 
 			m_imagesUrl = sLoc + "/images";
-		else //FIXME, TODO devise a better method, if the call fails
+		else //FIXME, devise a better method, if the call fails
 			m_aLogger.severe("ctor","no package location !");
 		try {
 			m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);

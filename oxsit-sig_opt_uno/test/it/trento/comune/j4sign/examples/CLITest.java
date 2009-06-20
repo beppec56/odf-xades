@@ -309,8 +309,8 @@ public class CLITest {
      */
     public void initSW() {
 
- /* FIXME, TODO
- * beppec56: it seems that the class CMSTestUtil is no longer available in BC 1.43 
+ /* FIXME, beppec56: it seems that the class CMSTestUtil is no longer available in BC 1.43
+ *  
           try {
             System.out.println("Init test with SW keys an certs ...");
             signDN = "O=Bouncy Castle, C=AU";

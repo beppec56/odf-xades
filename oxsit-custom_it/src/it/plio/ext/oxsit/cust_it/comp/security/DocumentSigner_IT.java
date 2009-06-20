@@ -26,7 +26,6 @@ import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
-import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
 import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.Utilities;
 import it.plio.ext.oxsit.logging.DynamicLogger;
@@ -38,7 +37,6 @@ import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.DialogQueryPIN;
 import it.plio.ext.oxsit.ooo.ui.MessageError;
 import it.plio.ext.oxsit.ooo.ui.MessageNoSignatureToken;
-import it.plio.ext.oxsit.ooo.ui.MessageSSCDPINError;
 import it.plio.ext.oxsit.pkcs11.PKCS11Driver;
 import it.plio.ext.oxsit.security.PKCS11TokenAttributes;
 import it.plio.ext.oxsit.security.ReadCerts;
@@ -53,15 +51,12 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
-import javax.naming.ldap.UnsolicitedNotification;
-
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
-import com.sun.star.datatransfer.XMimeContentType;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
@@ -134,6 +129,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String	m_sErrorNoDocumentType;
 	private String	m_sErrorNotYetSaved;
 	private String	m_sErrorGraphicNotEmbedded;
+	private String m_sErroreIsReadOnly;
 
 	/**
 	 * 
@@ -162,6 +158,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_sErrorNoDocumentType = _aRegAcc.getStringFromRegistry( "id_wrong_format_document" );
 			m_sErrorNotYetSaved = _aRegAcc.getStringFromRegistry( "id_wrong_docum_not_saved" );
 			m_sErrorGraphicNotEmbedded = _aRegAcc.getStringFromRegistry( "id_url_linked_graphics" );
+			m_sErroreIsReadOnly = _aRegAcc.getStringFromRegistry( "id_docum_is_readonly" );
 		} catch (com.sun.star.uno.Exception e) {
 			m_aLogger.severe("", "", e);
 		}
@@ -928,7 +925,15 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			aMex.executeDialogLocal(m_sErrorNotYetSaved);
 			return false;
 		}
-//check the main document types interfaces
+
+		//check if the document is readonly: to sign we need to have the full control on it:
+		if(xStore == null ||
+				xStore.isReadonly()) {
+			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+			aMex.executeDialogLocal(m_sErroreIsReadOnly);
+			return false;
+		}
+		//check the main document types interfaces
 		XTextDocument xText = (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, _xDocumentModel);		
 		if(xText != null) {
 			if(!verifyTextDocumentBeforeSigning(_xFrame, _xDocumentModel)) {
@@ -946,6 +951,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			return false;
 		}
 
+		
+		
 		//find the storage, and see if the storage contains macros
 		//get the document storage,
 		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,

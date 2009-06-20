@@ -368,8 +368,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 	//we need to set the certificate path of the current
                 	//main XOX_X509Certificate as invalid for Italian signature
                 	
-                	//FIXME
-                	//TODO we should add the possibility to check for an alternative CA
+                	//FIXME we should add the possibility to check for an alternative CA
                 	//in order to see if the certificate is still ok
                 	// in the end is the root CA of the certification path that rules
                 	// all
@@ -466,8 +465,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
                 qCertChild = xQualCert;
                 m_aLogger.info("added a certificate");
             }
-			//FIXME
-			//arrive here if the current child certificate is sels signed
+			//FIXME arrive here if the current child certificate is sels signed
 			// need to see if the certificate is not revoked (or something similar)
 
             ;

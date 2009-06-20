@@ -209,8 +209,7 @@ public class SSCDevice_IT extends ComponentBase
 	 */
 	@Override
 	public void dispose() {
-		// FIXME 
-		// TODO need to check if this element is referenced somewhere before deallocating it		m_aLogger.entering("dispose");
+		// FIXME need to check if this element is referenced somewhere before deallocating it		m_aLogger.entering("dispose");
 		//dispose of all the certificate
 /*		if(!m_xQualCertList.isEmpty()) {
 			for(int i=0; i< m_xQualCertList.size();i++) {

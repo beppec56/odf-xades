@@ -170,8 +170,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			//check if not CA
 			CertificateTreeElement ct = (CertificateTreeElement)aObj;
 			if(ct.getNodeType() == TreeNodeType.CERTIFICATE) {
-				//add a check on the state and alert the user
-				//FIXME
+				//FIXME add a check on the state and alert the user
 				
 				//instantiate the signer
 				try {

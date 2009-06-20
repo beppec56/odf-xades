@@ -1095,8 +1095,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 */
 	@Override
 	public void dispose() {
-		// FIXME 
-		// TODO need to check if this element is referenced somewhere before deallocating it
+		// FIXME need to check if this element is referenced somewhere before deallocating it
 		m_aLogger.entering("dispose");
 /*		if(m_xExt != null) {
 			for(int i=0; i < m_xExt.length; i++) {

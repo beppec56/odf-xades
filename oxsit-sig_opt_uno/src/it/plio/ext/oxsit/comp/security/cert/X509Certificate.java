@@ -1001,8 +1001,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public void dispose() {
-		// FIXME 
-		// TODO need to check if this element is referenced somewhere before deallocating it
+		// FIXME need to check if this element is referenced somewhere before deallocating it
 		m_aLogger.entering("dispose");
 /*		if(m_xExt != null) {
 			for(int i=0; i < m_xExt.length; i++) {

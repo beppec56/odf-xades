@@ -1259,6 +1259,17 @@ stesso.</value>
 			</prop>
 		</node>
 		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_docum_is_readonly" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Il documento è in sola lettura.
+
+Per poter firmare, dovete aprire il documento in
+modo lettura/scrittura.</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">
