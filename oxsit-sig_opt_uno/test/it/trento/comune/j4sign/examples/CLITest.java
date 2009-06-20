@@ -309,7 +309,7 @@ public class CLITest {
      */
     public void initSW() {
 
- /* FIXME, beppec56: it seems that the class CMSTestUtil is no longer available in BC 1.43
+ /* beppec56: it seems that the class CMSTestUtil is no longer available in BC 1.43
  *  
           try {
             System.out.println("Init test with SW keys an certs ...");

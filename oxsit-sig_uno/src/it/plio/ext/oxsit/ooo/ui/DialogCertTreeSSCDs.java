@@ -185,8 +185,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 
 						if(xSigner.signDocument(m_xParentFrame,getDocumentModel(), aCert, null))
 							endDialog();
-						//mark signature status dirty if signed?
-						//TODO
+						//FIXME mark signature status dirty if signed?
 					}
 					else
 						throw (new NoSuchMethodException("Missing XOX_DocumentSigner interface !"));

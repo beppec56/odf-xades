@@ -134,8 +134,8 @@ public class CertificateExtensionDisplayHelper {
 
 	/**
 	 * @param aext
-	 * @param _aOID TODO
-	 * @param _xCert TODO
+	 * @param _aOID the extension OID
+	 * @param _xCert the certificate containing the extension
 	 * @return
 	 */
 	public String examineExtension(X509Extension aext, DERObjectIdentifier _aOID, XOX_X509CertificateDisplay _xCert) {

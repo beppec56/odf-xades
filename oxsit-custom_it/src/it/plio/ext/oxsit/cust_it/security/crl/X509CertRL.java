@@ -854,7 +854,6 @@ public class X509CertRL {
         // ciclo sui distribution point presenti nel certificato utente
 
         int p = 0;
-        //FIXME, why not used db.length ?
         while (dp[p] != null) {
             p++;
         }

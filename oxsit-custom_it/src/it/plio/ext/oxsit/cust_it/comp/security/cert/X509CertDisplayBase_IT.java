@@ -678,7 +678,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 	/** This method shows how to create and insert a text table, as well as insert text and formulae
    into the cells of the table
-	 * @param xTxCurs TODO
+	 * @param xTxCurs 
 	 */
 	protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int row, int col)
 	{

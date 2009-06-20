@@ -104,8 +104,8 @@ public class CertTest {
          * java.security.cert.CertificateFactory cfbouncy = null; try {
          * Security.addProvider(new BouncyCastleProvider()); cfbouncy =
          * java.security.cert.CertificateFactory .getInstance("X.509","BC"); }
-         * catch (CertificateException e) { // TODO Auto-generated catch block
-         * e.printStackTrace(); } catch (NoSuchProviderException e) { // TODO
+         * catch (CertificateException e) { // Auto-generated catch block
+         * e.printStackTrace(); } catch (NoSuchProviderException e) { // 
          * Auto-generated catch block e.printStackTrace(); }
          * X509CertificateObject co = (X509CertificateObject)
          * cfbouncy.generateCertificate(bais1);

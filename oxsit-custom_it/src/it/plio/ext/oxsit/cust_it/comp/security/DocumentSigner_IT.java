@@ -472,7 +472,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							// return false;
 							// this should be adapted
 						} catch (Throwable e) {
-							// TODO: handle exception
 							m_aLogger.warning("", ">Throwable", e);
 							bRetry = false;
 						}

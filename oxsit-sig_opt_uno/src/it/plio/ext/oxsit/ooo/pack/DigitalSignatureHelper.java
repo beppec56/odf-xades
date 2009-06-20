@@ -150,7 +150,7 @@ public class DigitalSignatureHelper {
      * @return
      */
     private Vector<APackageElement> makeTheElementList(Object _othePackage, XStorage _xStorage) {
-    	//TODO: check for ODF 1.0 structure, see what to do in that case.
+    	//TODO check for ODF 1.0 structure, see what to do in that case.
     	Vector<APackageElement> aElements = new Vector<APackageElement>(20);
 
     	//print the storage ODF version
