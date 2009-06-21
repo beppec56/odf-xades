@@ -62,8 +62,7 @@ public class DigitalSignatureHelper {
     	m_xCtx = _context;
     	m_xMFC = _xMFC;
     	m_aLogger = new DynamicLogger(this, _context);
-//
-    	m_aLogger.enableLogging();
+//    	m_aLogger.enableLogging();
     	m_aLogger.info("ctor","");
     }
 
@@ -166,7 +165,7 @@ public class DigitalSignatureHelper {
     		m_aLogger.info("makeTheElementList", "use the document storage");
     	}
     	
-		Utilities.showInterfaces(this,_othePackage);
+//		Utilities.showInterfaces(this,_othePackage);
     	XPropertySet xPropset = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, _othePackage);
     	
     	//this chunk of code should be at the top package level

@@ -1270,6 +1270,18 @@ modo lettura/scrittura.</value>
 			</prop>
 		</node>
 		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_docum_contains_macro" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Il documento contiene macro di OpenOffice.org e
+quindi non può essere firmato.
+
+Per poterlo firmare dovete rimuovere completamente
+le macro.</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">

@@ -130,6 +130,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String	m_sErrorNotYetSaved;
 	private String	m_sErrorGraphicNotEmbedded;
 	private String m_sErroreIsReadOnly;
+	private String m_sErrorMacroPresent;
 
 	/**
 	 * 
@@ -159,6 +160,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_sErrorNotYetSaved = _aRegAcc.getStringFromRegistry( "id_wrong_docum_not_saved" );
 			m_sErrorGraphicNotEmbedded = _aRegAcc.getStringFromRegistry( "id_url_linked_graphics" );
 			m_sErroreIsReadOnly = _aRegAcc.getStringFromRegistry( "id_docum_is_readonly" );
+			m_sErrorMacroPresent = _aRegAcc.getStringFromRegistry( "id_docum_contains_macro" );
 		} catch (com.sun.star.uno.Exception e) {
 			m_aLogger.severe("", "", e);
 		}
@@ -950,8 +952,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			return false;
 		}
 
-		
-		
 		//find the storage, and see if the storage contains macros
 		//get the document storage,
 		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
@@ -966,6 +966,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, m_xDocumentStorage);
 		//		Utilities.showProperties(m_xDocumentStorage, xPropSet);
 
+		
 		if (xPropSet != null) { // grab the version
 			String sVersion = "1.0";
 			try {
@@ -997,12 +998,21 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		} else
 			m_aLogger.log("Version does not exists! May be this is not a ODF package?");
 
-		//display the structure
-		//		DigitalSignatureHelper aHelper = new DigitalSignatureHelper(m_xMCF,m_xCC);
-
-		//		aHelper.verifyDocumentSignature(m_xDocumentStorage, null);
 		//verify if there is a Basic substorage holding the basic script
-
+		String[] aElements = m_xDocumentStorage.getElementNames();
+		String sBasicElement = "Basic"; 
+		for(int i= 0; i< aElements.length;i++) {
+			m_aLogger.log(aElements[i]);
+			if(aElements[i].equals(sBasicElement)) {
+				m_aLogger.warning("verifyDocumentBeforeSigning",
+				"This document contains OpenOffice.org macro. It cannot be signed.");
+				//present a dialog explaining the reason why this can 't be signed
+				MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
+				aMex.executeDialogLocal(m_sErrorMacroPresent);
+				return false;
+			}
+		}
+		
 		return true;
 	}
 }
