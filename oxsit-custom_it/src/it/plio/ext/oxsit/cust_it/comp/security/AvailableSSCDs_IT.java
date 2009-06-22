@@ -339,7 +339,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 		
 				CardInfoOOo ci = null;
 				Iterator<CardInReaderInfo> it = infos.iterator();
-				int indexToken = 0;
 				int indexReader = 0;
 
 				while (it.hasNext()) {
@@ -391,8 +390,9 @@ public class AvailableSSCDs_IT extends ComponentBase
 									}
 
 									rt.setTokenHandle(availableToken[i]);
-									Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken();
-									if (certsOnToken != null) {
+									rt.openSession();
+									Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken(i);
+									if (certsOnToken != null && !certsOnToken.isEmpty()) {
 										Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
 										while (certIt.hasNext()) {
 											//add this certificate to our structure
@@ -410,13 +410,11 @@ public class AvailableSSCDs_IT extends ComponentBase
 											setLabel(cert.getCertificateLabel());
 											xSSCDevice.addCertificate(this);
 										}
-										rt.closeSession();
-										rt.libFinalize();
-										indexToken++;
+										//add the token to the list
+										addSSCDevice(xSSCDevice);
 									}
-									//add the token to the list
-									addSSCDevice(xSSCDevice);
 								}
+								rt.libFinalize();
 							}
 						} catch (java.io.IOException e) {
 							//thrown when there is something wrong on the pkcs#11 library...
