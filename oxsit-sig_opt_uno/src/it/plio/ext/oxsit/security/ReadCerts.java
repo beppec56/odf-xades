@@ -64,7 +64,7 @@ public class ReadCerts {
 	private IDynamicLogger m_aLogger;
 	private PKCS11Driver helper;
     private java.lang.String cryptokiLib = null;
-    private long[] certs;
+    private long[][] certs;
     private String cardDescription;
 	private int current;
 	private String statMessage;
@@ -98,13 +98,13 @@ public class ReadCerts {
 
     	setLogger(aLogger);
         this.isDownloadCRLForced = isDownloadCRLForced;
-        certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
+        
         signersList = new ArrayList();
         // pcsc = new PCSCHelper(true);
         setCryptokiLib(cIr.getLib());
         this.cIr = cIr;
 
-        certs = null;
+        certs = new long [10][10];
         helper = null;
         m_aLogger.info("Helper Class Loader: "
                 + PKCS11Driver.class.getClassLoader());
@@ -188,8 +188,11 @@ public class ReadCerts {
 					//FIXME the exceptions here need reworking
 					helper.setTokenHandle(m_nTokens[i]);
 					try {
+						m_aLogger.info(i+") Opening session on token with handle "+m_nTokens[i]);
 						helper.openSession();
-						certs = helper.findCertificates();
+						certs[i] = helper.findCertificates();
+						helper.closeSession();
+						
 					} catch (CertificateException ex2) {
 					} catch (TokenException ex2) {
 					}
@@ -252,7 +255,7 @@ public class ReadCerts {
      * 
      * @return Collection
      */
-    public Collection<CertificatePKCS11Attributes> getCertsOnToken() {
+    public Collection<CertificatePKCS11Attributes> getCertsOnToken(int t) {
         byte[] certBytes = null;
         CertificatePKCS11Attributes oCertificate = null;
 
@@ -265,14 +268,16 @@ public class ReadCerts {
         } catch (CertificateException ex) {
         }
         java.io.ByteArrayInputStream bais = null;
-        if (certs != null) {
-            for (int i = 0; (i < certs.length); i++) {
+        if (certs[t] != null) {
+        	certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
+            for (int i = 0; (i < certs[t].length); i++) {
 
-            	m_aLogger.info("Generating certificate with handle: " + i + ") "
-                        + certs[i]);
+            	m_aLogger.info("Generating certificate " + i + ") with handle: "
+                        + certs[t][i]);
 
                 try {
-                    certBytes = helper.getDEREncodedCertificate(certs[i]);
+                    certBytes = helper.getDEREncodedCertificate(certs[t][i]);
+                    m_aLogger.info("Got " + certBytes.length +" bytes.");
                 	oCertificate = new CertificatePKCS11Attributes();
                 	oCertificate.setCertificateValueDEREncoded(certBytes);
                     bais = new java.io.ByteArrayInputStream(certBytes);
@@ -281,21 +286,24 @@ public class ReadCerts {
                                 .generateCertificate(bais);
                         oCertificate.setCertificateValue(javaCert);
                     } catch (CertificateException ex1) {
+                    	m_aLogger.info("Certificate Exception ex1:" + ex1);
                     }
                     //now get the additional certificate attribute from PKCS11 interface
-                    oCertificate.setCertificateID(helper.getCertificateID(certs[i]));
-                    oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certs[i])));
+                    oCertificate.setCertificateID(helper.getCertificateID(certs[t][i]));
+                    oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certs[t][i])));
                     m_aLogger.info(javaCert.getSubjectDN().toString());
                 } catch (PKCS11Exception ex2) {
+                	m_aLogger.info("Certificate Exception ex2:" + ex2);
                 }
                 if(oCertificate != null)
                 	certsOnToken.put(new Integer(i), oCertificate);
             }
+            return certsOnToken.values();
         } else {
             return null;
         }
 
-        return certsOnToken.values();
+        
     }
 
     /**
@@ -305,6 +313,13 @@ public class ReadCerts {
      * 
      */
 
+    public void openSession() {
+        try {
+            helper.openSession();
+        } catch (TokenException ex) {
+        }
+    }
+    
     public void closeSession() {
         try {
             helper.closeSession();
