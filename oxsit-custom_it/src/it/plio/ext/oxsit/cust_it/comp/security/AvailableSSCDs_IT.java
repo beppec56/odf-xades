@@ -383,14 +383,12 @@ public class AvailableSSCDs_IT extends ComponentBase
 									xSSCDevice.setCryptoLibrariesConfigured(sLibs);
 									xSSCDevice.setCryptoLibraryUsed(ci.getDefaultLib());
 
-									m_aLogger.log("\tLettura certificati");
+									m_aLogger.log("\tRecupero certificati");
 									if (xStatusIndicator != null) {
-										xStatusIndicator.setText("Lettura certificati");
+										xStatusIndicator.setText("Recupero certificati");
 										xStatusIndicator.setValue(5);
 									}
 
-									rt.setTokenHandle(availableToken[i]);
-									rt.openSession();
 									Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken(i);
 									if (certsOnToken != null && !certsOnToken.isEmpty()) {
 										Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
