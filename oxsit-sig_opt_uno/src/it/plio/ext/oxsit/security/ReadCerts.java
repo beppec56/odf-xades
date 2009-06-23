@@ -47,6 +47,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import com.sun.star.task.XStatusIndicator;
@@ -58,13 +59,12 @@ import com.sun.star.task.XStatusIndicator;
 public class ReadCerts {
 
     private boolean isDownloadCRLForced;
-	private Hashtable<Integer, CertificatePKCS11Attributes> certsOnToken;
+	private Hashtable<Integer,Collection<CertificatePKCS11Attributes>> certs;
 	private ArrayList signersList;
 	private CardInReaderInfo cIr;
 	private IDynamicLogger m_aLogger;
 	private PKCS11Driver helper;
     private java.lang.String cryptokiLib = null;
-    private long[][] certs;
     private String cardDescription;
 	private int current;
 	private String statMessage;
@@ -104,7 +104,6 @@ public class ReadCerts {
         setCryptokiLib(cIr.getLib());
         this.cIr = cIr;
 
-        certs = new long [10][10];
         helper = null;
         m_aLogger.info("Helper Class Loader: "
                 + PKCS11Driver.class.getClassLoader());
@@ -165,6 +164,8 @@ public class ReadCerts {
 		m_nTokens = null;
 		try {
 			m_nTokens = helper.getTokens();
+			certs = new Hashtable<Integer,Collection<CertificatePKCS11Attributes>>();
+			
 			m_aLogger.info(m_nTokens.length + " token rilevati con la lib "
 					+ cryptokiLib);
 			// confronto tra la stringa reader di pcsc e quelle rilevate con la
@@ -190,7 +191,11 @@ public class ReadCerts {
 					try {
 						m_aLogger.info(i+") Opening session on token with handle "+m_nTokens[i]);
 						helper.openSession();
-						certs[i] = helper.findCertificates();
+						long[] certHandles = helper.findCertificates();
+						m_aLogger.info("\tExtracting certificates...");
+						Collection certsOnToken = getCertsFromHandles(certHandles);
+						certs.put(new Integer(i), certsOnToken);
+						m_aLogger.info(i+") Closing session on token with handle "+m_nTokens[i]);
 						helper.closeSession();
 						
 					} catch (CertificateException ex2) {
@@ -255,28 +260,29 @@ public class ReadCerts {
      * 
      * @return Collection
      */
-    public Collection<CertificatePKCS11Attributes> getCertsOnToken(int t) {
+    public Collection<CertificatePKCS11Attributes> getCertsFromHandles(long[] certHandles) {
         byte[] certBytes = null;
         CertificatePKCS11Attributes oCertificate = null;
 
         java.security.cert.X509Certificate javaCert = null;
         CertificateFactory cf = null;
 
-        m_aLogger.info("getCertsOnToken running ...");
+        m_aLogger.info("getCertsFromHandles running ...");
         try {
             cf = java.security.cert.CertificateFactory.getInstance("X.509");
         } catch (CertificateException ex) {
+        	m_aLogger.info("getCertsFromHandles CertificateException:"+ex);
         }
         java.io.ByteArrayInputStream bais = null;
-        if (certs[t] != null) {
-        	certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
-            for (int i = 0; (i < certs[t].length); i++) {
+        if (certHandles != null) {
+        	Hashtable<Integer, CertificatePKCS11Attributes> certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
+            for (int i = 0; (i < certHandles.length); i++) {
 
             	m_aLogger.info("Generating certificate " + i + ") with handle: "
-                        + certs[t][i]);
+                        + certHandles [i]);
 
                 try {
-                    certBytes = helper.getDEREncodedCertificate(certs[t][i]);
+                    certBytes = helper.getDEREncodedCertificate(certHandles[i]);
                     m_aLogger.info("Got " + certBytes.length +" bytes.");
                 	oCertificate = new CertificatePKCS11Attributes();
                 	oCertificate.setCertificateValueDEREncoded(certBytes);
@@ -289,8 +295,8 @@ public class ReadCerts {
                     	m_aLogger.info("Certificate Exception ex1:" + ex1);
                     }
                     //now get the additional certificate attribute from PKCS11 interface
-                    oCertificate.setCertificateID(helper.getCertificateID(certs[t][i]));
-                    oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certs[t][i])));
+                    oCertificate.setCertificateID(helper.getCertificateID(certHandles[i]));
+                    oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certHandles[i])));
                     m_aLogger.info(javaCert.getSubjectDN().toString());
                 } catch (PKCS11Exception ex2) {
                 	m_aLogger.info("Certificate Exception ex2:" + ex2);
@@ -302,10 +308,11 @@ public class ReadCerts {
         } else {
             return null;
         }
-
-        
     }
-
+    
+    public Collection<CertificatePKCS11Attributes> getCertsOnToken(int t) {	
+    	return certs.get(new Integer(t));
+    }
     /**
      * Close sessione of helper<br>
      * <br>
