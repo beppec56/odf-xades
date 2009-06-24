@@ -307,9 +307,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		boolean bRetValue = false;
 		boolean bCanCloseCertificateChooser = false;
-		// A dumy digest
-		byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0, (byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC, (byte) 0xF7,
-				(byte) 0x6F, (byte) 0xF2, (byte) 0x09, (byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2, (byte) 0xF1, 0x31 };
+		// A dummy digest:  sha1 hash of the word "ciao", encapsulated in a digestInfo asn.1 structure.
+		byte[] baSha1 = { 
+				(byte) 0x30, (byte) 0x21, (byte) 0x30, (byte) 0x09, (byte) 0x06, (byte) 0x05, (byte) 0x2B, (byte) 0x0E, (byte) 0x03, (byte) 0x02, (byte) 0x1A, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x14, (byte) 0xD7,
+				(byte) 0x54, (byte) 0xDA, (byte) 0xA6, (byte) 0xD2, (byte) 0xBA, (byte) 0xA7, (byte) 0x4F, (byte) 0x7B, (byte) 0x14, (byte) 0x75, (byte) 0xD0, (byte) 0x82, (byte) 0xA4, (byte) 0x6E, (byte) 0x89, (byte) 0x27,
+				(byte) 0x91, (byte) 0xC6, (byte) 0x12
+				};
 		// try to sign something simple
 		/*
 		 * String sTest = "Y6pN0POPYtz3b/IJp1sBTnjy8TE="
@@ -412,6 +415,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										} catch (Throwable e) {
 											//any exception thrown during signing process comes here
 											//close the pending session
+											m_aLogger.log("Throwable thrown! Closing session.");
 											m_aHelperPkcs11.closeSession();
 											throw(e);
 										} 
