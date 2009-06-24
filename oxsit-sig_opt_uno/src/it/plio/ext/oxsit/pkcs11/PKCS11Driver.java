@@ -854,10 +854,12 @@ public class PKCS11Driver {
         }
 
         m_aLogger.log("Start single part sign operation...");
+        m_aLogger.log("\tData length: " + data.length+", signatureMechanism: "+ this.signatureMechanism.mechanism);
+
         pkcs11Module.C_SignInit(getSession(), this.signatureMechanism,
                                 signatureKeyHandle);
 
-        if ((data.length > 0) && (data.length < 1024)) {
+        if ((data.length > 0) && (data.length <= 128)) {
         	m_aLogger.log("Signing ...");
             signature = pkcs11Module.C_Sign(getSession(), data);
             m_aLogger.log("FINISHED.");
