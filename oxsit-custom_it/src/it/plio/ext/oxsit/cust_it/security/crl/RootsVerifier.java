@@ -30,6 +30,7 @@
 package it.plio.ext.oxsit.cust_it.security.crl;
 
 import it.plio.ext.oxsit.Helpers;
+import it.plio.ext.oxsit.cust_it.ConstantCustomIT;
 import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
 import it.plio.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import it.plio.ext.oxsit.ooo.ui.ControlDims;
@@ -117,7 +118,7 @@ public class RootsVerifier {
 		        this.CAFilePath = _originPath+System.getProperty("file.separator") + 
 							"ca-list-signed-p7m-it"+ //fixed path, the directory containing the current root zip file
 							System.getProperty("file.separator")+
-							"LISTACER_20090303.zip.p7m";
+							ConstantCustomIT.m_sCA_LIST_SIGNED_FILE;
 			} catch (URISyntaxException e) {
 				// TODO Auto-generated catch block
 				m_aLogger.severe(e);

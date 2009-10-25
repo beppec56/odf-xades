@@ -317,7 +317,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 						System.getProperty("file.separator") + 
 						"ca-list-signed-p7m-it"+ //fixed path, the directory containing the current root zip file
 						System.getProperty("file.separator")+
-						"LISTACER_20090303.zip.p7m"
+						ConstantCustomIT.m_sCA_LIST_SIGNED_FILE
 						);
 				m_aCADbData = new CertificationAuthorities(xStatusIndicator,m_xCC, aURL, 
 						false //to display debug data

@@ -84,4 +84,10 @@ public class ConstantCustomIT {
 	
 	//service to implement a dispatch interceptor
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
+	
+	
+	//name of the italian CA file (current version)
+	//TODO: this mode should ve changed, for example checking if a new one is available
+	//and downloading it.
+	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20090914.zip.p7m";
 }
