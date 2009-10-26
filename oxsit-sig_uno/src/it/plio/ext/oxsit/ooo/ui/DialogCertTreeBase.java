@@ -684,7 +684,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			if(aNotCtritExt != null) {
 			//then there are extension NOT marked critical
 			//add the main node
-				//FIXME: the root node for extensions should see for the aggregate state of all
+				//the root node for extensions build the aggregate state of all
 				//the NOT critical extensions
 				int aggregateState = 0;
 				for(int i=0; i<aNotCtritExt.length;i++) {
