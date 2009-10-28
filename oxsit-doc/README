@@ -268,7 +268,7 @@ The interface are written in Java, where needed.
 
 1) install the OOo SDK, 
 2) initialize it, accept default, not the autodeploy (e.g. = NO)
-3) now go to the default directory (sould be $HOME/openoffice.org3.1_sdk under Linux)
+3) now go to the default directory (should be $HOME/openoffice.org3.1_sdk under GNU/Linux)
    cd  <your linux host name>
    . ./setsdkenv_unix.sh
    

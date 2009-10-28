@@ -11,5 +11,5 @@ export OOO_FORCE_DESKTOP=gnome
 sleep 7
 ls `pwd`/*bin | grep soffice.bin
 ps | grep soffice.bin | sed 's/pts.*$//g'
-netstat -taupln | grep java
+netstat -taupln | grep soffice.bin
 date
