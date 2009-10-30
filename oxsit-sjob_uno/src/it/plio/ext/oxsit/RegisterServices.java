@@ -41,7 +41,7 @@ public class RegisterServices {
 	public synchronized static XSingleComponentFactory __getComponentFactory( String sImplementationName ) {
 		XSingleComponentFactory xFactory = null;
 	
-//		System.out.println("__getComponentFactory");
+		System.out.println("__getComponentFactory");
 		if ( sImplementationName.equals( SyncJob.m_sImplementationName ) )
 			xFactory = Factory.createComponentFactory( SyncJob.class, SyncJob.m_sServiceNames );
 		return xFactory;
@@ -56,7 +56,7 @@ public class RegisterServices {
 	 * registry key accessible.
 	 */
 	public synchronized static boolean __writeRegistryServiceInfo( XRegistryKey xRegistryKey ) {
-//		System.out.println("__writeRegistryServiceInfo: "+SignatureHandler.m_sImplementationName+" "+SignatureHandler.m_sServiceNames[0]+" "+SignatureHandler.m_sServiceNames[1] );
+		System.out.println("__writeRegistryServiceInfo: "+SyncJob.m_sImplementationName+" "+SyncJob.m_sServiceNames[0] );
 		return Factory.writeRegistryServiceInfo( SyncJob.m_sImplementationName, SyncJob.m_sServiceNames, xRegistryKey );
 	}
 }
