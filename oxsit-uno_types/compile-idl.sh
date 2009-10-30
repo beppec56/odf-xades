@@ -20,6 +20,7 @@ cd "$3"
 . "$1" > /dev/null
 
 #compile the file
+echo idlc -I $OO_SDK_HOME/idl "$2"idl
 idlc -I $OO_SDK_HOME/idl "$2".idl
 
 if [ $? -ne 0 ] ;

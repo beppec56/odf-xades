@@ -27,7 +27,7 @@ In case of a different installation, please update it
 -->
 oo_sdk_installed=${user.home}/openoffice.org3.1_sdk
 <!-- standard init script for OOo SDK, what should be launched for a correct init of the environment -->
-oo_sdk_init_script=${oo_sdk_installed}/dsklnx/setsdkenv_unix.sh
+oo_sdk_init_script=${oo_sdk_installed}/dell-desktop/setsdkenv_unix.sh
 <!-- command to build idl to urd -->
 oo_sdk_idl_compile=compile-idl.sh
 

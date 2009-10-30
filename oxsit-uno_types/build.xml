@@ -31,10 +31,14 @@ the default target must be removed
 	<property name="project_name" value="${project_friendly_name}-uno_types" />
 	<property name="extension_jar_file" value="${project_name}.uno.jar" />
 	<property name="extension_rdb_file" value="${project_name}.uno.rdb" />
+	<!-- Load environment variables -->
+	<property environment="env"/>
+	<!-- Capture the computer name in a cross-platform manner -->
+	<property name="env.COMPUTERNAME" value="${env.HOSTNAME}"/>	
 	<description>
         Build the jar file ${extension_jar_file} + ${extension_rdb_file}.
     </description>
-	<echo>Build the jar file ${extension_jar_file}.</echo>
+	<echo>Build the jar file ${extension_jar_file} on ${env.COMPUTERNAME}.</echo>
 	<!-- set global properties for this build -->
 
 	<!--
@@ -94,7 +98,7 @@ the default target must be removed
 		<mkdir dir="${build}" />
 	</target>
 
-	<target name="compile-idl" description="compile idl, rdb and class for a single UNO type">
+	<target name="compile-idl" description="sub-task, internal only, compile idl, rdb and class for a single UNO type">
 		<!-- compile idl, Linux version, see compile-idl.sh for details -->
 		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary" os="Linux-i386">
 			<arg value="${oo_sdk_init_script}"/>
@@ -108,10 +112,10 @@ the default target must be removed
 	<!--
 	The following target builds the new UNO interface class files out of the UNO definition.
 	For this you'll need a working OpenOffice.org SDK for your platform.
-	Change into the file platform specific file is: build.${os.name}-${os.arch}.properties the 
-	properties value to suit your needs,	properties needed are commented in the supplied files.	
+	Change into the platform specific file: build.${os.name}-${os.arch}.properties the 
+	properties value to suit your needs, properties needed are commented in the supplied files.	
 	-->
-	<target name="prebuild"  description="uses OOo SDK to build clss file from the UNO IDL definition file, read the build.xml comments!">
+	<target name="prebuild"  description="uses OOo SDK to build class file from the UNO IDL definition file, please read the build.xml for comments!">
 		<!-- check the OOo SDK presence 
 
 		 The variable ooosdk should be set in the Eclipse IDE, Ant variables, or in a
