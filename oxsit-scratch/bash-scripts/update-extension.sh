@@ -4,7 +4,7 @@
 # IMPORTANT: OOo should be closed before running the script
 #
 # cd /opt/openoffice.org3/program
-./unopkg remove -v it.plio.ext.oxsit
+./unopkg remove --shared -v it.plio.ext.oxsit
 sleep 2
-./unopkg add -v $HOME/oxsit.oxt
+./unopkg add --shared -v $HOME/oxsit.oxt
 #
