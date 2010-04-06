@@ -87,7 +87,7 @@ public class ConstantCustomIT {
 	
 	
 	//name of the italian CA file (current version)
-	//TODO: this mode should ve changed, for example checking if a new one is available
-	//and downloading it.
-	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20090914.zip.p7m";
+	//FIXME: this solution should be changed, for example checking if a new one is available
+	//and downloading it in the user cache
+	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20100311.zip.p7m";
 }

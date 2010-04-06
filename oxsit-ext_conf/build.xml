@@ -399,6 +399,7 @@ build-extension
 		-->
 		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20090303.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20090303.zip.p7m" />
 		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20090914.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20090914.zip.p7m" />
+		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" />
 		
 		
 		<!--- end of subtask -->
