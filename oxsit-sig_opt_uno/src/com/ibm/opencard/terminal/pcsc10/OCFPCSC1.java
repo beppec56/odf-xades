@@ -120,14 +120,8 @@ public class OCFPCSC1 {
       //ROB: commented to avoid dependencies from core ocf packages
       //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary("OCFPCSC1");
 
-    } catch (SecurityException  e) {
-          e.printStackTrace();
-    } catch (UnsatisfiedLinkError  e) {
-          e.printStackTrace();
     } catch (NullPointerException e) {
-          e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
+          throw(e);
     }
     return ret;
   }

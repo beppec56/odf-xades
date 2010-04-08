@@ -116,6 +116,9 @@ public class PCSCHelper {
 	            	m_aLogger.info("Not found class OCFPCSC1 locally in jar file, trying the installed one from j4sign...");
 	                OCFPCSC1.loadLib();
 	            }
+	            catch (Throwable e) {
+	            	m_aLogger.severe("PCSCHelper <ctor>","Error during init" , e);
+	            }
             }
             pcsc = new OCFPCSC1();
 
