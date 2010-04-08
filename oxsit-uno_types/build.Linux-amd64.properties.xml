@@ -1,0 +1,37 @@
+<!--
+    Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+    Copyright 2009 by Roberto Resoli
+
+    The Contents of this file are made available subject to
+    the terms of European Union Public License (EUPL) version 1.1
+    as published by the European Community.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the EUPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    EUPL for more details.
+
+    You should have received a copy of the EUPL along with this
+    program.  If not, see:
+    https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+-->
+<!-- the installed OpenOffice.org SDK java classs location -->
+ooosdk=/opt/openoffice.org3/basis-link/sdk
+<!--
+this is where the sdk environment is installed for you
+the value is the default in Linux after standard installation of 3.0
+In case of a different installation, please update it
+-->
+oo_sdk_installed=${user.home}/openoffice.org3.1_sdk
+<!-- standard init script for OOo SDK, what should be launched for a correct init of the environment -->
+oo_sdk_init_script=${oo_sdk_installed}/dsklnx/setsdkenv_unix.sh
+<!-- command to build idl to urd -->
+oo_sdk_idl_compile=compile-idl.sh
+
+<!-- the installed OpenOffice.org URE Java classes location -->
+ooo_ure_classes_path=/opt/openoffice.org3/basis-link/ure-link/share/java
+<!-- the installed OpenOffice.org Java classes location -->
+ooo_classes_path=/opt/openoffice.org3/basis-link/program/classes

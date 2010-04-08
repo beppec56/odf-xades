@@ -201,6 +201,9 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 				
 				String theMex = m_sOwnerClassHashHex+" "+m_sOwnerClass+" "+_theMethod +
 									" "+_mex2+
+									System.getProperty("line.separator")+
+									ex.getMessage()+
+									System.getProperty("line.separator")+
 									DynamicLoggerBase.getStackFromException(ex);			
 				DialogDisplayLog dlg = new DialogDisplayLog(null,m_xCC,m_xMCF,theMex);
 				dlg.initialize( 0, 0);
