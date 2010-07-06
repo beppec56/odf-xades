@@ -89,5 +89,8 @@ public class ConstantCustomIT {
 	//name of the italian CA file (current version)
 	//FIXME: this solution should be changed, for example checking if a new one is available
 	//and downloading it in the user cache
-	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20100408.zip.p7m";
+	//IMPORTANT: if this is changed, the file oxsit-l10n/localization-master.ods
+	//MUST be updated as well, on cell E154
+	//after that a new message list shuold be generated
+	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20100616.zip.p7m";
 }
