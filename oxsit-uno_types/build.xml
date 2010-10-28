@@ -94,7 +94,7 @@ the default target must be removed
 		<mkdir dir="${build}" />
 	</target>
 
-	<target name="compile-idl" description="compile idl, rdb and class for a single UNO type">
+	<target name="compile-idl" description="Internal target: compile idl, rdb and class for a single UNO type">
 		<!-- compile idl, Linux version, see compile-idl.sh for details -->
 		<exec dir="${uno_idl}" executable="${basedir}/${oo_sdk_idl_compile}" description="compile a idl file to binary" os="Linux-i386">
 			<arg value="${oo_sdk_init_script}"/>
@@ -111,7 +111,7 @@ the default target must be removed
 	Change into the file platform specific file is: build.${os.name}-${os.arch}.properties the 
 	properties value to suit your needs,	properties needed are commented in the supplied files.	
 	-->
-	<target name="prebuild"  description="uses OOo SDK to build clss file from the UNO IDL definition file, read the build.xml comments!">
+	<target name="prebuild"  description="User target: uses OOo SDK to build class file from the UNO IDL definition file. Please read the build.xml comments!">
 		<!-- check the OOo SDK presence 
 
 		 The variable ooosdk should be set in the Eclipse IDE, Ant variables, or in a
@@ -260,7 +260,7 @@ the default target must be removed
 		</exec>
 	</target>
 
-	<target name="compile" depends="init" description="assemble the created class file into a Java archive (jar)">		
+	<target name="compile" depends="init" description="Internal target: assemble the created class file into a Java archive (jar)">		
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac debug="true" target="1.6" srcdir="${src}" destdir="${build}" deprecation="true">
 			<classpath>
@@ -296,7 +296,7 @@ the default target must be removed
 		<!-- end of copy -->
 	</target>
 
-	<target name="build-jar" depends="compile" description="generate the distribution">
+	<target name="build-jar" depends="compile" description="User target: generate the distribution">
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}/lib" />
 		<!-- Put everything in ${build} into the .jar file -->
@@ -324,7 +324,7 @@ the default target must be removed
 		<targetfilelist dir="${extension_dest_dir}" files="description.xml" />
 	</dependset>
 
-	<target name="clean" description="clean up the project">
+	<target name="clean" description="User target: clean up the project">
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<echo>Executing clean</echo>
 		<delete dir="${archr}" />

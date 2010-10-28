@@ -24,7 +24,8 @@ pre-built-type-rdb
 
 The build process is divided into two parts:
 
-1) the OOo SDK part, where OOo SDK is needed;
+1) the OOo SDK part, where OOo SDK is needed: use the target (project) prebuild in ant
+to perform this step; e.g.: ant prebuild.
 
 2) the standard part, where the jar library needed for the other subproject is built.
 In order for the part 1) to succeeded you need an OOo SDK installed and configured.
