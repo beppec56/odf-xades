@@ -50,11 +50,11 @@ build-extension
 
 	<!-- properties used when building/deploying the extension -->
 	<!-- version used for updating the extension, displayed on OOo interface -->
-	<property name="version" value="0.0.14" />
+	<property name="version" value="0.0.15" />
 	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
-	<property name="webidentbase" value="it.plio.ext" />
+	<property name="webidentbase" value="com.yacme.ext" />
 	<!-- local (intranet you may change them to suit you ) web properties -->
 	<property name="webhost" value="http://192.168.3.6" />
 	<property name="webpath" value="w2/acca-esse.it/dwnld/ooohs/extensions" />
@@ -76,7 +76,7 @@ build-extension
 		${webidentbase}
 		${ext_name}
 		are modified, change the value in constant:
-		it.plio.ext.xades.ooo.GlobConstant.m_sEXT_NAME
+		com.yacme.ext.xades.ooo.GlobConstant.m_sEXT_NAME
 		accordingly, otherwise the configuration management inside the
 		extension won't work anymore.
 		==========================================================
