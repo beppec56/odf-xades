@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -31,7 +31,7 @@
 #include <com/sun/star/frame/XFrame.idl>
 #include "CertificationAuthorityState.idl"
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** Interface of checker to verify the certification path of a X509 Certificate.
  */
@@ -40,7 +40,7 @@
 		/** the state of the CA (Certification Authority) control.
 		This in in the form of an enumeration, the one defined for Certification autority state
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificationAuthorityState CertificationAuthorityState;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::CertificationAuthorityState CertificationAuthorityState;
 
 		/** Use this to initialize the service implementing this interface, 
 		for the part related to the interface.
@@ -61,7 +61,7 @@
 		@param xCertificate the certificate to be verified		 		
 		 </p>
 		*/
-		it::plio::ext::oxsit::security::cert::CertificationAuthorityState
+		com::yacme::ext::oxsit::security::cert::CertificationAuthorityState
 			verifyCertificationPath( [in] com::sun::star::frame::XFrame xFrame, 
 							[in] com::sun::star::uno::XInterface xCertificate )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
@@ -82,7 +82,7 @@
 		*/
 		long	getCertificationAuthoritiesNumber() ;
 		/** Returns a sequence of the Certification Autority certificates used for the<br>
-			control this interface implements, e.g. the ones unsed to search for the<br>
+			controls this interface implements, e.g. the ones used to search for the<br>
 			certification path.
 			<p>The returned XComponent object sequence is a sequence of object implementing<br>
 			the XOX_X509Certificate interface that can be used to retrieve the relevant<br>

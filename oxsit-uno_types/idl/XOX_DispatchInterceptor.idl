@@ -20,12 +20,12 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_XOX_DispatchInterceptor_idl__
-#define __it_plio_ext_oxsit_XOX_DispatchInterceptor_idl__
+#ifndef __com_yacme_ext_oxsit_XOX_DispatchInterceptor_idl__
+#define __com_yacme_ext_oxsit_XOX_DispatchInterceptor_idl__
 
 #include <com/sun/star/frame/XFrame.idl>
 
-  module it { module plio { module ext { module oxsit {
+  module com { module yacme { module ext { module oxsit {
 
 /** Interface to start a component implementing a Dispatch Interceptor
 
@@ -43,3 +43,4 @@
   }; }; }; };
  
 #endif
+

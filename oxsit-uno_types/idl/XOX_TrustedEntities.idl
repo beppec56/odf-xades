@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificationPathProcedure_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_TrustedEntities_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_TrustedEntities_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -31,7 +31,7 @@
 #include <com/sun/star/frame/XFrame.idl>
 #include "XOX_X509Certificate"
 
-  module it { module plio { module ext { module oxsit { module security {
+  module com { module yacme { module ext { module oxsit { module security {
 
 /** Interface to manage list of trusted entities
  */
@@ -46,7 +46,7 @@
 		the top of the certification path.<br>
 		See RFC 3280, 6.1. 
 		*/
-		sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > getTrustAnchors(
+		sequence < com::yacme::ext::oxsit::security::cert::XOX_X509Certificate > getTrustAnchors(
 									[in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::uno::XComponentContext xContext);
 
@@ -55,3 +55,4 @@
   }; }; }; }; };
 
 #endif
+

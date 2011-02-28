@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_X509CertificateDisplay_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/util/DateTime.idl>
@@ -33,7 +33,7 @@
 #include "CertificateElementID.idl"
 #include "XOX_CertificateExtension.idl"
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** Interface of a X509 Certificate display data.
  */
@@ -104,21 +104,21 @@
 		/** Returns all the critical extensions.
 		<p></p>
 		*/
-		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getCriticalExtensions();
+		sequence<com::yacme::ext::oxsit::security::cert::XOX_CertificateExtension> getCriticalExtensions();
 
 		/** Returns all the Not critical extensions.
 		<p></p>
 		*/
-		sequence<it::plio::ext::oxsit::security::cert::XOX_CertificateExtension> getNotCriticalExtensions();
+		sequence<com::yacme::ext::oxsit::security::cert::XOX_CertificateExtension> getNotCriticalExtensions();
 
 		/** Find the localized name of an extension from OID.
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
-		string getCertificateElementLocalizedName( [in]  it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
+		string getCertificateElementLocalizedName( [in]  com::yacme::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
 
-		string getCertificateElementCommentString( [in] it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
+		string getCertificateElementCommentString( [in] com::yacme::ext::oxsit::security::cert::CertificateElementID  ElementID ) ;
 
-		void setCertificateElementCommentString( [in] it::plio::ext::oxsit::security::cert::CertificateElementID  ElementID,
+		void setCertificateElementCommentString( [in] com::yacme::ext::oxsit::security::cert::CertificateElementID  ElementID,
 													[in] string aComment ) ;
 
 		/** Find the localized name of an extension from OID.

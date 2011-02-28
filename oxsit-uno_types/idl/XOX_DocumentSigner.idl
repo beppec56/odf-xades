@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_DocumentSigner_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -35,7 +35,7 @@
 #include "CertificateStateConditions.idl"
 #include "XOX_X509Certificate.idl"
 
-  module it { module plio { module ext { module oxsit { module security {
+  module com { module yacme { module ext { module oxsit { module security {
 
 /** Interface to implement document signer.
  */
@@ -51,7 +51,7 @@
 		*/
 		boolean signDocument([in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::frame::XModel xTheDocumentModel,
-						  			[in] sequence < it::plio::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates,
+						  			[in] sequence < com::yacme::ext::oxsit::security::cert::XOX_X509Certificate > xCertificates,
  									[in] sequence<any> aArguments )
 
 						raises( ::com::sun::star::lang::IllegalArgumentException,
@@ -78,3 +78,4 @@
   }; }; }; }; };
  
 #endif
+

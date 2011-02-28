@@ -20,13 +20,13 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_SSCDevice_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_SSCDevice_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_SSCDevice_idl__
 
 #include "XOX_CertificatePKCS11Attributes.idl"
 #include "XOX_X509Certificate.idl"
 
-  module it { module plio { module ext { module oxsit { module security {
+  module com { module yacme { module ext { module oxsit { module security {
 
 	/** This interface is the main interface to hold data
 	  of a single SSCD element on system (called token).
@@ -88,15 +88,16 @@
 
 		/** The certificates this device contains.
 		*/
-		[attribute,readonly]  sequence<it::plio::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
+		[attribute,readonly]  sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
 
 		/** Adds this certificate to the list of certificates available on this token.
 		@param a UNO object implementing the XOX_CertificatePKCS11Attributes interface.
 		*/
-		void	addCertificate( [in]  it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes CertificateAttribute);
-//		void	addAQualifiedCertificate( [in] it::plio::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
+		void	addCertificate( [in]  com::yacme::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes CertificateAttribute);
+//		void	addAQualifiedCertificate( [in] com::yacme::ext::oxsit::security::cert::XOX_X509Certificate aCertificate);
   };
  
   }; }; }; }; };
  
 #endif
+

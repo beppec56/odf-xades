@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_CertificateComplianceProcedure_idl__
 
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -32,7 +32,7 @@
 #include "CertificateState.idl"
 #include "CertificateStateConditions.idl"
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** Interface of a Qualified X509 Certificate
 <p>The certificate accessed through this interface can only be created in two ways:</p>
@@ -47,13 +47,13 @@ XOX_AvailableSSCDs interface or</p>
 		<p>This in in the form of an enumeration, the one defined for Certification state</p>
 		It can be read to asses the certificate state at the end of control
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateState CertificateState;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::CertificateState CertificateState;
 
 		/** the state conditions of the certificate.
 		<p>This in in the form of an enumeration, the one defined for Certification state</p>
 		It can be read to asses the certificate state at the end of control
 	 	*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::CertificateStateConditions CertificateStateConditions;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::CertificateStateConditions CertificateStateConditions;
 
 		/** Use this to initialize the service implementing this interface, 
 		for the part related to the interface.
@@ -75,7 +75,7 @@ XOX_AvailableSSCDs interface or</p>
 		@param xCertificate the certificate to be verified		 		
 		 </p>
 		  */
-		it::plio::ext::oxsit::security::cert::CertificateState
+		com::yacme::ext::oxsit::security::cert::CertificateState
 			verifyCertificateCompliance([in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::uno::XInterface xCertificate)
 						raises( ::com::sun::star::lang::IllegalArgumentException,

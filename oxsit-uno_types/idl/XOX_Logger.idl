@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_logging_XOX_Logger_idl__
-#define __it_plio_ext_oxsit_logging_XOX_Logger_idl__
+#ifndef __com_yacme_ext_oxsit_logging_XOX_Logger_idl__
+#define __com_yacme_ext_oxsit_logging_XOX_Logger_idl__
 
-  module it { module plio { module ext { module oxsit { module logging {
+  module com { module yacme { module ext { module oxsit { module logging {
 
 	interface XOX_Logger 
 	{
@@ -79,3 +79,4 @@
   }; }; }; }; };
  
 #endif
+

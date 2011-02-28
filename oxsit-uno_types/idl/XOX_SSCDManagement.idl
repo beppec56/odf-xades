@@ -20,15 +20,15 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_SSCDManagement_idl__
 
 #include <com/sun/star/uno/XComponentContext.idl> 
 #include <com/sun/star/uno/Exception.idl>
 #include <com/sun/star/frame/XFrame.idl>
 #include "XOX_SSCDevice.idl"
 
-  module it { module plio { module ext { module oxsit { module security {
+  module com { module yacme { module ext { module oxsit { module security {
 
 	/** this interface represents the main interface to describe
 	  the available SSCD devices on system.
@@ -41,7 +41,7 @@
 		[attribute,readonly] long HasSSCDevices;
 		/** The list of SSC Devices on this system.
 		*/
-		[attribute,readonly] sequence<it::plio::ext::oxsit::security::XOX_SSCDevice> AvailableSSCDevices;
+		[attribute,readonly] sequence<com::yacme::ext::oxsit::security::XOX_SSCDevice> AvailableSSCDevices;
 
 
 		/** This method will start the scan of the available SSCDs devices.
@@ -53,9 +53,10 @@
 						raises( ::com::sun::star::uno::Exception );
 		/** Add a new device to the list of available devices.
 		*/
-		void addSSCDevice( [in] it::plio::ext::oxsit::security::XOX_SSCDevice SSCDevice );
+		void addSSCDevice( [in] com::yacme::ext::oxsit::security::XOX_SSCDevice SSCDevice );
   };
  
   }; }; }; }; };
  
 #endif
+

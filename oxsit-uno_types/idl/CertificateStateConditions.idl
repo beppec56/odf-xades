@@ -20,10 +20,10 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_CertificateStateConditions_idl__
-#define __it_plio_ext_oxsit_security_cert_CertificateStateConditions_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_CertificateStateConditions_idl__
+#define __com_yacme_ext_oxsit_security_cert_CertificateStateConditions_idl__
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** State of a Certificate, for string display
  */

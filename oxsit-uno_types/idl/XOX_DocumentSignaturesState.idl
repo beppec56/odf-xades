@@ -20,13 +20,13 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
 
 #include <com/sun/star/embed/XStorage.idl>
 #include "XOX_X509Certificate.idl"
 
-  module it { module plio { module ext { module oxsit { module security {
+  module com { module yacme { module ext { module oxsit { module security {
 
 	/** this interface represents the main interface to describe
 	  document signature states.
@@ -48,9 +48,10 @@
 
 		/** The certificates contained in the document.
 		*/
-		[attribute, readonly] sequence< it::plio::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
+		[attribute, readonly] sequence< com::yacme::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
   };
  
   }; }; }; }; };
  
 #endif
+

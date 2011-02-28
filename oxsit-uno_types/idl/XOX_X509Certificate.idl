@@ -20,8 +20,8 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_XOX_X509Certificate_idl__
-#define __it_plio_ext_oxsit_security_cert_XOX_X509Certificate_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_X509Certificate_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_X509Certificate_idl__
 
 #include <com/sun/star/util/DateTime.idl>
 #include <com/sun/star/uno/Exception.idl>
@@ -39,7 +39,7 @@
 #include <com/sun/star/lang/XComponent.idl>
 #include <com/sun/star/uno/XInterface.idl> 
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** Interface of a Qualified X509 Certificate
 <p>The certificate accessed through this interface can only be created in two ways:</p>
@@ -57,7 +57,7 @@ XOX_AvailableSSCDs interface or</p>
 		/**
 		this is a simple way to obtain an interface usefull to set certificate data
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes;
 
 		/** The SSCD device where this certificate resides.
 		In the same SSCD there is a corresponding private key used to sign.
@@ -65,11 +65,11 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute]  com::sun::star::uno::XInterface SSCDevice ;
 
 		/** the state of the certificate, for general and string indications.
-		<p>It's an integer in the form of <type scope="it::plio::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
+		<p>It's an integer in the form of <type scope="com::yacme::ext::module::oxsit::security::cert">CertificateState</type>, the numerical value,
 		not the enum (e.g. CertificateState.OK_value).</p>
 
 	 	*/
-		/* @see it::plio::ext::oxsit::security::cert::CertificateState
+		/* @see com::yacme::ext::oxsit::security::cert::CertificateState
 		*/
 		[attribute, readonly] long CertificateState;
 		/** conditions observed in checking the certificate state
@@ -80,32 +80,32 @@ XOX_AvailableSSCDs interface or</p>
 		[attribute, readonly] long CertificationAuthorityState;
 		/** the object used to control the certification path of this certificate
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificationPathProcedure CertificationPathControlObj;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_CertificationPathProcedure CertificationPathControlObj;
 
 		/** the object used to control the certificate revocation state, CRL or OCSP
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure RevocationControlObj;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure RevocationControlObj;
 
 		/** the object used to control the certificate compliance
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure ComplianceControlObj;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure ComplianceControlObj;
 
 		/** the object used to prepare the certificate display
 		*/
-		[attribute, readonly] it::plio::ext::oxsit::security::cert::XOX_X509CertificateDisplay CertificateDisplayObj;
+		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_X509CertificateDisplay CertificateDisplayObj;
 
 		/** The first certificate in the certification path, this is the start of the certification path
 		tree.
 		*/
-		[attribute] it::plio::ext::oxsit::security::cert::XOX_X509Certificate CertificationPath ;
+		[attribute] com::yacme::ext::oxsit::security::cert::XOX_X509Certificate CertificationPath ;
 
 		/** Copies the certificate attributes from the parameters to internal representation.<br>
 		They can be retrieved by means of getCertificateAttributes method.
 		*/
-		void	setCertificateAttributes([in] it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes ) ;
+		void	setCertificateAttributes([in] com::yacme::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes ) ;
 
 		/** Returns the error state of an extension, in value of
-		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value
+		com.yacme.ext.oxsit.security.cert.CertificateExtensionState.<>_value
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		<p>For the certificate item that don't have an OID, use the certificate element name; for example IssuerName will
 		return the state of the check performed on issuerName element of TBSCertificate</p> 
@@ -113,7 +113,7 @@ XOX_AvailableSSCDs interface or</p>
 		long getCertificateElementErrorState( [in] string oid ) ;
 
 		/** Set the error state of an extension, in value of
-		it.plio.ext.oxsit.security.cert.CertificateExtensionState.<>_value
+		com.yacme.ext.oxsit.security.cert.CertificateExtensionState.<>_value
 		<p>the OID should be in string form, for example the string "2.5.29.15" for KeyUsage extension</p>
 		*/
 		void setCertificateElementErrorState( [in] string oid, [in] long newState) ;
@@ -121,23 +121,23 @@ XOX_AvailableSSCDs interface or</p>
 		/** Set the interface objects used for the certificate compliance control procedure.
 		<p>This interface is used internally at the end of the certificate preparation, inside setter method setDEREncoded().</p>
 		<p>
-		@see it::plio::oxsit::ext::security::cert::QualifiedCertificate
+		@see com::yacme::oxsit::ext::security::cert::QualifiedCertificate
 			For a description of the suggested method to use this interface.
 		</p>
 		*/
-		void setCertificateComplianceControlObject([in] it::plio::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure arg0)
+		void setCertificateComplianceControlObject([in] com::yacme::ext::oxsit::security::cert::XOX_CertificateComplianceProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 		/** Sets the interface object used to check for the certificate revocation state (CRL, OSP).
 		*/
-		void setRevocationStateControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure arg0)
+		void setRevocationStateControlObject([in]  com::yacme::ext::oxsit::security::cert::XOX_CertificateRevocationStateProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 		/** Sets the interface object used to check for the certificate certification path.
 		*/
-		void setCertificationPathControlObject([in]  it::plio::ext::oxsit::security::cert::XOX_CertificationPathProcedure arg0)
+		void setCertificationPathControlObject([in]  com::yacme::ext::oxsit::security::cert::XOX_CertificationPathProcedure arg0)
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
@@ -191,3 +191,4 @@ XOX_AvailableSSCDs interface or</p>
   }; }; }; }; };  };
  
 #endif
+

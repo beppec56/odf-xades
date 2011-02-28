@@ -20,14 +20,14 @@
  *
  ************************************************************************/
 
-#ifndef __it_plio_ext_oxsit_security_cert_X509Certificate_idl__
-#define __it_plio_ext_oxsit_security_cert_X509Certificate_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_X509Certificate_idl__
+#define __com_yacme_ext_oxsit_security_cert_X509Certificate_idl__
 
 #include <com/sun/star/lang/XInitialization.idl>
 #include "XOX_CertificatePKCS11Attributes.idl"
 #include "XOX_X509Certificate.idl"
 
-  module it { module plio { module ext { module oxsit { module security { module cert {
+  module com { module yacme { module ext { module oxsit { module security { module cert {
 
 /** This service is used to represent a X509 Certificate.
 	<p>Besides the interfaces documented here, it exports the interfaces needed to interact with OpenOffice.org API, they are not shown here.</p>
@@ -63,7 +63,7 @@
 		//the display formatter can be passed in any order, here it's the last one
 		aArguments[5] = oCertDisp;
 
-		Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext("it.plio.ext.oxsit.security.cert.X509Certificate",
+		Object oACertificate = m_xMCF.createInstanceWithArgumentsAndContext("com.yacme.ext.oxsit.security.cert.X509Certificate",
 				aArguments, m_xCC);
 		</listing>		
 		If you have a single object implementing all three interfaces, you need to pass the object three times.<br>
@@ -82,14 +82,14 @@
 		interface com::sun::star::lang::XInitialization;
 		/** This interface gives access to the X509 certificate PKCS11 attributes this service represents.
 		*/
-		interface it::plio::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes;
+		interface com::yacme::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes;
 		/** This interface gives access to the X509 qualified certificate this service represents.
 		*/
-		interface it::plio::ext::oxsit::security::cert::XOX_X509Certificate;
+		interface com::yacme::ext::oxsit::security::cert::XOX_X509Certificate;
 		/** This interface is used in this service as a connection to the
 		real XOX_X509CertificateDisplay, that is added at instantiation time. 
 		*/
-		interface it::plio::ext::oxsit::security::cert::XOX_X509CertificateDisplay;
+		interface com::yacme::ext::oxsit::security::cert::XOX_X509CertificateDisplay;
 	} ;
 
   }; }; }; }; };  };
