@@ -18,20 +18,30 @@
     program.  If not, see:
     https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
 -->
+<!-- the installed office incarnation branding -->
+
+<!-- a universal libreoffice installation.
+	the distribution version may be different
+-->
+<!-- branding=libreoffice -->
+branding=openoffice.org3
+<!--  home_sdk=libreoffice3.3_sdk -->
+home_sdk=openoffice.org3.3_sdk
+
 <!-- the installed OpenOffice.org SDK java classs location -->
-ooosdk=/opt/openoffice.org3/basis-link/sdk
+ooosdk=/opt/${branding}/basis-link/sdk
 <!--
 this is where the sdk environment is installed for you
-the value is the default in Linux after standard installation of 3.0
+the value is the default in Linux after standard installation of 3.1
 In case of a different installation, please update it
 -->
-oo_sdk_installed=${user.home}/openoffice.org3.1_sdk
+oo_sdk_installed=${user.home}/${home_sdk}
 <!-- standard init script for OOo SDK, what should be launched for a correct init of the environment -->
 oo_sdk_init_script=${oo_sdk_installed}/dsklnx/setsdkenv_unix.sh
 <!-- command to build idl to urd -->
 oo_sdk_idl_compile=compile-idl.sh
 
 <!-- the installed OpenOffice.org URE Java classes location -->
-ooo_ure_classes_path=/opt/openoffice.org3/basis-link/ure-link/share/java
+ooo_ure_classes_path=/opt/${branding}/basis-link/ure-link/share/java
 <!-- the installed OpenOffice.org Java classes location -->
-ooo_classes_path=/opt/openoffice.org3/basis-link/program/classes
+ooo_classes_path=/opt/${branding}/basis-link/program/classes
