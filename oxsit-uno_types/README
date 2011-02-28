@@ -56,7 +56,7 @@ Step 1) is developer responsibility, using a text editor or Eclipse.
 Steps 2) 3) and 4) 5) are carried out by the ant target 'prebuild', it generates
 the documentation as well, using autodoc (as is done in the OOo main build process),
 and putting the documentation in the directory 'html-no-svn'.
-The documentation is not (yet) under svn cause of the automatic copyright note that
+The documentation is not (yet) under svn because of the automatic copyright note that
 autodoc adds at the end of every file.
 
 Steps 6) and 7) are carried out by the main extension build.

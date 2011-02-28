@@ -13,6 +13,14 @@
 # $5 is the full path to class destination
 # $6 is the full module path of the class
 
+#debug only
+echo "1: $1"
+echo "2: $2"
+echo "3: $3"
+echo "4: $4"
+echo "5: $5"
+echo "6: $6"
+
 # change working dir to the $3 directory
 cd "$3"
 
