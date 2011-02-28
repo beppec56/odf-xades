@@ -11,7 +11,7 @@ REM PDF output filter FilterData values will be ignored...
 option explicit
 
 &apos;dichiarato in AddonConfiguration.xcs/xcu
-Const CONFIG_KEY As String = &quot;/it.plio.ext.xades.Configuration/&quot;
+Const CONFIG_KEY As String = &quot;/com.yacme.ext.xades.Configuration/&quot;
 
 &apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;
 &apos; funzione di lettura dei parametri del filtro

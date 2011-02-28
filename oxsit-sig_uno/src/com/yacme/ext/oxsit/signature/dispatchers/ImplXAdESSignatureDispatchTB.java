@@ -65,7 +65,7 @@ import com.yacme.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
 
-// import it.plio.ext.cnipa.utilities.Utilities;
+// import com.yacme.ext.cnipa.utilities.Utilities;
 
 /**
  * specific for extended toolbar

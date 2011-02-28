@@ -168,10 +168,10 @@ the default target must be removed
 				<attribute name="Built-By" value="https://forge.osor.eu/projects/ooo-xadessig-it" />
 				<attribute name="Specification-Title" value="Firma digitale XAdES" />
 				<attribute name="Specification-Version" value="${spec_version}" />
-				<attribute name="Specification-Vendor" value="http://www.plio.it" />
+				<attribute name="Specification-Vendor" value="http://www.yacme.com" />
 				<attribute name="Implementation-Title" value="${project_name}" />
 				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
-				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
+				<attribute name="Implementation-Vendor" value="http://www.yacme.com" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.RegisterServices" />

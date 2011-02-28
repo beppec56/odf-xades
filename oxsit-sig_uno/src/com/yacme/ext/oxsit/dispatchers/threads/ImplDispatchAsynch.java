@@ -59,7 +59,7 @@ public class ImplDispatchAsynch extends ImplDispatchSynch implements IDispatchIm
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.cnipa.dispatchers.IDispatchImplementer#impl_dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
+	 * @see com.yacme.ext.cnipa.dispatchers.IDispatchImplementer#impl_dispatch(com.sun.star.util.URL, com.sun.star.beans.PropertyValue[])
 	 */
 	@Override
 	public void impl_dispatch(URL aURL, PropertyValue[] lArguments) {

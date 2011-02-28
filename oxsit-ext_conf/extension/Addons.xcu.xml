@@ -27,14 +27,14 @@
 	<node oor:name="AddonUI">
 		<!-- toolbar standard aggiunta -->
 		<node oor:name="OfficeToolBar">
-			<node oor:name="it.plio.ext.oxsit.OfficeToolBar" oor:op="replace">
+			<node oor:name="com.yacme.ext.oxsit.OfficeToolBar" oor:op="replace">
 				<node oor:name="button1" oor:op="replace">
 				<!-- if a document type is changed here, change it below for menu and inside the code, look for DOCUMENTTYPE text key -->
 					<prop oor:name="Context" oor:type="xs:string">
 						<value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.drawing.DrawingDocument,com.sun.star.presentation.PresentationDocument</value>
 					</prop>
 					<prop oor:name="URL" oor:type="xs:string">
-						<value>it.plio.ext.oxsit.comp.SignatureHandler:SignDialogTB</value>
+						<value>com.yacme.ext.oxsit.comp.SignatureHandler:SignDialogTB</value>
 					</prop>
 					<prop oor:name="ImageIdentifier" oor:type="xs:string">
 						<value>%origin%/images/writer-unknown</value>
@@ -62,7 +62,7 @@
 		    nel codice sorgente di OOo
 		-->
 		<node oor:name="OfficeMenuBarMerging">
-			<node oor:name="it.plio.ext.oxsit.PopupMenu" oor:op="replace">
+			<node oor:name="com.yacme.ext.oxsit.PopupMenu" oor:op="replace">
 				<node oor:name="S1" oor:op="replace">
 					<!--
 					    per il merge point vedere in:
@@ -105,7 +105,7 @@
 								<value/>
 							</prop>
 							<prop oor:name="URL" oor:type="xs:string">
-								<value>it.plio.ext.oxsit.comp.SignatureHandler:SignDialog</value>
+								<value>com.yacme.ext.oxsit.comp.SignatureHandler:SignDialog</value>
 							</prop>
 							<prop oor:name="Title" oor:type="xs:string"  oor:localized="true">
 								<value>Digital signatures XAdES (IT) mode...</value>
@@ -122,12 +122,12 @@
 		</node>
 
 		<node oor:name="OfficeHelp">
-			<node oor:name="it.plio.ext.oxsit.OfficeHelp" oor:op="replace">
+			<node oor:name="com.yacme.ext.oxsit.OfficeHelp" oor:op="replace">
 				<prop oor:name="Context" oor:type="xs:string">
 					<value></value>
 				</prop>
 				<prop oor:name="URL" oor:type="xs:string">
-					<value>it.plio.ext.oxsit.comp.SignatureHandler:HelpAbout</value>
+					<value>com.yacme.ext.oxsit.comp.SignatureHandler:HelpAbout</value>
 				</prop>
 				<prop oor:name="ImageIdentifier" oor:type="xs:string">
 					<value></value>

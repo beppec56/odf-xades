@@ -25,14 +25,14 @@
 		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<node oor:name="HandlerSet">
 		<!-- name of the Java class implementing the handler -->
-		<node oor:name="it.plio.ext.oxsit.comp.SignatureHandler" oor:op="replace">
+		<node oor:name="com.yacme.ext.oxsit.comp.SignatureHandler" oor:op="replace">
 			<!--
 			    protocol name can be anything, it MUST be in the class defined as HandlerSet name.
 			    In this case it is defined in static field:
-			    it.plio.ext.xades.SignatureHandler:m_ProtocolBaseUrl
+			    com.yacme.ext.xades.SignatureHandler:m_ProtocolBaseUrl
 			-->
 			<prop oor:name="Protocols" oor:type="oor:string-list">
-				<value>it.plio.ext.oxsit.comp.SignatureHandler:*</value>
+				<value>com.yacme.ext.oxsit.comp.SignatureHandler:*</value>
 			</prop>
 		</node>
 	</node>

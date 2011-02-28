@@ -14,7 +14,7 @@ End Sub
 
 sub tryConfigSSCD
 
-	oVal = GetRegistryKeyContent( &quot;it.plio.ext.oxsit.Configuration/SSCDs&quot; )
+	oVal = GetRegistryKeyContent( &quot;com.yacme.ext.oxsit.Configuration/SSCDs&quot; )
 	
 	xray oVal
 
@@ -26,7 +26,7 @@ sub tryCertificateDiscovery()
  &apos;try the new certificate discovery service
 	dim sscds as object
  	&apos;istanzia il servizio di ricerca cetificati
-	sscds = createUNOservice(&quot;it.plio.ext.oxsit.security.AvailableSSCDs&quot;)
+	sscds = createUNOservice(&quot;com.yacme.ext.oxsit.security.AvailableSSCDs&quot;)
  	&apos;presenta il servizio, senza certificati
 &apos;	xray sscds
  	&apos;esegue la ricerca dei dispositivi presenti
