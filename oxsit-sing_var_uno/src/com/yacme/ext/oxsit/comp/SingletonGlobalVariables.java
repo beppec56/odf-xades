@@ -20,11 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp;
+package com.yacme.ext.oxsit.comp;
 
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
@@ -42,6 +40,8 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
+import com.yacme.ext.oxsit.logging.DynamicLogger;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
 
 /**
  * This class is a singleton UNO object.
@@ -155,7 +155,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#getDocumentSignatures(java.lang.String)
 	 */
 	@Override
 	public XOX_DocumentSignaturesState getDocumentSignatures(String _aDocumentId) {
@@ -181,7 +181,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#initDocumentAndListener(java.lang.String, com.sun.star.util.XChangesListener)
 	 * 
 	 * FIXME set exception
 	 */
@@ -243,7 +243,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeDocumentSignatures(java.lang.String)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#removeDocumentSignatures(java.lang.String)
 	 */
 	@Override
 	public void removeDocumentSignatures(String _aDocumentId) {
@@ -264,7 +264,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#addUNOComponent(java.lang.String, com.sun.star.lang.XComponent)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#addUNOComponent(java.lang.String, com.sun.star.lang.XComponent)
 	 */
 	@Override
 	public void addUNOComponent(String _UNOComponentName, XComponent _UNOComponent)
@@ -277,7 +277,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#getUNOComponent(java.lang.String)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#getUNOComponent(java.lang.String)
 	 */
 	@Override
 	public XComponent getUNOComponent(String _UNOComponentName)
@@ -289,7 +289,7 @@ public class SingletonGlobalVariables extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.XOX_SingletonDataAccess#removeUNOComponent(java.lang.String)
+	 * @see com.yacme.ext.oxsit.XOX_SingletonDataAccess#removeUNOComponent(java.lang.String)
 	 * 
 	 * rerome a UNO component from the list
 	 */

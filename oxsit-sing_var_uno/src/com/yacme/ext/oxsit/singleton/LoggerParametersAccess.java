@@ -20,9 +20,8 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.singleton;
+package com.yacme.ext.oxsit.singleton;
 
-import it.plio.ext.oxsit.ooo.GlobConstant;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -35,6 +34,7 @@ import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
 
 /**
  * Access to configurations options (Tools > Options...)

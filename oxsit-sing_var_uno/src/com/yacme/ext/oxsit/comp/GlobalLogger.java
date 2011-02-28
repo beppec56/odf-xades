@@ -20,12 +20,9 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp;
+package com.yacme.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.logging.LocalLogFormatter;
 import it.plio.ext.oxsit.logging.XOX_Logger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.singleton.LoggerParametersAccess;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +34,9 @@ import java.util.logging.Logger;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.XComponentContext;
+import com.yacme.ext.oxsit.logging.LocalLogFormatter;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.singleton.LoggerParametersAccess;
 
 /**
  * This class is a singleton UNO object.
@@ -258,7 +258,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableConsoleOutput()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableConsoleOutput()
 	 */
 	@Override
 	public boolean getEnableConsoleOutput() {
@@ -266,7 +266,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableFileOutput()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableFileOutput()
 	 */
 	@Override
 	public boolean getEnableFileOutput() {
@@ -274,7 +274,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableInfoLevel()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableInfoLevel()
 	 */
 	@Override
 	public boolean getEnableInfoLevel() {
@@ -282,7 +282,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableLogging()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableLogging()
 	 */
 	@Override
 	public boolean getEnableLogging() {
@@ -290,7 +290,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#getEnableWarningLevel()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableWarningLevel()
 	 */
 	@Override
 	public boolean getEnableWarningLevel() {
@@ -298,7 +298,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#localConfigurationChanged()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#localConfigurationChanged()
 	 */
 	@Override
 	public void localConfigurationChanged() {
@@ -306,7 +306,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#optionsConfigurationChanged()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#optionsConfigurationChanged()
 	 */
 	@Override
 	public void optionsConfigurationChanged() {
@@ -321,7 +321,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableConsoleOutput(boolean)
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableConsoleOutput(boolean)
 	 */
 	@Override
 	public void setEnableConsoleOutput(boolean _bNewVal) {
@@ -331,7 +331,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableFileOutput(boolean)
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableFileOutput(boolean)
 	 */
 	@Override
 	public void setEnableFileOutput(boolean _bNewVal) {
@@ -341,7 +341,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableInfoLevel(boolean)
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableInfoLevel(boolean)
 	 */
 	@Override
 	public void setEnableInfoLevel(boolean _bNewVal) {
@@ -351,7 +351,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableLogging(boolean)
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableLogging(boolean)
 	 */
 	@Override
 	public void setEnableLogging(boolean _bNewVal) {
@@ -371,7 +371,7 @@ public class GlobalLogger extends ComponentBase
 	 *  configuration parameters.
 	 *  
 	 *  The event is fired when the parameters change.
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#setEnableWarningLevel(boolean)
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableWarningLevel(boolean)
 	 */
 	@Override
 	public void setEnableWarningLevel(boolean _bNewVal) {
@@ -381,7 +381,7 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.oxsit.logging.XOX_Logger#stopLogging()
+	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#stopLogging()
 	 */
 	@Override
 	public void stopLogging() {
