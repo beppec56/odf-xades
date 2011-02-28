@@ -19,13 +19,13 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit;
+package com.yacme.ext.oxsit;
 
-import it.plio.ext.oxsit.comp.SyncJob;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
 import com.sun.star.registry.XRegistryKey;
+import com.yacme.ext.oxsit.comp.SyncJob;
 
 public class RegisterServices {
 	/** Gives a factory for creating the service(s).

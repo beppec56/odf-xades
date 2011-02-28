@@ -20,14 +20,10 @@
  *
  ************************************************************************/
 
-package it.plio.ext.oxsit.comp;
+package com.yacme.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.Helpers;
 import it.plio.ext.oxsit.XOX_DispatchInterceptor;
 import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.ooo.GlobConstant;
-import it.plio.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import com.sun.star.beans.NamedValue;
@@ -59,6 +55,10 @@ import com.sun.star.util.CloseVetoException;
 import com.sun.star.util.XChangesBatch;
 import com.sun.star.util.XCloseListener;
 import com.sun.star.util.XCloseable;
+import com.yacme.ext.oxsit.Helpers;
+import com.yacme.ext.oxsit.logging.DynamicLogger;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 
 /**
  * this class is the class to be registered when installing the extension
