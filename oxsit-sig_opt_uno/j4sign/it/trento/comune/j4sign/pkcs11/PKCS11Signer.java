@@ -48,12 +48,13 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
-import it.plio.ext.oxsit.logging.IDynamicLogger;
 
 import java.util.Collection;
+
+import com.yacme.ext.oxsit.logging.DynamicLazyLogger;
+import com.yacme.ext.oxsit.logging.DynamicLogger;
+import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
+import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
 /**
  * This class uses the PKCS#11 Java api provieded by <a

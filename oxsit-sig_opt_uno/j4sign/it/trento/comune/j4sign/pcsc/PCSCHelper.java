@@ -26,10 +26,6 @@
 package it.trento.comune.j4sign.pcsc;
 
 
-import it.plio.ext.oxsit.logging.DynamicLazyLogger;
-import it.plio.ext.oxsit.logging.DynamicLogger;
-import it.plio.ext.oxsit.logging.DynamicLoggerDialog;
-import it.plio.ext.oxsit.logging.IDynamicLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +42,10 @@ import com.ibm.opencard.terminal.pcsc10.OCFPCSC1;
 import com.ibm.opencard.terminal.pcsc10.Pcsc10Constants;
 import com.ibm.opencard.terminal.pcsc10.PcscException;
 import com.ibm.opencard.terminal.pcsc10.PcscReaderState;
+import com.yacme.ext.oxsit.logging.DynamicLazyLogger;
+import com.yacme.ext.oxsit.logging.DynamicLogger;
+import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
+import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
 /**
  * A java class for detecting SmartCard m_nTokens and readers via PCSC.

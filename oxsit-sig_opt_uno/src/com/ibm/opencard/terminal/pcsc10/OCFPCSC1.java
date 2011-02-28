@@ -36,7 +36,7 @@
 
 package com.ibm.opencard.terminal.pcsc10;
 
-import it.plio.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
 
 //ROB: Commented out to eliminate dependencies from opencard.core.util.Tracer
 //import opencard.core.util.Tracer;
