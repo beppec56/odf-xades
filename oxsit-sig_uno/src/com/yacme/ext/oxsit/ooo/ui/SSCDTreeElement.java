@@ -28,7 +28,7 @@ import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 
-import it.plio.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
 
 /** This class describes the node representing a certificate obtained from
  * an SSCD.

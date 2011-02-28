@@ -23,9 +23,9 @@
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
-import it.plio.ext.oxsit.security.XOX_SSCDManagement;
-import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
+import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

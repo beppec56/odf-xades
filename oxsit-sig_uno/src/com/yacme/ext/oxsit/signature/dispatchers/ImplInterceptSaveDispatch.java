@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;

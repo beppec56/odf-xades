@@ -22,9 +22,9 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
+import com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;

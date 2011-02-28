@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.XOX_DispatchInterceptor;
+import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.FrameActionEvent;

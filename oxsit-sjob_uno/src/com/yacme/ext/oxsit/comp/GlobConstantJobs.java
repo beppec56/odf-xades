@@ -30,7 +30,7 @@ package com.yacme.ext.oxsit.comp;
 public class GlobConstantJobs {
 	
 /** the followings are the dispatch code 'external' to this component (that is, this jar file)
- * 	public static final String m_sSignProtocolBaseUrl = "it.plio.ext.cnipa.comp.SignatureHandler:";
+ * 	public static final String m_sSignProtocolBaseUrl = "com.yacme.ext.cnipa.comp.SignatureHandler:";
  * 
  */
 	//intercepted url

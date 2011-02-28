@@ -22,9 +22,9 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.security.XOX_DocumentSigner;
-import it.plio.ext.oxsit.security.XOX_SSCDManagement;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
+import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;

@@ -22,8 +22,8 @@
 
 package com.yacme.ext.oxsit.comp.security;
 
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Collection;
 import java.util.HashMap;

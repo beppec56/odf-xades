@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/it/plio/ext/oxsit/cust_it/ConstantCustomIT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/ConstantCustomIT.java.
  *
  * The Initial Developer of the Original Code is
  * Giuseppe Castagno giuseppe.castagno@acca-esse.it
@@ -49,7 +49,7 @@ import com.yacme.ext.oxsit.ooo.GlobConstant;
 public class ConstantCustomIT {
 	
 	/// base of configuration item
-	public static final String m_sWEBIDENTBASE = "it.plio.ext"; // extension owner, used in building it,
+	public static final String m_sWEBIDENTBASE = "com.yacme.ext"; // extension owner, used in building it,
 																// same name, same meaning in extension_conf_files/build.xml
 	public static final String m_sEXT_NAME ="oxsit"; //name of the extension, used in building it,
 																		// same name, same meaning in extension_conf_files/build.xml

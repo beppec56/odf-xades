@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.logging;
 
-import it.plio.ext.oxsit.logging.XOX_Logger;
+import com.yacme.ext.oxsit.logging.XOX_Logger;
 
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;

@@ -27,11 +27,11 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security.ca;
 
-import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.frame.XFrame;

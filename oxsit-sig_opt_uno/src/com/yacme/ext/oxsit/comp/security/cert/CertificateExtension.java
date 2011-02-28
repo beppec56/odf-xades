@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.comp.security.cert;
 
-import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificateExtension;
 
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
@@ -165,7 +165,7 @@ public class CertificateExtension extends ComponentBase //help class, implements
 	}
 
 	/* (non-Javadoc)
-	 * @see it.plio.ext.security.cert.XOX_CertificateExtension#isCritical()
+	 * @see com.yacme.ext.security.cert.XOX_CertificateExtension#isCritical()
 	 */
 	@Override
 	public boolean isCritical() {

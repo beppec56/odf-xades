@@ -3,13 +3,13 @@
  */
 package com.yacme.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.CertificateElementID;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
-import it.plio.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.CertificateElementID;
+import com.yacme.ext.oxsit.security.cert.CertificateElementState;
+import com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.KeyEvent;

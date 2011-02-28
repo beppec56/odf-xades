@@ -27,15 +27,15 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security.ca;
 
-import it.plio.ext.oxsit.security.cert.CertificateElementID;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
+import com.yacme.ext.oxsit.security.cert.CertificateElementID;
+import com.yacme.ext.oxsit.security.cert.CertificateElementState;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
+import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

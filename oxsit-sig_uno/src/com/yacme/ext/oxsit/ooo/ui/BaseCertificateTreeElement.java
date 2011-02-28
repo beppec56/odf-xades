@@ -22,9 +22,9 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
+import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
 
 import java.util.Hashtable;
 import java.util.Iterator;

@@ -3,7 +3,7 @@
  */
 package com.yacme.ext.oxsit.comp.security.cert;
 
-import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.IOException;
 import java.math.BigInteger;

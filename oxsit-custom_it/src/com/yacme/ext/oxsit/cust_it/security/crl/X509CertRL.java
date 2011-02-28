@@ -29,8 +29,8 @@
 
 package com.yacme.ext.oxsit.cust_it.security.crl;
 
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

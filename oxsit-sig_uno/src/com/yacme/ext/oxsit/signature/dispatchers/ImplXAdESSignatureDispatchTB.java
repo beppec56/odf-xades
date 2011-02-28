@@ -22,9 +22,9 @@
 
 package com.yacme.ext.oxsit.signature.dispatchers;
 
-import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
-import it.plio.ext.oxsit.security.XOX_DocumentSigner;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 
 import java.util.Collection;
 import java.util.HashMap;

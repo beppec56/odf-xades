@@ -22,10 +22,10 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security.cert;
 
-import it.plio.ext.oxsit.security.cert.CertificateElementID;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateExtension;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.plio.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
+import com.yacme.ext.oxsit.security.cert.CertificateElementID;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificateExtension;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

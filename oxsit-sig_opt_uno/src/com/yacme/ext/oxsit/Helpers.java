@@ -23,9 +23,9 @@
 package com.yacme.ext.oxsit;
 
 import iaik.pkcs.pkcs11.wrapper.PKCS11Connector;
-import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

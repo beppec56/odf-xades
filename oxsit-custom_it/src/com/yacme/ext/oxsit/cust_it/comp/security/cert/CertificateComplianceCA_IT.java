@@ -27,16 +27,16 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security.cert;
 
-import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.security.cert.CertificateElementID;
-import it.plio.ext.oxsit.security.cert.CertificateElementState;
-import it.plio.ext.oxsit.security.cert.CertificateState;
-import it.plio.ext.oxsit.security.cert.CertificateStateConditions;
-import it.plio.ext.oxsit.security.cert.CertificationAuthorityState;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.cert.CertificateElementID;
+import com.yacme.ext.oxsit.security.cert.CertificateElementState;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
+import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;

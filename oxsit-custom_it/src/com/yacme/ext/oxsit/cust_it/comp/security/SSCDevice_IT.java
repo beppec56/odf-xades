@@ -22,9 +22,9 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
-import it.plio.ext.oxsit.security.XOX_SSCDevice;
-import it.plio.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Vector;
 

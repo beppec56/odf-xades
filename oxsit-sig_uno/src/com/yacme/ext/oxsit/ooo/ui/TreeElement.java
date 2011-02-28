@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
-import it.plio.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;

@@ -22,8 +22,8 @@
 
 package com.yacme.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.XOX_SingletonDataAccess;
-import it.plio.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 import java.util.HashMap;
 

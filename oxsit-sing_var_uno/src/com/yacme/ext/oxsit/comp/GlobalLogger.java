@@ -22,7 +22,7 @@
 
 package com.yacme.ext.oxsit.comp;
 
-import it.plio.ext.oxsit.logging.XOX_Logger;
+import com.yacme.ext.oxsit.logging.XOX_Logger;
 
 import java.io.File;
 import java.io.IOException;
