@@ -201,14 +201,14 @@ the default target must be removed
 				<attribute name="Built-By" value="https://forge.osor.eu/projects/ooo-xadessig-it" />
 				<attribute name="Specification-Title" value="Firma digitale XAdES" />
 				<attribute name="Specification-Version" value="${spec_version}" />
-				<attribute name="Specification-Vendor" value="http://www.plio.it" />
+				<attribute name="Specification-Vendor" value="http://www.yacme.com" />
 				<attribute name="Implementation-Title" value="${project_name}, parte di implementazione specifica per l'Italia" />
 				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
-				<attribute name="Implementation-Vendor" value="http://www.plio.it" />
+				<attribute name="Implementation-Vendor" value="http://www.yacme.com" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />
-				<attribute name="RegistrationClassName" value="it.plio.ext.oxsit.cust_it.RegisterServices" />
-				<!-- attribute name="RegistrationClassName" value="it.plio.ext.oxsit.cust_it.RegisterServices" / -->
+				<attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" />
+				<!-- attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" / -->
 				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${bcmail_jar} ${bcprov_jar}"/> 
 			</manifest>
 		</jar>
