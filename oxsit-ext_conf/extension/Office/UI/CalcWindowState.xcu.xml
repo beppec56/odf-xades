@@ -31,33 +31,33 @@
 					<value xml:lang="it">Firma XAdES (IT)</value>
 				</prop>
 				<prop oor:name="Visible" oor:type="xs:boolean">
-					<info>
-						<desc>Specifies if the user interface element is visible.</desc>
-					</info>
+					<!-- 
+						Specifies if the user interface element is visible.
+					-->
 					<value>true</value>
 				</prop>
 				<prop oor:name="Docked" oor:type="xs:boolean">
-					<info>
-						<desc>Specifies if the user interface element is currently docked.</desc>
-					</info>
+					<!--
+						Specifies if the user interface element is currently docked.
+					-->
 					<value>true</value>
 				</prop>
 				<prop oor:name="DockingArea" oor:type="xs:int">
-					<info>
-						<desc>Specifies the docking area to which a user interface element belongs to. Only valid if 'Docked' is true. Top docking area=0, bottom=1, left=2, right=3.</desc>
-					</info>
+					<!-- 
+						Specifies the docking area to which a user interface element belongs to. Only valid if 'Docked' is true. Top docking area=0, bottom=1, left=2, right=3.
+					-->
 					<value>3</value>
 				</prop>            
             	<prop oor:name="Locked" oor:type="xs:boolean">
-                	<info>
-                    	<desc>A locked user interface element cannot be moved or undocked by the user. This property is only active when the user interface element is in a docked state.</desc>
-                	</info>
+                	<!--
+                    	A locked user interface element cannot be moved or undocked by the user. This property is only active when the user interface element is in a docked state.
+                	-->
                 	<value>true</value>
             	</prop>
             	<prop oor:name="Size" oor:type="xs:string">
-                	<info>
-                    	<desc>Specifies the size of a floating user interface element in pixel. The real size can differ if the layout manager decides to resize it due to current circumenstances. Width and height must be splitted by an comma.</desc>
-                	</info>
+                	<!-- 
+                    	Specifies the size of a floating user interface element in pixel. The real size can differ if the layout manager decides to resize it due to current circumenstances. Width and height must be splitted by an comma.
+                	-->
                 	<value>26,26</value>
             	</prop>            
 			</node>
