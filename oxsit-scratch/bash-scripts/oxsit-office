@@ -7,7 +7,7 @@ export SAL_USE_VCL_PLUGIN=gtk
 export OOO_FORCE_DESKTOP=gnome
 
 #./soffice -norestore /home/beppe/OOo-Working-on/i53420-TOC-Index/test-docs/test-doc-1.odt&
-./soffice -norestore -accept='socket,host=0,port=9000;urp;' "/home/beppe/OOo-Working-on/Firma-digitale-XAdES-IT/test-docs/test doc 1 unsigned with spaces-3.0.1.odt"&
+./soffice -norestore -accept='socket,host=0,port=9000;urp;' "/home/beppe/Acca-Esse/Commesse/Esterne/in-corso/2011001-mynt.it-firma-digitale-ooo/Firma-digitale-XAdES-IT/test-docs/test doc 1 unsigned with spaces-3.0.1.odt"&
 sleep 7
 ls `pwd`/*bin | grep soffice.bin
 ps | grep soffice.bin | sed 's/pts.*$//g'
