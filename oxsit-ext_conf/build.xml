@@ -139,15 +139,19 @@ build-extension
 
 	<target name="build-jar" description="generate the subproject jar">
 		<echo>======== *** =========</echo>
-		<!--  disabled, alway built manually 
-		  subant target="build-jar">
+		<!-- disabled, always built manually --> 
+		  <subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${uno_types}/build.xml" />
 			</filelist>
-		</subant -->
+		</subant>
 
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${sig_options_comp}/build.xml" />
 			</filelist>
@@ -155,6 +159,8 @@ build-extension
 		
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${sing_comp}/build.xml" />
 			</filelist>
@@ -164,6 +170,8 @@ build-extension
 			must be build AFTER -->
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${sig_comp}/build.xml" />
 			</filelist>
@@ -171,6 +179,8 @@ build-extension
 		
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${job_comp}/build.xml" />
 			</filelist>
@@ -179,6 +189,8 @@ build-extension
 		<!-- start the Italian specific part -->
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
 			<filelist dir="${basedir}/../">
 				<file name="${cust_it_uno}/build.xml" />
 			</filelist>
