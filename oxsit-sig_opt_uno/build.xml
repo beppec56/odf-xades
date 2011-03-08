@@ -82,6 +82,7 @@ the default target must be removed
 	 See README file in doc project.
 	-->
 	<property name="ooo_ure_classes_path" value="$ooo_ure_classes_path" />
+	<echo>ooo_ure_classes_path: ${ooo_ure_classes_path}</echo>
 	<available file="${ooo_ure_classes_path}" type="dir" property="ooo_classes_path.available" value="false" />
 	<fail message="No OOo URE classes available. Please edit the file build.${os.name}-${os.arch}.properties to correct it.">
 		<condition>
@@ -189,6 +190,11 @@ the default target must be removed
 	</target>
 
 	<target name="build-jar" depends="compile" description="generate the distribution">
+		<exec dir="." executable="${svn_revision_script}"
+	   		outputproperty="svn.revision.number">
+	   	</exec>
+	   	<echo>${extension_jar_file} SVN Revision Number ${svn.revision.number}, version ${version}, spec version: ${spec_version}</echo>
+		
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}/lib" />
 		<!-- ROB Copy BC libs in the distribution directory -->
@@ -208,7 +214,7 @@ the default target must be removed
 				<attribute name="Specification-Version" value="${spec_version}" />
 				<attribute name="Specification-Vendor" value="http://www.yacme.com" />
 				<attribute name="Implementation-Title" value="${project_name}" />
-				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+				<attribute name="Implementation-Version" value="${TODAY}, Vers. ${version}-r${svn.revision.number}" />
 				<attribute name="Implementation-Vendor" value="http://www.yacme.com" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />

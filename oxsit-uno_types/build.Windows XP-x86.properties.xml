@@ -21,3 +21,5 @@
 ooosdk=
 ooo_ure_classes_path=
 ooo_classes_path=
+svn_revision_script=./svnVersion.scmd
+

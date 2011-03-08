@@ -297,6 +297,10 @@ the default target must be removed
 	</target>
 
 	<target name="build-jar" depends="compile" description="User target: generate the distribution">
+		<exec dir="." executable="${svn_revision_script}"
+	   		outputproperty="svn.revision.number">
+	   	</exec>
+	   	<echo>${extension_jar_file} SVN Revision Number ${svn.revision.number}, version ${version}, spec version: ${spec_version}</echo>
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}/lib" />
 		<!-- Put everything in ${build} into the .jar file -->
@@ -308,7 +312,7 @@ the default target must be removed
 				<attribute name="Specification-Version" value="${spec_version}" />
 				<attribute name="Specification-Vendor" value="http://www.yacme.com" />
 				<attribute name="Implementation-Title" value="signature_component" />
-				<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+				<attribute name="Implementation-Version" value="${TODAY}, Vers. ${version}-r${svn.revision.number}" />
 				<attribute name="Implementation-Vendor" value="http://www.yacme.com" />
 				<attribute name="Ant-Version" value="${ant.version}" />
 				<attribute name="UNO-Type-Path" value="" />

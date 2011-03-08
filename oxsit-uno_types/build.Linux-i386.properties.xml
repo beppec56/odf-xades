@@ -35,3 +35,5 @@ oo_sdk_idl_compile=compile-idl.sh
 ooo_ure_classes_path=/opt/openoffice.org3/basis-link/ure-link/share/java
 <!-- the installed OpenOffice.org Java classes location -->
 ooo_classes_path=/opt/openoffice.org3/basis-link/program/classes
+
+svn_revision_script=./svnVersion.sh
