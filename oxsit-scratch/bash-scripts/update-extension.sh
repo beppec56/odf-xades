@@ -5,6 +5,8 @@
 #
 # cd /opt/openoffice.org3/program
 ./unopkg remove --shared -v com.yacme.ext.oxsit
+echo "Waiting for unopkg to sync..."
 sleep 2
+echo "installing new extension..."
 ./unopkg add --shared -v $HOME/oxsit.oxt
 #
