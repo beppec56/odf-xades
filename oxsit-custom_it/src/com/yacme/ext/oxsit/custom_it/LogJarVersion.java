@@ -77,11 +77,7 @@ public class LogJarVersion {
         }		
 	}
 	
-	public void logVersion() {
-		m_aLogger.log(m_aJarFileName+":", m_aJarVersion);
-	}
-	
 	public String getVersion() {
-		return "m_aJarVersion";
+		return m_aJarFileName+":     "+m_aJarVersion;
 	}
 }

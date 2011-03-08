@@ -16,7 +16,7 @@ idl			contains the UNOIDL (idl type file) descriptions of the new interfaces
 			UNO packaging.
 
 pre-built-type-classes
-			contains the *.class files generated through the OOo SDK procedure
+			contains the *.class files generated through the OOo SDK procedure, not under svn control
 
 pre-built-type-rdb
 			contains the type library to be used with the Java classes in
@@ -54,12 +54,17 @@ The steps needed to add a new interface or a new UNO component are the following
 Step 1) is developer responsibility, using a text editor or Eclipse.
 
 Steps 2) 3) and 4) 5) are carried out by the ant target 'prebuild', it generates
-the documentation as well, using autodoc (as is done in the OOo main build process),
+the documentation as well, using autodoc (as it's done in the OOo main build process),
 and putting the documentation in the directory 'html-no-svn'.
 The documentation is not (yet) under svn because of the automatic copyright note that
 autodoc adds at the end of every file.
 
-Steps 6) and 7) are carried out by the main extension build.
+The main extension build has a specific target to build all what is needed.
+The target is build-uno-jar-with-sdk, but the OOo SDK must be installed and able to compile the
+IDL descriptions. 
+This target will carry out the step 6) above.
+
+The step 7) will be carried out by the main build implementation.
 
 A good help in writing UNOIDL specification file could be the IDL editor embedded in
 the Eclipse plug-in, see:

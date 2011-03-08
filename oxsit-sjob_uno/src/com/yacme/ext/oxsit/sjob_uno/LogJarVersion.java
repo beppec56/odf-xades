@@ -21,7 +21,7 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
  */
 public class LogJarVersion {
 	
-	final String m_aJarFileName = "oxsit-sing_var_uno.uno.jar";
+	final String m_aJarFileName = "oxsit-sjob_uno.uno.jar";
 	
 	URI executivePath ;
 	private DynamicLogger m_aLogger;
@@ -36,7 +36,6 @@ public class LogJarVersion {
             try {
                 URL aURL = aCs.getLocation(); // where this class is 'seen' by the java runtime
                 //System.out.println(aURL.toString()+" "+aURL.getPath());
-                String thisFile = aURL.getFile();
                 int pos = aURL.toString().indexOf(m_aJarFileName); //FIXME: _00 modificare in modo che il nome del jar sia quello giusto
                 if(pos == -1) {
                     //non esiste, l'URL è il path
@@ -78,11 +77,7 @@ public class LogJarVersion {
         }		
 	}
 	
-	public void logVersion() {
-		m_aLogger.log(m_aJarFileName+":", m_aJarVersion);
-	}
-	
 	public String getVersion() {
-		return "m_aJarVersion";
+		return m_aJarFileName+":     "+m_aJarVersion;
 	}
 }

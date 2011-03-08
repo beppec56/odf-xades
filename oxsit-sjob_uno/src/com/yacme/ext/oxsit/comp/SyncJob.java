@@ -311,28 +311,31 @@ public class SyncJob extends ComponentBase
 
 	protected void executeOnStartApp() {
 		
+		try {
+		com.yacme.ext.oxsit.uno_types.LogJarVersion uno_TypeStart =
+			new com.yacme.ext.oxsit.uno_types.LogJarVersion();
+		
+		m_aLogger.log(uno_TypeStart.getVersion());
+		
 		com.yacme.ext.oxsit.sjob_uno.LogJarVersion sjob_unoStart = 
 			new com.yacme.ext.oxsit.sjob_uno.LogJarVersion(m_aLogger);
 
-		sjob_unoStart.logVersion();
+		m_aLogger.log(sjob_unoStart.getVersion());
 		
 		com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion sig_opt_unoStart = 
 			new com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion(m_aLogger);
 		
-		sig_opt_unoStart.logVersion();
-
+		m_aLogger.log(sig_opt_unoStart.getVersion());
+		
 		com.yacme.ext.oxsit.sing_var_uno.LogJarVersion sing_var_unoStart =
 			new com.yacme.ext.oxsit.sing_var_uno.LogJarVersion(m_aLogger);
 		
-		sing_var_unoStart.logVersion();
+		m_aLogger.log(sing_var_unoStart.getVersion());
 		
 		com.yacme.ext.oxsit.sig_uno.LogJarVersion sig_unoStart = 
 			new com.yacme.ext.oxsit.sig_uno.LogJarVersion(m_aLogger);
 		
-		sig_unoStart.logVersion();
-		
-		
-		com.yacme.ext.oxsit.custom_it.
+		m_aLogger.log(sig_unoStart.getVersion());
 
 		//we'll need to initialize the security stuff, done once on init.
 		
@@ -354,10 +357,10 @@ public class SyncJob extends ComponentBase
 			System.setProperty("java.library.path", libPath);
 
 		} catch (URISyntaxException e) {
-			m_aLogger.severe( e );
+			m_aLogger.severe( e );*/
 		} catch (java.lang.Exception e) {
 			m_aLogger.severe(e);
-		}*/
+		}
 	}
 
 	protected void executeOnUnload() {

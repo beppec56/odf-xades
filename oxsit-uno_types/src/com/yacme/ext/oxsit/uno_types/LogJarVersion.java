@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yacme.ext.oxsit.sig_opt_uno;
+package com.yacme.ext.oxsit.uno_types;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,8 +12,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import com.yacme.ext.oxsit.logging.DynamicLogger;
-
 /**
  * @author beppe
  * This class simply log this jar version
@@ -21,16 +19,12 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
  */
 public class LogJarVersion {
 	
-	final String m_aJarFileName = "oxsit-sig_opt_uno.uno.jar";
+	final String m_aJarFileName = "oxsit-uno_types.uno.jar";
 	
 	URI executivePath ;
-	private DynamicLogger m_aLogger;
 
 	private String m_aJarVersion;
-	public LogJarVersion(DynamicLogger _aLogger) {
-		
-		m_aLogger = _aLogger;
-		
+	public LogJarVersion() {		
         CodeSource aCs = LogJarVersion.class.getProtectionDomain().getCodeSource();
         if(aCs != null) {
             try {
@@ -47,7 +41,7 @@ public class LogJarVersion {
                     executivePath = new URI(aURL.toString().substring(0, pos-1));
                 }
             } catch (URISyntaxException e) {
-                m_aLogger.log(e, false);
+//                m_aLogger.log(e, false);
             }
         }
 
@@ -72,13 +66,13 @@ public class LogJarVersion {
             //else
                 //jarVersion += "not found in jar file !";
         } catch (IOException e3) {
-            m_aLogger.log(e3, false);
+//            m_aLogger.log(e3, false);
         } catch (URISyntaxException e) {
-            m_aLogger.log(e, false);
+//            m_aLogger.log(e, false);
         }		
 	}
 	
 	public String getVersion() {
-		return m_aJarFileName+":  "+m_aJarVersion;
+		return m_aJarFileName+":    "+m_aJarVersion;
 	}
 }

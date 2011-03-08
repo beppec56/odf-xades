@@ -137,16 +137,7 @@ build-extension
 	<property name="cust_it_uno_jar" value="${cust_it_uno}.uno.jar"/>
 	<!-- end specifica Italian subproject definition -->
 
-	<target name="build-jar" description="generate the subproject jar">
-		<echo>======== *** =========</echo>
-		<!-- disabled, always built manually --> 
-		  <subant target="build-jar">
-			<property name="version" value="${version}"/>
-			<property name="spec_version" value="${spec_version}"/>
-			<filelist dir="${basedir}/../">
-				<file name="${uno_types}/build.xml" />
-			</filelist>
-		</subant>
+	<target name="build-jar" description="generate the subproject jars">
 
 		<echo>======== *** =========</echo>
 		<subant target="build-jar">
@@ -555,6 +546,31 @@ build-extension
 		<delete dir="${dist}" / -->
 		<delete dir="${extension_dest_dir}" />
 	</target>
+
+	<target name="build-uno-tooling-classes-and-jar" description="Internal task, do not use !">
+		<echo>======== *** =========</echo>
+		  <subant target="prebuild">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
+			<filelist dir="${basedir}/../">
+				<file name="${uno_types}/build.xml" />
+			</filelist>
+		</subant>
+
+		<echo>======== *** =========</echo>
+		<!-- disabled, always built manually --> 
+		  <subant target="build-jar">
+			<property name="version" value="${version}"/>
+			<property name="spec_version" value="${spec_version}"/>
+			<filelist dir="${basedir}/../">
+				<file name="${uno_types}/build.xml" />
+			</filelist>
+		</subant>	
+	</target>
+	
+	<target name="build-uno-jar-with-sdk" depends="build-uno-tooling-classes-and-jar" description="Generate the subproject for the new uno objects. You need the sdk installed and able to compile idl files !">
+
+	</target>	
 
 	<!-- target name="build-arch-sub" depends="clean,build-extension" description="aux target to build the zip archive of the project" -->
 	<target name="build-arch-sub" depends="clean" description="NOTE: broken target! - aux target to build the zip archive of the project">
