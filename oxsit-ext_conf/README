@@ -55,7 +55,7 @@ read in OOo in a tricky way:
 4. close OOo
 5. goto the  personal basic library (in Debian Linux it's something in the form of:
 <home dir>/.openoffice.org/3/user/basic)
-6. remove the subdirectory it_plio_ext_xades_options you find here
+6. remove the subdirectory com_yacme_ext_xades_options you find here
 7. substitute it manually with the same directory you cleaned of .svn subdirectory at
 point 2.
 
