@@ -33,6 +33,7 @@ import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.ooo.ConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 
@@ -48,29 +49,34 @@ public class MessageConfigurationAccess extends ConfigurationAccess implements X
 			m_oMessagesRegKey = createConfigurationReadOnlyView(GlobConstant.m_sEXTENSION_CONF_BASE_KEY+"Messages/");
 		} catch (Exception e) {
 			e.printStackTrace();
-		}			
+		}
 	}
 
     public String getStringFromRegistry( String _stringIdToRetrieve ) throws Exception {
     	if(_stringIdToRetrieve == null)
     		return "";
+    	String retVal = new String(_stringIdToRetrieve);
     	if(m_oMessagesRegKey != null) {
-    		//get the string at id
+    		//get the string at id1
     	    // accessing a single nested value
-    		XPropertySetInfo oPropIn = (XPropertySetInfo) UnoRuntime.queryInterface(XPropertySetInfo.class, m_oMessagesRegKey);  		
-    		if(oPropIn.hasPropertyByName( _stringIdToRetrieve )) {
-    			XNameAccess xNAccess =(XNameAccess) UnoRuntime.queryInterface(XNameAccess.class, m_oMessagesRegKey);
-    			// get the value
-    			Object oObj = xNAccess.getByName( _stringIdToRetrieve );
+//FIXME: debug, remove when done 
+//Utilities.showInterfaces(m_oMessagesRegKey, m_oMessagesRegKey);
+    		XNameAccess xNameAccess =  (XNameAccess) UnoRuntime.queryInterface(XNameAccess.class, m_oMessagesRegKey);
+    		if( xNameAccess != null) {
+    			if(xNameAccess.hasByName(_stringIdToRetrieve)) {
+	    			Object oObj = xNameAccess.getByName( _stringIdToRetrieve );
 
-    			XPropertySet xPS = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, oObj);
-    			String retVal = AnyConverter.toString( xPS.getPropertyValue( "Text" ) );
-        		return retVal;
+	    			XPropertySet xPS = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, oObj);
+	    			retVal = AnyConverter.toString( xPS.getPropertyValue( "Text" ) );
+    			}
+    			else {
+	    			m_logger.info("no element id: "+_stringIdToRetrieve);
+    			}
     		}
     		else
-    			m_logger.info("no element id: "+_stringIdToRetrieve);
+    			m_logger.info("XNameAccess","Missing interface");
     	}
-		return new String(_stringIdToRetrieve); 
+		return retVal; 
     }
 
 	public void addEventListener(XEventListener arg0) {
