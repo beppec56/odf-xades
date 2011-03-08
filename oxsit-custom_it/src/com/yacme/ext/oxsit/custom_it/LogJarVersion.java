@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yacme.ext.oxsit.sing_var_uno;
+package com.yacme.ext.oxsit.custom_it;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +21,7 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
  */
 public class LogJarVersion {
 	
-	final String m_aJarFileName = "oxsit-sjob_uno.uno.jar";
+	final String m_aJarFileName = "oxsit-custom_it.uno.jar";
 	
 	URI executivePath ;
 	private DynamicLogger m_aLogger;

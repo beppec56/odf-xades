@@ -25,6 +25,7 @@ package com.yacme.ext.oxsit.comp;
 import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion;
 
 import com.sun.star.beans.NamedValue;
 import com.sun.star.document.XStorageBasedDocument;
@@ -309,6 +310,30 @@ public class SyncJob extends ComponentBase
 	}
 
 	protected void executeOnStartApp() {
+		
+		com.yacme.ext.oxsit.sjob_uno.LogJarVersion sjob_unoStart = 
+			new com.yacme.ext.oxsit.sjob_uno.LogJarVersion(m_aLogger);
+
+		sjob_unoStart.logVersion();
+		
+		com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion sig_opt_unoStart = 
+			new com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion(m_aLogger);
+		
+		sig_opt_unoStart.logVersion();
+
+		com.yacme.ext.oxsit.sing_var_uno.LogJarVersion sing_var_unoStart =
+			new com.yacme.ext.oxsit.sing_var_uno.LogJarVersion(m_aLogger);
+		
+		sing_var_unoStart.logVersion();
+		
+		com.yacme.ext.oxsit.sig_uno.LogJarVersion sig_unoStart = 
+			new com.yacme.ext.oxsit.sig_uno.LogJarVersion(m_aLogger);
+		
+		sig_unoStart.logVersion();
+		
+		
+		com.yacme.ext.oxsit.custom_it.
+
 		//we'll need to initialize the security stuff, done once on init.
 		
 /*		m_aLogger.log("os.name: \""+System.getProperty("os.name")+"\"");
