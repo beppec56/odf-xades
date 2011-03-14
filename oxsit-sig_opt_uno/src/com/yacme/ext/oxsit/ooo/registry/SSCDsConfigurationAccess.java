@@ -139,35 +139,35 @@ public class SSCDsConfigurationAccess extends ConfigurationAccess {
 										 fill.m_sManufacturer = value_.toString();
 									 else if ( path_.endsWith("]/CardType") )
 										 fill.m_sCardType = value_.toString();
-									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibName") &&
+									 else if ( path_.endsWith("OsType['OsLinux']/LibName") &&
 											 isLinux)
 										 fill.setOsLib(value_.toString());
-									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibNameAlt1") &&
+									 else if ( path_.endsWith("OsType['OsLinux']/LibNameAlt1") &&
 											 isLinux)
 										 fill.setOsLibAlt1(value_.toString());
-									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/LibNameAlt2") &&
+									 else if ( path_.endsWith("OsType['OsLinux']/LibNameAlt2") &&
 											 isLinux)
 										 fill.setOsLibAlt2(value_.toString());
 /*									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/res1") )
 										 fill.m_sOsRes1[CardInfoOOo.m_sOS_LINUX] = value_.toString();
 									 else if ( path_.endsWith("]/OsData/OsType['OsLinux']/res2") )
 										 fill.m_sOsRes2[CardInfoOOo.m_sOS_LINUX] = value_.toString();*/
-									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibName") &&
+									 else if ( path_.endsWith("OsType['OsWindows']/LibName") &&
 											 isWindows)
 										 fill.setOsLib(value_.toString());
-									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibNameAlt1") &&
+									 else if ( path_.endsWith("OsType['OsWindows']/LibNameAlt1") &&
 											 isWindows)
 										 fill.setOsLibAlt1(value_.toString());
-									 else if ( path_.endsWith("]/OsData/OsType['OsWindows']/LibNameAlt2") &&
+									 else if ( path_.endsWith("OsType['OsWindows']/LibNameAlt2") &&
 											 isWindows)
 										 fill.setOsLibAlt2(value_.toString());
-									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibName") &&
+									 else if (path_.endsWith("OsType['OsMac']/LibName") &&
 											 isMac)
 										 fill.setOsLib(value_.toString());
-									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibNameAlt1") &&
+									 else if (path_.endsWith("OsType['OsMac']/LibNameAlt1") &&
 											 isMac)
 										 fill.setOsLibAlt1(value_.toString());
-									 else if (path_.endsWith("]/OsData/OsType['OsMac']/LibNameAlt2") &&
+									 else if (path_.endsWith("OsType['OsMac']/LibNameAlt2") &&
 											 isMac)
 										 fill.setOsLibAlt2(value_.toString());
 								}},

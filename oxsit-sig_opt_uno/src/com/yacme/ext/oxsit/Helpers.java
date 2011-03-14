@@ -213,9 +213,9 @@ public class Helpers {
     	//check the arch:
         //FIXME: TODO: add the other returned string from the virtual java machines.
     	if(architecture.equalsIgnoreCase("amd64"))
-    		architecture = "/lib64/";
+    		architecture = "lib64"+System.getProperty("file.separator");
     	else
-    		architecture = "/lib32/";
+    		architecture = "lib32"+System.getProperty("file.separator");
 
         if(osName.toLowerCase().indexOf("windows") != -1){
         	// Windows OS detected
