@@ -188,13 +188,19 @@ public class Helpers {
 
 	/**
 	 * Returns the complete path to the native binary library in the root extension directory
-	 * 
+	 * Takes into account the architecture of the machine it is running on.
+	 * FIXME: to be written into the user manual:
+	 * IMPORTANT: this work right ONLY if in OOo you have a Oracle Java VM installed with the correct architecture, eg:
+	 * a 64bit Java VM on a 64bit machine and:
+	 * a 32bit Java VM on a 32bit machine.
+	 * FIXME:
+	 * to be checked on an OpenJDK installation 
 	 * 
 	 * @param _xContext
 	 * @param _libName
 	 * @return
-	 * @throws IOException 
-	 * @throws URISyntaxException 
+	 * @throws IOException
+	 * @throws URISyntaxException
 	 * @throws Exception 
 	 */
 	public static String getLocalNativeLibraryPath(XComponentContext _xContext, String _libName)
@@ -203,12 +209,20 @@ public class Helpers {
 		String sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(_xContext)+System.getProperty("file.separator");		
 		//now add the library name depending on os
         String osName = System.getProperty("os.name");
+        String architecture = System.getProperty("os.arch");
+    	//check the arch:
+        //FIXME: TODO: add the other returned string from the virtual java machines.
+    	if(architecture.equalsIgnoreCase("amd64"))
+    		architecture = "/lib64/";
+    	else
+    		architecture = "/lib32/";
+
         if(osName.toLowerCase().indexOf("windows") != -1){
         	// Windows OS detected
-        	return sExtensionSystemPath+_libName+".dll";
+        	return sExtensionSystemPath+architecture+_libName+".dll";
         } else if(osName.toLowerCase().indexOf("linux") != -1){
             // Linux OS detected
-        	return sExtensionSystemPath+"lib"+_libName+".so";
+        	return sExtensionSystemPath+architecture+"lib"+_libName+".so";
         } else //something else...
         	throw(new java.lang.NullPointerException("Native libraries for '"+osName+"' not available! Giving up."));
 	}

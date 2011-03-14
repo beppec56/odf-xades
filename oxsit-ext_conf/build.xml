@@ -208,13 +208,25 @@ build-extension
 
 		
 		<!--beppec56 for pkcs#11 wrapper native libraries -->
-		<!-- GNU/Linux libraries-->
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/libOCFPCSC1.so" todir="${extension_dest_dir}" />
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/libpkcs11wrapper.so" todir="${extension_dest_dir}" />
-		
-		<!-- Windows libraries-->
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/OCFPCSC1.dll" todir="${extension_dest_dir}" />
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/pkcs11wrapper.dll" todir="${extension_dest_dir}" />
+		<!-- Native 32bit libraries -->
+		<!-- GNU/Linux -->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/libOCFPCSC1.so" todir="${extension_dest_dir}/lib32" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/libpkcs11wrapper.so" todir="${extension_dest_dir}/lib32" />
+
+		<!-- Windows -->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/OCFPCSC1.dll" todir="${extension_dest_dir}/lib32" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/pkcs11wrapper.dll" todir="${extension_dest_dir}/lib32" />
+
+		<!-- Native 64bit libraries -->
+		<!-- GNU/Linux -->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/libOCFPCSC1.so" todir="${extension_dest_dir}/lib64" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/libpkcs11wrapper.so" todir="${extension_dest_dir}/lib64" />
+
+		<!-- Windows 
+		FIXME: to be added when available
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/OCFPCSC1.dll" todir="${extension_dest_dir}/lib32" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/pkcs11wrapper.dll" todir="${extension_dest_dir}/lib32" />
+		-->
 
 		<!-- the end part of the main jar files -->
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />

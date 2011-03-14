@@ -200,10 +200,19 @@ the default target must be removed
 		<!-- ROB Copy BC libs in the distribution directory -->
 		<copy file="lib/${bcmail_jar}" todir="${dist}/lib" />
 		<copy file="lib/${bcprov_jar}" todir="${dist}/lib" />
-		<copy file="lib/libOCFPCSC1.so" todir="${dist}/lib" />
-		<copy file="lib/OCFPCSC1.dll" todir="${dist}/lib" />
-		<copy file="lib/pkcs11wrapper.dll" todir="${dist}/lib" />
-		<copy file="lib/libpkcs11wrapper.so" todir="${dist}/lib" />
+		<!-- copy 32bit native libraries -->
+		<copy file="lib/lib32/libOCFPCSC1.so" todir="${dist}/lib/lib32" />
+		<copy file="lib/lib32/libpkcs11wrapper.so" todir="${dist}/lib/lib32" />
+		<copy file="lib/lib32/OCFPCSC1.dll" todir="${dist}/lib/lib32" />
+		<copy file="lib/lib32/pkcs11wrapper.dll" todir="${dist}/lib/lib32" />
+
+		<!-- copy 64bit native libraries -->
+		<copy file="lib/lib64/libOCFPCSC1.so" todir="${dist}/lib/lib64" />
+		<copy file="lib/lib64/libpkcs11wrapper.so" todir="${dist}/lib/lib64" />
+		<!-- FIXME: 64bit Windows native libraries not yet available !
+		<copy file="lib/lib64/OCFPCSC1.dll" todir="${dist}/lib/lib64" />
+		<copy file="lib/lib64/pkcs11wrapper.dll" todir="${dist}/lib/lib64" />
+		-->
 
 		<!-- Put everything in ${build} into the .jar file -->
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">
