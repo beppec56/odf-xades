@@ -412,10 +412,10 @@ build-extension
 		We copy the Certification Authority list of Italian CA into the extension, so it's available on-line immediately.
 		 
 		-->
-		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20090914.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20090914.zip.p7m" />
-		<!-- copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" / >
-		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100408.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100408.zip.p7m" / -->
-		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100616.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100616.zip.p7m" />
+		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100311.zip.p7m" />
+		<!-- copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100408.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100408.zip.p7m" />
+		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20100616.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20100616.zip.p7m" / -->
+		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20110110.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20110110.zip.p7m" />
 
 		<!--- end of subtask -->
 	</target>
