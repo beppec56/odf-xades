@@ -89,6 +89,8 @@ public class PKCS11Exception extends TokenException {
   /**
    * Constructor taking the error code as defined for the CKR_* constants
    * in PKCS#11.
+   * 
+   * @param errorCode The PKCS#11 error code (return value).
    */
   public PKCS11Exception(long errorCode) {
     errorCode_ = errorCode;

@@ -46,12 +46,11 @@ package iaik.pkcs.pkcs11.wrapper;
 import java.io.File;
 import java.io.IOException;
 
-
-
 /**
  * This is the default implementation of the PKCS11 interface. It connects to
  * the <code>pkcs11wrapper.dll</code> (or <code>libpkcs11wrapper.so</code>), 
- * which is the native part of this library.
+ * which is the native part of this library. This file either has to be located
+ * in the system path or the location has to be specified as parameter.
  * The strange and awkward looking initialization was chosen to avoid calling
  * <code>System.loadLibrary(String)</code> from a static initialization block, 
  * because this would complicate the use in applets.
@@ -67,7 +66,7 @@ public class PKCS11Implementation implements PKCS11 {
    * the extension (e.g. ".DLL" or ".so").
    */
   private static final String PKCS11_WRAPPER = "pkcs11wrapper";
-  
+
   /**
    * Indicates, if the static linking and initialization of the library is already done.
    */
@@ -104,23 +103,37 @@ public class PKCS11Implementation implements PKCS11 {
    *
    * @preconditions
    * @postconditions
-   * 
-   * beppec56 changed initialization to use library local to the OOo extension
    */
-  public static synchronized void ensureLinkedAndInitialized(String localLib) {
+  public static synchronized void ensureLinkedAndInitialized() {
     if (!linkedAndInitialized_) {
       /* We do not call loadLibrary in a static initializer to allow better use in
        * applets. Static initialization blocks have a different security context.
        */
-    	//beppec56 added for OOo local path
+      System.loadLibrary(PKCS11_WRAPPER);
+      initializeLibrary();
+      linkedAndInitialized_ = true;
+    }
+  }
+  
+  /**
+   * This method ensures that the library is linked to this class and that it
+   * is initialized. For loading the PKCS#11-wrapper native library, <code>System.load</code>
+   * is used with the absolute path to the library including the file name.
+   *
+   * @param pkcs11WrapperPath the absolute path to the PKCS#11-wrapper native library including the filename
+   * @preconditions
+   * @postconditions
+   */
+  public static synchronized void ensureLinkedAndInitialized(String pkcs11WrapperPath) {
+    if (!linkedAndInitialized_) {
+     	//beppec56 added for OOo local path
     	try {
-    		//try locally first
-    		System.load(localLib);
-    	} catch (UnsatisfiedLinkError e) {
+    		System.load(pkcs11WrapperPath);
+     	} catch (UnsatisfiedLinkError e) {
     		//so shared library load try, now
     		System.loadLibrary(PKCS11_WRAPPER);
-    	}
-    	initializeLibrary();
+    	}   		
+      initializeLibrary();
       linkedAndInitialized_ = true;
     }
   }
@@ -148,19 +161,32 @@ public class PKCS11Implementation implements PKCS11 {
    * path, if the driver is not in the system's search path.
    *
    * @param pkcs11ModulePath the PKCS#11 library path
+   * @exception IOException If linking to the given module failed.
    * @preconditions (pkcs11ModulePath <> null)
    * @postconditions
    */
   PKCS11Implementation(String pkcs11ModulePath)
-  throws IOException
-  {
-	  this(pkcs11ModulePath,"");
-  }
-
-  PKCS11Implementation(String pkcs11ModulePath, String libLocal)
       throws IOException
   {
-    ensureLinkedAndInitialized(libLocal);
+    ensureLinkedAndInitialized();
+    connect(pkcs11ModulePath);
+    pkcs11ModulePath_ = pkcs11ModulePath;
+  }
+  
+  /**
+   * Connects to the PKCS#11 driver given using the specified PKCS#11-wrapper native library.
+   * The filename of the PKCS#11 driver must contain the path, if the driver is not in the system's search path.
+   *
+   * @param pkcs11ModulePath the PKCS#11 library path
+   * @param pkcs11WrapperPath the absolute path to the PKCS#11-wrapper native library including the filename
+   * @exception IOException If linking to the given module failed.
+   * @preconditions (pkcs11ModulePath <> null)
+   * @postconditions
+   */
+  PKCS11Implementation(String pkcs11ModulePath, String pkcs11WrapperPath)
+      throws IOException
+  {
+    ensureLinkedAndInitialized(pkcs11WrapperPath);
     connect(pkcs11ModulePath);
     pkcs11ModulePath_ = pkcs11ModulePath;
   }
@@ -172,6 +198,7 @@ public class PKCS11Implementation implements PKCS11 {
    * native part.
    *
    * @param pkcs11ModulePath The PKCS#11 library path.
+   * @exception IOException If cennecting the given module failed.
    * @preconditions (pkcs11ModulePath <> null)
    * @postconditions
    */
@@ -1537,4 +1564,5 @@ public class PKCS11Implementation implements PKCS11 {
     disconnect();
     super.finalize();
   }
+
 }

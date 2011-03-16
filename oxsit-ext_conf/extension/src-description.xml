@@ -23,9 +23,9 @@
 	     xmlns:xlink="http://www.w3.org/1999/xlink">
   <version value="@VERSION@" />
   <identifier value="@WEBIDENTBASE@.@NAME@"/>
-  <!-- platform is used for C/C++ compiled extensions, this one is 
-  		OS-independent, in any case it's here for reference only 
-       platform value="windows_x86,solaris_sparc" / -->  
+  
+  <!-- There are some System dependent libraries -->  
+  <platform value="all" />  
   <dependencies >
     <OpenOffice.org-minimal-version value="@OOOMINVER@" d:name="OpenOffice.org @OOOMINVER@"/>
   </dependencies>

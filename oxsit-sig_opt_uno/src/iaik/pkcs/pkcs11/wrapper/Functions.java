@@ -743,7 +743,7 @@ public class Functions {
    */
   public static String mechanismCodeToString(long mechansimCode) {
     if (mechansimNames_ == null) {
-      Hashtable mechansimNames = new Hashtable(160);
+      Hashtable mechansimNames = new Hashtable(200);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS_KEY_PAIR_GEN), PKCS11Constants.NAME_CKM_RSA_PKCS_KEY_PAIR_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_PKCS), PKCS11Constants.NAME_CKM_RSA_PKCS);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RSA_9796), PKCS11Constants.NAME_CKM_RSA_9796);
@@ -768,6 +768,15 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_DERIVE), PKCS11Constants.NAME_CKM_X9_42_DH_DERIVE);
       mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_HYBRID_DERIVE), PKCS11Constants.NAME_CKM_X9_42_DH_HYBRID_DERIVE);
       mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_MQV_DERIVE), PKCS11Constants.NAME_CKM_X9_42_MQV_DERIVE);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA256_RSA_PKCS);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA384_RSA_PKCS);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA512_RSA_PKCS);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA256_RSA_PKCS_PSS);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA384_RSA_PKCS_PSS);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA512_RSA_PKCS_PSS);
+      
       mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_KEY_GEN), PKCS11Constants.NAME_CKM_RC2_KEY_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_ECB), PKCS11Constants.NAME_CKM_RC2_ECB);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RC2_CBC), PKCS11Constants.NAME_CKM_RC2_CBC);
@@ -795,6 +804,13 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_MAC), PKCS11Constants.NAME_CKM_CDMF_MAC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_MAC_GENERAL), PKCS11Constants.NAME_CKM_CDMF_MAC_GENERAL);
       mechansimNames.put(new Long(PKCS11Constants.CKM_CDMF_CBC_PAD), PKCS11Constants.NAME_CKM_CDMF_CBC_PAD);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_OFB64), PKCS11Constants.NAME_CKM_DES_OFB64);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_OFB8), PKCS11Constants.NAME_CKM_DES_OFB8);
+      
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_CFB64), PKCS11Constants.NAME_CKM_DES_CFB64);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_CFB8), PKCS11Constants.NAME_CKM_DES_CFB8);
+
       mechansimNames.put(new Long(PKCS11Constants.CKM_MD2), PKCS11Constants.NAME_CKM_MD2);
       mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_HMAC), PKCS11Constants.NAME_CKM_MD2_HMAC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_HMAC_GENERAL), PKCS11Constants.NAME_CKM_MD2_HMAC_GENERAL);
@@ -810,6 +826,19 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160), PKCS11Constants.NAME_CKM_RIPEMD160);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC_GENERAL), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC_GENERAL);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256), PKCS11Constants.NAME_CKM_SHA256);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256_HMAC), PKCS11Constants.NAME_CKM_SHA256_HMAC);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA256_HMAC_GENERAL);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384), PKCS11Constants.NAME_CKM_SHA384);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384_HMAC), PKCS11Constants.NAME_CKM_SHA384_HMAC);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA384_HMAC_GENERAL);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512), PKCS11Constants.NAME_CKM_SHA512);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512_HMAC), PKCS11Constants.NAME_CKM_SHA512_HMAC);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA512_HMAC_GENERAL);
+
       mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_KEY_GEN), PKCS11Constants.NAME_CKM_CAST_KEY_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_ECB), PKCS11Constants.NAME_CKM_CAST_ECB);
       mechansimNames.put(new Long(PKCS11Constants.CKM_CAST_CBC), PKCS11Constants.NAME_CKM_CAST_CBC);
@@ -865,6 +894,11 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_MD5_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD5_KEY_DERIVATION);
       mechansimNames.put(new Long(PKCS11Constants.CKM_MD2_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD2_KEY_DERIVATION);
       mechansimNames.put(new Long(PKCS11Constants.CKM_SHA1_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA1_KEY_DERIVATION);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA256_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA256_KEY_DERIVATION);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA384_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA384_KEY_DERIVATION);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_SHA512_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA512_KEY_DERIVATION);
+
       mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD2_DES_CBC), PKCS11Constants.NAME_CKM_PBE_MD2_DES_CBC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_DES_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_DES_CBC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_MD5_CAST_CBC), PKCS11Constants.NAME_CKM_PBE_MD5_CAST_CBC);
@@ -881,8 +915,19 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC2_40_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_RC2_40_CBC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_PKCS5_PBKD2), PKCS11Constants.NAME_CKM_PKCS5_PBKD2);
       mechansimNames.put(new Long(PKCS11Constants.CKM_PBA_SHA1_WITH_SHA1_HMAC), PKCS11Constants.NAME_CKM_PBA_SHA1_WITH_SHA1_HMAC);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_PRE_MASTER_KEY_GEN), PKCS11Constants.NAME_CKM_WTLS_PRE_MASTER_KEY_GEN);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_MASTER_KEY_DERIVE), PKCS11Constants.NAME_CKM_WTLS_MASTER_KEY_DERIVE);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_MASTER_KEY_DERVIE_DH_ECC), PKCS11Constants.NAME_CKM_WTLS_MASTER_KEY_DERIVE_DH_ECC);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_PRF), PKCS11Constants.NAME_CKM_WTLS_PRF);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_SERVER_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_WTLS_SERVER_KEY_AND_MAC_DERIVE);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_WTLS_CLIENT_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_WTLS_CLIENT_KEY_AND_MAC_DERIVE);
+      
       mechansimNames.put(new Long(PKCS11Constants.CKM_KEY_WRAP_LYNKS), PKCS11Constants.NAME_CKM_KEY_WRAP_LYNKS);
       mechansimNames.put(new Long(PKCS11Constants.CKM_KEY_WRAP_SET_OAEP), PKCS11Constants.NAME_CKM_KEY_WRAP_SET_OAEP);
+      
+      mechansimNames.put(new Long(PKCS11Constants.CKM_CMS_SIG), PKCS11Constants.NAME_CKM_CMS_SIG);
+      
       mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_KEY_GEN), PKCS11Constants.NAME_CKM_SKIPJACK_KEY_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_ECB64), PKCS11Constants.NAME_CKM_SKIPJACK_ECB64);
       mechansimNames.put(new Long(PKCS11Constants.CKM_SKIPJACK_CBC64), PKCS11Constants.NAME_CKM_SKIPJACK_CBC64);
@@ -924,6 +969,20 @@ public class Functions {
       mechansimNames.put(new Long(PKCS11Constants.CKM_AES_MAC), PKCS11Constants.NAME_CKM_AES_MAC);
       mechansimNames.put(new Long(PKCS11Constants.CKM_AES_MAC_GENERAL), PKCS11Constants.NAME_CKM_AES_MAC_GENERAL);
       mechansimNames.put(new Long(PKCS11Constants.CKM_AES_CBC_PAD), PKCS11Constants.NAME_CKM_AES_CBC_PAD);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_BLOWFISH_KEY_GEN), PKCS11Constants.NAME_CKM_BLOWFISH_KEY_GEN);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_BLOWFISH_CBC), PKCS11Constants.NAME_CKM_BLOWFISH_CBC);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_TWOFISH_KEY_GEN), PKCS11Constants.NAME_CKM_TWOFISH_KEY_GEN);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_TWOFISH_CBC), PKCS11Constants.NAME_CKM_TWOFISH_CBC);
+
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES_ECB_ENCRYPT_DATA);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES_CBC_ENCRYPT_DATA);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES3_ECB_ENCRYPT_DATA);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_DES3_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES3_CBC_ENCRYPT_DATA);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_AES_ECB_ENCRYPT_DATA);
+      mechansimNames.put(new Long(PKCS11Constants.CKM_AES_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_AES_CBC_ENCRYPT_DATA);
+      
       mechansimNames.put(new Long(PKCS11Constants.CKM_DSA_PARAMETER_GEN), PKCS11Constants.NAME_CKM_DSA_PARAMETER_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_DH_PKCS_PARAMETER_GEN), PKCS11Constants.NAME_CKM_DH_PKCS_PARAMETER_GEN);
       mechansimNames.put(new Long(PKCS11Constants.CKM_X9_42_DH_PARAMETER_GEN), PKCS11Constants.NAME_CKM_X9_42_DH_PARAMETER_GEN);
@@ -1009,7 +1068,7 @@ public class Functions {
 
     return equal ;
   }
-
+  
   /**
    * Check the given arrays for equalitiy. This method considers both arrays as
    * equal, if both are <code>null</code> or both have the same length and
@@ -1023,6 +1082,43 @@ public class Functions {
    * @postconditions
    */
   public static boolean equals(char[] array1, char[] array2) {
+    boolean equal = false;
+
+    if (array1 == array2) {
+      equal = true;
+    } else if ((array1 != null) && (array2 != null)) {
+      int length = array1.length;
+      if (length == array2.length) {
+        equal = true;
+        for (int i = 0; i < length; i++) {
+          if (array1[i] != array2[i]) {
+            equal = false;
+            break;
+          }
+        }
+      } else {
+        equal = false;
+      }
+    } else {
+      equal = false;
+    }
+
+    return equal ;
+  }
+  
+  /**
+   * Check the given arrays for equality. This method considers both arrays as
+   * equal, if both are <code>null</code> or both have the same length and
+   * contain exactly the same byte values.
+   *
+   * @param array1 The first array.
+   * @param array2 The second array.
+   * @return True, if both arrays are <code>null</code> or both have the same
+   *         length and contain exactly the same byte values. False, otherwise.
+   * @preconditions
+   * @postconditions
+   */
+  public static boolean equals(long[] array1, long[] array2) {
     boolean equal = false;
 
     if (array1 == array2) {
@@ -1088,13 +1184,13 @@ public class Functions {
 
     if (array != null) {
       for (int i = 0; (i < 4) && (i < array.length); i++) {
-        hash ^= ((int) (0xFF & array[i])) << ((i%4) << 3);
+        hash ^= (0xFF & array[i]) << ((i%4) << 3);
       }
     }
 
     return hash ;
   }
-
+  
   /**
    * Calculate a hash code for the given char array.
    *
@@ -1108,13 +1204,35 @@ public class Functions {
 
     if (array != null) {
       for (int i = 0; (i < 4) && (i < array.length); i++) {
-        hash ^= ((int) (0xFFFF & array[i])) << ((i%2) << 4);
+	      hash ^= (0xFFFFFFFF & (array[i]>>32));
+	      hash ^= (0xFFFFFFFF & array[i]);
       }
     }
 
     return hash ;
   }
 
+  /**
+   * Calculate a hash code for the given long array.
+   *
+   * @param array The long array.
+   * @return A hash code for the given array.
+   * @preconditions
+   * @postconditions
+   */
+  public static int hashCode(long[] array) {
+    int hash = 0;
+
+    if (array != null) {
+      for (int i = 0; (i < 4) && (i < array.length); i++) {
+        hash ^= (0xFFFFFFFF & (array[i]>>4));
+        hash ^= (0xFFFFFFFF & array[i]);
+      }
+    }
+
+    return hash ;
+  }
+  
   /**
    * Calculate a hash code for the given date object.
    *
@@ -1128,18 +1246,18 @@ public class Functions {
 
     if (date != null) {
       if (date.year.length == 4) {
-        hash ^= ((int) (0xFFFF & date.year[0])) << 16;
-        hash ^= (int) (0xFFFF & date.year[1]);
-        hash ^= ((int) (0xFFFF & date.year[2])) << 16;
-        hash ^= (int) (0xFFFF & date.year[3]);
+        hash ^= (0xFFFF & date.year[0]) << 16;
+        hash ^= 0xFFFF & date.year[1];
+        hash ^= (0xFFFF & date.year[2]) << 16;
+        hash ^= 0xFFFF & date.year[3];
       }
       if (date.month.length == 2) {
-        hash ^= ((int) (0xFFFF & date.month[0])) << 16;
-        hash ^= (int) (0xFFFF & date.month[1]);
+        hash ^= (0xFFFF & date.month[0]) << 16;
+        hash ^= 0xFFFF & date.month[1];
       }
       if (date.day.length == 2) {
-        hash ^= ((int) (0xFFFF & date.day[0])) << 16;
-        hash ^= (int) (0xFFFF & date.day[1]);
+        hash ^= (0xFFFF & date.day[0]) << 16;
+        hash ^= 0xFFFF & date.day[1];
       }
     }
 
@@ -1178,6 +1296,13 @@ public class Functions {
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CDMF_ECB), PKCS11Constants.NAME_CKM_CDMF_ECB);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CDMF_CBC), PKCS11Constants.NAME_CKM_CDMF_CBC);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CDMF_CBC_PAD), PKCS11Constants.NAME_CKM_CDMF_CBC_PAD);
+      
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_DES_OFB64), PKCS11Constants.NAME_CKM_DES_OFB64);
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_DES_OFB8), PKCS11Constants.NAME_CKM_DES_OFB8);
+
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_DES_CFB64), PKCS11Constants.NAME_CKM_DES_CFB64);
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_DES_CFB8), PKCS11Constants.NAME_CKM_DES_CFB8);
+
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CAST_ECB), PKCS11Constants.NAME_CKM_CAST_ECB);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CAST_CBC), PKCS11Constants.NAME_CKM_CAST_CBC);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_CAST_CBC_PAD), PKCS11Constants.NAME_CKM_CAST_CBC_PAD);
@@ -1196,6 +1321,8 @@ public class Functions {
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_AES_ECB), PKCS11Constants.NAME_CKM_AES_ECB);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_AES_CBC), PKCS11Constants.NAME_CKM_AES_CBC);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_AES_CBC_PAD), PKCS11Constants.NAME_CKM_AES_CBC_PAD);
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_BLOWFISH_CBC), PKCS11Constants.NAME_CKM_BLOWFISH_CBC);
+      fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_TWOFISH_CBC), PKCS11Constants.NAME_CKM_TWOFISH_CBC);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_IDEA_ECB), PKCS11Constants.NAME_CKM_IDEA_ECB);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_IDEA_CBC), PKCS11Constants.NAME_CKM_IDEA_CBC);
       fullEncryptDecryptMechanisms.put(new Long(PKCS11Constants.CKM_IDEA_CBC_PAD), PKCS11Constants.NAME_CKM_IDEA_CBC_PAD);
@@ -1276,6 +1403,15 @@ public class Functions {
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA1_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA1_RSA_PKCS_PSS);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA1_RSA_X9_31), PKCS11Constants.NAME_CKM_SHA1_RSA_X9_31);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_DSA_SHA1), PKCS11Constants.NAME_CKM_DSA_SHA1);
+
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA256_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA256_RSA_PKCS);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA384_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA384_RSA_PKCS);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA512_RSA_PKCS), PKCS11Constants.NAME_CKM_SHA512_RSA_PKCS);
+
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA256_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA256_RSA_PKCS_PSS);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA384_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA384_RSA_PKCS_PSS);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA512_RSA_PKCS_PSS), PKCS11Constants.NAME_CKM_SHA512_RSA_PKCS_PSS);
+
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_RC2_MAC), PKCS11Constants.NAME_CKM_RC2_MAC);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_RC2_MAC_GENERAL), PKCS11Constants.NAME_CKM_RC2_MAC_GENERAL);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_DES_MAC), PKCS11Constants.NAME_CKM_DES_MAC);
@@ -1294,6 +1430,16 @@ public class Functions {
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_RIPEMD128_HMAC_GENERAL), PKCS11Constants.NAME_CKM_RIPEMD128_HMAC_GENERAL);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_RIPEMD160_HMAC_GENERAL), PKCS11Constants.NAME_CKM_RIPEMD160_HMAC_GENERAL);
+
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA256_HMAC), PKCS11Constants.NAME_CKM_SHA256_HMAC);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA256_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA256_HMAC_GENERAL);
+      
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA384_HMAC), PKCS11Constants.NAME_CKM_SHA384_HMAC);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA384_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA384_HMAC_GENERAL);
+      
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA512_HMAC), PKCS11Constants.NAME_CKM_SHA512_HMAC);
+      fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_SHA512_HMAC_GENERAL), PKCS11Constants.NAME_CKM_SHA512_HMAC_GENERAL);
+      
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_CAST_MAC), PKCS11Constants.NAME_CKM_CAST_MAC);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_CAST_MAC_GENERAL), PKCS11Constants.NAME_CKM_CAST_MAC_GENERAL);
       fullSignVerifyMechanisms.put(new Long(PKCS11Constants.CKM_CAST3_MAC), PKCS11Constants.NAME_CKM_CAST3_MAC);
@@ -1400,6 +1546,9 @@ public class Functions {
       digestMechanisms.put(new Long(PKCS11Constants.CKM_SHA_1), PKCS11Constants.NAME_CKM_SHA_1);
       digestMechanisms.put(new Long(PKCS11Constants.CKM_RIPEMD128), PKCS11Constants.NAME_CKM_RIPEMD128);
       digestMechanisms.put(new Long(PKCS11Constants.CKM_RIPEMD160), PKCS11Constants.NAME_CKM_RIPEMD160);
+      digestMechanisms.put(new Long(PKCS11Constants.CKM_SHA256), PKCS11Constants.NAME_CKM_SHA256);
+      digestMechanisms.put(new Long(PKCS11Constants.CKM_SHA384), PKCS11Constants.NAME_CKM_SHA384);
+      digestMechanisms.put(new Long(PKCS11Constants.CKM_SHA512), PKCS11Constants.NAME_CKM_SHA512);
       digestMechanisms.put(new Long(PKCS11Constants.CKM_FASTHASH), PKCS11Constants.NAME_CKM_FASTHASH);
       digestMechanisms_ = digestMechanisms;
     }
@@ -1440,6 +1589,11 @@ public class Functions {
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_CAST128_KEY_GEN), PKCS11Constants.NAME_CKM_CAST128_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_RC5_KEY_GEN), PKCS11Constants.NAME_CKM_RC5_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_AES_KEY_GEN), PKCS11Constants.NAME_CKM_AES_KEY_GEN);
+
+      keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_BLOWFISH_KEY_GEN), PKCS11Constants.NAME_CKM_BLOWFISH_KEY_GEN);
+      
+      keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_TWOFISH_KEY_GEN), PKCS11Constants.NAME_CKM_TWOFISH_KEY_GEN);
+
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_IDEA_KEY_GEN), PKCS11Constants.NAME_CKM_IDEA_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_GENERIC_SECRET_KEY_GEN), PKCS11Constants.NAME_CKM_GENERIC_SECRET_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_SSL3_PRE_MASTER_KEY_GEN), PKCS11Constants.NAME_CKM_SSL3_PRE_MASTER_KEY_GEN);
@@ -1460,6 +1614,9 @@ public class Functions {
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_PBE_SHA1_RC2_40_CBC), PKCS11Constants.NAME_CKM_PBE_SHA1_RC2_40_CBC);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_PKCS5_PBKD2), PKCS11Constants.NAME_CKM_PKCS5_PBKD2);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_PBA_SHA1_WITH_SHA1_HMAC), PKCS11Constants.NAME_CKM_PBA_SHA1_WITH_SHA1_HMAC);
+
+      keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_PRE_MASTER_KEY_GEN), PKCS11Constants.NAME_CKM_WTLS_PRE_MASTER_KEY_GEN);
+      
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_SKIPJACK_KEY_GEN), PKCS11Constants.NAME_CKM_SKIPJACK_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_BATON_KEY_GEN), PKCS11Constants.NAME_CKM_BATON_KEY_GEN);
       keyGenerationMechanisms.put(new Long(PKCS11Constants.CKM_JUNIPER_KEY_GEN), PKCS11Constants.NAME_CKM_JUNIPER_KEY_GEN);
@@ -1561,6 +1718,11 @@ public class Functions {
       wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_SKIPJACK_RELAYX), PKCS11Constants.NAME_CKM_SKIPJACK_RELAYX);
       wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_BATON_WRAP), PKCS11Constants.NAME_CKM_BATON_WRAP);
       wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_JUNIPER_WRAP), PKCS11Constants.NAME_CKM_JUNIPER_WRAP);
+      wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_AES_ECB), PKCS11Constants.NAME_CKM_AES_ECB);
+      wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_AES_CBC), PKCS11Constants.NAME_CKM_AES_CBC);
+      wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_AES_CBC_PAD), PKCS11Constants.NAME_CKM_AES_CBC_PAD);
+      wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_BLOWFISH_CBC), PKCS11Constants.NAME_CKM_BLOWFISH_CBC);
+      wrapUnwrapMechanisms.put(new Long(PKCS11Constants.CKM_TWOFISH_CBC), PKCS11Constants.NAME_CKM_TWOFISH_CBC);
       wrapUnwrapMechanisms_ = wrapUnwrapMechanisms;
     }
 
@@ -1597,10 +1759,32 @@ public class Functions {
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_TLS_MASTER_KEY_DERIVE), PKCS11Constants.NAME_CKM_TLS_MASTER_KEY_DERIVE);
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_TLS_MASTER_KEY_DERIVE_DH), PKCS11Constants.NAME_CKM_TLS_MASTER_KEY_DERIVE_DH);
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_TLS_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_TLS_KEY_AND_MAC_DERIVE);
+
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_TLS_PRF), PKCS11Constants.NAME_CKM_TLS_PRF);
+      
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_MD5_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD5_KEY_DERIVATION);
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_MD2_KEY_DERIVATION), PKCS11Constants.NAME_CKM_MD2_KEY_DERIVATION);
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_SHA1_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA1_KEY_DERIVATION);
+
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_SHA256_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA256_KEY_DERIVATION);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_SHA384_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA384_KEY_DERIVATION);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_SHA512_KEY_DERIVATION), PKCS11Constants.NAME_CKM_SHA512_KEY_DERIVATION);
+
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_MASTER_KEY_DERIVE), PKCS11Constants.NAME_CKM_TLS_MASTER_KEY_DERIVE);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_MASTER_KEY_DERIVE_DH_ECC), PKCS11Constants.NAME_CKM_WTLS_MASTER_KEY_DERIVE_DH_ECC);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_SERVER_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_WTLS_SERVER_KEY_AND_MAC_DERIVE);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_CLIENT_KEY_AND_MAC_DERIVE), PKCS11Constants.NAME_CKM_WTLS_CLIENT_KEY_AND_MAC_DERIVE);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_WTLS_PRF), PKCS11Constants.NAME_CKM_WTLS_PRF);
+      
       keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_KEA_KEY_DERIVE), PKCS11Constants.NAME_CKM_KEA_KEY_DERIVE);
+
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_DES_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES_ECB_ENCRYPT_DATA);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_DES_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES_CBC_ENCRYPT_DATA);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_DES3_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES3_ECB_ENCRYPT_DATA);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_DES3_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_DES3_CBC_ENCRYPT_DATA);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_AES_ECB_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_AES_ECB_ENCRYPT_DATA);
+      keyDerivationMechanisms.put(new Long(PKCS11Constants.CKM_AES_CBC_ENCRYPT_DATA), PKCS11Constants.NAME_CKM_AES_CBC_ENCRYPT_DATA);
+      
       keyDerivationMechanisms_ = keyDerivationMechanisms;
     }
 

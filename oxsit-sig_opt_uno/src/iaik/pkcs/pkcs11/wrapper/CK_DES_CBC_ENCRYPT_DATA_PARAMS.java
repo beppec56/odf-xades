@@ -43,49 +43,61 @@
 
 package iaik.pkcs.pkcs11.wrapper;
 
-import java.io.IOException;
+
 
 /**
- * This class is a sort of factory to get a implementation of the PKCS11
- * interface. By now, this method simply instanciates PKCS11Implementation.
- * For future version, it can be extended to support different implementations
- * for different versions of PKCS#11.
+ * The class CK_DES_CBC_ENCRYPT_DATA_PARAMS provides the parameters to the 
+ * CKM_DES_CBC_ENCRYPT_DATA and CKM_DES3_CBC_ENCRYPT_DATA mechanisms.<p>
+ * <B>PKCS#11 structure:</B>
+ * <PRE>
+ *  typedef struct CK_DES_CBC_ENCRYPT_DATA_PARAMS {
+ *    CK_BYTE iv[8];
+ *    CK_BYTE_PTR pData;
+ *    CK_ULONG length;
+ *  } CK_DES_CBC_ENCRYPT_DATA_PARAMS;
+ * </PRE>
  *
- * @author Karl Scheibelhofer <Karl.Scheibelhofer@iaik.at>
- * @author Martin Schläffer <schlaeff@sbox.tugraz.at>
- * @author Giuseppe Castagno <beppec56@osor.eu>
+ * @author Karl Scheibelhofer <Karl.Scheibelhofer@svc.co.at>
  */
-public class PKCS11Connector {
+public class CK_DES_CBC_ENCRYPT_DATA_PARAMS {
 
   /**
-   * Empty constructor for internal use only.
-   *
-   * @preconditions
-   * @postconditions
+   * <B>PKCS#11:</B>
+   * <PRE>
+   *   CK_BYTE iv[8];
+   * </PRE>
+   * The 8-byte initialization vector.
    */
-  protected PKCS11Connector() { /* left empty intentionally */ }
+  public byte[] iv;
 
   /**
-   * Connect to a PKCS#11 module and get an interface to it.
-   *
-   * @param pkcs11ModulePath The path to the PKCS#11 library.
-   * @return The interface object to access the PKCS#11 module.
-   * @exception IOException If finding the module or connecting to it fails.
+   * <B>PKCS#11:</B>
+   * <PRE>
+   *   CK_BYTE_PTR pData;
+   *   CK_ULONG length;
+   * </PRE>
    */
-  public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath) throws IOException {
-    return new PKCS11Implementation(pkcs11ModulePath);
+  public byte[] pData;
+
+  /**
+   * Returns the string representation of CK_DES_CBC_ENCRYPT_DATA_PARAMS.
+   *
+   * @return the string representation of CK_DES_CBC_ENCRYPT_DATA_PARAMS
+   */
+  public String toString() {
+    StringBuffer buffer = new StringBuffer();
+
+    buffer.append(Constants.INDENT);
+    buffer.append("iv: ");
+    buffer.append(Functions.toHexString(iv));
+    buffer.append(Constants.NEWLINE);
+
+    buffer.append(Constants.INDENT);
+    buffer.append("pData: ");
+    buffer.append(Functions.toHexString(pData));
+    //buffer.append(Constants.NEWLINE);
+
+    return buffer.toString();
   }
 
-  /**
-   * Connect to a PKCS#11 module with the specified PKCS#11-wrapper native library and get an interface to it.
-   *
-   * @param pkcs11ModulePath The path to the PKCS#11 library.
-   * @param pkcs11WrapperPath The absolute path to the PKCS#11-wrapper native library including the filename
-   * @return The interface object to access the PKCS#11 module.
-   * @exception IOException If finding the module or connecting to it fails.
-   */
-  public static PKCS11 connectToPKCS11Module(String pkcs11ModulePath, String pkcs11WrapperPath) throws IOException {
-    return new PKCS11Implementation(pkcs11ModulePath, pkcs11WrapperPath);
-  }
-  
 }

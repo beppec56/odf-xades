@@ -211,8 +211,8 @@ the default target must be removed
 		<copy file="lib/lib64/libpkcs11wrapper.so" todir="${dist}/lib/lib64" />
 		<!-- FIXME: 64bit Windows native libraries not yet available !
 		<copy file="lib/lib64/OCFPCSC1.dll" todir="${dist}/lib/lib64" />
-		<copy file="lib/lib64/pkcs11wrapper.dll" todir="${dist}/lib/lib64" />
 		-->
+		<copy file="lib/lib64/PKCS11Wrapper.dll" todir="${dist}/lib/lib64" />
 
 		<!-- Put everything in ${build} into the .jar file -->
 		<jar jarfile="${dist}/lib/${extension_jar_file}" basedir="${build}">

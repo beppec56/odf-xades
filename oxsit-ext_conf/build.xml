@@ -50,7 +50,7 @@ build-extension
 
 	<!-- properties used when building/deploying the extension -->
 	<!-- version used for updating the extension, displayed on OOo interface -->
-	<property name="version" value="0.0.15" />
+	<property name="version" value="0.0.16" />
 	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
@@ -222,11 +222,11 @@ build-extension
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/libOCFPCSC1.so" todir="${extension_dest_dir}/lib64" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/libpkcs11wrapper.so" todir="${extension_dest_dir}/lib64" />
 
-		<!-- Windows 
-		FIXME: to be added when available
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/OCFPCSC1.dll" todir="${extension_dest_dir}/lib32" />
-		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib32/pkcs11wrapper.dll" todir="${extension_dest_dir}/lib32" />
+		<!-- Windows -->
+		<!-- FIXME: to be added when available
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/OCFPCSC1.dll" todir="${extension_dest_dir}/lib64" />
 		-->
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/lib64/PKCS11Wrapper.dll" todir="${extension_dest_dir}/lib64"/>
 
 		<!-- the end part of the main jar files -->
 		<copy file="${basedir}/../${sig_comp_dir}/lib/${sig_comp_jar}" todir="${extension_dest_dir}" />
