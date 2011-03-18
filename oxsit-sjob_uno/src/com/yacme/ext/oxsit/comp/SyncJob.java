@@ -309,6 +309,44 @@ public class SyncJob extends ComponentBase
 		return null;
 	}
 
+	protected void logSystemProperties() {
+		final String propList[] =  { "java.version", 
+		"java.vendor",
+		"java.vendor.url",
+		"java.home",
+		"java.vm.specification.version",
+		"java.vm.specification.vendor",
+		"java.vm.specification.name",
+		"java.vm.version",
+		"java.vm.vendor",
+		"java.vm.name",
+		"java.specification.version",
+		"java.specification.vendor",
+		"java.specification.name",
+		"java.class.version",
+		"java.class.path",
+		"java.library.path",
+		"java.io.tmpdir",
+		"java.compiler",
+		"java.ext.dirs",
+		"os.name",
+		"os.arch",
+		"os.version",
+		"file.separator",
+		"path.separator",
+		"line.separator",
+		"user.name",
+		"user.home",
+		"user.dir" };
+		
+		m_aLogger.log("====================== START of System Property Values ======================");
+		for(int i = 0; i < propList.length; i++) {
+			String aPropValue = System.getProperty(propList[i]);
+			m_aLogger.log(propList[i]+": "+aPropValue);
+		}
+		m_aLogger.log("====================== END of System Property Values ======================");
+	}
+
 	protected void executeOnStartApp() {
 		
 		try {
@@ -336,6 +374,9 @@ public class SyncJob extends ComponentBase
 			new com.yacme.ext.oxsit.sig_uno.LogJarVersion(m_aLogger);
 		
 		m_aLogger.log(sig_unoStart.getVersion());
+		
+		//log the java system properties
+		logSystemProperties();
 
 		//we'll need to initialize the security stuff, done once on init.
 		
