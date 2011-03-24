@@ -303,6 +303,7 @@ build-extension
 		<copy file="${license_dir}/EUPL v.1.1 - Licence.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - Licence.pdf" />
 		<copy file="${license_dir}/EUPL v.1.1 - Preambolo.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - Preambolo.pdf" />
 		<copy file="${license_dir}/EUPL v.1.1 - licenza.pdf" tofile="${extension_dest_dir}/license/EUPL v.1.1 - licenza.pdf" />		
+		<copy file="${license_dir}/GPL v3.0-license.odt" tofile="${extension_dest_dir}/license/GPL v3.0-license.odt" />		
 
 		<!-- copy third parties licenses (if needed) -->
 		<copy file="${license_dir}/third_parties/LICENSE_pcsc10_wrapper" tofile="${extension_dest_dir}/license/LICENSE_pcsc10_wrapper" />		
