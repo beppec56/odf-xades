@@ -207,12 +207,12 @@ The build.xml properties are the following:
 
     -Xdebug
  	-Xrunjdwp:transport=dt_socket,server=y,suspend=n
- 	
+
  	This will allocate a dynamic port every time it's needed. From Eclipse you can then connect to the JVM.
 
  	Infos on JPDA for Java 6 can be found here (2008-11-09):
  	http://java.sun.com/javase/6/docs/technotes/guides/jpda/conninv.html#Invocation
-   
+
 Information on testing it
 =========================
 The extension requires OOo 3.1 to be installed.
@@ -221,9 +221,13 @@ It would be a good idea install the extension on a 'no production' installation,
 installation not used for production jobs.
 With this kind of installation you can install the extension as shared, so it will be installed in the main
 OOo repository different than the 'production' installation. 
+
 Besides, if you manipulate the extension installation scripts, if something goes wrong you risk
-to cripple your OOo local configuration directory, that will need to be deleted to regain control
+to cripple your OOo user private configuration directory, that will need to be deleted to regain control
 of the whole thing.
+In Linux it's possible to direct OpenOffice.org to a different user private configuration directory by editing
+the file <OOo specific installation>/openoffice.org3/program/bootstraprc to change the value of
+the UserInstallation= parameter to a value for the new user configuration directory. 
 
 The best way to install/update the extension is to use the following sequence in a console window
 (this one is referred to GNU/Linux):
@@ -274,7 +278,6 @@ The interface are written in Java, where needed.
    
 Now you are ready to compile the idl and prepare the file rdb for inclusion
    
-
 
 Registered component
 ====================
