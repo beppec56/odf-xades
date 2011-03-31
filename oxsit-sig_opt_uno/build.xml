@@ -146,7 +146,7 @@ the default target must be removed
 				<pathelement path="${lib}/${bcmail_jar}" />
 				<pathelement path="${lib}/${bcprov_jar}" />
 			</classpath>
-			<src path="${j4sign}" />
+			<!-- src path="${j4sign}" / -->
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
 		
