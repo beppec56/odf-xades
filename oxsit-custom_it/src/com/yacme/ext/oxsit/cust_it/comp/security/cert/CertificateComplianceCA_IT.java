@@ -53,7 +53,6 @@ import com.yacme.ext.oxsit.security.cert.XOX_CertificateComplianceProcedure;
 import com.yacme.ext.oxsit.security.cert.XOX_CertificateRevocationStateProcedure;
 import com.yacme.ext.oxsit.security.cert.XOX_CertificationPathProcedure;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
-import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;

@@ -53,9 +53,9 @@ the default target must be removed
 	<property name="j4sign" location="j4sign" />
 	
 	<!-- ROB BC libs names -->
-	<property name="bcmail_jar" value="bcmail-jdk16-143.jar"/>
-	<property name="bcprov_jar" value="bcprov-jdk16-143.jar"/>
-	
+	<property name="bcmail_jar" value="bcmail-jdk16-146.jar"/>
+	<property name="bcprov_jar" value="bcprov-jdk16-146.jar"/>
+
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
