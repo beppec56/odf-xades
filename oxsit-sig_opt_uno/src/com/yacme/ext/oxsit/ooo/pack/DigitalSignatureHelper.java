@@ -49,6 +49,7 @@ import java.util.Vector;
 /**
  *
  * @author __USER__
+ * FIXME: this class must be moved to custom signature object as UNO service available to the main extension struct
  */
 public class DigitalSignatureHelper {
     

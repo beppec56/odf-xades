@@ -65,7 +65,7 @@ import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
 /**
  *  This service implements the CertificationPath_IT service, used to check the
- *  certificate for compliance on Italian law.
+ *  certificate for compliance to Italian law.
  *  
  *  
  * @author beppec56

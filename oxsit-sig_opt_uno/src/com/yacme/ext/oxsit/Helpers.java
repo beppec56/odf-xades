@@ -211,7 +211,6 @@ public class Helpers {
         String osName = System.getProperty("os.name");
         String architecture = System.getProperty("os.arch");
     	//check the arch:
-        //FIXME: TODO: add the other returned string from the virtual java machines.
     	if(architecture.equalsIgnoreCase("amd64"))
     		architecture = "lib64"+System.getProperty("file.separator");
     	else

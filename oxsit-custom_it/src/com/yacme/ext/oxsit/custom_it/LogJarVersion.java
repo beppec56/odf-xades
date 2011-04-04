@@ -47,7 +47,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import com.yacme.ext.oxsit.logging.DynamicLogger;
+import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
 /**
  * @author beppe
@@ -59,10 +59,11 @@ public class LogJarVersion {
 	final String m_aJarFileName = "oxsit-custom_it.uno.jar";
 	
 	URI executivePath ;
-	private DynamicLogger m_aLogger;
+	private IDynamicLogger m_aLogger;
 
 	private String m_aJarVersion;
-	public LogJarVersion(DynamicLogger _aLogger) {
+	//FIXME: add a call somewhere in custom_it (when checking CA f.ex.)
+	public LogJarVersion(IDynamicLogger _aLogger) {
 		
 		m_aLogger = _aLogger;
 		
@@ -71,7 +72,7 @@ public class LogJarVersion {
             try {
                 URL aURL = aCs.getLocation(); // where this class is 'seen' by the java runtime
                 //System.out.println(aURL.toString()+" "+aURL.getPath());
-                int pos = aURL.toString().indexOf(m_aJarFileName); //FIXME: _00 modificare in modo che il nome del jar sia quello giusto
+                int pos = aURL.toString().indexOf(m_aJarFileName);
                 if(pos == -1) {
                     //non esiste, l'URL è il path
                     executivePath = new URI(aURL.toString());
