@@ -84,6 +84,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
+import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
@@ -265,7 +266,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		m_aLogger.log(this.getClass().getName()
 				+ "\n\t\tthe url of the document under signature is: "
 				+ xDocumentModel.getURL());
+		LogJarVersion custom_itStart = new LogJarVersion(m_aLogger);
 
+		m_aLogger.log(custom_itStart.getVersion());
+		
 //get the document storage,
 		XStorageBasedDocument xDocStorage =
 			(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
@@ -273,42 +277,61 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		m_xDocumentStorage = xDocStorage.getDocumentStorage();
 
 		
-		return signAsCMSFile(xFrame, xDocumentModel, _aCertArray);
-/*
- * The procedure should be the following:
- * 
- * form a digest for any of the document substorage (files) the document has
- * according to the decided standard 
- * 
- * when the digests are done, iterate through the certificate list to be used to sign:
- * for every certificate
- *     check to see if the token where the certificate is contained is 'on-line'
- *     the check is performed using data that where retrieve when looking
- *     for available certificates
- *       if not, alert the user:
- *         - user 'next' go to next certificate
- *     	   - user 'cancel' abort the sign process
- *     	   - user 'retry' check again the token  
- * 		token is ready, ask the user for a PIN code to access the private key
- * 		the dialog shows token ids (description, model, serial number):
- * 		the dialog expect the right number of characters for PIN, that should come
- * 		from the token data, even though the right number of characters depends on 
- * 		the token supplier (e.g. the one that initialized it).
- * 			- user abort, go to next certificate 
- * 			- user confirm, then proceed
- * 
- * 		open a login session to the token using the provided PIN
- * 		if something goes wrong, alert the user:
- * 			- user retry, goto the PIN input step
- * 			- user abort, go to the next certificate
- * 		all is ok, retrieve the private key id using the certificate data that came
- * 		from the available certificate search,
- * 		for every hash computed:
- * 			sign the hash, get the signed has and attach it to the document substorage URL
- * 
- * 		goto next certificate
- * 
- */
+//		return signAsCMSFile(xFrame, xDocumentModel, _aCertArray);
+		return signAsFile(xFrame, xDocumentModel, _aCertArray);
+
+	}
+
+	/**
+	 * The procedure should be the following:
+	 * 
+	 * form a digest for any of the document substorage (files) the document has
+	 * according to the decided standard 
+	 * 
+	 * when the digests are done, iterate through the certificate list to be used to sign:
+	 * for every certificate
+	 *     check to see if the token where the certificate is contained is 'on-line'
+	 *     the check is performed using data that where retrieve when looking
+	 *     for available certificates
+	 *       if not, alert the user:
+	 *         - user 'next' go to next certificate
+	 *     	   - user 'cancel' abort the sign process
+	 *     	   - user 'retry' check again the token  
+	 * 		token is ready, ask the user for a PIN code to access the private key
+	 * 		the dialog shows token ids (description, model, serial number):
+	 * 		the dialog expect the right number of characters for PIN, that should come
+	 * 		from the token data, even though the right number of characters depends on 
+	 * 		the token supplier (e.g. the one that initialized it).
+	 * 			- user abort, go to next certificate 
+	 * 			- user confirm, then proceed
+	 * 
+	 * 		open a login session to the token using the provided PIN
+	 * 		if something goes wrong, alert the user:
+	 * 			- user retry, goto the PIN input step
+	 * 			- user abort, go to the next certificate
+	 * 		all is ok, retrieve the private key id using the certificate data that came
+	 * 		from the available certificate search,
+	 * 		for every hash computed:
+	 * 			sign the hash, get the signed has and attach it to the document substorage URL
+	 * 
+	 * 		goto next certificate
+	 * 
+	 * @param xFrame
+	 * @param xDocumentModel
+	 * @param aCertArray
+	 * @return
+	 */
+	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] aCertArray) {
+		// TODO Auto-generated method stub
+		
+		/*
+		 * form a digest for any of the document substorage (files) the document has according to the decided standard
+		 */
+		
+		
+		
+		
+		return false;
 	}
 
 	private boolean signAsCMSFile(XFrame xFrame, XModel _documentModel, XOX_X509Certificate[] _aCertArray)
