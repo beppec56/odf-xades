@@ -44,12 +44,22 @@
 package com.yacme.ext.oxsit.cust_it.comp.security.xades;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import javax.crypto.Cipher;
+
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
 
 /**
  * @author beppe
@@ -65,7 +75,7 @@ public class SignedODFDocument_IT {
     private String m_format;
     /** format version */
     private String m_version;
-    /** DataFile objects */
+    /** DataFile_IT objects */
     private ArrayList m_dataFiles;
     /** SignatureXADES_IT objects */
     private ArrayList m_signatures;
@@ -217,7 +227,7 @@ public class SignedODFDocument_IT {
 
 	/**
 	 * Writes the SignedDoc to an output file and automatically calculates
-	 * DataFile sizes and digests
+	 * DataFile_IT sizes and digests
 	 * 
 	 * @param outputFile
 	 *            output file name
@@ -225,14 +235,14 @@ public class SignedODFDocument_IT {
 	 *             for all errors
 	 */
 	public void writeToStream(OutputStream os) throws SignedODFDocumentException_IT {
-		// TODO read DataFile elements from old file
+		// TODO read DataFile_IT elements from old file
 
 		try {
 			os.write(xmlHeader().getBytes());
 			//ROB: no xml output for ExternalDataFile
 			/*
 			for (int i = 0; i < countDataFiles(); i++) {
-				DataFile df = getDataFile(i);
+				DataFile_IT df = getDataFile(i);
 				df.writeToFile(os);
 				os.write("\n".getBytes());
 			}
@@ -404,9 +414,9 @@ public class SignedODFDocument_IT {
 		// create SignedInfo block
 		SignedInfoXADES_IT si = new SignedInfoXADES_IT(sig, RSA_SHA1_SIGNATURE_METHOD,
 				CANONICALIZATION_METHOD_20010315);
-		// add DataFile references
+		// add DataFile_IT references
 		for (int i = 0; i < countDataFiles(); i++) {
-			DataFile df = getDataFile(i);
+			DataFile_IT df = getDataFile(i);
 			ReferenceXADES_IT ref = new ReferenceXADES_IT(si, df);
 			ref.setUri(df.getId());
 			si.addReference(ref);
@@ -433,6 +443,17 @@ public class SignedODFDocument_IT {
 		addSignature(sig);
 		return sig;
 	}
+	  
+    /**
+     * Adds a new Signature object
+     * @param attr Signature object to add
+     */
+    public void addSignature(SignatureXADES_IT sig) 
+    {
+        if(m_signatures == null)
+            m_signatures = new ArrayList();
+        m_signatures.add(sig);
+    }
 
 	/**
 	 * Helper method to create the xml header
@@ -475,7 +496,25 @@ public class SignedODFDocument_IT {
         return (SignatureXADES_IT)m_signatures.get(idx);
     }
     
-	
+    
+    /**
+     * return the desired DataFile object
+     * @param idx index of the DataFile object
+     * @return desired DataFile object
+     */
+    public DataFile_IT getDataFile(int idx) {
+        return (DataFile_IT)m_dataFiles.get(idx);
+    }
+
+    /**
+     * return the count of DataFile objects
+     * @return count of DataFile objects
+     */
+    public int countDataFiles()
+    {
+        return ((m_dataFiles == null) ? 0 : m_dataFiles.size());
+    }
+
 	//ROB: From uji
 	//FIXME: this procedure writes the signature file to ODF doc, needs to be adapted to ODF from OOo
 	
@@ -519,6 +558,273 @@ public class SignedODFDocument_IT {
         return dig;
     }
     
+
+    /**
+     * Helper method to verify the whole SignedDoc object. 
+     * Use this method to verify all signatures
+     * @param checkDate Date on which to check the signature validity
+     * @param demandConfirmation true if you demand OCSP confirmation from
+     * every signature
+     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     */
+    public ArrayList verify(boolean checkDate, boolean demandConfirmation)
+    {
+        ArrayList errs = validate(false);
+        for(int i = 0; i < countSignatures(); i++) {
+            SignatureXADES_IT sig = getSignature(i);
+            ArrayList e = sig.verify(this, checkDate, demandConfirmation);
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }    
+        if(countSignatures() == 0) {
+        	errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_NOT_SIGNED, "This document is not signed!", null));
+        }            
+        return errs;
+    }
+    
+    /**
+     * Verifies the siganture
+     * @param digest input data digest
+     * @param signature signature value
+     * @param cert certificate to be used on verify
+     * @return true if signature verifies
+     */
+    public static boolean verify(byte[] digest, byte[] signature, X509Certificate cert) 
+        throws SignedODFDocumentException_IT
+    {
+        boolean rc = false;
+        try {
+        	// VS - for some reason this JDK internal method sometimes failes
+        	
+        	//System.out.println("Verify digest: " + bin2hex(digest) +
+        	//	" signature: " + Base64Util.encode(signature, 0));
+        	/*
+            // check keystore...
+            java.security.Signature sig = 
+                java.security.Signature.getInstance("SHA1withRSA");
+            sig.initVerify((java.security.interfaces.RSAPublicKey)cert.getPublicKey());
+            sig.update(digest);
+            rc = sig.verify(signature);
+            */
+            Cipher cryptoEngine = Cipher.getInstance(ConfigManager_IT.
+            	instance().getProperty("DIGIDOC_VERIFY_ALGORITHM"), "BC");
+        	cryptoEngine.init(Cipher.DECRYPT_MODE, cert);
+        	byte[] decryptedDigestValue = cryptoEngine.doFinal(signature);
+        	byte[] cdigest = new byte[digest.length];
+            System.arraycopy(decryptedDigestValue, 
+              	decryptedDigestValue.length - digest.length,
+              	cdigest, 0, digest.length);
+        	//System.out.println("Decrypted digest: \'" + bin2hex(cdigest) + "\'");
+        	// now compare the digests
+            rc = compareDigests(digest, cdigest); 
+                       
+            //System.out.println("Result: " + rc);
+            if(!rc)
+            	throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_VERIFY, "Invalid signature value!", null);
+        } catch(SignedODFDocumentException_IT ex) {
+        	throw ex; // pass it on, but check other exceptions
+        } catch(Exception ex) {
+        	//System.out.println("Exception: " + ex);
+            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_VERIFY);
+        }
+        return rc;
+    }
+    
+    /**
+     * Helper method for comparing
+     * digest values
+     * @param dig1 first digest value
+     * @param dig2 second digest value
+     * @return true if they are equal
+     */
+    public static boolean compareDigests(byte[] dig1, byte[] dig2)
+    {
+        boolean ok = (dig1 != null) && (dig2 != null) && 
+            (dig1.length == dig2.length);
+        for(int i = 0; ok && (i < dig1.length); i++)
+            if(dig1[i] != dig2[i])
+                ok = false;
+        return ok;
+    }
+
+    /**
+     * Helper method to validate the whole
+     * SignedDoc object
+     * @param bStrong flag that specifies if Id atribute value is to
+     * be rigorously checked (according to digidoc format) or only
+     * as required by XML-DSIG
+     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     */
+    public ArrayList validate(boolean bStrong)
+    {
+        ArrayList errs = new ArrayList();
+        SignedODFDocumentException_IT ex = validateFormat(m_format);
+        if(ex != null)
+            errs.add(ex);
+        ex = validateVersion(m_version);
+        if(ex != null)
+            errs.add(ex);
+        for(int i = 0; i < countDataFiles(); i++) {
+            DataFile_IT df = getDataFile(i);
+            ArrayList e = df.validate(bStrong);
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }
+        for(int i = 0; i < countSignatures(); i++) {
+            SignatureXADES_IT sig = getSignature(i);
+            ArrayList e = sig.validate();
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }                
+        return errs;
+    }
+
+
+    /**
+     * return certificate owners first name
+     * @return certificate owners first name or null
+     */
+    public static String getSubjectFirstName(X509Certificate cert) {
+        String name = null;
+        String dn = cert.getSubjectDN().getName();
+        int idx1 = dn.indexOf("CN=");
+        if(idx1 != -1) {
+            while(idx1 < dn.length()-1 && dn.charAt(idx1) != ',')
+                idx1++;
+            if(idx1 < dn.length()-1)
+              idx1++;
+            int idx2 = idx1;
+            while(idx2 < dn.length()-1 && dn.charAt(idx2) != ',' && dn.charAt(idx2) != '/')
+                idx2++;
+            name = dn.substring(idx1, idx2);            
+        }
+        return name;
+    }
+    
+    /**
+     * return certificate owners last name
+     * @return certificate owners last name or null
+     */
+    public static String getSubjectLastName(X509Certificate cert) {
+        String name = null;
+        String dn = cert.getSubjectDN().getName();
+        int idx1 = dn.indexOf("CN=");
+        if(idx1 != -1) {
+            idx1 += 2;
+            while(idx1 < dn.length()-1 && !Character.isLetter(dn.charAt(idx1)))
+                idx1++;
+            int idx2 = idx1;
+            while(idx2 < dn.length()-1 && dn.charAt(idx2) != ',' && dn.charAt(idx2) != '/')
+                idx2++;
+            name = dn.substring(idx1, idx2);            
+        }
+        return name;
+    }
+    
+    /**
+     * return certificate owners personal code
+     * @return certificate owners personal code or null
+     */
+    public static String getSubjectPersonalCode(X509Certificate cert) {
+        String code = null;
+        String dn = cert.getSubjectDN().getName();
+        int idx1 = dn.indexOf("CN=");
+        //System.out.println("DN: " + dn);
+        if(idx1 != -1) {
+            while(idx1 < dn.length()-1 && !Character.isDigit(dn.charAt(idx1)))
+                idx1++;
+            int idx2 = idx1;
+            while(idx2 < dn.length()-1 && Character.isDigit(dn.charAt(idx2)))
+                idx2++;
+            code = dn.substring(idx1, idx2);            
+        }
+        //System.out.println("Code: " + code);
+        return code;
+    }
+    
+    // VS: 02.01.2009 - fix finding ocsp responders cert
+    /**
+     * return certificate's fingerprint
+     * @param cert X509Certificate object
+     * @return certificate's fingerprint or null
+     */
+    public static byte[] getCertFingerprint(X509Certificate cert) {
+    	byte[] bdat = cert.getExtensionValue("2.5.29.14");
+        if(bdat != null) {
+          if(bdat.length > 20) {
+        	  byte[] bdat2 = new byte[20];
+        	  System.arraycopy(bdat, bdat.length - 20, bdat2, 0, 20);
+        	  return bdat2;
+          } else
+        	  return bdat;
+        }
+        //System.out.println("Code: " + code);
+        return null;
+    }
+    // VS: 02.01.2009 - fix finding ocsp responders cert
+        
+    /**
+     * return CN part of DN
+     * @return CN part of DN or null
+     */
+    public static String getCommonName(String dn) {
+        String name = null;
+        if(dn != null) {
+        	int idx1 = dn.indexOf("CN=");
+        	if(idx1 != -1) {
+            	idx1 += 2;
+            	while(idx1 < dn.length() && 
+            		!Character.isLetter(dn.charAt(idx1)))
+                	idx1++;
+            	int idx2 = idx1;
+            	while(idx2 < dn.length() && 
+            		dn.charAt(idx2) != ',' && 
+            		dn.charAt(idx2) != '/')
+                	idx2++;
+            	name = dn.substring(idx1, idx2);            
+        	}
+        }
+        return name;
+    }
+    
+    /**
+     * Reads X509 certificate from a data stream
+     * @param data input data in Base64 form
+     * @return X509Certificate object
+     * @throws EFormException for all errors
+     */
+    public static X509Certificate readCertificate(byte[] data)
+        throws SignedODFDocumentException_IT 
+    {
+        X509Certificate cert = null;
+        try {
+        //ByteArrayInputStream certStream = new ByteArrayInputStream(Base64Util.decode(data));
+        ByteArrayInputStream certStream = new ByteArrayInputStream(data);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        cert = (X509Certificate)cf.generateCertificate(certStream);
+        certStream.close();
+        } catch(Exception ex) {
+            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_CERT);
+        }
+        return cert;        
+    }    
+
+    /**
+     * Reads in data file
+     * @param inFile input file
+     */
+    public static byte[] readFile(File inFile)
+        throws IOException, FileNotFoundException
+    {
+        byte[] data = null;
+        FileInputStream is = new FileInputStream(inFile);
+        DataInputStream dis = new DataInputStream(is);
+        data = new byte[dis.available()];
+        dis.readFully(data);
+        dis.close();
+        is.close();
+        return data;
+    }
 
 }
 

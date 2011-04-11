@@ -8,6 +8,8 @@ import java.util.TimeZone;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+
 
 /**
  * Miscellaneous data conversion utility methods
@@ -191,9 +193,9 @@ public class ConvertUtils
      */
     public static boolean isKnownOCSPCert(String cn)
     {
-    	int nOcsps = ConfigManager.instance().getIntProperty("DIGIDOC_OCSP_COUNT", 0);
+    	int nOcsps = ConfigManager_IT.instance().getIntProperty("DIGIDOC_OCSP_COUNT", 0);
     	for(int i = 0; i < nOcsps; i++) {
-    		String s = ConfigManager.instance().getProperty("DIGIDOC_OCSP" + (i+1) + "_CN");
+    		String s = ConfigManager_IT.instance().getProperty("DIGIDOC_OCSP" + (i+1) + "_CN");
     		if(s != null && s.equals(cn))
     			return true;
     	}
@@ -208,9 +210,9 @@ public class ConvertUtils
      */
     public static boolean isKnownTSACert(String cn)
     {
-    	int nTsas = ConfigManager.instance().getIntProperty("DIGIDOC_TSA_COUNT", 0);
+    	int nTsas = ConfigManager_IT.instance().getIntProperty("DIGIDOC_TSA_COUNT", 0);
     	for(int i = 0; i < nTsas; i++) {
-    		String s = ConfigManager.instance().getProperty("DIGIDOC_TSA" + (i+1) + "_CN");
+    		String s = ConfigManager_IT.instance().getProperty("DIGIDOC_TSA" + (i+1) + "_CN");
     		if(s != null && s.equals(cn))
     			return true;
     	}

@@ -11,6 +11,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+
 /**
  * @author beppe
  *
@@ -505,7 +508,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
         throws SignedODFDocumentException_IT
     {
     	if(m_origDigest == null) {
-        	CanonicalizationFactory canFac = ConfigManager.
+        	CanonicalizationFactory_IT canFac = ConfigManager_IT.
                     instance().getCanonicalizationFactory();
         	byte[] tmp = canFac.canonicalize(toXML(),  
                     SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);

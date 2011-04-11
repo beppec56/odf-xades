@@ -45,6 +45,7 @@ package com.yacme.ext.oxsit.cust_it.comp.security.xades;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
@@ -52,6 +53,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.TimestampInfo_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CRLFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.TimestampFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
 
 /**
  * Models an XML-DSIG/ETSI Signature. A signature
@@ -602,13 +608,13 @@ public class SignatureXADES_IT implements Serializable {
     public void getConfirmation()
         throws SignedODFDocumentException_IT
     {
-        NotaryFactory notFac = ConfigManager.
+        NotaryFactory_IT notFac = ConfigManager_IT.
 	    instance().getNotaryFactory();
         
         
         
         X509Certificate cert = m_keyInfo.getSignersCertificate();
-        DigiDocFactory ddocFac = ConfigManager.instance().getDigiDocFactory();
+        DigiDocFactory_IT ddocFac = ConfigManager_IT.instance().getDigiDocFactory();
         X509Certificate caCert = ddocFac.findCAforCertificate(cert);
         //ROB
         notFac.checkCertificateOcspOrCrl(cert, false);
@@ -668,9 +674,9 @@ public class SignatureXADES_IT implements Serializable {
     {
     	Date do1 = null, dt1 = null, dt2 = null;
         ArrayList errs = new ArrayList();
-        // check the DataFile digests
+        // check the DataFile_IT digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
-            DataFile df = sdoc.getDataFile(i);
+            DataFile_IT df = sdoc.getDataFile(i);
             //System.out.println("Check digest for DF: " + df.getId());
             ReferenceXADES_IT ref = m_signedInfo.getReferenceForDataFile(df);
             byte[] dfDig = null;
@@ -684,7 +690,7 @@ public class SignatureXADES_IT implements Serializable {
                 if(!SignedODFDocument_IT.compareDigests(ref.getDigestValue(), dfDig)) {
                    errs.add(new SignedODFDocumentException_IT(
                     SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
-                    "Bad digest for DataFile: " + df.getId(), null));
+                    "Bad digest for DataFile_IT: " + df.getId(), null));
                     //System.out.println("BAD DIGEST");
                 }
                 //else System.out.println("GOOD DIGEST");
@@ -692,14 +698,14 @@ public class SignatureXADES_IT implements Serializable {
             	//System.out.println("No ReferenceXADES_IT");
                 errs.add(new SignedODFDocumentException_IT(
                     SignedODFDocumentException_IT.ERR_DATA_FILE_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for DataFile: " + df.getId(), null));
+                    "No ReferenceXADES_IT element for DataFile_IT: " + df.getId(), null));
             }
             // if this is a detatched file and the file
             // referred by this entry actually exists,
             // then go and check it's digest
             // If the datafile doesn't exist the
             // just trust whatever is in the XML
-            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED)) {
+            if(df.getContentType().equals(DataFile_IT.CONTENT_DETATCHED)) {
                 File fTest = new File(df.getFileName());
                 if(fTest.canRead()) {
                     //System.out.println("Check detatched file: " + fTest.getAbsolutePath());
@@ -766,17 +772,17 @@ public class SignatureXADES_IT implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+        	DigiDocFactory_IT digFac = ConfigManager_IT.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedODFDocumentException_IT ex) {
             errs.add(ex);
         }
         // if we check signatures using CRL
-        String verifier = ConfigManager.instance().
+        String verifier = ConfigManager_IT.instance().
                 getStringProperty("DIGIDOC_SIGNATURE_VERIFIER", "OCSP");
         if(verifier != null && verifier.equals("CRL")) {
         	try {
-        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
+        		CRLFactory_IT crlFac = ConfigManager_IT.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
             } catch(SignedODFDocumentException_IT ex) {
          	   errs.add(ex);
@@ -798,11 +804,11 @@ public class SignatureXADES_IT implements Serializable {
         // verify timestamps
         ArrayList tsaCerts = findTSACerts();
         if(m_timestamps != null && m_timestamps.size() > 0) {
-        	TimestampFactory tsFac = null;
+        	TimestampFactory_IT tsFac = null;
         	try {
-        		tsFac = ConfigManager.instance().getTimestampFactory();
+        		tsFac = ConfigManager_IT.instance().getTimestampFactory();
         	} catch(SignedODFDocumentException_IT ex) {
-        		//m_logger.error("Failed to get TimestampFactory: " + ex);
+        		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
         		errs.add(ex);
         	}
         	ArrayList e = tsFac.verifySignaturesTimestamps(this);
@@ -818,7 +824,7 @@ public class SignatureXADES_IT implements Serializable {
         	//System.out.println("OCSP time: " + do1);
         	//System.out.println("SignatureTimeStamp time: " + dt1);
         	//System.out.println("SigAndRefsTimeStamp time: " + dt2);
-        	int nMaxTsTimeErrSecs = ConfigManager.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
+        	int nMaxTsTimeErrSecs = ConfigManager_IT.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
         	dt1 = new Date(dt1.getTime() - (nMaxTsTimeErrSecs * 1000));
         	dt2 = new Date(dt2.getTime() + (nMaxTsTimeErrSecs * 1000));
         	//System.out.println("SignatureTimeStamp adj time: " + dt1);
@@ -844,9 +850,9 @@ public class SignatureXADES_IT implements Serializable {
     {
     	Date do1 = null, dt1 = null, dt2 = null;
         ArrayList errs = new ArrayList();
-        // check the DataFile digests
+        // check the DataFile_IT digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
-            DataFile df = sdoc.getDataFile(i);
+            DataFile_IT df = sdoc.getDataFile(i);
             //System.out.println("Check digest for DF: " + df.getId());
             ReferenceXADES_IT ref = m_signedInfo.getReferenceForDataFile(df);
             byte[] dfDig = null;
@@ -860,7 +866,7 @@ public class SignatureXADES_IT implements Serializable {
                 if(!SignedODFDocument_IT.compareDigests(ref.getDigestValue(), dfDig)) {
                    errs.add(new SignedODFDocumentException_IT(
                     SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
-                    "Bad digest for DataFile: " + df.getId(), null));
+                    "Bad digest for DataFile_IT: " + df.getId(), null));
                     //System.out.println("BAD DIGEST");
                 }
                 //else System.out.println("GOOD DIGEST");
@@ -868,14 +874,14 @@ public class SignatureXADES_IT implements Serializable {
             	//System.out.println("No ReferenceXADES_IT");
                 errs.add(new SignedODFDocumentException_IT(
                     SignedODFDocumentException_IT.ERR_DATA_FILE_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for DataFile: " + df.getId(), null));
+                    "No ReferenceXADES_IT element for DataFile_IT: " + df.getId(), null));
             }
             // if this is a detatched file and the file
             // referred by this entry actually exists,
             // then go and check it's digest
             // If the datafile doesn't exist the
             // just trust whatever is in the XML
-            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED)) {
+            if(df.getContentType().equals(DataFile_IT.CONTENT_DETATCHED)) {
                 File fTest = new File(df.getFileName());
                 if(fTest.canRead()) {
                     //System.out.println("Check detatched file: " + fTest.getAbsolutePath());
@@ -942,7 +948,7 @@ public class SignatureXADES_IT implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+        	DigiDocFactory_IT digFac = ConfigManager_IT.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedODFDocumentException_IT ex) {
             errs.add(ex);
@@ -962,11 +968,11 @@ public class SignatureXADES_IT implements Serializable {
         	// verify timestamps
             ArrayList tsaCerts = findTSACerts();
             if(m_timestamps.size() > 0) {
-            	TimestampFactory tsFac = null;
+            	TimestampFactory_IT tsFac = null;
             	try {
-            		tsFac = ConfigManager.instance().getTimestampFactory();
+            		tsFac = ConfigManager_IT.instance().getTimestampFactory();
             	} catch(SignedODFDocumentException_IT ex) {
-            		//m_logger.error("Failed to get TimestampFactory: " + ex);
+            		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
             		errs.add(ex);
             	}
             	ArrayList e = tsFac.verifySignaturesTimestamps(this);
@@ -982,7 +988,7 @@ public class SignatureXADES_IT implements Serializable {
             	//System.out.println("OCSP time: " + do1);
             	//System.out.println("SignatureTimeStamp time: " + dt1);
             	//System.out.println("SigAndRefsTimeStamp time: " + dt2);
-            	int nMaxTsTimeErrSecs = ConfigManager.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
+            	int nMaxTsTimeErrSecs = ConfigManager_IT.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
             	dt1 = new Date(dt1.getTime() - (nMaxTsTimeErrSecs * 1000));
             	dt2 = new Date(dt2.getTime() + (nMaxTsTimeErrSecs * 1000));
             	//System.out.println("SignatureTimeStamp adj time: " + dt1);
@@ -994,7 +1000,7 @@ public class SignatureXADES_IT implements Serializable {
             }
         } else {
         	try {
-        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
+        		CRLFactory_IT crlFac = ConfigManager_IT.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
             } catch(SignedODFDocumentException_IT ex) {
          	   errs.add(ex);

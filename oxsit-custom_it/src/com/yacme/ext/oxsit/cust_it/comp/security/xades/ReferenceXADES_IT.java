@@ -68,16 +68,16 @@ public class ReferenceXADES_IT implements Serializable {
 
 	/**
 	 * Creates new Reference and initializes it with default values from the
-	 * DataFile
+	 * DataFile_IT
 	 * 
 	 * @param sigInfo
 	 *            reference to parent SignedInfoXADES_IT object
 	 * @param df
-	 *            DataFile object
+	 *            DataFile_IT object
 	 * @throws SignedODFDocumentException_IT
 	 *             for validation errors
 	 */
-	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo, DataFile df)
+	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo, DataFile_IT df)
 			throws SignedODFDocumentException_IT {
 		
 
@@ -86,7 +86,7 @@ public class ReferenceXADES_IT implements Serializable {
 		setDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
 		setDigestValue(df.getDigest());
 		setTransformAlgorithm(df.getContentType().equals(
-				DataFile.CONTENT_DETATCHED) ? SignedODFDocument_IT.DIGIDOC_DETATCHED_TRANSFORM
+				DataFile_IT.CONTENT_DETATCHED) ? SignedODFDocument_IT.DIGIDOC_DETATCHED_TRANSFORM
 				: null);
 	}
 
