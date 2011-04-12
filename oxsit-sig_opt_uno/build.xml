@@ -56,6 +56,8 @@ the default target must be removed
 	<property name="bcmail_jar" value="bcmail-jdk16-146.jar"/>
 	<property name="bcprov_jar" value="bcprov-jdk16-146.jar"/>
 
+	<property name="bctsp_jar" value="bctsp-jdk16-146.jar"/>
+	
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
@@ -200,6 +202,8 @@ the default target must be removed
 		<!-- ROB Copy BC libs in the distribution directory -->
 		<copy file="lib/${bcmail_jar}" todir="${dist}/lib" />
 		<copy file="lib/${bcprov_jar}" todir="${dist}/lib" />
+		<copy file="lib/${bctsp_jar}" todir="${dist}/lib" />
+		
 		<!-- copy 32bit native libraries -->
 		<copy file="lib/lib32/libOCFPCSC1.so" todir="${dist}/lib/lib32" />
 		<copy file="lib/lib32/libpkcs11wrapper.so" todir="${dist}/lib/lib32" />

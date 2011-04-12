@@ -119,6 +119,8 @@ build-extension
 	<property name="sig_options_comp_bcmail_jar" value="bcmail-jdk16-146.jar"/>
 	<property name="sig_options_comp_bcprov_jar" value="bcprov-jdk16-146.jar"/>
 
+	<property name="sig_options_comp_bctsp_jar" value="bctsp-jdk16-146.jar"/>
+	
 	<property name="sing_comp" value="${project_friendly_name}-sing_var_uno"/>
 	<property name="sing_comp_dir" value="${sing_comp}/dist"/>
 	<property name="sing_comp_jar" value="${sing_comp}.uno.jar"/>
@@ -205,6 +207,7 @@ build-extension
 		<!-- ROB copy BC libs -->
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcmail_jar}" todir="${extension_dest_dir}" />
 		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bcprov_jar}" todir="${extension_dest_dir}" />
+		<copy file="${basedir}/../${sig_options_comp_dir}/lib/${sig_options_comp_bctsp_jar}" todir="${extension_dest_dir}" />
 
 		
 		<!--beppec56 for pkcs#11 wrapper native libraries -->

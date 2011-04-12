@@ -72,6 +72,8 @@ the default target must be removed
 	<property name="bcmail_jar" value="bcmail-jdk16-146.jar"/>
 	<property name="bcprov_jar" value="bcprov-jdk16-146.jar"/>
 
+	<property name="bctsp_jar" value="bctsp-jdk16-146.jar"/>
+	
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
@@ -181,6 +183,7 @@ the default target must be removed
 				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}-sig_opt_uno.uno.jar" />
 				<pathelement path="${bc_classes_path}/${bcmail_jar}" />
 				<pathelement path="${bc_classes_path}/${bcprov_jar}" />
+				<pathelement path="${bc_classes_path}/${bctsp_jar}" />
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -230,7 +233,7 @@ the default target must be removed
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" />
 				<!-- attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" / -->
-				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${bcmail_jar} ${bcprov_jar}"/> 
+				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${bcmail_jar} ${bcprov_jar} ${bctsp_jar}"/> 
 			</manifest>
 		</jar>
 	</target>
