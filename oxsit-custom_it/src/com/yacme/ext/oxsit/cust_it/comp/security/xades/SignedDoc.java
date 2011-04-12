@@ -44,13 +44,16 @@
 package com.yacme.ext.oxsit.cust_it.comp.security.xades;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -59,6 +62,7 @@ import java.util.UUID;
 
 import javax.crypto.Cipher;
 
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
@@ -94,7 +98,7 @@ public class SignedDoc {
     public static final String VERSION_1_4 = "1.4";
     /** the only supported algorithm is SHA1 */
     public static final String SHA1_DIGEST_ALGORITHM = "http://www.w3.org/2000/09/xmldsig#sha1";
-    /** SHA1 digest data is always 20 bytes */
+    /** SHA1 digest data is allways 20 bytes */
     public static final int SHA1_DIGEST_LENGTH = 20;
     /** the only supported canonicalization method is 20010315 */
     public static final String CANONICALIZATION_METHOD_20010315 = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
@@ -113,7 +117,7 @@ public class SignedDoc {
 	/** program & library version */
 	public static final String LIB_VERSION = "2.3.29";
 
-	
+    
     /** 
      * Creates new SignedDoc 
      * Initializes everything to null
@@ -141,27 +145,6 @@ public class SignedDoc {
     }
 
     /**
-     * Accessor for version attribute
-     * @return value of version attribute
-     */
-    public String getVersion() {
-        return m_version;
-    }
-    
-    /**
-     * Mutator for version attribute
-     * @param str new value for version attribute
-     * @throws SignedDocException for validation errors
-     */    
-    public void setVersion(String str) 
-        throws SignedDocException
-    {
-    	SignedDocException ex = validateVersion(str);
-        if(ex != null)
-            throw ex;
-        m_version = str;
-    }
-    /**
      * Accessor for format attribute
      * @return value of format attribute
      */
@@ -177,11 +160,54 @@ public class SignedDoc {
     public void setFormat(String str) 
         throws SignedDocException
     {
-    	SignedDocException ex = validateFormat(str);
+        SignedDocException ex = validateFormat(str);
         if(ex != null)
             throw ex;
         m_format = str;
-    }  
+    }
+        
+    /**
+     * Helper method to validate a format
+     * @param str input data
+     * @return exception or null for ok
+     */
+    private SignedDocException validateFormat(String str)
+    {
+    	//ROB
+        SignedDocException ex = null;
+        if(str == null || 
+          (!str.equals(FORMAT_SK_XML) && !str.equals(FORMAT_DIGIDOC_XML)) && !str.equals(FORMAT_ODF_XADES) ||
+          (str.equals(FORMAT_SK_XML) && m_version != null && !m_version.equals(VERSION_1_0)) ||
+          (str.equals(FORMAT_DIGIDOC_XML) && m_version != null && 
+            !m_version.equals(VERSION_1_1) && 
+            !m_version.equals(VERSION_1_2) &&
+            !m_version.equals(VERSION_1_3)) )
+            ex = new SignedDocException(SignedDocException.ERR_DIGIDOC_FORMAT, 
+                "Currently supports only SK-XML and DIGIDOC-XML formats", null);
+        return ex;
+    }
+
+    /**
+     * Accessor for version attribute
+     * @return value of version attribute
+     */
+    public String getVersion() {
+        return m_version;
+    }
+    
+    /**
+     * Mutator for version attribute
+     * @param str new value for version attribute
+     * @throws SignedDocException for validation errors
+     */    
+    public void setVersion(String str) 
+        throws SignedDocException
+    {
+        SignedDocException ex = validateVersion(str);
+        if(ex != null)
+            throw ex;
+        m_version = str;
+    }
     
     /**
      * Helper method to validate a version
@@ -191,7 +217,7 @@ public class SignedDoc {
     private SignedDocException validateVersion(String str)
     {
     	//ROB
-    	SignedDocException ex = null;
+        SignedDocException ex = null;
         if(str == null || 
           (!str.equals(VERSION_1_0) && !str.equals(VERSION_1_1) && 
            !str.equals(VERSION_1_2) && !str.equals(VERSION_1_3) &&
@@ -205,297 +231,135 @@ public class SignedDoc {
         return ex;
     }
 
-    /****************************************************
-     * methods from /JDigiDoc.old/src/it/plio/ext/oxsit/signature/test/ODFXadesSignedDoc.java
-     * written by ROB. 
-     * 
-     */
-	/**
-	 * Helper method to validate a format
-	 * 
-	 * @param str
-	 *            input data
-	 * @return exception or null for ok
-	 */
-	private SignedDocException validateFormat(String str) {
-		SignedDocException ex = null;
-		if (str == null || (!str.equals(FORMAT_ODF_XADES)))
-			ex = new SignedDocException(SignedDocException.ERR_DIGIDOC_FORMAT,
-					"Currently supports only ODF_XADES format", null);
-		return ex;
-	}
-
-	/**
-	 * Writes the SignedDoc to an output file and automatically calculates
-	 * DataFile sizes and digests
-	 * 
-	 * @param outputFile
-	 *            output file name
-	 * @throws SignedDocException
-	 *             for all errors
-	 */
-	public void writeToStream(OutputStream os) throws SignedDocException {
-		// TODO read DataFile elements from old file
-
-		try {
-			os.write(xmlHeader().getBytes());
-			//ROB: no xml output for ExternalDataFile
-			/*
-			for (int i = 0; i < countDataFiles(); i++) {
-				DataFile df = getDataFile(i);
-				df.writeToFile(os);
-				os.write("\n".getBytes());
-			}
-			*/
-			for (int i = 0; i < countSignatures(); i++) {
-				Signature sig = getSignature(i);
-				os.write(sig.toXML());
-				os.write("\n".getBytes());
-			}
-			os.write(xmlTrailer().getBytes());
-		} catch (SignedDocException ex) {
-			throw ex; // already handled
-		} catch (Exception ex) {
-			SignedDocException.handleException(ex,
-					SignedDocException.ERR_WRITE_FILE);
-		}
-	}
-	
-	
-	//ROB: From uji
-	//FIXME BeppeC: this need to be modified and adapted to access
-	//the currently active ODF file using OOo API
-//	public byte[] addODFData(ODFDocument odf) throws SignedDocException {
-//		
-//		byte[] manifestBytes = null;
-//		
-//		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-//				.newInstance();
-//		documentBuilderFactory.setNamespaceAware(true);
-//		DocumentBuilder documentBuilder;
-//		try {
-//			documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//
-//			// Acceso al manifest.xml y a la lista de elementos que contiene
-//			InputStream manifest = new ByteArrayInputStream(odf
-//					.getEntry("META-INF/manifest.xml"));
-//
-//			Document docManifest = documentBuilder.parse(manifest);
-//			Element rootManifest = docManifest.getDocumentElement();
-//			NodeList listFileEntry = rootManifest
-//					.getElementsByTagName("manifest:file-entry");
-//
-//			for (int i = 0; i < listFileEntry.getLength(); i++) {
-//				Element e = ((Element) listFileEntry.item(i));
-//
-//				String fullPath = e.getAttribute("manifest:full-path");
-//				String mediaType = e.getAttribute("manifest:media-type");
-//
-//				// Solo procesamos los ficheros
-//				if (!fullPath.endsWith("/")
-//						&& !fullPath.equals("META-INF/documentsignatures.xml")) {
-//					if ((odf.getEntry(fullPath).length != 0)
-//							&& (fullPath.equals("manifest.rdf") || fullPath
-//									.endsWith(".xml"))) {
-//						// Obtenemos el fichero, canonizamos y calculamos el
-//						// digest
-//						InputStream xmlFile = new ByteArrayInputStream(odf
-//								.getEntry(fullPath));
-//
-//						ExternalDataFile df = new ExternalDataFile(xmlFile,
-//								fullPath, mediaType, fullPath,
-//								ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY,
-//								this);
-//						addDataFile(df);
-//
-//					} else {
-//
-//						InputStream binaryStream = new ByteArrayInputStream(odf
-//								.getEntry(fullPath));
-//						ExternalDataFile df = new ExternalDataFile(binaryStream,
-//								fullPath, mediaType, fullPath,
-//								ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY,
-//								this);
-//						addDataFile(df);
-//
-//					}
-//
-//				}
-//			}
-//			// ROB: mimetype
-//			if (odf.hasEntry("mimetype")) {
-//
-//				InputStream xmlStream = new ByteArrayInputStream(odf
-//						.getEntry("mimetype"));
-//				ExternalDataFile df = new ExternalDataFile(xmlStream, "mimetype",
-//						"text/text", "mimetype",
-//						ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY, this);
-//				addDataFile(df);
-//			}
-//
-//			// ROB creazione del data file per manifest.xml aggiornato
-//			// Añadimos el fichero de firma al manifest.xml
-//			// Aggiungiamo a manifest.xml l'entry per documensignatures.xml
-//			Element nodeDocumentSignatures = docManifest
-//					.createElement("manifest:file-entry");
-//			nodeDocumentSignatures.setAttribute("manifest:media-type", "");
-//			nodeDocumentSignatures.setAttribute("manifest:full-path",
-//					"META-INF/xadessignatures.xml");
-//			rootManifest.appendChild(nodeDocumentSignatures);
-//
-//			Element nodeMetaInf = docManifest
-//					.createElement("manifest:file-entry");
-//			nodeMetaInf.setAttribute("manifest:media-type", "");
-//			nodeMetaInf.setAttribute("manifest:full-path", "META-INF/");
-//			rootManifest.appendChild(nodeMetaInf);
-//			
-//			ByteArrayOutputStream manifestOs = new ByteArrayOutputStream();
-//			writeXML(manifestOs, rootManifest, false);
-//			manifestBytes = manifestOs.toByteArray();
-//			ByteArrayInputStream manifestIs = new ByteArrayInputStream(manifestBytes);
-//			
-//			ExternalDataFile df = new ExternalDataFile(manifestIs, "META-INF/manifest.xml",
-//					"text/text", "META-INF/manifest.xml",
-//					ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY, this);
-//			addDataFile(df);
-//			
-//			
-//			
-//
-//		} catch (ParserConfigurationException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SAXException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (TransformerFactoryConfigurationError e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (TransformerException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return manifestBytes;
-//	}
-
-
-	/**
-	 * return a new available Signature id
-	 * 
-	 * @return new Signature id
-	 */
-	public String getNewSignatureId() {
-		String id = "ID_"+UUID.randomUUID().toString();
-		return id;
-	}
-
-	/**
-	 * Adds a new uncomplete signature to signed doc
-	 * 
-	 * @param cert
-	 *            signers certificate
-	 * @param claimedRoles
-	 *            signers claimed roles
-	 * @param adr
-	 *            signers address
-	 * @return new Signature object
-	 */
-	//FIXME BeppeC: this need to be modified and adapted to access
-	//the currently active ODF file using OOo API
-	public Signature prepareSignature(X509Certificate cert,
-			String[] claimedRoles, SignatureProductionPlace adr)
-			throws SignedDocException {
-		Signature sig = new Signature(this);
-		sig.setId(getNewSignatureId());
-		// create SignedInfo block
-		SignedInfo si = new SignedInfo(sig, RSA_SHA1_SIGNATURE_METHOD,
-				CANONICALIZATION_METHOD_20010315);
-		// add DataFile references
-		for (int i = 0; i < countDataFiles(); i++) {
-			DataFile df = getDataFile(i);
-			Reference ref = new Reference(si, df);
-			ref.setUri(df.getId());
-			si.addReference(ref);
-		}
-		// create key info
-		KeyInfo ki = new KeyInfo(cert);
-		sig.setKeyInfo(ki);
-		ki.setSignature(sig);
-		CertValue cval = new CertValue();
-		cval.setType(CertValue.CERTVAL_TYPE_SIGNER);
-		cval.setCert(cert);
-		sig.addCertValue(cval);
-		CertID cid = new CertID(sig, cert, CertID.CERTID_TYPE_SIGNER);
-		sig.addCertID(cid);
-		// create signed properties
-		SignedProperties sp = new SignedProperties(sig, cert, claimedRoles, adr);
-		sp.setId("ID_"+UUID.randomUUID().toString());
-
-		Reference ref = new Reference(si, sp);
-		ref.setUri("#"+sp.getId());
-		si.addReference(ref);
-		sig.setSignedInfo(si);
-		sig.setSignedProperties(sp);
-		addSignature(sig);
-		return sig;
-	}
-	  
     /**
-     * Adds a new Signature object
-     * @param attr Signature object to add
+     * return the count of DataFile objects
+     * @return count of DataFile objects
      */
-    public void addSignature(Signature sig) 
+    public int countDataFiles()
     {
-        if(m_signatures == null)
-            m_signatures = new ArrayList();
-        m_signatures.add(sig);
-    }
-
-	/**
-	 * Helper method to create the xml header
-	 * 
-	 * @return xml header
-	 */
-	private String xmlHeader() {
-		StringBuffer sb = new StringBuffer(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<document-signatures xmlns=\"");
-		sb.append(getFormat());
-		sb.append("\">\n");
-		return sb.toString();
-	}
-
-	/**
-	 * Helper method to create the xml trailer
-	 * 
-	 * @return xml trailer
-	 */
-	private String xmlTrailer() {
-		return "\n</document-signatures>";
-	}
-
-    /**
-     * return the count of Signature objects
-     * @return count of Signature objects
-     */
-    public int countSignatures()
-    {
-        return ((m_signatures == null) ? 0 : m_signatures.size());
+        return ((m_dataFiles == null) ? 0 : m_dataFiles.size());
     }
     
     /**
-     * return the desired Signature object
-     * @param idx index of the Signature object
-     * @return desired Signature object
+     * Removes temporary DataFile cache files
      */
-    public Signature getSignature(int idx) {
-        return (Signature)m_signatures.get(idx);
+    public void cleanupDfCache() {
+    	for(int i = 0; (m_dataFiles != null) && (i < m_dataFiles.size()); i++) {
+    		DataFile df = (DataFile)m_dataFiles.get(i);
+    		df.cleanupDfCache();
+    	}
+    }
+
+    /**
+     * return a new available DataFile id
+     * @retusn new DataFile id
+     */
+    public String getNewDataFileId()
+    {
+        int nDf = 0;
+        String id = "D" + nDf;
+        boolean bExists = false;
+        do {
+            bExists = false;
+            for(int d = 0; d < countDataFiles(); d++) {
+                DataFile df = getDataFile(d);
+                if(df.getId().equals(id)) {
+                    nDf++;
+                    id = "D" + nDf;
+                    bExists = true;
+                    continue;
+                }
+            }
+        } while(bExists);
+        return id;
     }
     
+    /**
+     * Adds a new DataFile to signed doc
+     * @param inputFile input file name
+     * @param mime files mime type
+     * @param contentType DataFile's content type
+     * @return new DataFile object
+     */
+    public DataFile addDataFile(File inputFile, String mime, String contentType)
+        throws SignedDocException
+    {
+        DataFile df = new DataFile(getNewDataFileId(), contentType, inputFile.getAbsolutePath(), mime, this);
+        addDataFile(df); 
+        return df;
+    }
+    
+    /**
+     * Writes the SignedDoc to an output file
+     * and automatically calculates DataFile sizes
+     * and digests
+     * @param outputFile output file name
+     * @throws SignedDocException for all errors
+     */
+    public void writeToFile(File outputFile)
+        throws SignedDocException
+    {
+        try {
+            //System.out.println("Write to file: " + outputFile.getAbsoluteFile());
+            FileOutputStream fos = new FileOutputStream(outputFile);
+            writeToStream(fos);
+            fos.close();
+            //System.out.println("Write complete!");
+        } catch(SignedDocException ex) {
+            throw ex; // allready handled
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
+        }
+    }
+    
+    /**
+     * Writes the SignedDoc to an output file
+     * and automatically calculates DataFile sizes
+     * and digests
+     * @param outputFile output file name
+     * @throws SignedDocException for all errors
+     */
+    public void writeToStream(OutputStream os)
+        throws SignedDocException
+    {
+        // TODO read DataFile elements from old file
+        
+        try {
+            os.write(xmlHeader().getBytes());
+            for(int i = 0; i < countDataFiles(); i++) {
+                DataFile df = getDataFile(i);
+                df.writeToFile(os);
+                os.write("\n".getBytes());
+            }
+            for(int i = 0; i < countSignatures(); i++) {
+                Signature sig = getSignature(i);
+                os.write(sig.toXML());
+                os.write("\n".getBytes());
+            }
+            os.write(xmlTrailer().getBytes());
+        } catch(SignedDocException ex) {
+            throw ex; // allready handled
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
+        }
+    }
+  
+    /**
+     * Adds a new DataFile object
+     * @param attr DataFile object to add
+     */
+    public void addDataFile(DataFile df) 
+        throws SignedDocException
+    {
+        if(countSignatures() > 0)
+            throw new SignedDocException(SignedDocException.ERR_SIGATURES_EXIST,
+                "Cannot add DataFiles when signatures exist!", null);
+        if(m_dataFiles == null)
+            m_dataFiles = new ArrayList();
+        if(df.getId() == null)
+        	df.setId(getNewDataFileId());
+        m_dataFiles.add(df);        
+    }
     
     /**
      * return the desired DataFile object
@@ -507,57 +371,210 @@ public class SignedDoc {
     }
 
     /**
-     * return the count of DataFile objects
-     * @return count of DataFile objects
+     * return the latest DataFile object
+     * @return desired DataFile object
      */
-    public int countDataFiles()
-    {
-        return ((m_dataFiles == null) ? 0 : m_dataFiles.size());
+    public DataFile getLastDataFile() {
+        return (DataFile)m_dataFiles.get(m_dataFiles.size()-1);
     }
-
-	//ROB: From uji
-	//FIXME: this procedure writes the signature file to ODF doc, needs to be adapted to ODF from OOo
-	
-//	private static void writeXML(OutputStream outStream, Node node,
-//			boolean indent) throws TransformerFactoryConfigurationError,
-//			TransformerException {
-//		writeXML(new BufferedWriter(new OutputStreamWriter(outStream, Charset
-//				.forName("UTF-8"))), node, indent);
-//	}
-
-//	private static void writeXML(Writer writer, Node node, boolean indent)
-//			throws TransformerFactoryConfigurationError, TransformerException {
-//		Transformer serializer = TransformerFactory.newInstance()
-//				.newTransformer();
-//		serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//
-//		if (indent) {
-//			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-//		}
-//		serializer.transform(new DOMSource(node), new StreamResult(writer));
-//	}
-	/*********** end of methods from 	 */
-
     
     /**
-     * Computes an SHA1 digest
-     * @param data input data
-     * @return SHA1 digest
+     * Removes the datafile with the given index
+     * @param idx index of the data file
      */
-    public static byte[] digest(byte[] data)
-        throws SignedDocException 
+    public void removeDataFile(int idx) 
+    	throws SignedDocException
     {
-        byte[] dig = null;
-        try {
-            MessageDigest sha = MessageDigest.getInstance("SHA-1");
-            sha.update(data);
-            dig = sha.digest();
-        } catch(Exception ex) {
-            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST);
-        }
-        return dig;
+    	if(countSignatures() > 0)
+        	throw new SignedDocException(SignedDocException.ERR_SIGATURES_EXIST,
+               	"Cannot remove DataFiles when signatures exist!", null);
+        m_dataFiles.remove(idx);
     }
     
+    /**
+     * return the count of Signature objects
+     * @return count of Signature objects
+     */
+    public int countSignatures()
+    {
+        return ((m_signatures == null) ? 0 : m_signatures.size());
+    }
+    
+    /**
+     * return a new available Signature id
+     * @return new Signature id
+     */
+    public String getNewSignatureId()
+    {
+        int nS = 0;
+        String id = "S" + nS;
+        boolean bExists = false;
+        do {
+            bExists = false;
+            for(int i = 0; i < countSignatures(); i++) {
+                Signature sig = getSignature(i);
+                if(sig.getId().equals(id)) {
+                    nS++;
+                    id = "S" + nS;
+                    bExists = true;
+                    continue;
+                }
+            }
+        } while(bExists);
+        return id;
+    }
+    
+    /**
+     * Find signature by id atribute value
+     * @param sigId signature Id atribute value
+     * @return signature object or null if not found
+     */
+    public Signature findSignatureById(String sigId)
+    {
+    	for(int i = 0; i < countSignatures(); i++) {
+            Signature sig = getSignature(i);
+            if(sig.getId().equals(sigId))
+                return sig;
+        }
+    	return null;
+    }
+    
+    /**
+     * Adds a new uncomplete signature to signed doc
+     * @param cert signers certificate
+     * @param claimedRoles signers claimed roles
+     * @param adr signers address
+     * @return new Signature object
+     */
+    public Signature prepareSignature(X509Certificate cert, 
+        String[] claimedRoles, SignatureProductionPlace adr)
+        throws SignedDocException
+    {
+        Signature sig = new Signature(this);
+        sig.setId(getNewSignatureId());
+        // create SignedInfo block
+        SignedInfo si = new SignedInfo(sig, RSA_SHA1_SIGNATURE_METHOD, 
+            CANONICALIZATION_METHOD_20010315);
+        // add DataFile references
+        for(int i = 0; i < countDataFiles(); i++) {
+            DataFile df = getDataFile(i);
+            Reference ref = new Reference(si, df);
+            si.addReference(ref);
+        }
+        // create key info
+        KeyInfo ki = new KeyInfo(cert);
+        sig.setKeyInfo(ki);
+        ki.setSignature(sig);
+        CertValue cval = new CertValue();
+        cval.setType(CertValue.CERTVAL_TYPE_SIGNER);
+        cval.setCert(cert);
+        sig.addCertValue(cval);
+        CertID cid = new CertID(sig, cert, CertID.CERTID_TYPE_SIGNER);
+        sig.addCertID(cid);
+        // create signed properties
+        SignedProperties sp = new SignedProperties(sig, cert, claimedRoles, adr);
+        Reference ref = new Reference(si, sp);
+        si.addReference(ref);
+        sig.setSignedInfo(si);
+        sig.setSignedProperties(sp);
+        addSignature(sig);
+        return sig;
+    }
+  
+    /**
+     * Adds a new Signature object
+     * @param attr Signature object to add
+     */
+    public void addSignature(Signature sig) 
+    {
+        if(m_signatures == null)
+            m_signatures = new ArrayList();
+        m_signatures.add(sig);
+    }
+    
+    /**
+     * Adds a new Signature object by reading it from
+     * input stream. This method can be used for example
+     * during mobile signing process where the web-service
+     * returns new signature in XML
+     * @param is input stream
+     */
+    public void readSignature(InputStream is)
+    	throws SignedDocException
+    {
+    	DigiDocFactory ddfac = ConfigManager.instance().getDigiDocFactory();
+    	Signature sig = ddfac.readSignature(this, is);
+    }
+    
+    /**
+     * return the desired Signature object
+     * @param idx index of the Signature object
+     * @return desired Signature object
+     */
+    public Signature getSignature(int idx) {
+        return (Signature)m_signatures.get(idx);
+    }
+    
+    /**
+     * Removes the desired Signature object
+     * @param idx index of the Signature object
+     */
+    public void removeSignature(int idx)
+    {
+    	m_signatures.remove(idx);
+    }
+    
+    /**
+     * return the latest Signature object
+     * @return desired Signature object
+     */
+    public Signature getLastSignature() {
+    	if(m_signatures != null && m_signatures.size() > 0)
+    		return (Signature)m_signatures.get(m_signatures.size()-1);
+    	else
+    		return null;
+    }
+
+	/** 
+	 * Deletes last signature
+	 */
+	public void removeLastSiganture()
+	{
+		if(m_signatures.size() > 0)
+			m_signatures.remove(m_signatures.size()-1);
+	}
+	
+    /**
+     * Helper method to validate the whole
+     * SignedDoc object
+     * @param bStrong flag that specifies if Id atribute value is to
+     * be rigorously checked (according to digidoc format) or only
+     * as required by XML-DSIG
+     * @return a possibly empty list of SignedDocException objects
+     */
+    public ArrayList validate(boolean bStrong)
+    {
+        ArrayList errs = new ArrayList();
+        SignedDocException ex = validateFormat(m_format);
+        if(ex != null)
+            errs.add(ex);
+        ex = validateVersion(m_version);
+        if(ex != null)
+            errs.add(ex);
+        for(int i = 0; i < countDataFiles(); i++) {
+            DataFile df = getDataFile(i);
+            ArrayList e = df.validate(bStrong);
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }
+        for(int i = 0; i < countSignatures(); i++) {
+            Signature sig = getSignature(i);
+            ArrayList e = sig.validate();
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }                
+        return errs;
+    }
 
     /**
      * Helper method to verify the whole SignedDoc object. 
@@ -580,6 +597,123 @@ public class SignedDoc {
         	errs.add(new SignedDocException(SignedDocException.ERR_NOT_SIGNED, "This document is not signed!", null));
         }            
         return errs;
+    }
+    
+
+    /**
+     * Helper method to verify the whole SignedDoc object. 
+     * Use this method to verify all signatures
+     * @param checkDate Date on which to check the signature validity
+     * @param bUseOcsp true if you demand OCSP confirmation from
+     * every signature. False if you want to check against CRL.
+     * @return a possibly empty list of SignedDocException objects
+     */
+    public ArrayList verifyOcspOrCrl(boolean checkDate, boolean bUseOcsp)
+    {
+        ArrayList errs = validate(false);
+        for(int i = 0; i < countSignatures(); i++) {
+            Signature sig = getSignature(i);
+            ArrayList e = sig.verifyOcspOrCrl(this, checkDate, bUseOcsp);
+            if(!e.isEmpty())
+                errs.addAll(e);
+        }    
+        if(countSignatures() == 0) {
+        	errs.add(new SignedDocException(SignedDocException.ERR_NOT_SIGNED, "This document is not signed!", null));
+        }            
+        return errs;
+    }
+
+    /**
+     * Helper method to create the xml header
+     * @return xml header
+     */
+    private String xmlHeader()
+    {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sb.append("<SignedDoc format=\""); 
+        sb.append(m_format);
+        sb.append("\" version=\"");
+        sb.append(m_version);
+        sb.append("\"");
+        // namespace
+        if(m_version.equals(VERSION_1_3)) {
+        	sb.append(" xmlns=\"");
+        	sb.append(xmlns_digidoc);
+        	sb.append("\"");
+        }
+        sb.append(">\n");
+        return sb.toString();
+    }
+    
+    /**
+     * Helper method to create the xml trailer
+     * @return xml trailer
+     */
+    private String xmlTrailer()
+    {
+        return "\n</SignedDoc>";
+    }
+    
+    /**
+     * Converts the SignedDoc to XML form
+     * @return XML representation of SignedDoc
+     */
+    public String toXML()
+    throws SignedDocException
+    {
+    	//System.out.println("TO-XML:");
+        StringBuffer sb = new StringBuffer(xmlHeader());
+        //System.out.println("DFS: " + countDataFiles());
+        for(int i = 0; i < countDataFiles(); i++) {
+            DataFile df = getDataFile(i);
+            String str = df.toString();
+            //System.out.println("DF: " + df.getId() + " size: " + str.length());
+            sb.append(str);
+            sb.append("\n");
+        }
+        //System.out.println("SIGS: " + countSignatures());
+        for(int i = 0; i < countSignatures(); i++) {
+            Signature sig = getSignature(i);
+            String str = sig.toString();
+            //System.out.println("SIG: " + sig.getId() + " size: " + str.length());
+            sb.append(str);
+            sb.append("\n");
+        }
+        sb.append(xmlTrailer());        
+        //System.out.println("Doc size: " + sb.toString().length());
+        return sb.toString();
+    }
+
+    /**
+     * return the stringified form of SignedDoc
+     * @return SignedDoc string representation
+     */
+    public String toString() 
+    {
+        String str = null;
+        try {
+            str = toXML();
+        } catch(Exception ex) {}
+        return str;
+    }   
+    
+    /**
+     * Computes an SHA1 digest
+     * @param data input data
+     * @return SHA1 digest
+     */
+    public static byte[] digest(byte[] data)
+        throws SignedDocException 
+    {
+        byte[] dig = null;
+        try {
+            MessageDigest sha = MessageDigest.getInstance("SHA-1");
+            sha.update(data);
+            dig = sha.digest();
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST);
+        }
+        return dig;
     }
     
     /**
@@ -629,56 +763,6 @@ public class SignedDoc {
         }
         return rc;
     }
-    
-    /**
-     * Helper method for comparing
-     * digest values
-     * @param dig1 first digest value
-     * @param dig2 second digest value
-     * @return true if they are equal
-     */
-    public static boolean compareDigests(byte[] dig1, byte[] dig2)
-    {
-        boolean ok = (dig1 != null) && (dig2 != null) && 
-            (dig1.length == dig2.length);
-        for(int i = 0; ok && (i < dig1.length); i++)
-            if(dig1[i] != dig2[i])
-                ok = false;
-        return ok;
-    }
-
-    /**
-     * Helper method to validate the whole
-     * SignedDoc object
-     * @param bStrong flag that specifies if Id atribute value is to
-     * be rigorously checked (according to digidoc format) or only
-     * as required by XML-DSIG
-     * @return a possibly empty list of SignedDocException objects
-     */
-    public ArrayList validate(boolean bStrong)
-    {
-        ArrayList errs = new ArrayList();
-        SignedDocException ex = validateFormat(m_format);
-        if(ex != null)
-            errs.add(ex);
-        ex = validateVersion(m_version);
-        if(ex != null)
-            errs.add(ex);
-        for(int i = 0; i < countDataFiles(); i++) {
-            DataFile df = getDataFile(i);
-            ArrayList e = df.validate(bStrong);
-            if(!e.isEmpty())
-                errs.addAll(e);
-        }
-        for(int i = 0; i < countSignatures(); i++) {
-            Signature sig = getSignature(i);
-            ArrayList e = sig.validate();
-            if(!e.isEmpty())
-                errs.addAll(e);
-        }                
-        return errs;
-    }
-
 
     /**
      * return certificate owners first name
@@ -826,6 +910,123 @@ public class SignedDoc {
         return data;
     }
 
+    /**
+     * Reads the cert from a file
+     * @param certFile certificates file name
+     * @return certificate object
+     */
+    public static X509Certificate readCertificate(File certFile)
+        throws SignedDocException
+    {
+        X509Certificate cert = null;
+        try {
+        	FileInputStream fis = new FileInputStream(certFile);
+        	CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+      		cert = (X509Certificate)certificateFactory.generateCertificate(fis);
+      		fis.close();
+        	//byte[] data = readFile(certFile);
+            //cert = readCertificate(data);
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
+        }
+        return cert;
+    }
+    
+    /**
+     * Reads the cert from a file, URL or from another
+     * location somewhere in the CLASSPATH such as
+     * in the librarys jar file.
+     * @param certLocation certificates file name,
+     * or URL. You can use url in form jar://<location> to read
+     * a certificate from the car file or some other location in the
+     * CLASSPATH
+     * @return certificate object
+     */
+    public static X509Certificate readCertificate(String certLocation)
+        throws SignedDocException
+    {
+        X509Certificate cert = null;
+        try {
+        	InputStream isCert = null;
+            URL url = null;
+            if(certLocation.startsWith("http")) {
+                url = new URL(certLocation);
+                isCert = url.openStream();
+            } else if(certLocation.startsWith("jar://")) {
+              ClassLoader cl = ConfigManager.instance().getClass().getClassLoader();
+              isCert = cl.getResourceAsStream(certLocation.substring(6));
+            } else {
+            	isCert = new FileInputStream(certLocation);
+            }
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+      		cert = (X509Certificate)certificateFactory.generateCertificate(isCert);
+      		isCert.close();
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
+        }
+        return cert;
+    }
+    
+    /**
+     * Helper method for comparing
+     * digest values
+     * @param dig1 first digest value
+     * @param dig2 second digest value
+     * @return true if they are equal
+     */
+    public static boolean compareDigests(byte[] dig1, byte[] dig2)
+    {
+        boolean ok = (dig1 != null) && (dig2 != null) && 
+            (dig1.length == dig2.length);
+        for(int i = 0; ok && (i < dig1.length); i++)
+            if(dig1[i] != dig2[i])
+                ok = false;
+        return ok;
+    }
+    
+    /** 
+     * Converts a hex string to byte array
+     * @param hexString input data
+     * @return byte array
+     */
+    public static byte[] hex2bin(String hexString)
+    {
+    	//System.out.println("hex2bin: " + hexString);
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	try {
+    		for(int i = 0; (hexString != null) && 
+    			(i < hexString.length()); i += 2) {
+				String tmp = hexString.substring(i, i+2);  
+				//System.out.println("tmp: " + tmp);  		
+    			Integer x = new Integer(Integer.parseInt(tmp, 16));
+    			//System.out.println("x: " + x);
+    			bos.write(x.byteValue());    			
+    		}
+    	} catch(Exception ex) {
+    		System.err.println("Error converting hex string: " + ex);
+    	}
+    	return bos.toByteArray();
+    }
+    
+    /**
+     * Converts a byte array to hex string
+     * @param arr byte array input data
+     * @return hex string
+     */
+    public static String bin2hex(byte[] arr)
+    {
+    	StringBuffer sb = new StringBuffer();
+    	for(int i = 0; i < arr.length; i++) {
+    		String str = Integer.toHexString((int)arr[i]);
+    		if(str.length() == 2)
+    			sb.append(str);
+    		if(str.length() < 2) {
+    			sb.append("0");
+    			sb.append(str);
+    		}
+    		if(str.length() > 2)
+    			sb.append(str.substring(str.length()-2));
+    	}
+    	return sb.toString();
+    }
 }
-
-
