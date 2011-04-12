@@ -13,17 +13,20 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedODFDocumentExceptio
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CRLFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.EncryptedDataParser_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.EncryptedStreamParser;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SignatureFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.TimestampFactory_IT;
 
 /**
  * Configuration reader for JDigiDoc
  */
-public class ConfigManager_IT {
+public class ConfigManager {
     /** Resource bundle */
     private static Properties m_props = null;
     /** singleton instance */
-    private static ConfigManager_IT m_instance = null;
+    private static ConfigManager m_instance = null;
     /** notary factory instance */
     private static NotaryFactory_IT m_notFac = null;
     /** canonicalization factory instance */
@@ -33,7 +36,7 @@ public class ConfigManager_IT {
     /** CRL factory instance */
     private static CRLFactory_IT m_crlFac = null;
     /** XML-ENC parser factory instance */
-    private static EncryptedDataParser m_dencFac = null;
+    private static EncryptedDataParser_IT m_dencFac = null;
     /** XML-ENC parses for large encrypted files */
     private static EncryptedStreamParser m_dstrFac = null;
     /** loh4j logger */
@@ -42,19 +45,19 @@ public class ConfigManager_IT {
     /**
      * Singleton accessor
      */
-    public static ConfigManager_IT instance() {
+    public static ConfigManager instance() {
         if(m_instance == null)
-            m_instance = new ConfigManager_IT();
+            m_instance = new ConfigManager();
         return m_instance;
     }
     
     /**
      * ConfigManager default constructor
      */
-    private ConfigManager_IT() {
+    private ConfigManager() {
     	// initialize logging
-    	if(getProperty("DIGIDOC_LOG4J_CONFIG") != null)
-    		PropertyConfigurator.configure(getProperty("DIGIDOC_LOG4J_CONFIG"));
+//    	if(getProperty("DIGIDOC_LOG4J_CONFIG") != null)
+//    		PropertyConfigurator.configure(getProperty("DIGIDOC_LOG4J_CONFIG"));
 //    	m_logger = Logger.getLogger(ConfigManager.class);
     }
     
@@ -86,7 +89,7 @@ public class ConfigManager_IT {
                 url = new URL(cfgFileName);
                 isCfg = url.openStream();
             } else if(cfgFileName.startsWith("jar://")) {
-            	ClassLoader cl = ConfigManager_IT.class.getClassLoader();
+            	ClassLoader cl = ConfigManager.class.getClassLoader();
                 isCfg = cl.getResourceAsStream(cfgFileName.substring(6));
             } else {
                 isCfg = new FileInputStream(cfgFileName);
@@ -114,15 +117,15 @@ public class ConfigManager_IT {
     }
     
     /**
-     * Returns the SignatureFactory instance
-     * @return SignatureFactory implementation
+     * Returns the SignatureFactory_IT instance
+     * @return SignatureFactory_IT implementation
      */
-    public SignatureFactory getSignatureFactory()
+    public SignatureFactory_IT getSignatureFactory()
         throws SignedODFDocumentException_IT
     {
-    	SignatureFactory sigFac = null;
+    	SignatureFactory_IT sigFac = null;
         try {
-        	sigFac = (SignatureFactory)Class.
+        	sigFac = (SignatureFactory_IT)Class.
                     forName(getProperty("DIGIDOC_SIGN_IMPL")).newInstance();
             sigFac.init();
         } catch(SignedODFDocumentException_IT ex) {
@@ -134,18 +137,18 @@ public class ConfigManager_IT {
     }
     
     /**
-     * Returns the SignatureFactory instance
+     * Returns the SignatureFactory_IT instance
      * @param type type of signature factory
-     * @return SignatureFactory implementation
+     * @return SignatureFactory_IT implementation
      */
-    public SignatureFactory getSignatureFactory(String type)
+    public SignatureFactory_IT getSignatureFactory(String type)
         throws SignedODFDocumentException_IT
     {
-    	SignatureFactory sigFac = null;
+    	SignatureFactory_IT sigFac = null;
         try {
         	String strClass = getProperty("DIGIDOC_SIGN_IMPL_" + type);
         	if(strClass != null) {
-        		sigFac = (SignatureFactory)Class.
+        		sigFac = (SignatureFactory_IT)Class.
                     forName(strClass).newInstance();
                 if(sigFac != null)
             		sigFac.init();
@@ -244,15 +247,15 @@ public class ConfigManager_IT {
     }
 
 	/**
-	 * Returns the EncryptedDataParser instance
-	 * @return EncryptedDataParser implementation
+	 * Returns the EncryptedDataParser_IT instance
+	 * @return EncryptedDataParser_IT implementation
 	 */
-	public EncryptedDataParser getEncryptedDataParser()
+	public EncryptedDataParser_IT getEncryptedDataParser()
 		throws SignedODFDocumentException_IT
 	{
 		try {
 			if(m_dencFac == null)
-				m_dencFac = (EncryptedDataParser)Class.
+				m_dencFac = (EncryptedDataParser_IT)Class.
 					forName(getProperty("ENCRYPTED_DATA_PARSER_IMPL")).newInstance();
 			m_dencFac.init();            
 		} catch(SignedODFDocumentException_IT ex) {

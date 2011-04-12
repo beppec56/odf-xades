@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.Base64InputStream_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * Represents a DataFile instance, that either
@@ -199,7 +199,7 @@ public class DataFile_IT implements Serializable
     {
     	// copy data to temp file
     	try {
-    		File fCacheDir = new File(ConfigManager_IT.instance().
+    		File fCacheDir = new File(ConfigManager.instance().
         			getStringProperty("DIGIDOC_DF_CACHE_DIR", System.getProperty("java.io.tmpdir")));
         	String dfId = new Long(System.currentTimeMillis()).toString();
         	m_fDfCache = File.createTempFile(dfId, ".df", fCacheDir);
@@ -320,7 +320,7 @@ public class DataFile_IT implements Serializable
      */
     public boolean schouldUseTempFile()
     {
-    	long lMaxDfCached = ConfigManager_IT.instance().
+    	long lMaxDfCached = ConfigManager.instance().
 			getLongProperty("DIGIDOC_MAX_DATAFILE_CACHED", Long.MAX_VALUE);
     	return (m_size > lMaxDfCached);
     }
@@ -335,7 +335,7 @@ public class DataFile_IT implements Serializable
     {
     	m_fDfCache = null;
     	if(schouldUseTempFile()) {
-    		File fCacheDir = new File(ConfigManager_IT.instance().
+    		File fCacheDir = new File(ConfigManager.instance().
         			getStringProperty("DIGIDOC_DF_CACHE_DIR", System.getProperty("java.io.tmpdir")));
         	String dfId = new Long(System.currentTimeMillis()).toString();
         	m_fDfCache = File.createTempFile(dfId, ".df", fCacheDir);
@@ -832,7 +832,7 @@ public class DataFile_IT implements Serializable
             tmp = xmlTrailer();
             sbDig.write(tmp);
             //debugWriteFile(getId() + "-body1.xml", sbDig.toString());
-            CanonicalizationFactory canFac = ConfigManager_IT.
+            CanonicalizationFactory canFac = ConfigManager.
                     instance().getCanonicalizationFactory();
             tmp = canFac.canonicalize(sbDig.toByteArray(), 
                     SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
@@ -855,7 +855,7 @@ public class DataFile_IT implements Serializable
 	 */
 	protected byte[] canonicalizeXml(byte[] data) {
 		try {				 
-			CanonicalizationFactory_IT canFac = ConfigManager_IT.
+			CanonicalizationFactory_IT canFac = ConfigManager.
 				instance().getCanonicalizationFactory();
 			byte[] tmp = canFac.canonicalize(data, 
 					SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
@@ -946,7 +946,7 @@ public class DataFile_IT implements Serializable
 //    	if(m_logger.isDebugEnabled())
 //        	m_logger.debug("calculateFileSizeAndDigest(" + getId() + ")");
         boolean bUse64ByteLines = true;
-        String use64Flag = ConfigManager_IT.instance().getProperty("DATAFILE_USE_64BYTE_LINES");
+        String use64Flag = ConfigManager.instance().getProperty("DATAFILE_USE_64BYTE_LINES");
         if(use64Flag != null && use64Flag.equalsIgnoreCase("FALSE"))
         	bUse64ByteLines = false;
         try {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * @author beppe
@@ -508,7 +508,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
         throws SignedODFDocumentException_IT
     {
     	if(m_origDigest == null) {
-        	CanonicalizationFactory_IT canFac = ConfigManager_IT.
+        	CanonicalizationFactory_IT canFac = ConfigManager.
                     instance().getCanonicalizationFactory();
         	byte[] tmp = canFac.canonicalize(toXML(),  
                     SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);

@@ -59,7 +59,7 @@ import java.util.UUID;
 
 import javax.crypto.Cipher;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * @author beppe
@@ -606,7 +606,7 @@ public class SignedODFDocument_IT {
             sig.update(digest);
             rc = sig.verify(signature);
             */
-            Cipher cryptoEngine = Cipher.getInstance(ConfigManager_IT.
+            Cipher cryptoEngine = Cipher.getInstance(ConfigManager.
             	instance().getProperty("DIGIDOC_VERIFY_ALGORITHM"), "BC");
         	cryptoEngine.init(Cipher.DECRYPT_MODE, cert);
         	byte[] decryptedDigestValue = cryptoEngine.doFinal(signature);

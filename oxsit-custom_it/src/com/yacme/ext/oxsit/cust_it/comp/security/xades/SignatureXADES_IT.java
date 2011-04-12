@@ -57,7 +57,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CRLFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.TimestampFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * Models an XML-DSIG/ETSI Signature. A signature
@@ -608,13 +608,13 @@ public class SignatureXADES_IT implements Serializable {
     public void getConfirmation()
         throws SignedODFDocumentException_IT
     {
-        NotaryFactory_IT notFac = ConfigManager_IT.
+        NotaryFactory_IT notFac = ConfigManager.
 	    instance().getNotaryFactory();
         
         
         
         X509Certificate cert = m_keyInfo.getSignersCertificate();
-        DigiDocFactory_IT ddocFac = ConfigManager_IT.instance().getDigiDocFactory();
+        DigiDocFactory_IT ddocFac = ConfigManager.instance().getDigiDocFactory();
         X509Certificate caCert = ddocFac.findCAforCertificate(cert);
         //ROB
         notFac.checkCertificateOcspOrCrl(cert, false);
@@ -772,17 +772,17 @@ public class SignatureXADES_IT implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory_IT digFac = ConfigManager_IT.instance().getDigiDocFactory();
+        	DigiDocFactory_IT digFac = ConfigManager.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedODFDocumentException_IT ex) {
             errs.add(ex);
         }
         // if we check signatures using CRL
-        String verifier = ConfigManager_IT.instance().
+        String verifier = ConfigManager.instance().
                 getStringProperty("DIGIDOC_SIGNATURE_VERIFIER", "OCSP");
         if(verifier != null && verifier.equals("CRL")) {
         	try {
-        		CRLFactory_IT crlFac = ConfigManager_IT.instance().getCRLFactory();
+        		CRLFactory_IT crlFac = ConfigManager.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
             } catch(SignedODFDocumentException_IT ex) {
          	   errs.add(ex);
@@ -806,7 +806,7 @@ public class SignatureXADES_IT implements Serializable {
         if(m_timestamps != null && m_timestamps.size() > 0) {
         	TimestampFactory_IT tsFac = null;
         	try {
-        		tsFac = ConfigManager_IT.instance().getTimestampFactory();
+        		tsFac = ConfigManager.instance().getTimestampFactory();
         	} catch(SignedODFDocumentException_IT ex) {
         		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
         		errs.add(ex);
@@ -824,7 +824,7 @@ public class SignatureXADES_IT implements Serializable {
         	//System.out.println("OCSP time: " + do1);
         	//System.out.println("SignatureTimeStamp time: " + dt1);
         	//System.out.println("SigAndRefsTimeStamp time: " + dt2);
-        	int nMaxTsTimeErrSecs = ConfigManager_IT.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
+        	int nMaxTsTimeErrSecs = ConfigManager.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
         	dt1 = new Date(dt1.getTime() - (nMaxTsTimeErrSecs * 1000));
         	dt2 = new Date(dt2.getTime() + (nMaxTsTimeErrSecs * 1000));
         	//System.out.println("SignatureTimeStamp adj time: " + dt1);
@@ -948,7 +948,7 @@ public class SignatureXADES_IT implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory_IT digFac = ConfigManager_IT.instance().getDigiDocFactory();
+        	DigiDocFactory_IT digFac = ConfigManager.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedODFDocumentException_IT ex) {
             errs.add(ex);
@@ -970,7 +970,7 @@ public class SignatureXADES_IT implements Serializable {
             if(m_timestamps.size() > 0) {
             	TimestampFactory_IT tsFac = null;
             	try {
-            		tsFac = ConfigManager_IT.instance().getTimestampFactory();
+            		tsFac = ConfigManager.instance().getTimestampFactory();
             	} catch(SignedODFDocumentException_IT ex) {
             		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
             		errs.add(ex);
@@ -988,7 +988,7 @@ public class SignatureXADES_IT implements Serializable {
             	//System.out.println("OCSP time: " + do1);
             	//System.out.println("SignatureTimeStamp time: " + dt1);
             	//System.out.println("SigAndRefsTimeStamp time: " + dt2);
-            	int nMaxTsTimeErrSecs = ConfigManager_IT.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
+            	int nMaxTsTimeErrSecs = ConfigManager.instance().getIntProperty("MAX_TSA_TIME_ERR_SECS", 0);
             	dt1 = new Date(dt1.getTime() - (nMaxTsTimeErrSecs * 1000));
             	dt2 = new Date(dt2.getTime() + (nMaxTsTimeErrSecs * 1000));
             	//System.out.println("SignatureTimeStamp adj time: " + dt1);
@@ -1000,7 +1000,7 @@ public class SignatureXADES_IT implements Serializable {
             }
         } else {
         	try {
-        		CRLFactory_IT crlFac = ConfigManager_IT.instance().getCRLFactory();
+        		CRLFactory_IT crlFac = ConfigManager.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
             } catch(SignedODFDocumentException_IT ex) {
          	   errs.add(ex);

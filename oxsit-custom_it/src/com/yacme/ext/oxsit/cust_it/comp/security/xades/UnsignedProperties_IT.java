@@ -10,7 +10,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * Models the unsigned properties of
@@ -233,7 +233,7 @@ public class UnsignedProperties_IT implements Serializable {
         } 
         // verify notary status
         try {
-            NotaryFactory_IT notFac = ConfigManager_IT.instance().getNotaryFactory();
+            NotaryFactory_IT notFac = ConfigManager.instance().getNotaryFactory();
             notFac.parseAndVerifyResponse(m_signature, m_notary);
         } catch(SignedODFDocumentException_IT ex) {
             errs.add(ex);
