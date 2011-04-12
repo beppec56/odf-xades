@@ -23,15 +23,15 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class KeyInfo_IT implements Serializable {
+public class KeyInfo implements Serializable {
 	/** parent object - Signature ref */
-    private SignatureXADES_IT m_signature;
+    private Signature m_signature;
     
     
     /** 
      * Creates new KeyInfo 
      */
-    public KeyInfo_IT() {
+    public KeyInfo() {
     	m_signature = null;
     }
     
@@ -39,8 +39,8 @@ public class KeyInfo_IT implements Serializable {
      * Creates new KeyInfo 
      * @param cert signers certificate
      */
-    public KeyInfo_IT(X509Certificate cert) 
-        throws SignedODFDocumentException_IT
+    public KeyInfo(X509Certificate cert) 
+        throws SignedDocException
     {
         setSignersCertificate(cert);
     }
@@ -49,7 +49,7 @@ public class KeyInfo_IT implements Serializable {
      * Accessor for Signature attribute
      * @return value of Signature attribute
      */
-    public SignatureXADES_IT getSignature()
+    public Signature getSignature()
     {
     	return m_signature;
     }
@@ -58,7 +58,7 @@ public class KeyInfo_IT implements Serializable {
      * Mutator for Signature attribute
      * @param uprops value of Signature attribute
      */
-    public void setSignature(SignatureXADES_IT sig)
+    public void setSignature(Signature sig)
     {
     	m_signature = sig;
     }
@@ -70,7 +70,7 @@ public class KeyInfo_IT implements Serializable {
     public X509Certificate getSignersCertificate() {
     	X509Certificate cert = null;
     	if(m_signature != null) {
-    		CertValue_IT cval = m_signature.getCertValueOfType(CertValue_IT.CERTVAL_TYPE_SIGNER);
+    		CertValue cval = m_signature.getCertValueOfType(CertValue.CERTVAL_TYPE_SIGNER);
     		if(cval != null) {
     			cert = cval.getCert();
     		}
@@ -85,7 +85,7 @@ public class KeyInfo_IT implements Serializable {
     public String getSubjectFirstName() {
     	X509Certificate cert = getSignersCertificate();
     	if(cert != null)
-    		return SignedODFDocument_IT.getSubjectFirstName(cert);
+    		return SignedDoc.getSubjectFirstName(cert);
     	else
     		return null;
     }
@@ -97,7 +97,7 @@ public class KeyInfo_IT implements Serializable {
     public String getSubjectLastName() {
     	X509Certificate cert = getSignersCertificate();
     	if(cert != null)
-    		return SignedODFDocument_IT.getSubjectLastName(cert);
+    		return SignedDoc.getSubjectLastName(cert);
     	else
     		return null;
     }
@@ -109,7 +109,7 @@ public class KeyInfo_IT implements Serializable {
     public String getSubjectPersonalCode() {
     	X509Certificate cert = getSignersCertificate();
     	if(cert != null)
-    		return SignedODFDocument_IT.getSubjectPersonalCode(cert);
+    		return SignedDoc.getSubjectPersonalCode(cert);
     	else
     		return null;
     }
@@ -117,16 +117,16 @@ public class KeyInfo_IT implements Serializable {
     /**
      * Mutator for signersCert attribute
      * @param cert new value for signersCert attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSignersCertificate(X509Certificate cert) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateSignersCertificate(cert);
+        SignedDocException ex = validateSignersCertificate(cert);
         if(ex != null)
             throw ex;
         if(m_signature != null) {
-    		CertValue_IT cval = m_signature.getOrCreateCertValueOfType(CertValue_IT.CERTVAL_TYPE_SIGNER);
+    		CertValue cval = m_signature.getOrCreateCertValueOfType(CertValue.CERTVAL_TYPE_SIGNER);
     		cval.setCert(cert);
         }
     }
@@ -136,11 +136,11 @@ public class KeyInfo_IT implements Serializable {
      * @param cert input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateSignersCertificate(X509Certificate cert)
+    private SignedDocException validateSignersCertificate(X509Certificate cert)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(cert == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNERS_CERT, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGNERS_CERT, 
                 "Signers certificate is required", null);
         return ex;
     }
@@ -174,12 +174,12 @@ public class KeyInfo_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * KeyInfo object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         X509Certificate cert = getSignersCertificate();
     	if(cert != null)
     		ex = validateSignersCertificate(cert);
@@ -193,7 +193,7 @@ public class KeyInfo_IT implements Serializable {
      * @return XML representation of KeyInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
                 new ByteArrayOutputStream();
@@ -210,16 +210,16 @@ public class KeyInfo_IT implements Serializable {
             bos.write(ConvertUtils.str2data(Base64Util.encode(getBytes(getSignerKeyExponent(), getSignerKeyExponent().bitLength()), 64)));
             bos.write(ConvertUtils.str2data("</Exponent>\n</RSAKeyValue>\n</KeyValue>\n"));
             bos.write(ConvertUtils.str2data("<X509Data>"));
-            CertValue_IT cval = null;
+            CertValue cval = null;
             if(m_signature != null) {
-            	cval = m_signature.getCertValueOfType(CertValue_IT.CERTVAL_TYPE_SIGNER);
+            	cval = m_signature.getCertValueOfType(CertValue.CERTVAL_TYPE_SIGNER);
             	if(cval != null)
             		bos.write(cval.toXML());
             }
             bos.write(ConvertUtils.str2data("</X509Data>"));
             bos.write(ConvertUtils.str2data("</KeyInfo>"));
          } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

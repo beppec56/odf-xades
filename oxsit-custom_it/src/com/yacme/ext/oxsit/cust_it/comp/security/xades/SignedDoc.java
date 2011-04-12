@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignedODFDocument_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignedDoc.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -70,14 +70,14 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
  * 
  *
  */
-public class SignedODFDocument_IT {
+public class SignedDoc {
     /** digidoc format */
     private String m_format;
     /** format version */
     private String m_version;
-    /** DataFile_IT objects */
+    /** DataFile objects */
     private ArrayList m_dataFiles;
-    /** SignatureXADES_IT objects */
+    /** Signature objects */
     private ArrayList m_signatures;
     
     /** the only supported formats are SK-XML and DIGIDOC-XML */
@@ -118,7 +118,7 @@ public class SignedODFDocument_IT {
      * Creates new SignedDoc 
      * Initializes everything to null
      */
-    public SignedODFDocument_IT() {
+    public SignedDoc() {
         m_format = null;
         m_version = null;
         m_dataFiles = null;
@@ -129,10 +129,10 @@ public class SignedODFDocument_IT {
      * Creates new SignedDoc 
      * @param format file format name
      * @param version file version number
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public SignedODFDocument_IT(String format, String version) 
-        throws SignedODFDocumentException_IT
+    public SignedDoc(String format, String version) 
+        throws SignedDocException
     {
         setFormat(format);
         setVersion(version);
@@ -151,12 +151,12 @@ public class SignedODFDocument_IT {
     /**
      * Mutator for version attribute
      * @param str new value for version attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setVersion(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateVersion(str);
+    	SignedDocException ex = validateVersion(str);
         if(ex != null)
             throw ex;
         m_version = str;
@@ -172,12 +172,12 @@ public class SignedODFDocument_IT {
     /**
      * Mutator for format attribute
      * @param str new value for format attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setFormat(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateFormat(str);
+    	SignedDocException ex = validateFormat(str);
         if(ex != null)
             throw ex;
         m_format = str;
@@ -188,10 +188,10 @@ public class SignedODFDocument_IT {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateVersion(String str)
+    private SignedDocException validateVersion(String str)
     {
     	//ROB
-    	SignedODFDocumentException_IT ex = null;
+    	SignedDocException ex = null;
         if(str == null || 
           (!str.equals(VERSION_1_0) && !str.equals(VERSION_1_1) && 
            !str.equals(VERSION_1_2) && !str.equals(VERSION_1_3) &&
@@ -200,7 +200,7 @@ public class SignedODFDocument_IT {
           ((str.equals(VERSION_1_1) || str.equals(VERSION_1_2) || 
           	str.equals(VERSION_1_3) || str.equals(VERSION_1_4)) 
             && m_format != null && !m_format.equals(FORMAT_DIGIDOC_XML) && !m_format.equals(FORMAT_ODF_XADES))) 
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGIDOC_VERSION, 
+            ex = new SignedDocException(SignedDocException.ERR_DIGIDOC_VERSION, 
                 "Currently supports only versions 1.0, 1.1, 1.2, 1.3 and 1.4", null);
         return ex;
     }
@@ -217,47 +217,47 @@ public class SignedODFDocument_IT {
 	 *            input data
 	 * @return exception or null for ok
 	 */
-	private SignedODFDocumentException_IT validateFormat(String str) {
-		SignedODFDocumentException_IT ex = null;
+	private SignedDocException validateFormat(String str) {
+		SignedDocException ex = null;
 		if (str == null || (!str.equals(FORMAT_ODF_XADES)))
-			ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGIDOC_FORMAT,
+			ex = new SignedDocException(SignedDocException.ERR_DIGIDOC_FORMAT,
 					"Currently supports only ODF_XADES format", null);
 		return ex;
 	}
 
 	/**
 	 * Writes the SignedDoc to an output file and automatically calculates
-	 * DataFile_IT sizes and digests
+	 * DataFile sizes and digests
 	 * 
 	 * @param outputFile
 	 *            output file name
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for all errors
 	 */
-	public void writeToStream(OutputStream os) throws SignedODFDocumentException_IT {
-		// TODO read DataFile_IT elements from old file
+	public void writeToStream(OutputStream os) throws SignedDocException {
+		// TODO read DataFile elements from old file
 
 		try {
 			os.write(xmlHeader().getBytes());
 			//ROB: no xml output for ExternalDataFile
 			/*
 			for (int i = 0; i < countDataFiles(); i++) {
-				DataFile_IT df = getDataFile(i);
+				DataFile df = getDataFile(i);
 				df.writeToFile(os);
 				os.write("\n".getBytes());
 			}
 			*/
 			for (int i = 0; i < countSignatures(); i++) {
-				SignatureXADES_IT sig = getSignature(i);
+				Signature sig = getSignature(i);
 				os.write(sig.toXML());
 				os.write("\n".getBytes());
 			}
 			os.write(xmlTrailer().getBytes());
-		} catch (SignedODFDocumentException_IT ex) {
+		} catch (SignedDocException ex) {
 			throw ex; // already handled
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex,
-					SignedODFDocumentException_IT.ERR_WRITE_FILE);
+			SignedDocException.handleException(ex,
+					SignedDocException.ERR_WRITE_FILE);
 		}
 	}
 	
@@ -265,7 +265,7 @@ public class SignedODFDocument_IT {
 	//ROB: From uji
 	//FIXME BeppeC: this need to be modified and adapted to access
 	//the currently active ODF file using OOo API
-//	public byte[] addODFData(ODFDocument odf) throws SignedODFDocumentException_IT {
+//	public byte[] addODFData(ODFDocument odf) throws SignedDocException {
 //		
 //		byte[] manifestBytes = null;
 //		
@@ -384,9 +384,9 @@ public class SignedODFDocument_IT {
 
 
 	/**
-	 * return a new available SignatureXADES_IT id
+	 * return a new available Signature id
 	 * 
-	 * @return new SignatureXADES_IT id
+	 * @return new Signature id
 	 */
 	public String getNewSignatureId() {
 		String id = "ID_"+UUID.randomUUID().toString();
@@ -402,40 +402,40 @@ public class SignedODFDocument_IT {
 	 *            signers claimed roles
 	 * @param adr
 	 *            signers address
-	 * @return new SignatureXADES_IT object
+	 * @return new Signature object
 	 */
 	//FIXME BeppeC: this need to be modified and adapted to access
 	//the currently active ODF file using OOo API
-	public SignatureXADES_IT prepareSignature(X509Certificate cert,
-			String[] claimedRoles, SignatureProductionPlace_IT adr)
-			throws SignedODFDocumentException_IT {
-		SignatureXADES_IT sig = new SignatureXADES_IT(this);
+	public Signature prepareSignature(X509Certificate cert,
+			String[] claimedRoles, SignatureProductionPlace adr)
+			throws SignedDocException {
+		Signature sig = new Signature(this);
 		sig.setId(getNewSignatureId());
 		// create SignedInfo block
-		SignedInfoXADES_IT si = new SignedInfoXADES_IT(sig, RSA_SHA1_SIGNATURE_METHOD,
+		SignedInfo si = new SignedInfo(sig, RSA_SHA1_SIGNATURE_METHOD,
 				CANONICALIZATION_METHOD_20010315);
-		// add DataFile_IT references
+		// add DataFile references
 		for (int i = 0; i < countDataFiles(); i++) {
-			DataFile_IT df = getDataFile(i);
-			ReferenceXADES_IT ref = new ReferenceXADES_IT(si, df);
+			DataFile df = getDataFile(i);
+			Reference ref = new Reference(si, df);
 			ref.setUri(df.getId());
 			si.addReference(ref);
 		}
 		// create key info
-		KeyInfo_IT ki = new KeyInfo_IT(cert);
+		KeyInfo ki = new KeyInfo(cert);
 		sig.setKeyInfo(ki);
 		ki.setSignature(sig);
-		CertValue_IT cval = new CertValue_IT();
-		cval.setType(CertValue_IT.CERTVAL_TYPE_SIGNER);
+		CertValue cval = new CertValue();
+		cval.setType(CertValue.CERTVAL_TYPE_SIGNER);
 		cval.setCert(cert);
 		sig.addCertValue(cval);
-		CertID_IT cid = new CertID_IT(sig, cert, CertID_IT.CERTID_TYPE_SIGNER);
+		CertID cid = new CertID(sig, cert, CertID.CERTID_TYPE_SIGNER);
 		sig.addCertID(cid);
 		// create signed properties
-		SignedPropertiesXADES_IT sp = new SignedPropertiesXADES_IT(sig, cert, claimedRoles, adr);
+		SignedProperties sp = new SignedProperties(sig, cert, claimedRoles, adr);
 		sp.setId("ID_"+UUID.randomUUID().toString());
 
-		ReferenceXADES_IT ref = new ReferenceXADES_IT(si, sp);
+		Reference ref = new Reference(si, sp);
 		ref.setUri("#"+sp.getId());
 		si.addReference(ref);
 		sig.setSignedInfo(si);
@@ -448,7 +448,7 @@ public class SignedODFDocument_IT {
      * Adds a new Signature object
      * @param attr Signature object to add
      */
-    public void addSignature(SignatureXADES_IT sig) 
+    public void addSignature(Signature sig) 
     {
         if(m_signatures == null)
             m_signatures = new ArrayList();
@@ -492,8 +492,8 @@ public class SignedODFDocument_IT {
      * @param idx index of the Signature object
      * @return desired Signature object
      */
-    public SignatureXADES_IT getSignature(int idx) {
-        return (SignatureXADES_IT)m_signatures.get(idx);
+    public Signature getSignature(int idx) {
+        return (Signature)m_signatures.get(idx);
     }
     
     
@@ -502,8 +502,8 @@ public class SignedODFDocument_IT {
      * @param idx index of the DataFile object
      * @return desired DataFile object
      */
-    public DataFile_IT getDataFile(int idx) {
-        return (DataFile_IT)m_dataFiles.get(idx);
+    public DataFile getDataFile(int idx) {
+        return (DataFile)m_dataFiles.get(idx);
     }
 
     /**
@@ -545,7 +545,7 @@ public class SignedODFDocument_IT {
      * @return SHA1 digest
      */
     public static byte[] digest(byte[] data)
-        throws SignedODFDocumentException_IT 
+        throws SignedDocException 
     {
         byte[] dig = null;
         try {
@@ -553,7 +553,7 @@ public class SignedODFDocument_IT {
             sha.update(data);
             dig = sha.digest();
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_CALCULATE_DIGEST);
+            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST);
         }
         return dig;
     }
@@ -565,19 +565,19 @@ public class SignedODFDocument_IT {
      * @param checkDate Date on which to check the signature validity
      * @param demandConfirmation true if you demand OCSP confirmation from
      * every signature
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList verify(boolean checkDate, boolean demandConfirmation)
     {
         ArrayList errs = validate(false);
         for(int i = 0; i < countSignatures(); i++) {
-            SignatureXADES_IT sig = getSignature(i);
+            Signature sig = getSignature(i);
             ArrayList e = sig.verify(this, checkDate, demandConfirmation);
             if(!e.isEmpty())
                 errs.addAll(e);
         }    
         if(countSignatures() == 0) {
-        	errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_NOT_SIGNED, "This document is not signed!", null));
+        	errs.add(new SignedDocException(SignedDocException.ERR_NOT_SIGNED, "This document is not signed!", null));
         }            
         return errs;
     }
@@ -590,7 +590,7 @@ public class SignedODFDocument_IT {
      * @return true if signature verifies
      */
     public static boolean verify(byte[] digest, byte[] signature, X509Certificate cert) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         boolean rc = false;
         try {
@@ -620,12 +620,12 @@ public class SignedODFDocument_IT {
                        
             //System.out.println("Result: " + rc);
             if(!rc)
-            	throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_VERIFY, "Invalid signature value!", null);
-        } catch(SignedODFDocumentException_IT ex) {
+            	throw new SignedDocException(SignedDocException.ERR_VERIFY, "Invalid signature value!", null);
+        } catch(SignedDocException ex) {
         	throw ex; // pass it on, but check other exceptions
         } catch(Exception ex) {
         	//System.out.println("Exception: " + ex);
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_VERIFY);
+            SignedDocException.handleException(ex, SignedDocException.ERR_VERIFY);
         }
         return rc;
     }
@@ -653,25 +653,25 @@ public class SignedODFDocument_IT {
      * @param bStrong flag that specifies if Id atribute value is to
      * be rigorously checked (according to digidoc format) or only
      * as required by XML-DSIG
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate(boolean bStrong)
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateFormat(m_format);
+        SignedDocException ex = validateFormat(m_format);
         if(ex != null)
             errs.add(ex);
         ex = validateVersion(m_version);
         if(ex != null)
             errs.add(ex);
         for(int i = 0; i < countDataFiles(); i++) {
-            DataFile_IT df = getDataFile(i);
+            DataFile df = getDataFile(i);
             ArrayList e = df.validate(bStrong);
             if(!e.isEmpty())
                 errs.addAll(e);
         }
         for(int i = 0; i < countSignatures(); i++) {
-            SignatureXADES_IT sig = getSignature(i);
+            Signature sig = getSignature(i);
             ArrayList e = sig.validate();
             if(!e.isEmpty())
                 errs.addAll(e);
@@ -794,7 +794,7 @@ public class SignedODFDocument_IT {
      * @throws EFormException for all errors
      */
     public static X509Certificate readCertificate(byte[] data)
-        throws SignedODFDocumentException_IT 
+        throws SignedDocException 
     {
         X509Certificate cert = null;
         try {
@@ -804,7 +804,7 @@ public class SignedODFDocument_IT {
         cert = (X509Certificate)cf.generateCertificate(certStream);
         certStream.close();
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_CERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_CERT);
         }
         return cert;        
     }    

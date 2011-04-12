@@ -6,7 +6,7 @@ package com.yacme.ext.oxsit.cust_it.comp.security.xades.factory;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedODFDocumentException_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 
 /**
  * Interface for parsing large encrypted files
@@ -19,7 +19,7 @@ public interface EncryptedStreamParser
 	 * initializes the implementation class 
 	 */
 	public void init()
-		throws SignedODFDocumentException_IT;
+		throws SignedDocException;
 
 	/**
 	 * Reads in a EncryptedData file (.cdoc)
@@ -31,11 +31,11 @@ public interface EncryptedStreamParser
 	 * @param recipientName Recipient atribute value of <EncryptedKey>
 	 * used to locate the correct transport key to decrypt with
 	 * @return number of bytes successfully decrypted
-	 * @throws SignedODFDocumentException_IT for decryption errors
+	 * @throws SignedDocException for decryption errors
 	 */
 	public int decryptStreamUsingRecipientName(InputStream dencStream, 
 			OutputStream outs, int token, String pin, String recipientName) 
-		throws SignedODFDocumentException_IT;
+		throws SignedDocException;
 
 	/**
 	 * Reads in a EncryptedData file (.cdoc)
@@ -46,10 +46,10 @@ public interface EncryptedStreamParser
 	 * @param recipientName Recipient atribute value of <EncryptedKey>
 	 * used to locate the correct transport key to decrypt with
 	 * @return number of bytes successfully decrypted
-	 * @throws SignedODFDocumentException_IT for decryption errors
+	 * @throws SignedDocException for decryption errors
 	 */
 	public int decryptStreamUsingRecipientNameAndKey(InputStream dencStream, 
 			OutputStream outs, byte[] deckey, String recipientName) 
-		throws SignedODFDocumentException_IT;
+		throws SignedDocException;
 }
 

@@ -28,20 +28,20 @@ public class ConvertUtils
      * @param d input data
      * @param ddoc signed doc
      * @return stringified date (xsd:date)
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
-    public static String date2string(Date d, SignedODFDocument_IT ddoc)
-        throws SignedODFDocumentException_IT
+    public static String date2string(Date d, SignedDoc ddoc)
+        throws SignedDocException
     {
         String str = null;
         try {
             SimpleDateFormat f = new SimpleDateFormat(
-              ((ddoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-              	ddoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) ? m_dateFormatXAdES : m_dateFormat));
+              ((ddoc.getVersion().equals(SignedDoc.VERSION_1_3) ||
+              	ddoc.getVersion().equals(SignedDoc.VERSION_1_4)) ? m_dateFormatXAdES : m_dateFormat));
             f.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
             str = f.format(d);
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_DATE_FORMAT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_DATE_FORMAT);
         }
         return str;
     }
@@ -53,21 +53,21 @@ public class ConvertUtils
      * @param str stringified date (xsd:date
      * @param ddoc signed doc
      * @return Date object
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
-    public static Date string2date(String str, SignedODFDocument_IT ddoc)
-        throws SignedODFDocumentException_IT
+    public static Date string2date(String str, SignedDoc ddoc)
+        throws SignedDocException
     {
         Date d = null;
         try {
             SimpleDateFormat f = new SimpleDateFormat(
-            	((ddoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-                  ddoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) ? m_dateFormatXAdES : m_dateFormat));
+            	((ddoc.getVersion().equals(SignedDoc.VERSION_1_3) ||
+                  ddoc.getVersion().equals(SignedDoc.VERSION_1_4)) ? m_dateFormatXAdES : m_dateFormat));
             f.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
             if(str != null && str.length() > 0)
             	d = f.parse(str.trim());
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_DATE_FORMAT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_DATE_FORMAT);
         }
         return d;
     }
@@ -77,17 +77,17 @@ public class ConvertUtils
      * to a BigInteger object
      * @param str stringified date (xsd:date
      * @return BigInteger object
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static BigInteger string2bigint(String str)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         BigInteger b = null;
         try {
         	if(str != null && str.length() > 0)
         		b = new BigInteger(str.trim());
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_NUMBER_FORMAT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_NUMBER_FORMAT);
         }
         return b;
     }
@@ -98,17 +98,17 @@ public class ConvertUtils
      * @param data input data
      * @param codepage codepage of input bytes
      * @return UTF-8 string
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static byte[] data2utf8(byte[] data, String codepage)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         byte[] bdata = null;
         try {
             String str = new String(data, codepage);
             bdata = str.getBytes("UTF-8");
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_UTF8_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_UTF8_CONVERT);
         }
         return bdata;
     }
@@ -117,10 +117,10 @@ public class ConvertUtils
      * Converts to UTF-8 byte array
      * @param str input data
      * @return byte array of string in desired codepage
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static byte[] str2data(String str)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         return str2data(str, "UTF-8");
     }
@@ -131,16 +131,16 @@ public class ConvertUtils
      * @param data input data
      * @param codepage codepage of output bytes
      * @return byte array of string in desired codepage
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static byte[] str2data(String str, String codepage)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         byte[] bdata = null;
         try {
             bdata = str.getBytes(codepage);
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_UTF8_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_UTF8_CONVERT);
         }
         return bdata;
     }
@@ -151,16 +151,16 @@ public class ConvertUtils
      * @param data input data
      * @param codepage codepage of input bytes
      * @return UTF-8 string
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static String data2str(byte[] data, String codepage)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         String str = null;
         try {
             str = new String(data, codepage);
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_UTF8_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_UTF8_CONVERT);
         }
         return str;
     }
@@ -170,17 +170,17 @@ public class ConvertUtils
      * String to non-utf8 string
      * @param UTF-8 input data
      * @return normal string
-     * @throws SignedODFDocumentException_IT for errors
+     * @throws SignedDocException for errors
      */
     public static String utf82str(String data)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         String str = null;
         try {
             byte[] bdata = data.getBytes();
             str = new String(bdata, "UTF-8");
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_UTF8_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_UTF8_CONVERT);
         }
         return str;
     }

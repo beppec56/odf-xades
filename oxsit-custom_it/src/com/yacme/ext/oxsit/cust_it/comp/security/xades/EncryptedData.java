@@ -22,7 +22,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SignatureFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SignatureFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
@@ -120,11 +120,11 @@ public class EncryptedData {
 	 * @param mimeType MimeType atribute value (optional)
 	 * @param xmlns xmlns atribute value. Must be http://www.w3.org/2001/04/xmlenc#
 	 * @param encryptionMethod EncryptionMethod> sublements atribute Algorithm value (required)
-	 * @throws SignedODFDocumentException_IT for validation errors
+	 * @throws SignedDocException for validation errors
 	 */
 	public EncryptedData(String id, String type, String mimeType, 
 			String xmlns, String encryptionMethod)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 //		m_logger = Logger.getLogger(EncryptedData.class);
 		setId(id);
@@ -147,10 +147,10 @@ public class EncryptedData {
 	 * This is to be used only in SAX parser because it 
 	 * initializes instance variables to default values.
 	 * @param xmlns xmlns atribute value. Must be http://www.w3.org/2001/04/xmlenc#
-	 * @throws SignedODFDocumentException_IT for validation errors
+	 * @throws SignedDocException for validation errors
 	 */
 	public EncryptedData(String xmlns)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
    	{
 //		m_logger = Logger.getLogger(EncryptedData.class);
 		m_id = null;
@@ -276,12 +276,12 @@ public class EncryptedData {
 	/**
      * Mutator for EncryptionMethod attribute
      * @param str new value for EncryptionMethod attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setEncryptionMethod(String str) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateEncryptionMethod(str);
+    	SignedDocException ex = validateEncryptionMethod(str);
         if(ex != null)
             throw ex;
     	m_encryptionMethod = str;
@@ -292,11 +292,11 @@ public class EncryptedData {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateEncryptionMethod(String str)
+    private SignedDocException validateEncryptionMethod(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null || !str.equals(EncryptedData.DENC_ENC_METHOD_AES128))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCDATA_ENCRYPTION_METHOD, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCDATA_ENCRYPTION_METHOD, 
                 "EncryptionMethod atribute is required and currently the only supported value is: " 
             		+ EncryptedData.DENC_ENC_METHOD_AES128, null);
         return ex;
@@ -313,12 +313,12 @@ public class EncryptedData {
 	/**
      * Mutator for Xmlns attribute
      * @param str new value for Xmlns attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setXmlns(String str) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateXmlns(str);
+    	SignedDocException ex = validateXmlns(str);
         if(ex != null)
             throw ex;
         m_xmlns = str;
@@ -329,11 +329,11 @@ public class EncryptedData {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateXmlns(String str)
+    private SignedDocException validateXmlns(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null || !str.equals(EncryptedData.DENC_XMLNS_XMLENC))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCDATA_XMLNS, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCDATA_XMLNS, 
                 "xmlns atribute is required and currently the only supported value is: " 
             		+ EncryptedData.DENC_XMLNS_XMLENC, null);
         return ex;
@@ -382,7 +382,7 @@ public class EncryptedData {
      * @param content <EncryptionProperty> object's content
      */
     public void addProperty(String name, String content)
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	if(m_encProperties == null)
     		m_encProperties = new EncryptionProperties(null);
@@ -468,16 +468,16 @@ public class EncryptedData {
      * Creates a new <EncryptionProperty> or uses and existing
      * one to store the library namd and version used to 
      * create this encrypted document
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public void setPropLibraryNameAndVersion()
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	EncryptionProperty prop = findPropertyByName(ENCPROP_LIB_VER);
     	StringBuffer sb = new StringBuffer();
-    	sb.append(SignedODFDocument_IT.LIB_NAME);
+    	sb.append(SignedDoc.LIB_NAME);
     	sb.append("|");
-    	sb.append(SignedODFDocument_IT.LIB_VERSION);    	
+    	sb.append(SignedDoc.LIB_VERSION);    	
     	if(prop == null) {
     		prop = new EncryptionProperty(ENCPROP_LIB_VER, sb.toString());
     		addProperty(prop);
@@ -488,7 +488,7 @@ public class EncryptedData {
     /**
      * Returns the library name that created this document.
      * This is stored in an <EncryptionProperty> element
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropLibraryName()
     {
@@ -508,7 +508,7 @@ public class EncryptedData {
     /**
      * Returns the library version that created this document.
      * This is stored in an <EncryptionProperty> element
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropLibraryVersion()
     {
@@ -528,10 +528,10 @@ public class EncryptedData {
     /**
      * Creates a new <EncryptionProperty> or uses and existing
      * one to store the encrypted document format name and version
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public void setPropFormatNameAndVersion()
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	EncryptionProperty prop = findPropertyByName(ENCPROP_FORMAT_VER);
     	StringBuffer sb = new StringBuffer();
@@ -548,7 +548,7 @@ public class EncryptedData {
     /**
      * Returns the encrypted document format name.
      * This is stored in an <EncryptionProperty> element
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropFormatName()
     {
@@ -568,7 +568,7 @@ public class EncryptedData {
     /**
      * Returns the encrypted document format version.
      * This is stored in an <EncryptionProperty> element
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropFormatVersion()
     {
@@ -588,13 +588,13 @@ public class EncryptedData {
     /**
      * Creates a number of <EncryptionProperty> objects to store the
      * meta info about the contents of this digidoc
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
-    public void setPropRegisterDigiDoc(SignedODFDocument_IT sdoc)
-    	throws SignedODFDocumentException_IT
+    public void setPropRegisterDigiDoc(SignedDoc sdoc)
+    	throws SignedDocException
     {
     	for(int i = 0; i < sdoc.countDataFiles(); i++) {
-            DataFile_IT df = sdoc.getDataFile(i);
+            DataFile df = sdoc.getDataFile(i);
             StringBuffer sb = new StringBuffer();
             sb.append(df.getFileName());
             sb.append("|");
@@ -611,7 +611,7 @@ public class EncryptedData {
      * counts the number of <EncryptionProperty> objects used for
      * stroring digidoc meta info
      * @return count of such <EncryptionProperty> objects
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public int getPropOrigFileCount()
     {
@@ -629,7 +629,7 @@ public class EncryptedData {
      * digidoc metadata item.
      * @param nProp index of digidoc metadata properties
      * @return filename part of the given property
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropOrigFileName(int nProp)
     {
@@ -657,7 +657,7 @@ public class EncryptedData {
      * digidoc metadata item.
      * @param nProp index of digidoc metadata properties
      * @return filesize part of the given property
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropOrigFileSize(int nProp)
     {
@@ -686,7 +686,7 @@ public class EncryptedData {
      * digidoc metadata item.
      * @param nProp index of digidoc metadata properties
      * @return mimetype part of the given property
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropOrigFileMime(int nProp)
     {
@@ -716,7 +716,7 @@ public class EncryptedData {
      * digidoc metadata item.
      * @param nProp index of digidoc metadata properties
      * @return id part of the given property
-     * @throws SignedODFDocumentException_IT
+     * @throws SignedDocException
      */
     public String getPropOrigFileId(int nProp)
     {
@@ -837,21 +837,21 @@ public class EncryptedData {
     
 	/**
 	 * Generates the session key
-	 * @throws SignedODFDocumentException_IT for all initialization errors
+	 * @throws SignedDocException for all initialization errors
 	 */
 	private void initKey() 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		    // add BouncyCastle provider if not done yet
 			try {
 				Security.addProvider((Provider)Class.forName(
 					ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
 			} catch (Exception ex) {
-				SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_NO_PROVIDER);
+				SignedDocException.handleException(ex, SignedDocException.ERR_NO_PROVIDER);
 			}
 			// check key status first
 			if(m_transportKey != null)
-				throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_STATUS,    
+				throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_STATUS,    
 							"Transport key allready initialized!", null);
 			try {
 				SecureRandom random = SecureRandom.getInstance(
@@ -867,11 +867,11 @@ public class EncryptedData {
 //					m_logger.debug("key0: " + m_transportKey.getEncoded().length);
 //				}
 			} catch (Exception ex) {
-				SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_KEY_GEN);
+				SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_KEY_GEN);
 			}
 			// check the result
 			if(m_transportKey == null)
-				throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_GEN,    
+				throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_GEN,    
 					"Failure to initialize the transport key!", null);
 	}
 
@@ -883,13 +883,13 @@ public class EncryptedData {
 	 * @return Cipher object
 	 */
 	public Cipher getCipher(int mode, SecretKey transportKey, byte[] iv) 
-			throws SignedODFDocumentException_IT 
+			throws SignedDocException 
 	{
 			Cipher cip = null;
 			byte[] ivdata = null;
 			// check key status first - nothing to encrypt?
 			if(m_transportKey == null && transportKey == null)
-				  throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_STATUS,    
+				  throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_STATUS,    
 							  "Transport key has not been initialized!", null);
 			try {
 				cip = Cipher.getInstance(
@@ -911,7 +911,7 @@ public class EncryptedData {
 //					//cip.getProvider().list(System.out);
 //				}
 			} catch (Exception ex) {
-				SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_ENCRYPT);
+				SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_ENCRYPT);
 			}
 			return cip;
 	}
@@ -920,10 +920,10 @@ public class EncryptedData {
 	/**
 	 * Encrypts the data with the given 
 	 * @param nCompressOption compression option: allways, never or best effort
-	 *  @throws SignedODFDocumentException_IT for encryption errors
+	 *  @throws SignedDocException for encryption errors
 	 */
 	public void encrypt(int nCompressOption) 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		byte [] ivdata = new byte[16];
 		// check the transport key
@@ -933,7 +933,7 @@ public class EncryptedData {
 		if(m_data == null || 
 		 (m_nDataStatus != DENC_DATA_STATUS_UNENCRYPTED_AND_COMPRESSED &&
 		  m_nDataStatus != DENC_DATA_STATUS_UNENCRYPTED_AND_NOT_COMPRESSED))
-						  throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_DATA_STATUS,    
+						  throw new SignedDocException(SignedDocException.ERR_XMLENC_DATA_STATUS,    
 									  "Invalid data status for encryption operation!", null);
 		int nTotalInput = m_data.length, nTotalCompressed = 0, nTotalEncrypted = 0;
 		// compress data if necessary
@@ -984,23 +984,23 @@ public class EncryptedData {
 //			if(m_logger.isInfoEnabled())
 //				m_logger.info("Encrypt total - input: " + nTotalInput + " compressed: " + nTotalCompressed + " encrypted: " + nTotalEncrypted);
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_ENCRYPT);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_ENCRYPT);
 		}
 	} 
 
 	/**
 	 * Decrypts the data with the given 
-	 *  @throws SignedODFDocumentException_IT for decryption errors
+	 *  @throws SignedDocException for decryption errors
 	 */
 	public void decrypt(int nKey, int token, String pin) 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		byte[] ivdata = new byte[16];
 		// check data
 		if(m_data == null || 
 		 (m_nDataStatus != DENC_DATA_STATUS_ENCRYPTED_AND_COMPRESSED &&
 		  m_nDataStatus != DENC_DATA_STATUS_ENCRYPTED_AND_NOT_COMPRESSED))
-			throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_DATA_STATUS,    
+			throw new SignedDocException(SignedDocException.ERR_XMLENC_DATA_STATUS,    
 			  "Invalid data status for decryption operation!", null);
 //		if(m_logger.isDebugEnabled())
 //			m_logger.debug("Decrypting " + m_data.length + " using iv " + ivdata.length + " left: " + (m_data.length - ivdata.length));
@@ -1011,7 +1011,7 @@ public class EncryptedData {
 		EncryptedKey ekey = getEncryptedKey(nKey);
 		try {
 			// decrypt transport key
-			SignatureFactory_IT sfac = ConfigManager.instance().getSignatureFactory();
+			SignatureFactory sfac = ConfigManager.instance().getSignatureFactory();
 //			if(m_logger.isDebugEnabled())
 //				m_logger.debug("Decrypting key: " + nKey + " with token: " + token); 
 			byte [] decdata = sfac.decrypt(ekey.getTransportKeyData(), token, pin);
@@ -1055,24 +1055,24 @@ public class EncryptedData {
 			if(m_nDataStatus == DENC_DATA_STATUS_UNENCRYPTED_AND_COMPRESSED)
 				decompress();
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_DECRYPT);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_DECRYPT);
 		}
 	} 
 	    
 	/**
 	 * Compresses the unencrypted data using ZLIB algorithm
 	 *  @param nCompressOption compression option: allways, never or best effort
-	 *  @throws SignedODFDocumentException_IT for compression errors
+	 *  @throws SignedDocException for compression errors
 	 */
 	private void compress(int nCompressOption) 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		// check the flag
 		if(nCompressOption == DENC_COMPRESS_NEVER)
 			return; // nothing to do
 		// check data
 		if(m_data == null || m_nDataStatus != DENC_DATA_STATUS_UNENCRYPTED_AND_NOT_COMPRESSED)
-						  throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_DATA_STATUS,    
+						  throw new SignedDocException(SignedDocException.ERR_XMLENC_DATA_STATUS,    
 									  "Invalid data status for compression operation!", null);
 		try {
 			int nOldSize = m_data.length;
@@ -1103,20 +1103,20 @@ public class EncryptedData {
 //					m_logger.debug("Discarding compressed: " + m_data.length + " bytes");
 			}
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_COMPRESS);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_COMPRESS);
 		}
 	}
 
 	/**
 	 * Decompresses the unencrypted data using ZLIB algorithm
-	 * @throws SignedODFDocumentException_IT for decompression errors
+	 * @throws SignedDocException for decompression errors
 	 */
 	private void decompress() 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		//	check data
 		if(m_data == null || m_nDataStatus != DENC_DATA_STATUS_UNENCRYPTED_AND_COMPRESSED)
-			   throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_DATA_STATUS,    
+			   throw new SignedDocException(SignedDocException.ERR_XMLENC_DATA_STATUS,    
 				   "Invalid data status for decompression operation!", null);
 		try {
 //			if(m_logger.isDebugEnabled())
@@ -1136,7 +1136,7 @@ public class EncryptedData {
 //			if(m_logger.isDebugEnabled())
 //				m_logger.debug("Decompressed: " + m_data.length + " bytes");
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_DECOMPRESS);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_DECOMPRESS);
 		}
 	}
 	
@@ -1153,10 +1153,10 @@ public class EncryptedData {
 	 * @param nCompressOption compression option: allways, never. Best-effort 
 	 * is not supported here because we don't know it before we have encrypted
 	 * eveything end then we don't want to redo this. 
-	 *  @throws SignedODFDocumentException_IT for encryption errors
+	 *  @throws SignedDocException for encryption errors
 	 */
 	public void encryptStream(InputStream in, OutputStream out, int nCompressOption) 
-		throws SignedODFDocumentException_IT 
+		throws SignedDocException 
 	{
 		byte [] ivdata = new byte[16];
 		// check the transport key
@@ -1164,7 +1164,7 @@ public class EncryptedData {
 			initKey();
 		// check data
 		if(m_data != null || m_nDataStatus != DENC_DATA_STATUS_UNINITIALIZED)
-			throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_DATA_STATUS,    
+			throw new SignedDocException(SignedDocException.ERR_XMLENC_DATA_STATUS,    
 				  "Invalid data status for encryption operation!", null);
 		// get cipher to encrypt the data
 		Cipher cipher = getCipher(Cipher.ENCRYPT_MODE, null, ivdata);
@@ -1294,7 +1294,7 @@ public class EncryptedData {
 //			if(m_logger.isInfoEnabled())
 //				m_logger.info("EncryptStream total - input: " + nTotalInput + " compressed: " + nTotalCompressed + " encrypted: " + nTotalEncrypted + " base64: " + nTotalBase64);
 		} catch (Exception ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_ENCRYPT);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_ENCRYPT);
 		}
 	} 
 
@@ -1304,7 +1304,7 @@ public class EncryptedData {
      * @return XML representation of EncryptedData
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
                 new ByteArrayOutputStream();
@@ -1317,7 +1317,7 @@ public class EncryptedData {
 //				m_logger.info("Encrypt total - base64: " + nTotalBase64);       
             bos.write(xmlTrailer());           
          } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
@@ -1327,7 +1327,7 @@ public class EncryptedData {
 	 * @return XML representation of EncryptedData header
 	 */
 	private byte[] xmlHeader()
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		ByteArrayOutputStream bos = 
 				new ByteArrayOutputStream();
@@ -1354,7 +1354,7 @@ public class EncryptedData {
 			bos.write(ConvertUtils.str2data("<denc:CipherData><denc:CipherValue>"));
 			// after this comes payload data			
 		 } catch(IOException ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
 		}
 		return bos.toByteArray();
 	}
@@ -1364,7 +1364,7 @@ public class EncryptedData {
 	 * @return XML representation of EncryptedData header
 	 */
 	private byte[] xmlTrailer()
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		ByteArrayOutputStream bos = 
 				new ByteArrayOutputStream();
@@ -1384,7 +1384,7 @@ public class EncryptedData {
 			}
 			bos.write(ConvertUtils.str2data("</denc:EncryptedData>"));
 		 } catch(IOException ex) {
-			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+			SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
 		}
 		return bos.toByteArray();
 	}
@@ -1392,12 +1392,12 @@ public class EncryptedData {
     /**
      * Helper method to validate the whole
      * EncryptedData object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateEncryptionMethod(m_encryptionMethod);
+        SignedDocException ex = validateEncryptionMethod(m_encryptionMethod);
         if(ex != null)
             errs.add(ex);
         ex = validateXmlns(m_xmlns);

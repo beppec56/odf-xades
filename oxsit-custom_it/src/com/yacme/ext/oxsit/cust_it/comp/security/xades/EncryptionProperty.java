@@ -50,10 +50,10 @@ public class EncryptionProperty  implements Serializable
 	 * Constructor for EncryptionProperty object
 	 * @param name Name atribute value (required in this implementation)
 	 * @param content encryption property value itself (required)
-	 * @throws SignedODFDocumentException_IT for validation errors
+	 * @throws SignedDocException for validation errors
 	 */
 	public EncryptionProperty(String name, String content)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		setName(name);
 		setContent(content);
@@ -65,10 +65,10 @@ public class EncryptionProperty  implements Serializable
 	 * @param target Target atribute value (optional) 
 	 * @param name Name atribute value (required in this implementation)
 	 * @param content encryption property value itself (required)
-	 * @throws SignedODFDocumentException_IT for validation errors
+	 * @throws SignedDocException for validation errors
 	 */
 	public EncryptionProperty(String id, String target, String name, String content)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		setId(id);
 		setTarget(target);
@@ -119,12 +119,12 @@ public class EncryptionProperty  implements Serializable
 	/**
      * Mutator for Name attribute
      * @param str new value for Name attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setName(String str) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateName(str);
+    	SignedDocException ex = validateName(str);
         if(ex != null)
             throw ex;
     	m_name = str;
@@ -135,11 +135,11 @@ public class EncryptionProperty  implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateName(String str)
+    private SignedDocException validateName(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCPROP_NAME, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCPROP_NAME, 
                 "Name atribute is required", null);
         return ex;
     }
@@ -155,12 +155,12 @@ public class EncryptionProperty  implements Serializable
 	/**
      * Mutator for Content attribute
      * @param str new value for Content attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setContent(String str) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateContent(str);
+    	SignedDocException ex = validateContent(str);
         if(ex != null)
             throw ex;
     	m_content = str;
@@ -171,11 +171,11 @@ public class EncryptionProperty  implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateContent(String str)
+    private SignedDocException validateContent(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCPROP_CONTENT, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCPROP_CONTENT, 
                 "content of <EncryptionProperty> element is required", null);
         return ex;
     }
@@ -185,7 +185,7 @@ public class EncryptionProperty  implements Serializable
      * @return XML representation of KeyInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
                 new ByteArrayOutputStream();
@@ -202,7 +202,7 @@ public class EncryptionProperty  implements Serializable
             	bos.write(ConvertUtils.str2data(m_content));            
             bos.write(ConvertUtils.str2data("</denc:EncryptionProperty>"));
          } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
@@ -210,12 +210,12 @@ public class EncryptionProperty  implements Serializable
     /**
      * Helper method to validate the whole
      * EncrypteionProperty object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateName(m_name);
+        SignedDocException ex = validateName(m_name);
         if(ex != null)
             errs.add(ex);
         ex = validateContent(m_content);

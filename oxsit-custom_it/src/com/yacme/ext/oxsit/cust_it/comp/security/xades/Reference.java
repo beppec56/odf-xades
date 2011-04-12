@@ -15,9 +15,9 @@ import java.util.ArrayList;
  * @author Veiko Sinivee, modified by G. Castagno
  * @version 1.0
  */
-public class ReferenceXADES_IT implements Serializable {
-	/** reference to parent SignedInfoXADES_IT object */
-	private SignedInfoXADES_IT m_sigInfo;
+public class Reference implements Serializable {
+	/** reference to parent SignedInfo object */
+	private SignedInfo m_sigInfo;
 	/** URI to signed XML data */
 	private String m_uri;
 	/** selected digest algorithm */
@@ -31,9 +31,9 @@ public class ReferenceXADES_IT implements Serializable {
 	 * Creates new Reference. Initializes everything to null
 	 * 
 	 * @param sigInfo
-	 *            reference to parent SignedInfoXADES_IT object
+	 *            reference to parent SignedInfo object
 	 */
-	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo) {
+	public Reference(SignedInfo sigInfo) {
 		m_sigInfo = sigInfo;
 		m_uri = null;
 		m_digestAlgorithm = null;
@@ -45,7 +45,7 @@ public class ReferenceXADES_IT implements Serializable {
 	 * Creates new Reference
 	 * 
 	 * @param sigInfo
-	 *            reference to parent SignedInfoXADES_IT object
+	 *            reference to parent SignedInfo object
 	 * @param uri
 	 *            reference uri pointing to signed XML data
 	 * @param algorithm
@@ -54,11 +54,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 *            message digest data
 	 * @param transform
 	 *            transform algorithm
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo, String uri, String algorithm,
-			byte[] digest, String transform) throws SignedODFDocumentException_IT {
+	public Reference(SignedInfo sigInfo, String uri, String algorithm,
+			byte[] digest, String transform) throws SignedDocException {
 		m_sigInfo = sigInfo;
 		setUri(uri);
 		setDigestAlgorithm(algorithm);
@@ -68,25 +68,25 @@ public class ReferenceXADES_IT implements Serializable {
 
 	/**
 	 * Creates new Reference and initializes it with default values from the
-	 * DataFile_IT
+	 * DataFile
 	 * 
 	 * @param sigInfo
-	 *            reference to parent SignedInfoXADES_IT object
+	 *            reference to parent SignedInfo object
 	 * @param df
-	 *            DataFile_IT object
-	 * @throws SignedODFDocumentException_IT
+	 *            DataFile object
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo, DataFile_IT df)
-			throws SignedODFDocumentException_IT {
+	public Reference(SignedInfo sigInfo, DataFile df)
+			throws SignedDocException {
 		
 
 		m_sigInfo = sigInfo;
 		setUri("#" + df.getId());
-		setDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
+		setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
 		setDigestValue(df.getDigest());
 		setTransformAlgorithm(df.getContentType().equals(
-				DataFile_IT.CONTENT_DETATCHED) ? SignedODFDocument_IT.DIGIDOC_DETATCHED_TRANSFORM
+				DataFile.CONTENT_DETATCHED) ? SignedDoc.DIGIDOC_DETATCHED_TRANSFORM
 				: null);
 	}
 
@@ -95,7 +95,7 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @return value of sigInfo attribute
 	 */
-	public SignedInfoXADES_IT getSignedInfo() {
+	public SignedInfo getSignedInfo() {
 		return m_sigInfo;
 	}
 
@@ -105,7 +105,7 @@ public class ReferenceXADES_IT implements Serializable {
 	 * @param sigInfo
 	 *            new value for sigInfo attribute
 	 */
-	public void setSignedInfo(SignedInfoXADES_IT sigInfo) {
+	public void setSignedInfo(SignedInfo sigInfo) {
 		m_sigInfo = sigInfo;
 	}
 
@@ -114,17 +114,17 @@ public class ReferenceXADES_IT implements Serializable {
 	 * SignedProperties
 	 * 
 	 * @param sigInfo
-	 *            reference to parent SignedInfoXADES_IT object
+	 *            reference to parent SignedInfo object
 	 * @param sp
-	 *            SignedPropertiesXADES_IT object
-	 * @throws SignedODFDocumentException_IT
+	 *            SignedProperties object
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public ReferenceXADES_IT(SignedInfoXADES_IT sigInfo, SignedPropertiesXADES_IT sp)
-			throws SignedODFDocumentException_IT {
+	public Reference(SignedInfo sigInfo, SignedProperties sp)
+			throws SignedDocException {
 		m_sigInfo = sigInfo;
 		setUri(sp.getTarget() + "-SignedProperties");
-		setDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
+		setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
 		setDigestValue(sp.calculateDigest());
 		setTransformAlgorithm(null);
 	}
@@ -143,11 +143,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @param str
 	 *            new value for uri attribute
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public void setUri(String str) throws SignedODFDocumentException_IT {
-		SignedODFDocumentException_IT ex = validateUri(str);
+	public void setUri(String str) throws SignedDocException {
+		SignedDocException ex = validateUri(str);
 		if (ex != null)
 			throw ex;
 		m_uri = str;
@@ -160,10 +160,10 @@ public class ReferenceXADES_IT implements Serializable {
 	 *            input data
 	 * @return exception or null for ok
 	 */
-	private SignedODFDocumentException_IT validateUri(String str) {
-		SignedODFDocumentException_IT ex = null;
+	private SignedDocException validateUri(String str) {
+		SignedDocException ex = null;
 		if (str == null) // check the uri somehow ???
-			ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_REFERENCE_URI,
+			ex = new SignedDocException(SignedDocException.ERR_REFERENCE_URI,
 					"URI has to be in format #<DataFile-ID>", null);
 		return ex;
 	}
@@ -182,11 +182,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @param str
 	 *            new value for digestAlgorithm attribute
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public void setDigestAlgorithm(String str) throws SignedODFDocumentException_IT {
-		SignedODFDocumentException_IT ex = validateDigestAlgorithm(str);
+	public void setDigestAlgorithm(String str) throws SignedDocException {
+		SignedDocException ex = validateDigestAlgorithm(str);
 		if (ex != null)
 			throw ex;
 		m_digestAlgorithm = str;
@@ -199,10 +199,10 @@ public class ReferenceXADES_IT implements Serializable {
 	 *            input data
 	 * @return exception or null for ok
 	 */
-	private SignedODFDocumentException_IT validateDigestAlgorithm(String str) {
-		SignedODFDocumentException_IT ex = null;
-		if (str == null || !str.equals(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM))
-			ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGEST_ALGORITHM,
+	private SignedDocException validateDigestAlgorithm(String str) {
+		SignedDocException ex = null;
+		if (str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+			ex = new SignedDocException(SignedDocException.ERR_DIGEST_ALGORITHM,
 					"Currently supports only SHA1 digest algorithm", null);
 		return ex;
 	}
@@ -221,11 +221,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @param data
 	 *            new value for digestValue attribute
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public void setDigestValue(byte[] data) throws SignedODFDocumentException_IT {
-		SignedODFDocumentException_IT ex = validateDigestValue(data);
+	public void setDigestValue(byte[] data) throws SignedDocException {
+		SignedDocException ex = validateDigestValue(data);
 		if (ex != null)
 			throw ex;
 		m_digestValue = data;
@@ -238,10 +238,10 @@ public class ReferenceXADES_IT implements Serializable {
 	 *            input data
 	 * @return exception or null for ok
 	 */
-	private SignedODFDocumentException_IT validateDigestValue(byte[] data) {
-		SignedODFDocumentException_IT ex = null;
-		if (data == null || data.length != SignedODFDocument_IT.SHA1_DIGEST_LENGTH)
-			ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGEST_LENGTH,
+	private SignedDocException validateDigestValue(byte[] data) {
+		SignedDocException ex = null;
+		if (data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+			ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH,
 					"SHA1 digest data is allways 20 bytes of length", null);
 		return ex;
 	}
@@ -262,11 +262,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @param str
 	 *            new value for transformAlgorithm attribute
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public void setTransformAlgorithm(String str) throws SignedODFDocumentException_IT {
-		SignedODFDocumentException_IT ex = validateTransformAlgorithm(str);
+	public void setTransformAlgorithm(String str) throws SignedDocException {
+		SignedDocException ex = validateTransformAlgorithm(str);
 		if (ex != null)
 			throw ex;
 		m_transformAlgorithm = str;
@@ -279,11 +279,11 @@ public class ReferenceXADES_IT implements Serializable {
 	 *            input data
 	 * @return exception or null for ok
 	 */
-	private SignedODFDocumentException_IT validateTransformAlgorithm(String str) {
-		SignedODFDocumentException_IT ex = null;
-		if (str != null && !str.equals(SignedODFDocument_IT.DIGIDOC_DETATCHED_TRANSFORM))
-			ex = new SignedODFDocumentException_IT(
-					SignedODFDocumentException_IT.ERR_TRANSFORM_ALGORITHM,
+	private SignedDocException validateTransformAlgorithm(String str) {
+		SignedDocException ex = null;
+		if (str != null && !str.equals(SignedDoc.DIGIDOC_DETATCHED_TRANSFORM))
+			ex = new SignedDocException(
+					SignedDocException.ERR_TRANSFORM_ALGORITHM,
 					"Currently supports either no transforms or one detatched document transform",
 					null);
 		return ex;
@@ -292,11 +292,11 @@ public class ReferenceXADES_IT implements Serializable {
 	/**
 	 * Helper method to validate the whole Reference object
 	 * 
-	 * @return a possibly empty list of SignedODFDocumentException_IT objects
+	 * @return a possibly empty list of SignedDocException objects
 	 */
 	public ArrayList validate() {
 		ArrayList errs = new ArrayList();
-		SignedODFDocumentException_IT ex = validateUri(m_uri);
+		SignedDocException ex = validateUri(m_uri);
 		if (ex != null)
 			errs.add(ex);
 		ex = validateDigestAlgorithm(m_digestAlgorithm);
@@ -316,7 +316,7 @@ public class ReferenceXADES_IT implements Serializable {
 	 * 
 	 * @return XML representation of Reference
 	 */
-	public byte[] toXML() throws SignedODFDocumentException_IT {
+	public byte[] toXML() throws SignedDocException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			/*
@@ -331,8 +331,8 @@ public class ReferenceXADES_IT implements Serializable {
 			// VS: rc11_02 bug fix on Type attribute
 			bos.write(ConvertUtils.str2data("<Reference"));
 			if ((m_sigInfo.getSignature().getSignedDoc().getVersion().equals(
-					SignedODFDocument_IT.VERSION_1_2) || m_sigInfo.getSignature()
-					.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3))
+					SignedDoc.VERSION_1_2) || m_sigInfo.getSignature()
+					.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3))
 					&& m_uri.indexOf("SignedProperties") != -1) {
 				bos
 						.write(ConvertUtils
@@ -357,8 +357,8 @@ public class ReferenceXADES_IT implements Serializable {
 			bos.write(ConvertUtils.str2data("</DigestValue>\n"));
 			bos.write(ConvertUtils.str2data("</Reference>"));
 		} catch (IOException ex) {
-			SignedODFDocumentException_IT.handleException(ex,
-					SignedODFDocumentException_IT.ERR_XML_CONVERT);
+			SignedDocException.handleException(ex,
+					SignedDocException.ERR_XML_CONVERT);
 		}
 		return bos.toByteArray();
 	}

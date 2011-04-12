@@ -12,7 +12,7 @@ import java.io.InputStream;
  * @author veiko
  *
  */
-public class Base64InputStream_IT extends FilterInputStream 
+public class Base64InputStream extends FilterInputStream 
 {
 	/** buffer */
 	private int[] buffer;
@@ -27,7 +27,7 @@ public class Base64InputStream_IT extends FilterInputStream
 	 * Constructor for Base64InputStream
 	 * @param is basic input stream to read from
 	 */
-	public Base64InputStream_IT(InputStream is) {
+	public Base64InputStream(InputStream is) {
 		super(is);
 	}
 

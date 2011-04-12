@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CompleteCertificateRefs_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CompleteCertificateRefs.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -56,15 +56,15 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class CompleteCertificateRefs_IT implements Serializable {
+public class CompleteCertificateRefs implements Serializable {
     /** parent object - UnsignedProperties ref */
-    private UnsignedProperties_IT m_unsignedProps;
+    private UnsignedProperties m_unsignedProps;
     
     /** 
      * Creates new CompleteCertificateRefs 
      * and initializes everything to null
      */
-    public CompleteCertificateRefs_IT() {
+    public CompleteCertificateRefs() {
         m_unsignedProps = null;        
     }
     
@@ -75,12 +75,12 @@ public class CompleteCertificateRefs_IT implements Serializable {
      * @param digAlg OCSP responders certs digest algorithm id/uri
      * @param digest OCSP responders certs digest
      * @param serial OCSP responders certs issuers serial number
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CompleteCertificateRefs_IT(String certId, String digAlg, byte[] digest, BigInteger serial) 
-        throws SignedODFDocumentException_IT
+    public CompleteCertificateRefs(String certId, String digAlg, byte[] digest, BigInteger serial) 
+        throws SignedDocException
     {
-    	CertID_IT cid = new CertID_IT(certId, digAlg, digest, serial, null, CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = new CertID(certId, digAlg, digest, serial, null, CertID.CERTID_TYPE_RESPONDER);
     	addCertID(cid);
         m_unsignedProps = null;
     }
@@ -91,18 +91,18 @@ public class CompleteCertificateRefs_IT implements Serializable {
      * Rerouted to set those values on responders certid.
      * @param sig Signature object
      * @param respCert OCSP responders cert
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CompleteCertificateRefs_IT(SignatureXADES_IT sig, X509Certificate respCert) 
-        throws SignedODFDocumentException_IT
+    public CompleteCertificateRefs(Signature sig, X509Certificate respCert) 
+        throws SignedDocException
     {        
-    	CertID_IT cid = new CertID_IT(sig, respCert, CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = new CertID(sig, respCert, CertID.CERTID_TYPE_RESPONDER);
     	sig.addCertID(cid);
      }
     
     /**
-     * return the count of CertID_IT objects
-     * @return count of CertID_IT objects
+     * return the count of CertID objects
+     * @return count of CertID objects
      */
     public int countCertIDs()
     {
@@ -110,52 +110,52 @@ public class CompleteCertificateRefs_IT implements Serializable {
     }
     
     /**
-     * Adds a new CertID_IT object
+     * Adds a new CertID object
      * @param cid new object to be added
      */
-    public void addCertID(CertID_IT cid)
+    public void addCertID(CertID cid)
     {
     	m_unsignedProps.getSignature().addCertID(cid);
     }
     
     /**
-     * Retrieves CertID_IT element with the desired index
-     * @param idx CertID_IT index
-     * @return CertID_IT element or null if not found
+     * Retrieves CertID element with the desired index
+     * @param idx CertID index
+     * @return CertID element or null if not found
      */
-    public CertID_IT getCertID(int idx)
+    public CertID getCertID(int idx)
     {
     	return m_unsignedProps.getSignature().getCertID(idx); 
     }
     
     /**
-     * Retrieves the last CertID_IT element
-     * @return CertID_IT element or null if not found
+     * Retrieves the last CertID element
+     * @return CertID element or null if not found
      */
-    public CertID_IT getLastCertId()
+    public CertID getLastCertId()
     {
     	return m_unsignedProps.getSignature().getLastCertId(); 
     }
     
     /**
-     * Retrieves CertID_IT element with the desired type
-     * @param type CertID_IT type
-     * @return CertID_IT element or null if not found
+     * Retrieves CertID element with the desired type
+     * @param type CertID type
+     * @return CertID element or null if not found
      */
-    public CertID_IT getCertIdOfType(int type)
+    public CertID getCertIdOfType(int type)
     {
     	return m_unsignedProps.getSignature().getCertIdOfType(type);
     }
     
     /**
-     * Retrieves CertID_IT element with the desired type.
+     * Retrieves CertID element with the desired type.
      * If not found creates a new one with this type.
-     * @param type CertID_IT type
-     * @return CertID_IT element
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @param type CertID type
+     * @return CertID element
+     * @throws SignedDocException for validation errors
      */
-    public CertID_IT getOrCreateCertIdOfType(int type)
-    	throws SignedODFDocumentException_IT
+    public CertID getOrCreateCertIdOfType(int type)
+    	throws SignedDocException
     {
     	return m_unsignedProps.getSignature().getOrCreateCertIdOfType(type);
     }
@@ -166,7 +166,7 @@ public class CompleteCertificateRefs_IT implements Serializable {
      * Accessor for UnsignedProperties attribute
      * @return value of UnsignedProperties attribute
      */
-    public UnsignedProperties_IT getUnsignedProperties()
+    public UnsignedProperties getUnsignedProperties()
     {
     	return m_unsignedProps;
     }
@@ -175,18 +175,18 @@ public class CompleteCertificateRefs_IT implements Serializable {
      * Mutator for UnsignedProperties attribute
      * @param uprops value of UnsignedProperties attribute
      */
-    public void setUnsignedProperties(UnsignedProperties_IT uprops)
+    public void setUnsignedProperties(UnsignedProperties uprops)
     {
     	m_unsignedProps = uprops;
     }
     
     /**
      * Accessor for certId attribute
-     * Rerouted to get this attribute from CertID_IT sublement.
+     * Rerouted to get this attribute from CertID sublement.
      * @return value of certId attribute
      */
     public String getCertId() {
-    	CertID_IT cid = getCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	if(cid != null)
     		return cid.getId();
     	else
@@ -195,24 +195,24 @@ public class CompleteCertificateRefs_IT implements Serializable {
     
     /**
      * Mutator for certId attribute.
-     * Rerouted to set this attribute on CertID_IT sublement.
+     * Rerouted to set this attribute on CertID sublement.
      * @param str new value for certId attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	CertID_IT cid = getOrCreateCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getOrCreateCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	cid.setId(str);
     }
     
     /**
      * Accessor for certDigestAlgorithm attribute
-     * Rerouted to get this attribute from CertID_IT sublement.
+     * Rerouted to get this attribute from CertID sublement.
      * @return value of certDigestAlgorithm attribute
      */
     public String getCertDigestAlgorithm() {
-    	CertID_IT cid = getCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	if(cid != null)
     		return cid.getDigestAlgorithm();
     	else
@@ -221,24 +221,24 @@ public class CompleteCertificateRefs_IT implements Serializable {
     
     /**
      * Mutator for certDigestAlgorithm attribute.
-     * Rerouted to set this attribute on CertID_IT sublement.
+     * Rerouted to set this attribute on CertID sublement.
      * @param str new value for certDigestAlgorithm attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertDigestAlgorithm(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	CertID_IT cid = getOrCreateCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getOrCreateCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	cid.setDigestAlgorithm(str);
     }
     
     /**
      * Accessor for certDigestValue attribute
-     * Rerouted to get this attribute from CertID_IT sublement.
+     * Rerouted to get this attribute from CertID sublement.
      * @return value of certDigestValue attribute
      */
     public byte[] getCertDigestValue() {
-    	CertID_IT cid = getCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	if(cid != null)
     		return cid.getDigestValue();
     	else
@@ -247,24 +247,24 @@ public class CompleteCertificateRefs_IT implements Serializable {
     
     /**
      * Mutator for certDigestValue attribute.
-     * Rerouted to set this attribute on CertID_IT sublement.
+     * Rerouted to set this attribute on CertID sublement.
      * @param data new value for certDigestValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertDigestValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	CertID_IT cid = getOrCreateCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getOrCreateCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	cid.setDigestValue(data);
     }
      
     /**
      * Accessor for certSerial attribute.
-     * Rerouted to get this attribute from CertID_IT sublement.
+     * Rerouted to get this attribute from CertID sublement.
      * @return value of certSerial attribute
      */
     public BigInteger getCertSerial() {
-    	CertID_IT cid = getCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	if(cid != null)
     		return cid.getSerial();
     	else
@@ -273,27 +273,27 @@ public class CompleteCertificateRefs_IT implements Serializable {
     
     /**
      * Mutator for certSerial attribute.
-     * Rerouted to set this attribute on CertID_IT sublement.
+     * Rerouted to set this attribute on CertID sublement.
      * @param str new value for certSerial attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertSerial(BigInteger i) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-    	CertID_IT cid = getOrCreateCertIdOfType(CertID_IT.CERTID_TYPE_RESPONDER);
+    	CertID cid = getOrCreateCertIdOfType(CertID.CERTID_TYPE_RESPONDER);
     	cid.setSerial(i);
     }
 
     /**
      * Helper method to validate the whole
      * CompleteCertificateRefs object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
         for(int i = 0; i < countCertIDs(); i++) {
-    		CertID_IT cid = getCertID(i);
+    		CertID cid = getCertID(i);
     		ArrayList a = cid.validate();
     		if(a.size() > 0)
     			errs.addAll(a);
@@ -306,30 +306,30 @@ public class CompleteCertificateRefs_IT implements Serializable {
      * @return XML representation of CompleteCertificateRefs
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
         try {
             bos.write(ConvertUtils.str2data("<CompleteCertificateRefs>"));
-            if(m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-               m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) {
+            if(m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) ||
+               m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)) {
             	bos.write(ConvertUtils.str2data("<CertRefs>\n"));
             } 
             for(int i = 0; i < countCertIDs(); i++) {
-        		CertID_IT cid = getCertID(i);
-        		if(cid.getType() != CertID_IT.CERTID_TYPE_SIGNER) {
+        		CertID cid = getCertID(i);
+        		if(cid.getType() != CertID.CERTID_TYPE_SIGNER) {
         			bos.write(cid.toXML());
         			bos.write(ConvertUtils.str2data("\n"));   
         		}
             }
-            if(m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-               m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) {
+            if(m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) ||
+               m_unsignedProps.getSignature().getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)) {
             	bos.write(ConvertUtils.str2data("</CertRefs>"));
             }
             bos.write(ConvertUtils.str2data("</CompleteCertificateRefs>"));        
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

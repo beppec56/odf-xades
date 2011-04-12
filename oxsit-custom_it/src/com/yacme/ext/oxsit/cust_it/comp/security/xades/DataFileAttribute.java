@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class DataFileAttribute_IT implements Serializable
+public class DataFileAttribute implements Serializable
 {
     /** attribute name */
     private String m_name;
@@ -24,10 +24,10 @@ public class DataFileAttribute_IT implements Serializable
      * Creates new DataFileAttribute 
      * @param name attribute name
      * @param value attribute value
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public DataFileAttribute_IT(String name, String value)
-        throws SignedODFDocumentException_IT
+    public DataFileAttribute(String name, String value)
+        throws SignedDocException
     {
         setName(name);
         setValue(value);
@@ -44,12 +44,12 @@ public class DataFileAttribute_IT implements Serializable
     /**
      * Mutator for name attribute
      * @param str new value for name attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setName(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateName(str);
+        SignedDocException ex = validateName(str);
         if(ex != null)
             throw ex;
         m_name = str;
@@ -60,11 +60,11 @@ public class DataFileAttribute_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateName(String str)
+    private SignedDocException validateName(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_ATTR_NAME, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_ATTR_NAME, 
                 "Attribute name is required", null);
         return ex;
     }
@@ -80,12 +80,12 @@ public class DataFileAttribute_IT implements Serializable
     /**
      * Mutator for value attribute
      * @param str new value for value attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setValue(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateValue(str);
+        SignedDocException ex = validateValue(str);
         if(ex != null)
             throw ex;
         m_value = str;
@@ -96,11 +96,11 @@ public class DataFileAttribute_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateValue(String str)
+    private SignedDocException validateValue(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_ATTR_VALUE, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_ATTR_VALUE, 
                 "Attribute value is required", null);
         return ex;
     }
@@ -108,12 +108,12 @@ public class DataFileAttribute_IT implements Serializable
     /**
      * Helper method to validate the whole
      * DataFileAttribute object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateName(m_name);
+        SignedDocException ex = validateName(m_name);
         if(ex != null)
             errs.add(ex);
         ex = validateValue(m_value);
@@ -127,7 +127,7 @@ public class DataFileAttribute_IT implements Serializable
      * @return XML representation of SignedInfo
      */
     public String toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         StringBuffer sb = new StringBuffer(m_name);
         sb.append("=\"");

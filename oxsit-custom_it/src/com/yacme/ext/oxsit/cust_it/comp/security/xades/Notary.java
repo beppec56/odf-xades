@@ -16,7 +16,7 @@ import java.util.Date;
  * @version 1.0
  * FIXME: needs to be adapted to IT env, where the OCSP usually doesn't work, due to lack of support by the CAs
  */
-public class Notary_IT {
+public class Notary {
     /** notary id (in XML) */
     private String m_id;
     /** OCSP response data */
@@ -32,7 +32,7 @@ public class Notary_IT {
      * Creates new Notary and 
      * initializes everything to null
      */
-    public Notary_IT() {
+    public Notary() {
         m_ocspResponseData = null;
         m_id = null;
         m_responderId = null;
@@ -45,7 +45,7 @@ public class Notary_IT {
      * @param id new Notary id
      * @param resp OCSP response data
      */
-    public Notary_IT(String id, byte[] resp, String respId, Date prodAt) 
+    public Notary(String id, byte[] resp, String respId, Date prodAt) 
     {
         m_ocspResponseData = resp;
         m_id = id;
@@ -64,12 +64,12 @@ public class Notary_IT {
     /**
      * Mutator for id attribute
      * @param str new value for id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        //throws SignedODFDocumentException_IT
+        //throws SignedDocException
     {
-        //SignedODFDocumentException_IT ex = validateId(str);
+        //SignedDocException ex = validateId(str);
         //if(ex != null)
         //    throw ex;
         m_id = str;
@@ -148,7 +148,7 @@ public class Notary_IT {
     /**
      * Helper method to validate the whole
      * SignedProperties object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
@@ -162,24 +162,24 @@ public class Notary_IT {
      * @return XML representation of Notary
      */
     public byte[] toXML(String ver)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
         try {
             bos.write(ConvertUtils.str2data("<RevocationValues>"));            
-            if(ver.equals(SignedODFDocument_IT.VERSION_1_3))
+            if(ver.equals(SignedDoc.VERSION_1_3))
             	bos.write(ConvertUtils.str2data("<OCSPValues>"));
             bos.write(ConvertUtils.str2data("<EncapsulatedOCSPValue Id=\""));
             bos.write(ConvertUtils.str2data(m_id));
             bos.write(ConvertUtils.str2data("\">\n"));
             bos.write(ConvertUtils.str2data(Base64Util.encode(m_ocspResponseData, 64)));
             bos.write(ConvertUtils.str2data("</EncapsulatedOCSPValue>\n"));
-            if(ver.equals(SignedODFDocument_IT.VERSION_1_3))
+            if(ver.equals(SignedDoc.VERSION_1_3))
             	bos.write(ConvertUtils.str2data("</OCSPValues>"));
             bos.write(ConvertUtils.str2data("</RevocationValues>"));
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
@@ -191,7 +191,7 @@ public class Notary_IT {
     public String toString() {
         String str = null;
         try {
-            str = new String(toXML(SignedODFDocument_IT.VERSION_1_3));
+            str = new String(toXML(SignedDoc.VERSION_1_3));
         } catch(Exception ex) { //cannot throw any exception!!!
         }
         return str;

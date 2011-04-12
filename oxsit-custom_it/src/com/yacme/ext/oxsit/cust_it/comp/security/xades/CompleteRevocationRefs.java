@@ -16,7 +16,7 @@ import java.util.Date;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class CompleteRevocationRefs_IT implements Serializable {
+public class CompleteRevocationRefs implements Serializable {
     /** <OCSPIdentifier> URI attribute */
     private String m_uri;
     /** <ResponderId> element */
@@ -28,13 +28,13 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /** digest value */
     private byte[] m_digestValue;
     /** parent object - UnsignedProperties ref */
-    private UnsignedProperties_IT m_unsignedProps;
+    private UnsignedProperties m_unsignedProps;
     
     /** 
      * Creates new CompleteRevocationRefs 
      * Initializes everything to null
      */
-    public CompleteRevocationRefs_IT() {
+    public CompleteRevocationRefs() {
         m_uri = null;
         m_responderId = null;
         m_producedAt = null;
@@ -50,11 +50,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param producedAt OCSP producedAt timestamp
      * @param digAlg notary digest algorithm
      * @param digest notary digest
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CompleteRevocationRefs_IT(String uri, String respId,
+    public CompleteRevocationRefs(String uri, String respId,
         Date producedAt, String digAlg, byte[] digest) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         setUri(uri);
         setResponderId(respId);
@@ -67,23 +67,23 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * Creates new CompleteRevocationRefs 
      * by using data from an existing Notary object
      * @param not Notary object
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CompleteRevocationRefs_IT(Notary_IT not) 
-        throws SignedODFDocumentException_IT
+    public CompleteRevocationRefs(Notary not) 
+        throws SignedDocException
     {
         setUri("#" + not.getId());
         setResponderId(not.getResponderId());
         setProducedAt(not.getProducedAt());
-        setDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
+        setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
         byte[] digest = null;
         try {
             byte[] ocspData = not.getOcspResponseData();
-            digest = SignedODFDocument_IT.digest(ocspData);
+            digest = SignedDoc.digest(ocspData);
             //System.out.println("OCSP data len: " + ocspData.length); 
             //System.out.println("Calculated digest: " + Base64Util.encode(digest, 0));            
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_CALCULATE_DIGEST); 
+            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST); 
         }
         setDigestValue(digest);
     }
@@ -92,7 +92,7 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * Accessor for UnsignedProperties attribute
      * @return value of UnsignedProperties attribute
      */
-    public UnsignedProperties_IT getUnsignedProperties()
+    public UnsignedProperties getUnsignedProperties()
     {
     	return m_unsignedProps;
     }
@@ -101,7 +101,7 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * Mutator for UnsignedProperties attribute
      * @param uprops value of UnsignedProperties attribute
      */
-    public void setUnsignedProperties(UnsignedProperties_IT uprops)
+    public void setUnsignedProperties(UnsignedProperties uprops)
     {
     	m_unsignedProps = uprops;
     }
@@ -117,12 +117,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Mutator for uri attribute
      * @param str new value for uri attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setUri(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateUri(str);
+        SignedDocException ex = validateUri(str);
         if(ex != null)
             throw ex;
         m_uri = str;
@@ -133,11 +133,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateUri(String str)
+    private SignedDocException validateUri(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_REVREFS_URI, 
+            ex = new SignedDocException(SignedDocException.ERR_REVREFS_URI, 
                 "Notary uri must be in form: #<notary-id>", null);
         return ex;
     }
@@ -153,12 +153,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Mutator for responderId attribute
      * @param str new value for responderId attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setResponderId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateResponderId(str);
+        SignedDocException ex = validateResponderId(str);
         if(ex != null)
             throw ex;
         m_responderId = str;
@@ -193,11 +193,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateResponderId(String str)
+    private SignedDocException validateResponderId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_REVREFS_RESP_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_REVREFS_RESP_ID, 
                 "ResponderId cannot be empty!", null);
         return ex;
     }
@@ -213,12 +213,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Mutator for producedAt attribute
      * @param str new value for producedAt attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setProducedAt(Date d) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateProducedAt(d);
+        SignedDocException ex = validateProducedAt(d);
         if(ex != null)
             throw ex;
         m_producedAt = d;
@@ -229,11 +229,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateProducedAt(Date d)
+    private SignedDocException validateProducedAt(Date d)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(d == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_REVREFS_PRODUCED_AT, 
+            ex = new SignedDocException(SignedDocException.ERR_REVREFS_PRODUCED_AT, 
                 "ProducedAt timestamp cannot be empty!", null);
         return ex;
     }
@@ -249,12 +249,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Mutator for digestAlgorithm attribute
      * @param str new value for digestAlgorithm attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestAlgorithm(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestAlgorithm(str);
+        SignedDocException ex = validateDigestAlgorithm(str);
         if(ex != null)
             throw ex;
         m_digestAlgorithm = str;
@@ -265,11 +265,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestAlgorithm(String str)
+    private SignedDocException validateDigestAlgorithm(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null || !str.equals(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERT_DIGEST_ALGORITHM, 
+        SignedDocException ex = null;
+        if(str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+            ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM, 
                 "Currently supports only SHA1 digest algorithm", null);
         return ex;
     }
@@ -285,12 +285,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Mutator for digestValue attribute
      * @param data new value for digestValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestValue(data);
+        SignedDocException ex = validateDigestValue(data);
         if(ex != null)
             throw ex;
         m_digestValue = data;
@@ -301,11 +301,11 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @param data input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestValue(byte[] data)
+    private SignedDocException validateDigestValue(byte[] data)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(data == null || data.length != SignedODFDocument_IT.SHA1_DIGEST_LENGTH)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGEST_LENGTH, 
+        SignedDocException ex = null;
+        if(data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
                 "SHA1 digest data is allways 20 bytes of length", null);
         return ex;
     }
@@ -313,12 +313,12 @@ public class CompleteRevocationRefs_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * CompleteRevocationRefs object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateUri(m_uri);
+        SignedDocException ex = validateUri(m_uri);
         if(ex != null)
             errs.add(ex);
         ex = validateResponderId(m_responderId);
@@ -341,7 +341,7 @@ public class CompleteRevocationRefs_IT implements Serializable {
      * @return XML representation of CompleteRevocationRefs
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -363,7 +363,7 @@ public class CompleteRevocationRefs_IT implements Serializable {
             bos.write(ConvertUtils.str2data("</OCSPRef>\n</OCSPRefs>\n"));
             bos.write(ConvertUtils.str2data("</CompleteRevocationRefs>"));        
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

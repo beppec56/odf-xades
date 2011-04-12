@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignedODFDocument_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignedDoc.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -52,49 +52,49 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.TimestampInfo_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CRLFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.TimestampFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.TimestampInfo;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CRLFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.NotaryFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.TimestampFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * Models an XML-DSIG/ETSI Signature. A signature
- * can contain references SignedInfoXADES_IT (truly signed data)
+ * can contain references SignedInfo (truly signed data)
  * and signed and unsigned properties.
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class SignatureXADES_IT implements Serializable {
-    /** reference to the parent SignedODFDocument_IT object */
-    private SignedODFDocument_IT m_sigDoc;
+public class Signature implements Serializable {
+    /** reference to the parent SignedDoc object */
+    private SignedDoc m_sigDoc;
     /** signature id */
     private String m_id;
-    /** SignedInfoXADES_IT object */
-    private SignedInfoXADES_IT m_signedInfo;
-    /** SignatureValue_IT object */
-    private SignatureValue_IT m_signatureValue;
-    /** KeyInfo_IT object */
-    private KeyInfo_IT m_keyInfo;
-    /** SignedPropertiesXADES_IT object */
-    private SignedPropertiesXADES_IT m_sigProp;
+    /** SignedInfo object */
+    private SignedInfo m_signedInfo;
+    /** SignatureValue object */
+    private SignatureValue m_signatureValue;
+    /** KeyInfo object */
+    private KeyInfo m_keyInfo;
+    /** SignedProperties object */
+    private SignedProperties m_sigProp;
     /** UnsignedProperties object */
-    private UnsignedProperties_IT m_unsigProp;
+    private UnsignedProperties m_unsigProp;
     /** original bytes read from XML file  */
     private byte[] m_origContent;
-	/** CertID_IT elements */
+	/** CertID elements */
 	private ArrayList m_certIds;    
-    /** CertValue_IT elements */
+    /** CertValue elements */
 	private ArrayList m_certValues;
-    /** TimestampInfo_IT elements */
+    /** TimestampInfo elements */
 	private ArrayList m_timestamps;
     
     
     /** 
      * Creates new Signature 
      */
-    public SignatureXADES_IT(SignedODFDocument_IT sigDoc) {
+    public Signature(SignedDoc sigDoc) {
         m_sigDoc = sigDoc;
         m_id = null;
         m_signedInfo = null;
@@ -112,7 +112,7 @@ public class SignatureXADES_IT implements Serializable {
      * Accessor for sigDoc attribute
      * @return value of sigDoc attribute
      */
-    public SignedODFDocument_IT getSignedDoc() {
+    public SignedDoc getSignedDoc() {
         return m_sigDoc;
     }
     
@@ -120,7 +120,7 @@ public class SignatureXADES_IT implements Serializable {
      * Mutator for sigDoc attribute
      * @param sigDoc new value for sigDoc attribute
      */    
-    public void setSignedDoc(SignedODFDocument_IT sigDoc) 
+    public void setSignedDoc(SignedDoc sigDoc) 
     {
         m_sigDoc = sigDoc;
     }
@@ -136,12 +136,12 @@ public class SignatureXADES_IT implements Serializable {
     /**
      * Mutator for id attribute
      * @param str new value for id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateId(str);
+        SignedDocException ex = validateId(str);
         if(ex != null)
             throw ex;
         m_id = str;
@@ -169,11 +169,11 @@ public class SignatureXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str)
+    private SignedDocException validateId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNATURE_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGNATURE_ID, 
                 "Id is a required attribute", null);
         return ex;
     }
@@ -182,30 +182,30 @@ public class SignatureXADES_IT implements Serializable {
      * Accessor for signedInfo attribute
      * @return value of signedInfo attribute
      */
-    public SignedInfoXADES_IT getSignedInfo() {
+    public SignedInfo getSignedInfo() {
         return m_signedInfo;
     }
     
     /**
      * Mutator for signedInfo attribute
      * @param str new value for signedInfo attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
-    public void setSignedInfo(SignedInfoXADES_IT si) 
-        throws SignedODFDocumentException_IT
+    public void setSignedInfo(SignedInfo si) 
+        throws SignedDocException
     {
         //ArrayList errs = si.validate();
         //if(!errs.isEmpty())
-        //    throw (SignedODFDocumentException_IT)errs.get(0);
+        //    throw (SignedDocException)errs.get(0);
         m_signedInfo = si;
     }
 
     /**
-     * Calculates the SignedInfoXADES_IT digest
-     * @return SignedInfoXADES_IT digest
+     * Calculates the SignedInfo digest
+     * @return SignedInfo digest
      */
     public byte[] calculateSignedInfoDigest()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         return m_signedInfo.calculateDigest();
     }
@@ -214,21 +214,21 @@ public class SignatureXADES_IT implements Serializable {
      * Accessor for signatureValue attribute
      * @return value of signatureValue attribute
      */
-    public SignatureValue_IT getSignatureValue() {
+    public SignatureValue getSignatureValue() {
         return m_signatureValue;
     }
     
     /**
      * Mutator for signatureValue attribute
      * @param str new value for signatureValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
-    public void setSignatureValue(SignatureValue_IT sv) 
-        throws SignedODFDocumentException_IT
+    public void setSignatureValue(SignatureValue sv) 
+        throws SignedDocException
     {
         //ArrayList errs = sv.validate();
         //if(!errs.isEmpty())
-        //    throw (SignedODFDocumentException_IT)errs.get(0);
+        //    throw (SignedDocException)errs.get(0);
         m_signatureValue = sv;
         // VS: bug fix on 14.05.2008
         m_origContent = null;
@@ -238,12 +238,12 @@ public class SignatureXADES_IT implements Serializable {
      * Creates a new SignatureValue object
      * of this signature
      * @param sigv signatures byte data
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSignatureValue(byte[] sigv) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignatureValue_IT sv = new SignatureValue_IT(this, sigv);
+        SignatureValue sv = new SignatureValue(this, sigv);
         setSignatureValue(sv);
     }
     
@@ -251,43 +251,43 @@ public class SignatureXADES_IT implements Serializable {
      * Accessor for keyInfo attribute
      * @return value of keyInfo attribute
      */
-    public KeyInfo_IT getKeyInfo() {
+    public KeyInfo getKeyInfo() {
         return m_keyInfo;
     }
     
     /**
      * Mutator for keyInfo attribute
      * @param str new value for keyInfo attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
-    public void setKeyInfo(KeyInfo_IT ki) 
-        throws SignedODFDocumentException_IT
+    public void setKeyInfo(KeyInfo ki) 
+        throws SignedDocException
     {
         //ArrayList errs = ki.validate();
         //if(!errs.isEmpty())
-        //    throw (SignedODFDocumentException_IT)errs.get(0);
+        //    throw (SignedDocException)errs.get(0);
         m_keyInfo = ki;
     }
     
     /**
      * Accessor for signedProperties attribute
-     * @return value of SignedPropertiesXADES_IT attribute
+     * @return value of SignedProperties attribute
      */
-    public SignedPropertiesXADES_IT getSignedProperties() {
+    public SignedProperties getSignedProperties() {
         return m_sigProp;
     }
     
     /**
      * Mutator for signedProperties attribute
      * @param str new value for signedProperties attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
-    public void setSignedProperties(SignedPropertiesXADES_IT sp) 
-        throws SignedODFDocumentException_IT
+    public void setSignedProperties(SignedProperties sp) 
+        throws SignedDocException
     {
         //ArrayList errs = sp.validate();
         //if(!errs.isEmpty())
-        //    throw (SignedODFDocumentException_IT)errs.get(0);
+        //    throw (SignedDocException)errs.get(0);
         m_sigProp = sp;
     }
     
@@ -295,26 +295,26 @@ public class SignatureXADES_IT implements Serializable {
      * Accessor for unsignedProperties attribute
      * @return value of unsignedProperties attribute
      */
-    public UnsignedProperties_IT getUnsignedProperties() {
+    public UnsignedProperties getUnsignedProperties() {
         return m_unsigProp;
     }
     
     /**
      * Mutator for unsignedProperties attribute
      * @param str new value for unsignedProperties attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
-    public void setUnsignedProperties(UnsignedProperties_IT usp) 
-        throws SignedODFDocumentException_IT
+    public void setUnsignedProperties(UnsignedProperties usp) 
+        throws SignedDocException
     {
         //ArrayList errs = usp.validate();
         //if(!errs.isEmpty())
-        //    throw (SignedODFDocumentException_IT)errs.get(0);
+        //    throw (SignedDocException)errs.get(0);
         m_unsigProp = usp;
     }
     /**
-     * return the count of CertID_IT objects
-     * @return count of CertID_IT objects
+     * return the count of CertID objects
+     * @return count of CertID objects
      */
     public int countCertIDs()
     {
@@ -325,7 +325,7 @@ public class SignatureXADES_IT implements Serializable {
      * Adds a new CertID object
      * @param cid new object to be added
      */
-    public void addCertID(CertID_IT cid)
+    public void addCertID(CertID cid)
     {
     	if(m_certIds == null)
     		m_certIds = new ArrayList();
@@ -338,10 +338,10 @@ public class SignatureXADES_IT implements Serializable {
      * @param idx CertID index
      * @return CertID element or null if not found
      */
-    public CertID_IT getCertID(int idx)
+    public CertID getCertID(int idx)
     {
     	if(m_certIds != null && idx < m_certIds.size()) {
-    		return (CertID_IT)m_certIds.get(idx);
+    		return (CertID)m_certIds.get(idx);
     	}
     	return null; // not found
     }
@@ -350,23 +350,23 @@ public class SignatureXADES_IT implements Serializable {
      * Retrieves the last CertID element
      * @return CertID element or null if not found
      */
-    public CertID_IT getLastCertId()
+    public CertID getLastCertId()
     {
     	if(m_certIds != null && m_certIds.size() > 0) {
-    		return (CertID_IT)m_certIds.get(m_certIds.size()-1);
+    		return (CertID)m_certIds.get(m_certIds.size()-1);
     	}
     	return null; // not found
     }
     
     /**
-     * Retrieves CertID_IT element with the desired type
-     * @param type CertID_IT type
-     * @return CertID_IT element or null if not found
+     * Retrieves CertID element with the desired type
+     * @param type CertID type
+     * @return CertID element or null if not found
      */
-    public CertID_IT getCertIdOfType(int type)
+    public CertID getCertIdOfType(int type)
     {
     	for(int i = 0; (m_certIds != null) && (i < m_certIds.size()); i++) {
-    		CertID_IT cid = (CertID_IT)m_certIds.get(i);
+    		CertID cid = (CertID)m_certIds.get(i);
     		if(cid.getType() == type)
     			return cid;
     	}
@@ -374,18 +374,18 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Retrieves CertID_IT element with the desired type.
+     * Retrieves CertID element with the desired type.
      * If not found creates a new one with this type.
-     * @param type CertID_IT type
-     * @return CertID_IT element
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @param type CertID type
+     * @return CertID element
+     * @throws SignedDocException for validation errors
      */
-    public CertID_IT getOrCreateCertIdOfType(int type)
-    	throws SignedODFDocumentException_IT
+    public CertID getOrCreateCertIdOfType(int type)
+    	throws SignedDocException
     {
-    	CertID_IT cid = getCertIdOfType(type);
+    	CertID cid = getCertIdOfType(type);
     	if(cid == null) {
-    		cid = new CertID_IT();
+    		cid = new CertID();
     		cid.setType(type);
     		addCertID(cid);
     	}
@@ -393,7 +393,7 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * return the count of CertValue_IT objects
+     * return the count of CertValue objects
      * @return count of CertValue_ITs objects
      */
     public int countCertValues()
@@ -402,10 +402,10 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Adds a new CertValue_IT object
+     * Adds a new CertValue object
      * @param cval new object to be added
      */
-    public void addCertValue(CertValue_IT cval)
+    public void addCertValue(CertValue cval)
     {
     	if(m_certValues == null)
     		m_certValues = new ArrayList();
@@ -414,39 +414,39 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Retrieves CertValue_IT element with the desired index
-     * @param idx CertValue_IT index
-     * @return CertValue_IT element or null if not found
+     * Retrieves CertValue element with the desired index
+     * @param idx CertValue index
+     * @return CertValue element or null if not found
      */
-    public CertValue_IT getCertValue(int idx)
+    public CertValue getCertValue(int idx)
     {
     	if(m_certValues != null && idx < m_certValues.size()) {
-    		return (CertValue_IT)m_certValues.get(idx);
+    		return (CertValue)m_certValues.get(idx);
     	} else
     	return null; // not found
     }
     
     /**
-     * Retrieves the last CertValue_IT element 
-     * @return CertValue_IT element or null if not found
+     * Retrieves the last CertValue element 
+     * @return CertValue element or null if not found
      */
-    public CertValue_IT getLastCertValue()
+    public CertValue getLastCertValue()
     {
     	if(m_certValues != null && m_certValues.size() > 0) {
-    		return (CertValue_IT)m_certValues.get(m_certValues.size()-1);
+    		return (CertValue)m_certValues.get(m_certValues.size()-1);
     	} else
     		return null; // not found
     }
     
     /**
-     * Retrieves CertValue_IT element with the desired type
-     * @param type CertValue_IT type
-     * @return CertValue_IT element or null if not found
+     * Retrieves CertValue element with the desired type
+     * @param type CertValue type
+     * @return CertValue element or null if not found
      */
-    public CertValue_IT getCertValueOfType(int type)
+    public CertValue getCertValueOfType(int type)
     {
     	for(int i = 0; (m_certValues != null) && (i < m_certValues.size()); i++) {
-    		CertValue_IT cval = (CertValue_IT)m_certValues.get(i);
+    		CertValue cval = (CertValue)m_certValues.get(i);
     		if(cval.getType() == type)
     			return cval;
     	}
@@ -454,18 +454,18 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Retrieves CertValue_IT element with the desired type.
+     * Retrieves CertValue element with the desired type.
      * If not found creates a new one with this type.
-     * @param type CertValue_IT type
-     * @return CertValue_IT element
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @param type CertValue type
+     * @return CertValue element
+     * @throws SignedDocException for validation errors
      */
-    public CertValue_IT getOrCreateCertValueOfType(int type)
-    	throws SignedODFDocumentException_IT
+    public CertValue getOrCreateCertValueOfType(int type)
+    	throws SignedDocException
     {
-    	CertValue_IT cval = getCertValueOfType(type);
+    	CertValue cval = getCertValueOfType(type);
     	if(cval == null) {
-    		cval = new CertValue_IT();
+    		cval = new CertValue();
     		cval.setType(type);
     		addCertValue(cval);
     	}
@@ -473,17 +473,17 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Returns the first CertValue_IT with the given serial
+     * Returns the first CertValue with the given serial
      * number that has been attached to this signature in
      * digidoc document. This could be either the signers 
      * cert, OCSP responders cert or one of the TSA certs.
      * @param serNo certificates serial number
-     * @return found CertValue_IT or null
+     * @return found CertValue or null
      */
-    public CertValue_IT findCertValueWithSerial(BigInteger serNo)
+    public CertValue findCertValueWithSerial(BigInteger serNo)
     {
     	for(int i = 0; (m_certValues != null) && (i < m_certValues.size()); i++) {
-    		CertValue_IT cval = (CertValue_IT)m_certValues.get(i);
+    		CertValue cval = (CertValue)m_certValues.get(i);
     		//System.out.println("Serach cert: " + serNo + " found: " + cval.getCert().getSerialNumber());
     		if(cval.getCert().getSerialNumber().equals(serNo))
     			return cval;
@@ -497,7 +497,7 @@ public class SignatureXADES_IT implements Serializable {
      */
     public X509Certificate findResponderCert()
     {
-    	CertValue_IT cval = getCertValueOfType(CertValue_IT.CERTVAL_TYPE_RESPONDER);
+    	CertValue cval = getCertValueOfType(CertValue.CERTVAL_TYPE_RESPONDER);
     	if(cval != null)
     		return cval.getCert();
     	else
@@ -512,16 +512,16 @@ public class SignatureXADES_IT implements Serializable {
     {
     	ArrayList vec = new ArrayList();
     	for(int i = 0; (m_certValues != null) && (i < m_certValues.size()); i++) {
-    		CertValue_IT cval = (CertValue_IT)m_certValues.get(i);
-    		if(cval.getType() == CertValue_IT.CERTVAL_TYPE_TSA)
+    		CertValue cval = (CertValue)m_certValues.get(i);
+    		if(cval.getType() == CertValue.CERTVAL_TYPE_TSA)
     			vec.add(cval.getCert());
     	}
     	return vec;
     }
     
     /**
-     * return the count of TimestampInfo_IT objects
-     * @return count of TimestampInfo_IT objects
+     * return the count of TimestampInfo objects
+     * @return count of TimestampInfo objects
      */
     public int countTimestampInfos()
     {
@@ -529,10 +529,10 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Adds a new TimestampInfo_IT object
+     * Adds a new TimestampInfo object
      * @param ts new object to be added
      */
-    public void addTimestampInfo(TimestampInfo_IT ts)
+    public void addTimestampInfo(TimestampInfo ts)
     {
     	if(m_timestamps == null)
     		m_timestamps = new ArrayList();
@@ -541,39 +541,39 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Retrieves TimestampInfo_IT element with the desired index
-     * @param idx TimestampInfo_IT index
-     * @return TimestampInfo_IT element or null if not found
+     * Retrieves TimestampInfo element with the desired index
+     * @param idx TimestampInfo index
+     * @return TimestampInfo element or null if not found
      */
-    public TimestampInfo_IT getTimestampInfo(int idx)
+    public TimestampInfo getTimestampInfo(int idx)
     {
     	if(m_timestamps != null && idx < m_timestamps.size()) {
-    		return (TimestampInfo_IT)m_timestamps.get(idx);
+    		return (TimestampInfo)m_timestamps.get(idx);
     	} else
     		return null; // not found
     }
     
     /**
-     * Retrieves the last TimestampInfo_IT element 
-     * @return TimestampInfo_IT element or null if not found
+     * Retrieves the last TimestampInfo element 
+     * @return TimestampInfo element or null if not found
      */
-    public TimestampInfo_IT getLastTimestampInfo()
+    public TimestampInfo getLastTimestampInfo()
     {
     	if(m_timestamps != null && m_timestamps.size() > 0) {
-    		return (TimestampInfo_IT)m_timestamps.get(m_timestamps.size()-1);
+    		return (TimestampInfo)m_timestamps.get(m_timestamps.size()-1);
     	} else
     		return null; // not found
     }
     
     /**
-     * Retrieves TimestampInfo_IT element with the desired type
-     * @param type TimestampInfo_IT type
-     * @return TimestampInfo_IT element or null if not found
+     * Retrieves TimestampInfo element with the desired type
+     * @param type TimestampInfo type
+     * @return TimestampInfo element or null if not found
      */
-    public TimestampInfo_IT getTimestampInfoOfType(int type)
+    public TimestampInfo getTimestampInfoOfType(int type)
     {
     	for(int i = 0; (m_timestamps != null) && (i < m_timestamps.size()); i++) {
-    		TimestampInfo_IT ts = (TimestampInfo_IT)m_timestamps.get(i);
+    		TimestampInfo ts = (TimestampInfo)m_timestamps.get(i);
     		if(ts.getType() == type)
     			return ts;
     	}
@@ -581,18 +581,18 @@ public class SignatureXADES_IT implements Serializable {
     }
     
     /**
-     * Retrieves TimestampInfo_IT element with the desired type.
+     * Retrieves TimestampInfo element with the desired type.
      * If not found creates a new one with this type.
-     * @param type TimestampInfo_IT type
-     * @return TimestampInfo_IT element
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @param type TimestampInfo type
+     * @return TimestampInfo element
+     * @throws SignedDocException for validation errors
      */
-    public TimestampInfo_IT getOrCreateTimestampInfoOfType(int type)
-    	throws SignedODFDocumentException_IT
+    public TimestampInfo getOrCreateTimestampInfoOfType(int type)
+    	throws SignedDocException
     {
-    	TimestampInfo_IT ts = getTimestampInfoOfType(type);
+    	TimestampInfo ts = getTimestampInfoOfType(type);
     	if(ts == null) {
-    		ts = new TimestampInfo_IT();
+    		ts = new TimestampInfo();
     		ts.setType(type);
     		addTimestampInfo(ts);
     	}
@@ -603,18 +603,18 @@ public class SignatureXADES_IT implements Serializable {
      * Gets confirmation and adds the corresponding
      * members that carry the returned info to
      * this signature
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     public void getConfirmation()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        NotaryFactory_IT notFac = ConfigManager.
+        NotaryFactory notFac = ConfigManager.
 	    instance().getNotaryFactory();
         
         
         
         X509Certificate cert = m_keyInfo.getSignersCertificate();
-        DigiDocFactory_IT ddocFac = ConfigManager.instance().getDigiDocFactory();
+        DigiDocFactory ddocFac = ConfigManager.instance().getDigiDocFactory();
         X509Certificate caCert = ddocFac.findCAforCertificate(cert);
         //ROB
         notFac.checkCertificateOcspOrCrl(cert, false);
@@ -628,12 +628,12 @@ public class SignatureXADES_IT implements Serializable {
         X509Certificate rcert = notFac.getNotaryCert(rrefs.getResponderCommonName(), not.getCertNr());
         // if the request was successful then
         // create new data memebers
-        CertValue_IT cval = new CertValue_IT();
+        CertValue cval = new CertValue();
         cval.setType(CertValue.CERTVAL_TYPE_RESPONDER);
         cval.setCert(rcert);
         addCertValue(cval);
         cval.setId(m_id + "-RESPONDER_CERT");
-        CertID_IT cid = new CertID_IT(this, rcert, CertID_IT.CERTID_TYPE_RESPONDER);
+        CertID cid = new CertID(this, rcert, CertID.CERTID_TYPE_RESPONDER);
         addCertID(cid);        
         CompleteCertificateRefs crefs = 
             new CompleteCertificateRefs();
@@ -655,7 +655,7 @@ public class SignatureXADES_IT implements Serializable {
 		    bos.write("</QualifyingProperties></Object></Signature>".getBytes());
 		    m_origContent = bos.toByteArray();
 		} catch(java.io.IOException ex) {
-		    SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_OCSP_GET_CONF);
+		    SignedDocException.handleException(ex, SignedDocException.ERR_OCSP_GET_CONF);
 		}
 	    }   
         }
@@ -668,44 +668,44 @@ public class SignatureXADES_IT implements Serializable {
      * @param checkDate Date on which to check the signature validity
      * @param demandConfirmation true if you demand OCSP confirmation from
      *every signature
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verify(SignedODFDocument_IT sdoc, boolean checkDate, boolean demandConfirmation)
+    public ArrayList verify(SignedDoc sdoc, boolean checkDate, boolean demandConfirmation)
     {
     	Date do1 = null, dt1 = null, dt2 = null;
         ArrayList errs = new ArrayList();
-        // check the DataFile_IT digests
+        // check the DataFile digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
-            DataFile_IT df = sdoc.getDataFile(i);
+            DataFile df = sdoc.getDataFile(i);
             //System.out.println("Check digest for DF: " + df.getId());
-            ReferenceXADES_IT ref = m_signedInfo.getReferenceForDataFile(df);
+            Reference ref = m_signedInfo.getReferenceForDataFile(df);
             byte[] dfDig = null;
             try {
                 dfDig = df.getDigest();
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
                 errs.add(ex);
             }
             if(ref != null) {
             	//System.out.println("Compare it to: " + Base64Util.encode(ref.getDigestValue(), 0));
-                if(!SignedODFDocument_IT.compareDigests(ref.getDigestValue(), dfDig)) {
-                   errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
-                    "Bad digest for DataFile_IT: " + df.getId(), null));
+                if(!SignedDoc.compareDigests(ref.getDigestValue(), dfDig)) {
+                   errs.add(new SignedDocException(
+                    SignedDocException.ERR_DIGEST_COMPARE,
+                    "Bad digest for DataFile: " + df.getId(), null));
                     //System.out.println("BAD DIGEST");
                 }
                 //else System.out.println("GOOD DIGEST");
             } else {
-            	//System.out.println("No ReferenceXADES_IT");
-                errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DATA_FILE_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for DataFile_IT: " + df.getId(), null));
+            	//System.out.println("No Reference");
+                errs.add(new SignedDocException(
+                    SignedDocException.ERR_DATA_FILE_NOT_SIGNED,
+                    "No Reference element for DataFile: " + df.getId(), null));
             }
             // if this is a detatched file and the file
             // referred by this entry actually exists,
             // then go and check it's digest
             // If the datafile doesn't exist the
             // just trust whatever is in the XML
-            if(df.getContentType().equals(DataFile_IT.CONTENT_DETATCHED)) {
+            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED)) {
                 File fTest = new File(df.getFileName());
                 if(fTest.canRead()) {
                     //System.out.println("Check detatched file: " + fTest.getAbsolutePath());
@@ -714,12 +714,12 @@ public class SignatureXADES_IT implements Serializable {
                     try {
                         realDigest = df.calculateDetatchedFileDigest();
                         detDigest = df.getDigestValue();
-                    } catch(SignedODFDocumentException_IT ex) {
+                    } catch(SignedDocException ex) {
                         errs.add(ex);
                     }
-                    if(!SignedODFDocument_IT.compareDigests(detDigest, realDigest)) {
-                        errs.add(new SignedODFDocumentException_IT(
-                            SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
+                    if(!SignedDoc.compareDigests(detDigest, realDigest)) {
+                        errs.add(new SignedDocException(
+                            SignedDocException.ERR_DIGEST_COMPARE,
                             "Bad digest for detatched file: " + df.getFileName(), null));
                     }
                 }
@@ -727,35 +727,35 @@ public class SignatureXADES_IT implements Serializable {
             }
         }
         // check signed properties digest
-        ReferenceXADES_IT ref2 = m_signedInfo.getReferenceForSignedProperties(m_sigProp);
+        Reference ref2 = m_signedInfo.getReferenceForSignedProperties(m_sigProp);
         if(ref2 != null) {
             byte[] spDig = null;
             try {
                 spDig = m_sigProp.calculateDigest();
                 //System.out.println("SignedProp real digest: " + Base64Util.encode(spDig, 0));
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
                 errs.add(ex);
             }
             //System.out.println("Compare it to: " + Base64Util.encode(ref2.getDigestValue(), 0));
-            if(!SignedODFDocument_IT.compareDigests(ref2.getDigestValue(), spDig)) {
-                   errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
+            if(!SignedDoc.compareDigests(ref2.getDigestValue(), spDig)) {
+                   errs.add(new SignedDocException(
+                    SignedDocException.ERR_DIGEST_COMPARE,
                     "Bad digest for SignedProperties: " + m_sigProp.getId(), null));
                     //System.out.println("BAD DIGEST");
             }
             //else System.out.println("GOOD DIGEST");
         } else {
-            errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_SIG_PROP_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for SignedProperties: " + m_sigProp.getId(), null));
+            errs.add(new SignedDocException(
+                    SignedDocException.ERR_SIG_PROP_NOT_SIGNED,
+                    "No Reference element for SignedProperties: " + m_sigProp.getId(), null));
         }
         // verify signature value
         try {
             byte[] dig = m_signedInfo.calculateDigest();
-            //System.out.println("SignedInfo real digest: " + Base64Util.encode(dig, 0) + " hex: " + SignedODFDocument_IT.bin2hex(dig));
-            SignedODFDocument_IT.verify(dig, m_signatureValue.getValue(), m_keyInfo.getSignersCertificate());
+            //System.out.println("SignedInfo real digest: " + Base64Util.encode(dig, 0) + " hex: " + SignedDoc.bin2hex(dig));
+            SignedDoc.verify(dig, m_signatureValue.getValue(), m_keyInfo.getSignersCertificate());
             //System.out.println("GOOD DIGEST");
-        } catch(SignedODFDocumentException_IT ex) {
+        } catch(SignedDocException ex) {
                 errs.add(ex);
                 System.out.println("BAD DIGEST");
         }
@@ -766,15 +766,15 @@ public class SignatureXADES_IT implements Serializable {
             	m_keyInfo.getSignersCertificate().
                 	checkValidity(m_sigProp.getSigningTime()); 
         } catch(Exception ex) {
-            errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_CERT_EXPIRED,
+            errs.add(new SignedDocException(
+                    SignedDocException.ERR_CERT_EXPIRED,
                     "Signers certificate has expired!", null));
         }
         // check certificates CA
         try {
-        	DigiDocFactory_IT digFac = ConfigManager.instance().getDigiDocFactory();
+        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
-        } catch(SignedODFDocumentException_IT ex) {
+        } catch(SignedDocException ex) {
             errs.add(ex);
         }
         // if we check signatures using CRL
@@ -782,9 +782,9 @@ public class SignatureXADES_IT implements Serializable {
                 getStringProperty("DIGIDOC_SIGNATURE_VERIFIER", "OCSP");
         if(verifier != null && verifier.equals("CRL")) {
         	try {
-        		CRLFactory_IT crlFac = ConfigManager.instance().getCRLFactory();
+        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
          	   errs.add(ex);
         	}
         }
@@ -797,28 +797,28 @@ public class SignatureXADES_IT implements Serializable {
             	do1 = m_unsigProp.getNotary().getProducedAt();
         } else { // not OCSP confirmation
             if(demandConfirmation)
-                errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_NO_CONFIRMATION,
+                errs.add(new SignedDocException(
+                    SignedDocException.ERR_NO_CONFIRMATION,
                         "Signature has no OCSP confirmation!", null));
         }
         // verify timestamps
         ArrayList tsaCerts = findTSACerts();
         if(m_timestamps != null && m_timestamps.size() > 0) {
-        	TimestampFactory_IT tsFac = null;
+        	TimestampFactory tsFac = null;
         	try {
         		tsFac = ConfigManager.instance().getTimestampFactory();
-        	} catch(SignedODFDocumentException_IT ex) {
-        		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
+        	} catch(SignedDocException ex) {
+        		//m_logger.error("Failed to get TimestampFactory: " + ex);
         		errs.add(ex);
         	}
         	ArrayList e = tsFac.verifySignaturesTimestamps(this);
         	if(!e.isEmpty())
                 errs.addAll(e);
         	for(int i = 0; i < m_timestamps.size(); i++) {
-        		TimestampInfo_IT ts = (TimestampInfo_IT)m_timestamps.get(i);
-        		if(ts.getType() == TimestampInfo_IT.TIMESTAMP_TYPE_SIGNATURE)
+        		TimestampInfo ts = (TimestampInfo)m_timestamps.get(i);
+        		if(ts.getType() == TimestampInfo.TIMESTAMP_TYPE_SIGNATURE)
         			dt1 = ts.getTime();
-        		if(ts.getType() == TimestampInfo_IT.TIMESTAMP_TYPE_SIG_AND_REFS)
+        		if(ts.getType() == TimestampInfo.TIMESTAMP_TYPE_SIG_AND_REFS)
         			dt2 = ts.getTime();
         	}
         	//System.out.println("OCSP time: " + do1);
@@ -830,9 +830,9 @@ public class SignatureXADES_IT implements Serializable {
         	//System.out.println("SignatureTimeStamp adj time: " + dt1);
         	//System.out.println("SigAndRefsTimeStamp adj time: " + dt2);
         	if(dt2.before(dt1))
-        		errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_VERIFY, "SignAndRefsTimeStamp is before SignatureTimeStamp", null));
+        		errs.add(new SignedDocException(SignedDocException.ERR_TIMESTAMP_VERIFY, "SignAndRefsTimeStamp is before SignatureTimeStamp", null));
         	if(do1.before(dt1) || do1.after(dt2))
-        		errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_VERIFY, "OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp", null));
+        		errs.add(new SignedDocException(SignedDocException.ERR_TIMESTAMP_VERIFY, "OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp", null));
         }
         return errs;
     }
@@ -844,44 +844,44 @@ public class SignatureXADES_IT implements Serializable {
      * @param checkDate Date on which to check the signature validity
      * @param bUseOcsp true if you demand OCSP confirmation from
      * every signature. False if you want to check against CRL.
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verifyOcspOrCrl(SignedODFDocument_IT sdoc, boolean checkDate, boolean bUseOcsp)
+    public ArrayList verifyOcspOrCrl(SignedDoc sdoc, boolean checkDate, boolean bUseOcsp)
     {
     	Date do1 = null, dt1 = null, dt2 = null;
         ArrayList errs = new ArrayList();
-        // check the DataFile_IT digests
+        // check the DataFile digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
-            DataFile_IT df = sdoc.getDataFile(i);
+            DataFile df = sdoc.getDataFile(i);
             //System.out.println("Check digest for DF: " + df.getId());
-            ReferenceXADES_IT ref = m_signedInfo.getReferenceForDataFile(df);
+            Reference ref = m_signedInfo.getReferenceForDataFile(df);
             byte[] dfDig = null;
             try {
                 dfDig = df.getDigest();
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
                 errs.add(ex);
             }
             if(ref != null) {
             	//System.out.println("Compare it to: " + Base64Util.encode(ref.getDigestValue(), 0));
-                if(!SignedODFDocument_IT.compareDigests(ref.getDigestValue(), dfDig)) {
-                   errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
-                    "Bad digest for DataFile_IT: " + df.getId(), null));
+                if(!SignedDoc.compareDigests(ref.getDigestValue(), dfDig)) {
+                   errs.add(new SignedDocException(
+                    SignedDocException.ERR_DIGEST_COMPARE,
+                    "Bad digest for DataFile: " + df.getId(), null));
                     //System.out.println("BAD DIGEST");
                 }
                 //else System.out.println("GOOD DIGEST");
             } else {
-            	//System.out.println("No ReferenceXADES_IT");
-                errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DATA_FILE_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for DataFile_IT: " + df.getId(), null));
+            	//System.out.println("No Reference");
+                errs.add(new SignedDocException(
+                    SignedDocException.ERR_DATA_FILE_NOT_SIGNED,
+                    "No Reference element for DataFile: " + df.getId(), null));
             }
             // if this is a detatched file and the file
             // referred by this entry actually exists,
             // then go and check it's digest
             // If the datafile doesn't exist the
             // just trust whatever is in the XML
-            if(df.getContentType().equals(DataFile_IT.CONTENT_DETATCHED)) {
+            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED)) {
                 File fTest = new File(df.getFileName());
                 if(fTest.canRead()) {
                     //System.out.println("Check detatched file: " + fTest.getAbsolutePath());
@@ -890,12 +890,12 @@ public class SignatureXADES_IT implements Serializable {
                     try {
                         realDigest = df.calculateDetatchedFileDigest();
                         detDigest = df.getDigestValue();
-                    } catch(SignedODFDocumentException_IT ex) {
+                    } catch(SignedDocException ex) {
                         errs.add(ex);
                     }
-                    if(!SignedODFDocument_IT.compareDigests(detDigest, realDigest)) {
-                        errs.add(new SignedODFDocumentException_IT(
-                            SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
+                    if(!SignedDoc.compareDigests(detDigest, realDigest)) {
+                        errs.add(new SignedDocException(
+                            SignedDocException.ERR_DIGEST_COMPARE,
                             "Bad digest for detatched file: " + df.getFileName(), null));
                     }
                 }
@@ -903,35 +903,35 @@ public class SignatureXADES_IT implements Serializable {
             }
         }
         // check signed properties digest
-        ReferenceXADES_IT ref2 = m_signedInfo.getReferenceForSignedProperties(m_sigProp);
+        Reference ref2 = m_signedInfo.getReferenceForSignedProperties(m_sigProp);
         if(ref2 != null) {
             byte[] spDig = null;
             try {
                 spDig = m_sigProp.calculateDigest();
                 //System.out.println("SignedProp real digest: " + Base64Util.encode(spDig, 0));
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
                 errs.add(ex);
             }
             //System.out.println("Compare it to: " + Base64Util.encode(ref2.getDigestValue(), 0));
-            if(!SignedODFDocument_IT.compareDigests(ref2.getDigestValue(), spDig)) {
-                   errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_DIGEST_COMPARE,
+            if(!SignedDoc.compareDigests(ref2.getDigestValue(), spDig)) {
+                   errs.add(new SignedDocException(
+                    SignedDocException.ERR_DIGEST_COMPARE,
                     "Bad digest for SignedProperties: " + m_sigProp.getId(), null));
                     //System.out.println("BAD DIGEST");
             }
             //else System.out.println("GOOD DIGEST");
         } else {
-            errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_SIG_PROP_NOT_SIGNED,
-                    "No ReferenceXADES_IT element for SignedProperties: " + m_sigProp.getId(), null));
+            errs.add(new SignedDocException(
+                    SignedDocException.ERR_SIG_PROP_NOT_SIGNED,
+                    "No Reference element for SignedProperties: " + m_sigProp.getId(), null));
         }
         // verify signature value
         try {
             byte[] dig = m_signedInfo.calculateDigest();
-            //System.out.println("SignedInfo real digest: " + Base64Util.encode(dig, 0) + " hex: " + SignedODFDocument_IT.bin2hex(dig));
-            SignedODFDocument_IT.verify(dig, m_signatureValue.getValue(), m_keyInfo.getSignersCertificate());
+            //System.out.println("SignedInfo real digest: " + Base64Util.encode(dig, 0) + " hex: " + SignedDoc.bin2hex(dig));
+            SignedDoc.verify(dig, m_signatureValue.getValue(), m_keyInfo.getSignersCertificate());
             //System.out.println("GOOD DIGEST");
-        } catch(SignedODFDocumentException_IT ex) {
+        } catch(SignedDocException ex) {
                 errs.add(ex);
                 System.out.println("BAD DIGEST");
         }
@@ -942,15 +942,15 @@ public class SignatureXADES_IT implements Serializable {
             	m_keyInfo.getSignersCertificate().
                 	checkValidity(m_sigProp.getSigningTime()); 
         } catch(Exception ex) {
-            errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_CERT_EXPIRED,
+            errs.add(new SignedDocException(
+                    SignedDocException.ERR_CERT_EXPIRED,
                     "Signers certificate has expired!", null));
         }
         // check certificates CA
         try {
-        	DigiDocFactory_IT digFac = ConfigManager.instance().getDigiDocFactory();
+        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
-        } catch(SignedODFDocumentException_IT ex) {
+        } catch(SignedDocException ex) {
             errs.add(ex);
         }
         // switch OCSP or CRL verification
@@ -961,28 +961,28 @@ public class SignatureXADES_IT implements Serializable {
                 if(!e.isEmpty())
                     errs.addAll(e);
             } else { // not OCSP confirmation
-                errs.add(new SignedODFDocumentException_IT(
-                    SignedODFDocumentException_IT.ERR_NO_CONFIRMATION,
+                errs.add(new SignedDocException(
+                    SignedDocException.ERR_NO_CONFIRMATION,
                             "Signature has no OCSP confirmation!", null));
             }        	
         	// verify timestamps
             ArrayList tsaCerts = findTSACerts();
             if(m_timestamps.size() > 0) {
-            	TimestampFactory_IT tsFac = null;
+            	TimestampFactory tsFac = null;
             	try {
             		tsFac = ConfigManager.instance().getTimestampFactory();
-            	} catch(SignedODFDocumentException_IT ex) {
-            		//m_logger.error("Failed to get TimestampFactory_IT: " + ex);
+            	} catch(SignedDocException ex) {
+            		//m_logger.error("Failed to get TimestampFactory: " + ex);
             		errs.add(ex);
             	}
             	ArrayList e = tsFac.verifySignaturesTimestamps(this);
             	if(!e.isEmpty())
                     errs.addAll(e);
             	for(int i = 0; i < m_timestamps.size(); i++) {
-            		TimestampInfo_IT ts = (TimestampInfo_IT)m_timestamps.get(i);
-            		if(ts.getType() == TimestampInfo_IT.TIMESTAMP_TYPE_SIGNATURE)
+            		TimestampInfo ts = (TimestampInfo)m_timestamps.get(i);
+            		if(ts.getType() == TimestampInfo.TIMESTAMP_TYPE_SIGNATURE)
             			dt1 = ts.getTime();
-            		if(ts.getType() == TimestampInfo_IT.TIMESTAMP_TYPE_SIG_AND_REFS)
+            		if(ts.getType() == TimestampInfo.TIMESTAMP_TYPE_SIG_AND_REFS)
             			dt2 = ts.getTime();
             	}
             	//System.out.println("OCSP time: " + do1);
@@ -994,15 +994,15 @@ public class SignatureXADES_IT implements Serializable {
             	//System.out.println("SignatureTimeStamp adj time: " + dt1);
             	//System.out.println("SigAndRefsTimeStamp adj time: " + dt2);
             	if(dt2.before(dt1))
-            		errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_VERIFY, "SignAndRefsTimeStamp is before SignatureTimeStamp", null));
+            		errs.add(new SignedDocException(SignedDocException.ERR_TIMESTAMP_VERIFY, "SignAndRefsTimeStamp is before SignatureTimeStamp", null));
             	if(do1.before(dt1) || do1.after(dt2))
-            		errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_VERIFY, "OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp", null));
+            		errs.add(new SignedDocException(SignedDocException.ERR_TIMESTAMP_VERIFY, "OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp", null));
             }
         } else {
         	try {
-        		CRLFactory_IT crlFac = ConfigManager.instance().getCRLFactory();
+        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
             	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
-            } catch(SignedODFDocumentException_IT ex) {
+            } catch(SignedDocException ex) {
          	   errs.add(ex);
         	}
         }
@@ -1012,12 +1012,12 @@ public class SignatureXADES_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * Signature object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateId(m_id);
+        SignedDocException ex = validateId(m_id);
         if(ex != null)
             errs.add(ex);
         ArrayList e = m_signedInfo.validate();
@@ -1047,7 +1047,7 @@ public class SignatureXADES_IT implements Serializable {
      * @return XML representation of Signature
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
     	if(m_origContent == null) {
         	ByteArrayOutputStream bos = 
@@ -1055,7 +1055,7 @@ public class SignatureXADES_IT implements Serializable {
         	try {
             	bos.write(ConvertUtils.str2data("<Signature Id=\""));
             	bos.write(ConvertUtils.str2data(m_id));
-            	bos.write(ConvertUtils.str2data("\" xmlns=\"" + SignedODFDocument_IT.xmlns_xmldsig + "\">\n"));
+            	bos.write(ConvertUtils.str2data("\" xmlns=\"" + SignedDoc.xmlns_xmldsig + "\">\n"));
             	bos.write(m_signedInfo.toXML());
             	bos.write(ConvertUtils.str2data("\n"));
             	// VS: 2.2.24 - fix to allowe Signature without SignatureValue - incomplete sig
@@ -1064,9 +1064,9 @@ public class SignatureXADES_IT implements Serializable {
             	bos.write(ConvertUtils.str2data("\n"));
             	bos.write(m_keyInfo.toXML());
             	// In version 1.3 we use xmlns atributes like specified in XAdES 
-            	if(m_sigDoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+            	if(m_sigDoc.getVersion().equals(SignedDoc.VERSION_1_3)) {
             		bos.write(ConvertUtils.str2data("\n<Object><QualifyingProperties xmlns=\""));
-            		bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_etsi));
+            		bos.write(ConvertUtils.str2data(SignedDoc.xmlns_etsi));
             		bos.write(ConvertUtils.str2data("\" Target=\"#"));
             		bos.write(ConvertUtils.str2data(m_id));
             		bos.write(ConvertUtils.str2data("\">"));
@@ -1079,7 +1079,7 @@ public class SignatureXADES_IT implements Serializable {
             	bos.write(ConvertUtils.str2data("</QualifyingProperties></Object>\n"));
             	bos.write(ConvertUtils.str2data("</Signature>"));
         	} catch(IOException ex) {
-            	SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            	SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         	}
         	return bos.toByteArray();
     	}

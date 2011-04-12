@@ -119,7 +119,7 @@ public class EncryptionProperties implements Serializable
      * @return XML representation of KeyInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
                 new ByteArrayOutputStream();
@@ -135,7 +135,7 @@ public class EncryptionProperties implements Serializable
             }
             bos.write(ConvertUtils.str2data("</denc:EncryptionProperties>"));
          } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
@@ -143,7 +143,7 @@ public class EncryptionProperties implements Serializable
     /**
      * Helper method to validate the whole
      * EncrypteionProperties object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {

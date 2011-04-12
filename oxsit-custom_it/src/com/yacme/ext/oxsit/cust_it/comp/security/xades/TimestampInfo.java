@@ -18,11 +18,11 @@ import org.bouncycastle.tsp.TimeStampResponse;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class TimestampInfo_IT {
+public class TimestampInfo {
 	/** elements Id atribute */
     private String m_id;
-    /** parent object - SignatureXADES_IT ref */
-    private SignatureXADES_IT m_signature;
+    /** parent object - Signature ref */
+    private Signature m_signature;
     /** timestamp type */
     private int m_type;
     /** Include sublements */
@@ -45,7 +45,7 @@ public class TimestampInfo_IT {
      * Creates new TimestampInfo 
      * and initializes everything to null
      */
-    public TimestampInfo_IT() {
+    public TimestampInfo() {
     	m_id = null;
     	m_signature = null;
     	m_includes = null;
@@ -55,19 +55,19 @@ public class TimestampInfo_IT {
     }
     
     /**
-     * Accessor for SignatureXADES_IT attribute
-     * @return value of SignatureXADES_IT attribute
+     * Accessor for Signature attribute
+     * @return value of Signature attribute
      */
-    public SignatureXADES_IT getSignature()
+    public Signature getSignature()
     {
     	return m_signature;
     }
     
     /**
-     * Mutator for SignatureXADES_IT attribute
-     * @param uprops value of SignatureXADES_IT attribute
+     * Mutator for Signature attribute
+     * @param uprops value of Signature attribute
      */
-    public void setSignature(SignatureXADES_IT sig)
+    public void setSignature(Signature sig)
     {
     	m_signature = sig;
     }
@@ -76,10 +76,10 @@ public class TimestampInfo_IT {
      * Creates new TimestampInfo 
      * @param id Id atribute value
      * @param type timestamp type
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public TimestampInfo_IT(String id, int type) 
-    	throws SignedODFDocumentException_IT
+    public TimestampInfo(String id, int type) 
+    	throws SignedDocException
     {
         setId(id);
         setType(type);
@@ -114,12 +114,12 @@ public class TimestampInfo_IT {
     /**
      * Mutator for Id attribute
      * @param str new value for Id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateId(str);
+        SignedDocException ex = validateId(str);
         if(ex != null)
             throw ex;
         m_id = str;
@@ -130,11 +130,11 @@ public class TimestampInfo_IT {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str)
+    private SignedDocException validateId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_TIMESTAMP_ID, 
                 "Id atribute cannot be empty", null);
         return ex;
     }
@@ -150,12 +150,12 @@ public class TimestampInfo_IT {
     /**
      * Mutator for Type attribute
      * @param n new value for Type attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setType(int n) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateType(n);
+        SignedDocException ex = validateType(n);
         if(ex != null)
             throw ex;
         m_type = n;
@@ -166,11 +166,11 @@ public class TimestampInfo_IT {
      * @param n input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateType(int n)
+    private SignedDocException validateType(int n)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(n < TIMESTAMP_TYPE_ALL_DATA_OBJECTS || n > TIMESTAMP_TYPE_ARCHIVE)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_TIMESTAMP_TYPE, 
                 "Invalid timestamp type", null);
         return ex;
     } 
@@ -186,12 +186,12 @@ public class TimestampInfo_IT {
     /**
      * Mutator for TimeStampResponse attribute
      * @param tsr new value for TimeStampResponse attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setTimeStampResponse(TimeStampResponse tsr) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateTimeStampResponse(tsr);
+        SignedDocException ex = validateTimeStampResponse(tsr);
         if(ex != null)
             throw ex;
         m_tsResp = tsr;
@@ -202,18 +202,18 @@ public class TimestampInfo_IT {
      * @param tsr input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateTimeStampResponse(TimeStampResponse tsr)
+    private SignedDocException validateTimeStampResponse(TimeStampResponse tsr)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(tsr == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_TIMESTAMP_RESP, 
+            ex = new SignedDocException(SignedDocException.ERR_TIMESTAMP_RESP, 
                 "timestamp cannot be null", null);
         return ex;
     }    
     
     /**
-     * return the count of IncludeInfo_IT objects
-     * @return count of IncludeInfo_IT objects
+     * return the count of IncludeInfo objects
+     * @return count of IncludeInfo objects
      */
     public int countIncludeInfos()
     {
@@ -221,10 +221,10 @@ public class TimestampInfo_IT {
     }
     
     /**
-     * Adds a new IncludeInfo_IT object
+     * Adds a new IncludeInfo object
      * @param inc new object to be added
      */
-    public void addIncludeInfo(IncludeInfo_IT inc)
+    public void addIncludeInfo(IncludeInfo inc)
     {
     	if(m_includes == null)
     		m_includes = new ArrayList();
@@ -233,26 +233,26 @@ public class TimestampInfo_IT {
     }
     
     /**
-     * Retrieves IncludeInfo_IT element with the desired index
-     * @param idx IncludeInfo_IT index
-     * @return IncludeInfo_IT element or null if not found
+     * Retrieves IncludeInfo element with the desired index
+     * @param idx IncludeInfo index
+     * @return IncludeInfo element or null if not found
      */
-    public IncludeInfo_IT getIncludeInfo(int idx)
+    public IncludeInfo getIncludeInfo(int idx)
     {
     	if(m_includes != null && idx < m_includes.size()) {
-    		return (IncludeInfo_IT)m_includes.get(idx);
+    		return (IncludeInfo)m_includes.get(idx);
     	} else
     	return null; // not found
     }
     
     /**
-     * Retrieves the last IncludeInfo_IT element 
-     * @return IncludeInfo_IT element or null if not found
+     * Retrieves the last IncludeInfo element 
+     * @return IncludeInfo element or null if not found
      */
-    public IncludeInfo_IT getLastIncludeInfo()
+    public IncludeInfo getLastIncludeInfo()
     {
     	if(m_includes != null && m_includes.size() > 0) {
-    		return (IncludeInfo_IT)m_includes.get(m_includes.size()-1);
+    		return (IncludeInfo)m_includes.get(m_includes.size()-1);
     	} else
     	return null; // not found
     }
@@ -374,12 +374,12 @@ public class TimestampInfo_IT {
     /**
      * Helper method to validate the whole
      * TimestampInfo object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateId(m_id);
+        SignedDocException ex = validateId(m_id);
         if(ex != null)
             errs.add(ex);
         ex = validateType(m_type);
@@ -393,7 +393,7 @@ public class TimestampInfo_IT {
      * @return XML representation of TimestampInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -421,7 +421,7 @@ public class TimestampInfo_IT {
             bos.write(ConvertUtils.str2data(m_id));            
             bos.write(ConvertUtils.str2data("\">"));
             for(int i = 0; i < countIncludeInfos(); i++) {
-            	IncludeInfo_IT inc = getIncludeInfo(i);
+            	IncludeInfo inc = getIncludeInfo(i);
             	bos.write(inc.toXML());
             }
             bos.write(ConvertUtils.str2data("<EncapsulatedTimeStamp>"));
@@ -449,7 +449,7 @@ public class TimestampInfo_IT {
     			break;
             }
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

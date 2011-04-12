@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CertID_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CertID.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -59,7 +59,7 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class CertID_IT implements Serializable {
+public class CertID implements Serializable {
     /** certs digest algorithm */
     private String m_digestAlgorithm;
     /** elements id atribute if present */
@@ -71,7 +71,7 @@ public class CertID_IT implements Serializable {
     /** certs issuer serial number */
     private BigInteger m_serial;
     /** parent object - Signature ref */
-    private SignatureXADES_IT m_signature;
+    private Signature m_signature;
     /** CertID type - signer, responder, tsa */
     private int m_type;
     
@@ -85,7 +85,7 @@ public class CertID_IT implements Serializable {
      * Creates new CertID 
      * and initializes everything to null
      */
-    public CertID_IT() {
+    public CertID() {
         m_id = null;
         m_digestAlgorithm = null;
         m_digestValue = null;
@@ -102,11 +102,11 @@ public class CertID_IT implements Serializable {
      * @param digest OCSP responders certs digest
      * @param serial OCSP responders certs issuers serial number
      * @param type CertID type: signer, responder or tsa
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CertID_IT(String certId, String digAlg, byte[] digest, 
+    public CertID(String certId, String digAlg, byte[] digest, 
     		BigInteger serial, String issuer, int type) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         setId(certId);
         setDigestAlgorithm(digAlg);
@@ -124,18 +124,18 @@ public class CertID_IT implements Serializable {
      * @param sig Signature object
      * @param cert OCSP certificate for creating this ref data
      * @param type CertID type: signer, responder or tsa
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public CertID_IT(SignatureXADES_IT sig, X509Certificate cert, int type) 
-        throws SignedODFDocumentException_IT
+    public CertID(Signature sig, X509Certificate cert, int type) 
+        throws SignedDocException
     {        
         setId(sig.getId() + "-RESPONDER_CERTINFO");
-        setDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
+        setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
         byte[] digest = null;
         try {
-            digest = SignedODFDocument_IT.digest(cert.getEncoded());
+            digest = SignedDoc.digest(cert.getEncoded());
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_CALCULATE_DIGEST); 
+            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST); 
         }
         setDigestValue(digest);
         setSerial(cert.getSerialNumber());
@@ -147,7 +147,7 @@ public class CertID_IT implements Serializable {
      * Accessor for Signature attribute
      * @return value of Signature attribute
      */
-    public SignatureXADES_IT getSignature()
+    public Signature getSignature()
     {
     	return m_signature;
     }
@@ -156,7 +156,7 @@ public class CertID_IT implements Serializable {
      * Mutator for Signature attribute
      * @param uprops value of Signature attribute
      */
-    public void setSignature(SignatureXADES_IT sig)
+    public void setSignature(Signature sig)
     {
     	m_signature = sig;
     }
@@ -172,15 +172,15 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for certId attribute
      * @param str new value for certId attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
     	if(m_signature != null && m_signature.getSignedDoc() != null &&
-    	  !m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) &&
-    	  !m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) {
-        	SignedODFDocumentException_IT ex = validateId(str);
+    	  !m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) &&
+    	  !m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)) {
+        	SignedDocException ex = validateId(str);
         	if(ex != null)
             	throw ex;
     	}
@@ -192,12 +192,12 @@ public class CertID_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str)
+    private SignedDocException validateId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null && !m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)
-        		&& !m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_RESPONDER_CERT_ID, 
+        SignedDocException ex = null;
+        if(str == null && !m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)
+        		&& !m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4))
+            ex = new SignedDocException(SignedDocException.ERR_RESPONDER_CERT_ID, 
                 "Cert Id must be in form: <signature-id>-RESPONDER_CERTINFO", null);
         return ex;
     }
@@ -213,12 +213,12 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for digestAlgorithm attribute
      * @param str new value for digestAlgorithm attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestAlgorithm(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestAlgorithm(str);
+        SignedDocException ex = validateDigestAlgorithm(str);
         if(ex != null)
             throw ex;
         m_digestAlgorithm = str;
@@ -229,11 +229,11 @@ public class CertID_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestAlgorithm(String str)
+    private SignedDocException validateDigestAlgorithm(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null || !str.equals(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERT_DIGEST_ALGORITHM, 
+        SignedDocException ex = null;
+        if(str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+            ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM, 
                 "Currently supports only SHA1 digest algorithm", null);
         return ex;
     }
@@ -249,12 +249,12 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for digestValue attribute
      * @param data new value for digestValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestValue(data);
+        SignedDocException ex = validateDigestValue(data);
         if(ex != null)
             throw ex;
         m_digestValue = data;
@@ -265,11 +265,11 @@ public class CertID_IT implements Serializable {
      * @param data input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestValue(byte[] data)
+    private SignedDocException validateDigestValue(byte[] data)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(data == null || data.length != SignedODFDocument_IT.SHA1_DIGEST_LENGTH)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGEST_LENGTH, 
+        SignedDocException ex = null;
+        if(data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
                 "SHA1 digest data is allways 20 bytes of length", null);
         return ex;
     }
@@ -285,12 +285,12 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for serial attribute
      * @param str new value for serial attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSerial(BigInteger i) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateSerial(i);
+        SignedDocException ex = validateSerial(i);
         if(ex != null)
             throw ex;
         m_serial = i;
@@ -301,11 +301,11 @@ public class CertID_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateSerial(BigInteger i)
+    private SignedDocException validateSerial(BigInteger i)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(i == null) // check the uri somehow ???
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERT_SERIAL, 
+            ex = new SignedDocException(SignedDocException.ERR_CERT_SERIAL, 
                 "Certificates serial number cannot be empty!", null);
         return ex;
     }
@@ -321,12 +321,12 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for issuer attribute
      * @param str new value for issuer attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setIssuer(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateIssuer(str);
+        SignedDocException ex = validateIssuer(str);
         if(ex != null)
             throw ex;
         m_issuer = str;
@@ -337,13 +337,13 @@ public class CertID_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateIssuer(String str)
+    private SignedDocException validateIssuer(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null && m_signature != null && 
-           (m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-        		   m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CREF_ISSUER, 
+           (m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) ||
+        		   m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)))
+            ex = new SignedDocException(SignedDocException.ERR_CREF_ISSUER, 
                 "Issuer name cannot be empty", null);
         return ex;
     }
@@ -359,12 +359,12 @@ public class CertID_IT implements Serializable {
     /**
      * Mutator for type attribute
      * @param n new value for issuer attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setType(int n) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateType(n);
+        SignedDocException ex = validateType(n);
         if(ex != null)
             throw ex;
         m_type = n;
@@ -375,11 +375,11 @@ public class CertID_IT implements Serializable {
      * @param n input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateType(int n)
+    private SignedDocException validateType(int n)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(n < 0 || n > CERTID_TYPE_TSA)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERTID_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_CERTID_TYPE, 
                 "Invalid CertID type", null);
         return ex;
     }
@@ -387,12 +387,12 @@ public class CertID_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * CertID object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateId(m_id);
+        SignedDocException ex = validateId(m_id);
         if(ex != null)
             errs.add(ex);
         ex = validateDigestAlgorithm(m_digestAlgorithm);
@@ -418,13 +418,13 @@ public class CertID_IT implements Serializable {
      * @return XML representation of CertID
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
         try {
-            if(m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-               m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) {
+            if(m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) ||
+               m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)) {
             	bos.write(ConvertUtils.str2data("<Cert>"));
             } else {
             	bos.write(ConvertUtils.str2data("<Cert Id=\""));
@@ -438,16 +438,16 @@ public class CertID_IT implements Serializable {
             bos.write(ConvertUtils.str2data("</DigestValue>\n</CertDigest>\n"));
             // In version 1.3 we use correct <IssuerSerial> content 
             // e.g. subelements <X509IssuerName> and <X509SerialNumber>
-            if(m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3) ||
-            	m_signature.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_4)) {
+            if(m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3) ||
+            	m_signature.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_4)) {
             	bos.write(ConvertUtils.str2data("<IssuerSerial>"));
             	bos.write(ConvertUtils.str2data("\n<X509IssuerName xmlns=\""));
-            	bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_xmldsig));
+            	bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
             	bos.write(ConvertUtils.str2data("\">"));
             	bos.write(ConvertUtils.str2data(m_issuer));
             	bos.write(ConvertUtils.str2data("</X509IssuerName>"));
             	bos.write(ConvertUtils.str2data("\n<X509SerialNumber xmlns=\""));
-            	bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_xmldsig));
+            	bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
             	bos.write(ConvertUtils.str2data("\">"));
             	bos.write(ConvertUtils.str2data(m_serial.toString()));
             	bos.write(ConvertUtils.str2data("</X509SerialNumber>\n"));            		
@@ -459,7 +459,7 @@ public class CertID_IT implements Serializable {
             }            	
             bos.write(ConvertUtils.str2data("</Cert>"));
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

@@ -44,10 +44,10 @@ public class EncryptedKey  implements Serializable
      * takes only the required elements and sets the EncryptionMethod
      * to it's required value.
      * @param recvCert recipients certificate (required)
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     public EncryptedKey(X509Certificate recvCert)
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
 //		m_logger = Logger.getLogger(EncryptedKey.class);
     	setId(null);
@@ -62,7 +62,7 @@ public class EncryptedKey  implements Serializable
 	/**
 	 * Default constructor for <EncryptedKey> object that
 	 * takes initializes everything to default values.
-	 * @throws SignedODFDocumentException_IT for all errors
+	 * @throws SignedDocException for all errors
 	 */
 	public EncryptedKey()
 	{
@@ -85,11 +85,11 @@ public class EncryptedKey  implements Serializable
      * @param keyName <KeyName> sublements value (optional)
      * @param carriedKeyName <CarriedKeyName> sublements value (optional)
      * @param recvCert recipients certificate (required)
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     public EncryptedKey(String id, String recipient, String encryptionMethod,
     		String keyName, String carriedKeyName, X509Certificate recvCert)
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
 //		m_logger = Logger.getLogger(EncryptedKey.class);
     	setId(id);
@@ -160,16 +160,16 @@ public class EncryptedKey  implements Serializable
 	/**
      * Mutator for EncryptionMethod attribute
      * @param str new value for EncryptionMethod attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setEncryptionMethod(String str) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	String str2 = str;
     	// fix this buggy URL problem
     	if(str2 != null && str2.equals(EncryptedData.DENC_ENC_METHOD_RSA1_5_BUGGY))
     		str2 = EncryptedData.DENC_ENC_METHOD_RSA1_5;
-    	SignedODFDocumentException_IT ex = validateEncryptionMethod(str2);
+    	SignedDocException ex = validateEncryptionMethod(str2);
         if(ex != null)
             throw ex;
     	m_encryptionMethod = str2;
@@ -180,11 +180,11 @@ public class EncryptedKey  implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateEncryptionMethod(String str)
+    private SignedDocException validateEncryptionMethod(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null || !str.equals(EncryptedData.DENC_ENC_METHOD_RSA1_5))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCKEY_ENCRYPTION_METHOD, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCKEY_ENCRYPTION_METHOD, 
                 "EncryptionMethod atribute is required and currently the only supported value is: " 
             		+ EncryptedData.DENC_ENC_METHOD_RSA1_5, null);
         return ex;
@@ -233,12 +233,12 @@ public class EncryptedKey  implements Serializable
 	/**
      * Mutator for RecipientsCertificate attribute
      * @param cert new value for RecipientsCertificate attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setRecipientsCertificate(X509Certificate cert) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
-    	SignedODFDocumentException_IT ex = validateRecipientsCertificate(cert);
+    	SignedDocException ex = validateRecipientsCertificate(cert);
         if(ex != null)
             throw ex;
         m_recipientsCert = cert;
@@ -249,11 +249,11 @@ public class EncryptedKey  implements Serializable
      * @param cert input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateRecipientsCertificate(X509Certificate cert)
+    private SignedDocException validateRecipientsCertificate(X509Certificate cert)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(cert == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_ENCKEY_CERT, 
+            ex = new SignedDocException(SignedDocException.ERR_XMLENC_ENCKEY_CERT, 
                 "RecipientsCertificate atribute is required", null);
         return ex;
     }
@@ -262,18 +262,18 @@ public class EncryptedKey  implements Serializable
 	/**
 	 * Encrypts the transport key
 	 * @param encData EncryptedData object containing the transport key  
-	 * @throws SignedODFDocumentException_IT for encryption errors
+	 * @throws SignedDocException for encryption errors
 	 */
 	public void encryptKey(EncryptedData encData)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		// check key status first - nothing to encrypt?
 		if(encData.getTransportKey() == null)
-			 throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_STATUS,    
+			 throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_STATUS,    
 						 "Transport key has not been initialized!", null);	
 		// check recipients cert - something to encrypt with?
 		if(m_recipientsCert == null)
-			 throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_STATUS,    
+			 throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_STATUS,    
 						 "Recipients certificate has not been initialized!", null);	
 		// now try to encrypt the key and keep only the encrypted data
 		try {
@@ -289,7 +289,7 @@ public class EncryptedKey  implements Serializable
 //			if(m_logger.isDebugEnabled())
 //				m_logger.debug("EncryptKey - data: " + ((m_transportKeyData == null) ? 0 : m_transportKeyData.length));
 		} catch (Exception ex) {
-					SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XMLENC_KEY_ENCRYPT);
+					SignedDocException.handleException(ex, SignedDocException.ERR_XMLENC_KEY_ENCRYPT);
 		}
 	}
 
@@ -300,7 +300,7 @@ public class EncryptedKey  implements Serializable
      * @return XML representation of KeyInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
                 new ByteArrayOutputStream();
@@ -325,14 +325,14 @@ public class EncryptedKey  implements Serializable
             try {
                 bos.write(ConvertUtils.str2data(Base64Util.encode(m_recipientsCert.getEncoded(), 64)));
             } catch(CertificateEncodingException ex) {
-                SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_ENCODING);
+                SignedDocException.handleException(ex, SignedDocException.ERR_ENCODING);
             }
             bos.write(ConvertUtils.str2data("</ds:X509Certificate></ds:X509Data>"));            
             bos.write(ConvertUtils.str2data("<denc:CipherData><denc:CipherValue>"));
 			if(m_transportKeyData != null) {
             	bos.write(ConvertUtils.str2data(Base64Util.encode(m_transportKeyData, 64)));            
             } else
-				throw new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_XMLENC_KEY_STATUS,    
+				throw new SignedDocException(SignedDocException.ERR_XMLENC_KEY_STATUS,    
 					"Invalid transport key status for transport!", null);     
             bos.write(ConvertUtils.str2data("</denc:CipherValue></denc:CipherData>"));            
             if(m_carriedKeyName != null) {
@@ -342,7 +342,7 @@ public class EncryptedKey  implements Serializable
             }
             bos.write(ConvertUtils.str2data("</EncryptedKey>"));
          } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
@@ -350,12 +350,12 @@ public class EncryptedKey  implements Serializable
     /**
      * Helper method to validate the whole
      * EncryptedKey object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateEncryptionMethod(m_encryptionMethod);
+        SignedDocException ex = validateEncryptionMethod(m_encryptionMethod);
         if(ex != null)
             errs.add(ex);
         ex = validateRecipientsCertificate(m_recipientsCert);

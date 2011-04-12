@@ -48,16 +48,16 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * @author beppe
  *
  */
-public class SignedInfoXADES_IT implements Serializable {
-    /** reference to parent SignatureXADES_IT object */
-    private SignatureXADES_IT m_signature;
+public class SignedInfo implements Serializable {
+    /** reference to parent Signature object */
+    private Signature m_signature;
     /** selected signature method */
     private String m_signatureMethod;
     /** selected canonicalization method */
@@ -70,9 +70,9 @@ public class SignedInfoXADES_IT implements Serializable {
 
     /** 
      * Creates new SignedInfo. Initializes everything to null.
-     * @param sig parent SignatureXADES_IT reference
+     * @param sig parent Signature reference
      */
-    public SignedInfoXADES_IT(SignatureXADES_IT sig) 
+    public SignedInfo(Signature sig) 
     {
         m_signature = sig;
         m_signatureMethod = null;
@@ -83,13 +83,13 @@ public class SignedInfoXADES_IT implements Serializable {
     
     /** 
      * Creates new SignedInfo 
-     * @param sig parent SignatureXADES_IT reference
+     * @param sig parent Signature reference
      * @param signatureMethod signature method uri
      * @param canonicalizationMethod xml canonicalization method uri
-     * throws SignedODFDocumentException_IT
+     * throws SignedDocException
      */
-    public SignedInfoXADES_IT(SignatureXADES_IT sig, String signatureMethod, String canonicalizationMethod) 
-        throws SignedODFDocumentException_IT
+    public SignedInfo(Signature sig, String signatureMethod, String canonicalizationMethod) 
+        throws SignedDocException
     {
         m_signature = sig;
         setSignatureMethod(signatureMethod);
@@ -102,7 +102,7 @@ public class SignedInfoXADES_IT implements Serializable {
      * Accessor for signature attribute
      * @return value of signature attribute
      */
-    public SignatureXADES_IT getSignature() {
+    public Signature getSignature() {
         return m_signature;
     }
     
@@ -110,7 +110,7 @@ public class SignedInfoXADES_IT implements Serializable {
      * Mutator for signature attribute
      * @param sig new value for signature attribute
      */    
-    public void setSignature(SignatureXADES_IT sig) 
+    public void setSignature(Signature sig) 
     {
         m_signature = sig;
     }
@@ -143,12 +143,12 @@ public class SignedInfoXADES_IT implements Serializable {
     /**
      * Mutator for signatureMethod attribute
      * @param str new value for signatureMethod attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSignatureMethod(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateSignatureMethod(str);
+        SignedDocException ex = validateSignatureMethod(str);
         if(ex != null)
             throw ex;
         m_signatureMethod = str;
@@ -159,11 +159,11 @@ public class SignedInfoXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateSignatureMethod(String str)
+    private SignedDocException validateSignatureMethod(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null || !str.equals(SignedODFDocument_IT.RSA_SHA1_SIGNATURE_METHOD))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNATURE_METHOD, 
+        SignedDocException ex = null;
+        if(str == null || !str.equals(SignedDoc.RSA_SHA1_SIGNATURE_METHOD))
+            ex = new SignedDocException(SignedDocException.ERR_SIGNATURE_METHOD, 
                 "Currently supports only RSA-SHA1 signatures", null);
         return ex;
     }
@@ -179,12 +179,12 @@ public class SignedInfoXADES_IT implements Serializable {
     /**
      * Mutator for canonicalizationMethod attribute
      * @param str new value for canonicalizationMethod attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCanonicalizationMethod(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateCanonicalizationMethod(str);
+        SignedDocException ex = validateCanonicalizationMethod(str);
         if(ex != null)
             throw ex;
         m_canonicalizationMethod = str;
@@ -195,18 +195,18 @@ public class SignedInfoXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateCanonicalizationMethod(String str)
+    private SignedDocException validateCanonicalizationMethod(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null || !str.equals(SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315))
-            ex= new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CANONICALIZATION_METHOD, 
+        SignedDocException ex = null;
+        if(str == null || !str.equals(SignedDoc.CANONICALIZATION_METHOD_20010315))
+            ex= new SignedDocException(SignedDocException.ERR_CANONICALIZATION_METHOD, 
                 "Currently supports only Canonical XML 1.0", null);
         return ex;
     }
     
     /**
-     * Returns the count of ReferenceXADES_IT objects
-     * @return count of ReferenceXADES_IT objects
+     * Returns the count of Reference objects
+     * @return count of Reference objects
      */
     public int countReferences() {
         return ((m_references == null) ? 0 : m_references.size());
@@ -214,9 +214,9 @@ public class SignedInfoXADES_IT implements Serializable {
     
     /**
      * Adds a new reference object
-     * @param ref ReferenceXADES_IT object to add
+     * @param ref Reference object to add
      */
-    public void addReference(ReferenceXADES_IT ref) 
+    public void addReference(Reference ref) 
     {
         if(m_references == null)
             m_references = new ArrayList();
@@ -228,19 +228,19 @@ public class SignedInfoXADES_IT implements Serializable {
      * @param idx index of the Reference object
      * @return desired Reference object
      */
-    public ReferenceXADES_IT getReference(int idx) {
-        return (ReferenceXADES_IT)m_references.get(idx);
+    public Reference getReference(int idx) {
+        return (Reference)m_references.get(idx);
     }
     
     /**
-     * Returns the desired ReferenceXADES_IT object
-     * @param df DataFile_IT whose digest we are searching
-     * @return desired ReferenceXADES_IT object
+     * Returns the desired Reference object
+     * @param df DataFile whose digest we are searching
+     * @return desired Reference object
      */
-    public ReferenceXADES_IT getReferenceForDataFile(DataFile_IT df) {
-        ReferenceXADES_IT ref = null;
+    public Reference getReferenceForDataFile(DataFile df) {
+        Reference ref = null;
         for(int i = 0; (m_references != null) && (i < m_references.size()); i++) {
-            ReferenceXADES_IT r1 = (ReferenceXADES_IT)m_references.get(i);
+            Reference r1 = (Reference)m_references.get(i);
             if(r1.getUri().equals("#" + df.getId())) {
                 ref = r1;
                 break;
@@ -250,14 +250,14 @@ public class SignedInfoXADES_IT implements Serializable {
     }
     
     /**
-     * Returns the desired ReferenceXADES_IT object
+     * Returns the desired Reference object
      * @param sp SignedProperties whose digest we are searching
-     * @return desired ReferenceXADES_IT object
+     * @return desired Reference object
      */
-    public ReferenceXADES_IT getReferenceForSignedProperties(SignedPropertiesXADES_IT sp) {
-        ReferenceXADES_IT ref = null;
+    public Reference getReferenceForSignedProperties(SignedProperties sp) {
+        Reference ref = null;
         for(int i = 0; (m_references != null) && (i < m_references.size()); i++) {
-            ReferenceXADES_IT r1 = (ReferenceXADES_IT)m_references.get(i);
+            Reference r1 = (Reference)m_references.get(i);
             if(r1.getUri().equals("#" + sp.getId())) {
                 ref = r1;
                 break;
@@ -267,11 +267,11 @@ public class SignedInfoXADES_IT implements Serializable {
     }
 
     /**
-     * Returns the last ReferenceXADES_IT object
-     * @return desired ReferenceXADES_IT object
+     * Returns the last Reference object
+     * @return desired Reference object
      */
-    public ReferenceXADES_IT getLastReference() {
-        return (ReferenceXADES_IT)m_references.get(m_references.size()-1);
+    public Reference getLastReference() {
+        return (Reference)m_references.get(m_references.size()-1);
     }
     
     /**
@@ -282,11 +282,11 @@ public class SignedInfoXADES_IT implements Serializable {
     {
         ArrayList errs = new ArrayList();
         if(countReferences() < 2) {
-            errs.add(new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_NO_REFERENCES, 
+            errs.add(new SignedDocException(SignedDocException.ERR_NO_REFERENCES, 
                 "At least 2 References are required!", null));
         } else {
             for(int i = 0; i < countReferences(); i++) {
-                ReferenceXADES_IT ref = getReference(i);
+                Reference ref = getReference(i);
                 ArrayList e = ref.validate();
                 if(!e.isEmpty())
                     errs.addAll(e);
@@ -298,12 +298,12 @@ public class SignedInfoXADES_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * SignedInfo object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateSignatureMethod(m_signatureMethod);
+        SignedDocException ex = validateSignatureMethod(m_signatureMethod);
         if(ex != null)
             errs.add(ex);
         ex = validateCanonicalizationMethod(m_canonicalizationMethod);
@@ -324,14 +324,14 @@ public class SignedInfoXADES_IT implements Serializable {
      * @return SignedInfo block digest
      */
     public byte[] calculateDigest()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
     	if(m_origDigest == null) {
-        	CanonicalizationFactory_IT canFac = ConfigManager.
+        	CanonicalizationFactory canFac = ConfigManager.
                     instance().getCanonicalizationFactory();
         	byte[] tmp = canFac.canonicalize(toXML(),  
-                    SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
-        	return SignedODFDocument_IT.digest(tmp);
+                    SignedDoc.CANONICALIZATION_METHOD_20010315);
+        	return SignedDoc.digest(tmp);
     	}
     	else
     		return m_origDigest;
@@ -342,7 +342,7 @@ public class SignedInfoXADES_IT implements Serializable {
      * @return XML representation of SignedInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -355,13 +355,13 @@ public class SignedInfoXADES_IT implements Serializable {
             bos.write(m_signatureMethod.getBytes());
             bos.write("\">\n</SignatureMethod>\n".getBytes());
             for(int i = 0; (m_references != null) && (i < m_references.size()); i++) {
-                ReferenceXADES_IT ref = (ReferenceXADES_IT)m_references.get(i);
+                Reference ref = (Reference)m_references.get(i);
                 bos.write(ref.toXML());
                 bos.write("\n".getBytes());
             }
             bos.write("</SignedInfo>".getBytes());
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

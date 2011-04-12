@@ -7,7 +7,7 @@ package com.yacme.ext.oxsit.cust_it.comp.security.xades;
  * @author beppe
  *
  */
-public class SignedODFDocumentException_IT extends Exception 
+public class SignedDocException extends Exception 
 {
     /** numeric exception code */
     private int m_code;
@@ -139,7 +139,7 @@ public class SignedODFDocumentException_IT extends Exception
      * @param msg english language error description.
      * @param trace stack trace
      */
-    public SignedODFDocumentException_IT(int code, String msg, Throwable detail) {
+    public SignedDocException(int code, String msg, Throwable detail) {
         super(msg);
         m_code = code;
         m_detail = detail;
@@ -238,11 +238,11 @@ public class SignedODFDocumentException_IT extends Exception
      */
     //FIXME: need to set a method to access our logger...
     public static void handleException(Exception ex, int code)
-        throws SignedODFDocumentException_IT 
+        throws SignedDocException 
     {
 //    	Logger logger = Logger.getLogger(DigiDocException.class);
 //    	logger.error(ex.toString(), ex);
-        throw new SignedODFDocumentException_IT(code, ex.getClass().getName(), ex);
+        throw new SignedDocException(code, ex.getClass().getName(), ex);
     }
     
 

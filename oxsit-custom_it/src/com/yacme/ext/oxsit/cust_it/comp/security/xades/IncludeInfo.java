@@ -16,17 +16,17 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class IncludeInfo_IT {
+public class IncludeInfo {
 	/** elements URI atribute */
     private String m_uri;
     /** parent object - TimestampInfo ref */
-    private TimestampInfo_IT m_timestamp;
+    private TimestampInfo m_timestamp;
     
     /** 
      * Creates new IncludeInfo 
      * and initializes everything to null
      */
-    public IncludeInfo_IT() {
+    public IncludeInfo() {
         m_uri = null;
         m_timestamp = null;
     }
@@ -34,10 +34,10 @@ public class IncludeInfo_IT {
     /** 
      * Creates new IncludeInfo 
      * @param uri URI atribute value
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public IncludeInfo_IT(String uri) 
-    	throws SignedODFDocumentException_IT
+    public IncludeInfo(String uri) 
+    	throws SignedDocException
     {
         setUri(uri);
         m_timestamp = null;
@@ -47,7 +47,7 @@ public class IncludeInfo_IT {
      * Accessor for TimestampInfo attribute
      * @return value of TimestampInfo attribute
      */
-    public TimestampInfo_IT getTimestampInfo()
+    public TimestampInfo getTimestampInfo()
     {
     	return m_timestamp;
     }
@@ -56,7 +56,7 @@ public class IncludeInfo_IT {
      * Mutator for TimestampInfo attribute
      * @param uprops value of TimestampInfo attribute
      */
-    public void setTimestampInfo(TimestampInfo_IT t)
+    public void setTimestampInfo(TimestampInfo t)
     {
     	m_timestamp = t;
     }
@@ -72,12 +72,12 @@ public class IncludeInfo_IT {
     /**
      * Mutator for Uri attribute
      * @param str new value for Uri attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setUri(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateUri(str);
+        SignedDocException ex = validateUri(str);
         if(ex != null)
             throw ex;
         m_uri = str;
@@ -88,11 +88,11 @@ public class IncludeInfo_IT {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateUri(String str)
+    private SignedDocException validateUri(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_INCLUDE_URI, 
+            ex = new SignedDocException(SignedDocException.ERR_INCLUDE_URI, 
                 "URI atribute cannot be empty", null);
         return ex;
     }
@@ -100,12 +100,12 @@ public class IncludeInfo_IT {
     /**
      * Helper method to validate the whole
      * IncludeInfo object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateUri(m_uri);
+        SignedDocException ex = validateUri(m_uri);
         if(ex != null)
             errs.add(ex);
         return errs;
@@ -116,7 +116,7 @@ public class IncludeInfo_IT {
      * @return XML representation of IncludeInfo
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -125,7 +125,7 @@ public class IncludeInfo_IT {
             bos.write(ConvertUtils.str2data(m_uri));
             bos.write(ConvertUtils.str2data("\"></Include>"));
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

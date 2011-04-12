@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CertValue_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/CertValue.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -57,11 +57,11 @@ import java.security.cert.X509Certificate;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class CertValue_IT {
+public class CertValue {
     /** elements id atribute if present */
     private String m_id;
-    /** parent object - SignatureXADES_IT ref */
-    private SignatureXADES_IT m_signature;
+    /** parent object - Signature ref */
+    private Signature m_signature;
     /** CertID type - signer, responder, tsa */
     private int m_type;
     /** certificate */
@@ -77,7 +77,7 @@ public class CertValue_IT {
      * Creates new CertValue 
      * and initializes everything to null
      */
-    public CertValue_IT() {
+    public CertValue() {
         m_id = null;
         m_signature = null;
         m_cert = null;
@@ -85,19 +85,19 @@ public class CertValue_IT {
     }
     
     /**
-     * Accessor for SignatureXADES_IT attribute
-     * @return value of SignatureXADES_IT attribute
+     * Accessor for Signature attribute
+     * @return value of Signature attribute
      */
-    public SignatureXADES_IT getSignature()
+    public Signature getSignature()
     {
     	return m_signature;
     }
     
     /**
-     * Mutator for SignatureXADES_IT attribute
-     * @param uprops value of SignatureXADES_IT attribute
+     * Mutator for Signature attribute
+     * @param uprops value of Signature attribute
      */
-    public void setSignature(SignatureXADES_IT sig)
+    public void setSignature(Signature sig)
     {
     	m_signature = sig;
     }
@@ -130,12 +130,12 @@ public class CertValue_IT {
     /**
      * Mutator for type attribute
      * @param n new value for issuer attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setType(int n) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateType(n);
+        SignedDocException ex = validateType(n);
         if(ex != null)
             throw ex;
         m_type = n;
@@ -146,11 +146,11 @@ public class CertValue_IT {
      * @param n input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateType(int n)
+    private SignedDocException validateType(int n)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(n < 0 || n > CERTVAL_TYPE_TSA)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERTID_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_CERTID_TYPE, 
                 "Invalid CertValue type", null);
         return ex;
     }    
@@ -178,7 +178,7 @@ public class CertValue_IT {
      * @return XML representation of CompleteCertificateRefs
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -188,7 +188,7 @@ public class CertValue_IT {
             	try {
             		bos.write(ConvertUtils.str2data(Base64Util.encode(m_cert.getEncoded(), 64)));
             	} catch(CertificateEncodingException ex) {
-            		SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_ENCODING);
+            		SignedDocException.handleException(ex, SignedDocException.ERR_ENCODING);
             	}
             	bos.write(ConvertUtils.str2data("</X509Certificate>"));
         	}
@@ -200,13 +200,13 @@ public class CertValue_IT {
                 try {
                     bos.write(ConvertUtils.str2data(Base64Util.encode(m_cert.getEncoded(), 64)));
                 } catch(CertificateEncodingException ex) {
-                    SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_ENCODING);
+                    SignedDocException.handleException(ex, SignedDocException.ERR_ENCODING);
                 }
                 bos.write(ConvertUtils.str2data("</EncapsulatedX509Certificate>\n"));
         		
         	}
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

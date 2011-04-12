@@ -3,20 +3,20 @@
  */
 package com.yacme.ext.oxsit.cust_it.comp.security.xades.factory;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedODFDocumentException_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 
 /**
  * Interface for canonicalization functions
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public interface CanonicalizationFactory_IT {
+public interface CanonicalizationFactory {
 
     /** 
      * initializes the implementation class 
      */
     public void init()
-        throws SignedODFDocumentException_IT;
+        throws SignedDocException;
     
     /**
      * Canonicalizes XML fragment using the
@@ -24,9 +24,9 @@ public interface CanonicalizationFactory_IT {
      * @param data input data
      * @param uri canonicalization algorithm
      * @returns canonicalized XML
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     byte[] canonicalize(byte[] data, String uri)
-        throws SignedODFDocumentException_IT;
+        throws SignedDocException;
 
 }

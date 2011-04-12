@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignatureProductionPlace_IT.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignatureProductionPlace.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -53,7 +53,7 @@ import java.io.Serializable;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class SignatureProductionPlace_IT implements Serializable {
+public class SignatureProductionPlace implements Serializable {
     /** city name */
     private String m_city;
     /** state name */
@@ -67,7 +67,7 @@ public class SignatureProductionPlace_IT implements Serializable {
      * Creates new SignatureProductionPlace 
      * Initializes everything to null
      */
-    public SignatureProductionPlace_IT() {
+    public SignatureProductionPlace() {
         m_city = null;
         m_state = null;
         m_country = null;
@@ -81,7 +81,7 @@ public class SignatureProductionPlace_IT implements Serializable {
      * @param country country name
      * @param zip postal code
      */
-    public SignatureProductionPlace_IT(String city, String state, 
+    public SignatureProductionPlace(String city, String state, 
         String country, String zip) 
     {
         m_city = city;
@@ -163,7 +163,7 @@ public class SignatureProductionPlace_IT implements Serializable {
      * @return XML representation of SignatureProductionPlace
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();        
@@ -196,7 +196,7 @@ public class SignatureProductionPlace_IT implements Serializable {
             bos.write(ConvertUtils.str2data("</SignatureProductionPlace>"));
         }
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

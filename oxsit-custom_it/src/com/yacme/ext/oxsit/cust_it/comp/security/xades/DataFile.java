@@ -23,8 +23,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.Base64InputStream_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.Base64InputStream;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
@@ -34,7 +34,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class DataFile_IT implements Serializable
+public class DataFile implements Serializable
 {
     /**
 	 * Comment for <code>serialVersionUID</code>
@@ -66,7 +66,7 @@ public class DataFile_IT implements Serializable
     /** initial codepage of DataFile data */
     private String m_codepage;
     /** parent object reference */
-    private SignedODFDocument_IT m_sigDoc;
+    private SignedDoc m_sigDoc;
     
     /** allowed values for content type */
     public static final String CONTENT_DETATCHED = "DETATCHED";
@@ -92,10 +92,10 @@ public class DataFile_IT implements Serializable
      * @param fileName original file name (without path!)
      * @param mimeType contents mime type
      * @param sdoc parent object
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public DataFile_IT(String id, String contentType, String fileName, String mimeType, SignedODFDocument_IT sdoc) 
-        throws SignedODFDocumentException_IT
+    public DataFile(String id, String contentType, String fileName, String mimeType, SignedDoc sdoc) 
+        throws SignedDocException
     {
         setId(id);
         setContentType(contentType);
@@ -141,16 +141,16 @@ public class DataFile_IT implements Serializable
      * @return value of body attribute
      */
     public byte[] getBody() 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	if(m_fDfCache != null) {
     		try {
-    			byte[] data = SignedODFDocument_IT.readFile(m_fDfCache);
+    			byte[] data = SignedDoc.readFile(m_fDfCache);
     			if(m_contentType.equals(CONTENT_EMBEDDED_BASE64))
     	        	data = Base64Util.decode(data);
     			return data;
     		} catch(Exception ex) {
-    			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+    			SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
     		}
     	}
         return m_body;
@@ -167,7 +167,7 @@ public class DataFile_IT implements Serializable
      * @param data new value for body attribute
      */    
     public void setBody(byte[] data) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	try {
     		m_body = data;
@@ -176,7 +176,7 @@ public class DataFile_IT implements Serializable
     			storeInTempFile();
     		}
     	} catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_WRITE_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
         }
     }
     
@@ -195,7 +195,7 @@ public class DataFile_IT implements Serializable
      * @param is input stream delivering the data
      */
     public void setBodyFromStream(InputStream is)
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	// copy data to temp file
     	try {
@@ -219,7 +219,7 @@ public class DataFile_IT implements Serializable
 //        	if(m_logger.isDebugEnabled())
 //        		m_logger.debug("DF: " + m_id + " size: " + m_size + " cache-file: " + m_fDfCache.getAbsolutePath());
     	} catch(IOException ex) {
-    		SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_WRITE_FILE);
+    		SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
     	}
     }
     
@@ -234,18 +234,18 @@ public class DataFile_IT implements Serializable
      * @return body as string
      */
     public String getBodyAsString() 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         String str = null;
         if(m_fDfCache != null) {
     		try {
-    			byte[] data = SignedODFDocument_IT.readFile(m_fDfCache);
+    			byte[] data = SignedDoc.readFile(m_fDfCache);
     			if(m_contentType.equals(CONTENT_EMBEDDED))
     	            str = ConvertUtils.data2str(data, m_codepage);
     	        if(m_contentType.equals(CONTENT_EMBEDDED_BASE64))
     	        	str = ConvertUtils.data2str(Base64Util.decode(data), m_codepage);
     		} catch(Exception ex) {
-    			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+    			SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
     		}
     	} else {
           if(m_contentType.equals(CONTENT_EMBEDDED))
@@ -264,16 +264,16 @@ public class DataFile_IT implements Serializable
      * @return body as a byte array
      */
     public byte[] getBodyAsData() 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	byte[] data = null;
     	if(m_fDfCache != null) {
     		try {
-    			data = SignedODFDocument_IT.readFile(m_fDfCache);
+    			data = SignedDoc.readFile(m_fDfCache);
     			if(m_contentType.equals(CONTENT_EMBEDDED_BASE64))
     	        	data = Base64Util.decode(data);
     		} catch(Exception ex) {
-    			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+    			SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
     		}
     	} else {
           if(m_contentType.equals(CONTENT_EMBEDDED))
@@ -292,7 +292,7 @@ public class DataFile_IT implements Serializable
      * @return body as a byte array
      */
     public InputStream getBodyAsStream() 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	InputStream strm = null;
     	if(m_fDfCache != null) {
@@ -300,9 +300,9 @@ public class DataFile_IT implements Serializable
     			if(m_contentType.equals(CONTENT_EMBEDDED))
     				strm = new FileInputStream(m_fDfCache);
     			if(m_contentType.equals(CONTENT_EMBEDDED_BASE64))
-    	        	strm = new Base64InputStream_IT(new FileInputStream(m_fDfCache));
+    	        	strm = new Base64InputStream(new FileInputStream(m_fDfCache));
     		} catch(Exception ex) {
-    			SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+    			SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
     		}
     	} else {
           if(m_contentType.equals(CONTENT_EMBEDDED))
@@ -368,7 +368,7 @@ public class DataFile_IT implements Serializable
      * @param data new value for body attribute
      */    
     public void setBody(byte[] data, String codepage) 
-    	throws SignedODFDocumentException_IT
+    	throws SignedDocException
     {
     	try {
           m_body = data;
@@ -377,7 +377,7 @@ public class DataFile_IT implements Serializable
           // check if data must be stored in file instead
           storeInTempFile();
     	} catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_WRITE_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
         }
     }
     
@@ -388,7 +388,7 @@ public class DataFile_IT implements Serializable
      * @param codepage input data's original codepage
      */    
     public void setBody(Node xml)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -406,7 +406,7 @@ public class DataFile_IT implements Serializable
             // check if data must be stored in file instead
             storeInTempFile();
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
     }
     
@@ -443,12 +443,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for contentType attribute
      * @param str new value for contentType attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setContentType(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateContentType(str);
+        SignedDocException ex = validateContentType(str);
         if(ex != null)
             throw ex;
         m_contentType = str;
@@ -459,15 +459,15 @@ public class DataFile_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateContentType(String str)
+    private SignedDocException validateContentType(String str)
     {	//ROB
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
        /*
         if(str == null || 
            (!str.equals(CONTENT_DETATCHED) && 
             !str.equals(CONTENT_EMBEDDED) &&
             !str.equals(CONTENT_EMBEDDED_BASE64)))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_CONTENT_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_CONTENT_TYPE, 
                 "Currently supports only content types: DETATCHED, EMBEDDED and EMBEDDED_BASE64", null);
         */
         return ex;
@@ -485,12 +485,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for fileName attribute
      * @param str new value for fileName attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setFileName(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateFileName(str);
+        SignedDocException ex = validateFileName(str);
         if(ex != null)
             throw ex;
         m_fileName = str;
@@ -501,11 +501,11 @@ public class DataFile_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateFileName(String str)
+    private SignedDocException validateFileName(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_FILE_NAME, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_FILE_NAME, 
                 "Filename is a required attribute", null);
         return ex;
     }
@@ -521,12 +521,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for id attribute
      * @param str new value for id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateId(str, false);
+        SignedDocException ex = validateId(str, false);
         if(ex != null)
             throw ex;
         m_id = str;
@@ -540,15 +540,15 @@ public class DataFile_IT implements Serializable
      * as required by XML-DSIG
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str, boolean bStrong)
+    private SignedDocException validateId(String str, boolean bStrong)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_ID, 
                 "Id is a required attribute", null);
         if(str != null && bStrong && 
         		(str.charAt(0) != 'D' || !Character.isDigit(str.charAt(1))))
-        	ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_ID, 
+        	ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_ID, 
                     "Id attribute value has to be in form D<number>", null);
         return ex;
     }
@@ -564,12 +564,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for mimeType attribute
      * @param str new value for mimeType attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setMimeType(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateMimeType(str);
+        SignedDocException ex = validateMimeType(str);
         if(ex != null)
             throw ex;
         m_mimeType = str;
@@ -580,11 +580,11 @@ public class DataFile_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateMimeType(String str)
+    private SignedDocException validateMimeType(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_MIME_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_MIME_TYPE, 
                 "MimeType is a required attribute", null);
         return ex;
     }
@@ -600,12 +600,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for size attribute
      * @param l new value for size attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSize(long l) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {	//ROB
-        /*SignedODFDocumentException_IT ex = validateSize(l);
+        /*SignedDocException ex = validateSize(l);
         if(ex != null)
             throw ex;
             */
@@ -617,11 +617,11 @@ public class DataFile_IT implements Serializable
      * @param l input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateSize(long l)
+    private SignedDocException validateSize(long l)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(l <= 0)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_SIZE, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_SIZE, 
                 "Size must be greater than zero", null);
         return ex;
     }
@@ -637,12 +637,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for digestType attribute
      * @param str new value for digestType attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestType(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestType(str);
+        SignedDocException ex = validateDigestType(str);
         if(ex != null)
             throw ex;
         m_digestType = str;
@@ -653,11 +653,11 @@ public class DataFile_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestType(String str)
+    private SignedDocException validateDigestType(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str != null && !str.equals(DIGEST_TYPE_SHA1))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_DIGEST_TYPE, 
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_DIGEST_TYPE, 
                 "The only supported digest type is sha1", null);
         return ex;
     }
@@ -667,7 +667,7 @@ public class DataFile_IT implements Serializable
      * @return value of digestValue attribute
      */
     public byte[] getDigestValue() 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         return m_digestValue;
     }
@@ -675,12 +675,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for digestValue attribute
      * @param data new value for digestValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigestValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestValue(data);
+        SignedDocException ex = validateDigestValue(data);
         if(ex != null)
             throw ex;
         m_digestValue = data;
@@ -691,7 +691,7 @@ public class DataFile_IT implements Serializable
      * @return value of digest attribute
      */
     public byte[] getDigest() 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         if(m_origDigestValue == null)
             calculateFileSizeAndDigest(null);
@@ -701,12 +701,12 @@ public class DataFile_IT implements Serializable
     /**
      * Mutator for digest attribute
      * @param data new value for digest attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setDigest(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateDigestValue(data);
+        SignedDocException ex = validateDigestValue(data);
         if(ex != null)
             throw ex;
         m_origDigestValue = data;
@@ -717,11 +717,11 @@ public class DataFile_IT implements Serializable
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateDigestValue(byte[] data)
+    private SignedDocException validateDigestValue(byte[] data)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(data != null && data.length != SignedODFDocument_IT.SHA1_DIGEST_LENGTH)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DATA_FILE_DIGEST_VALUE, 
+        SignedDocException ex = null;
+        if(data != null && data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_DIGEST_VALUE, 
                 "SHA1 digest value must be 20 bytes", null);
         return ex;
     }
@@ -736,10 +736,10 @@ public class DataFile_IT implements Serializable
     }
   
     /**
-     * Adds a new DataFileAttribute_IT object
-     * @param attr DataFileAttribute_IT object to add
+     * Adds a new DataFileAttribute object
+     * @param attr DataFileAttribute object to add
      */
-    public void addAttribute(DataFileAttribute_IT attr) 
+    public void addAttribute(DataFileAttribute attr) 
     {
         if(m_attributes == null)
             m_attributes = new ArrayList();
@@ -747,12 +747,12 @@ public class DataFile_IT implements Serializable
     }
     
     /**
-     * Returns the desired DataFileAttribute_IT object
-     * @param idx index of the DataFileAttribute_IT object
-     * @return desired DataFileAttribute_IT object
+     * Returns the desired DataFileAttribute object
+     * @param idx index of the DataFileAttribute object
+     * @return desired DataFileAttribute object
      */
-    public DataFileAttribute_IT getAttribute(int idx) {
-        return (DataFileAttribute_IT)m_attributes.get(idx);
+    public DataFileAttribute getAttribute(int idx) {
+        return (DataFileAttribute)m_attributes.get(idx);
     }
     
     /**
@@ -761,12 +761,12 @@ public class DataFile_IT implements Serializable
      * @param bStrong flag that specifies if Id atribute value is to
      * be rigorously checked (according to digidoc format) or only
      * as required by XML-DSIG
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate(boolean bStrong)
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateContentType(m_contentType);
+        SignedDocException ex = validateContentType(m_contentType);
         if(ex != null)
             errs.add(ex);
         ex = validateFileName(m_fileName);
@@ -788,7 +788,7 @@ public class DataFile_IT implements Serializable
         if(ex != null)
             errs.add(ex);
         for(int i = 0; i < countAttributes(); i++) {
-            DataFileAttribute_IT attr = getAttribute(i);
+            DataFileAttribute attr = getAttribute(i);
             ArrayList e = attr.validate();
             if(!e.isEmpty())
                 errs.addAll(e);
@@ -818,7 +818,7 @@ public class DataFile_IT implements Serializable
      * @param origBody original base64 body with any whitespace
      */
     /*public void calcOrigDigest(String origBody)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         //System.out.println("calculateFileSizeAndDigest(" + getId() + ")");
         try {
@@ -835,7 +835,7 @@ public class DataFile_IT implements Serializable
             CanonicalizationFactory canFac = ConfigManager.
                     instance().getCanonicalizationFactory();
             tmp = canFac.canonicalize(sbDig.toByteArray(), 
-                    SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
+                    SignedDoc.CANONICALIZATION_METHOD_20010315);
             //debugWriteFile(getId() + "-body2.xml", new String(tmp));
             MessageDigest sha = MessageDigest.getInstance("SHA-1");
             sha.update(tmp);
@@ -844,7 +844,7 @@ public class DataFile_IT implements Serializable
             //System.out.println("DataFile: \'" + getId() + "\' length: " +
             //        tmp.length + " digest: " + Base64Util.encode(digest));
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
         }
     }*/
     
@@ -855,10 +855,10 @@ public class DataFile_IT implements Serializable
 	 */
 	protected byte[] canonicalizeXml(byte[] data) {
 		try {				 
-			CanonicalizationFactory_IT canFac = ConfigManager.
+			CanonicalizationFactory canFac = ConfigManager.
 				instance().getCanonicalizationFactory();
 			byte[] tmp = canFac.canonicalize(data, 
-					SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
+					SignedDoc.CANONICALIZATION_METHOD_20010315);
 			return tmp;
 	   } catch(Exception ex) {
 		   System.out.println("Canonicalizing exception: " + ex);
@@ -878,11 +878,11 @@ public class DataFile_IT implements Serializable
 	 * @param dLen number of used bytes in data
 	 * @param bLastBlock flag last block
 	 * @return length of leftover bytes from this block
-	 * @throws SignedODFDocumentException_IT
+	 * @throws SignedDocException
 	 */
 	private int calculateAndWriteBase64Block(OutputStream os, MessageDigest digest, 
 				byte[] b64leftover, int b64left, byte[] data, int dLen, boolean bLastBlock)
-		throws SignedODFDocumentException_IT
+		throws SignedDocException
 	{
 		byte[] b64input = null;
 		int b64Used, nLeft = 0, nInLen = 0;
@@ -927,7 +927,7 @@ public class DataFile_IT implements Serializable
         	if(nLeft > 0)
         		System.arraycopy(b64input, b64input.length - nLeft, b64leftover, 0, nLeft);
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
         }
 //        if(m_logger.isDebugEnabled())
 //        	m_logger.debug("left: " + nLeft + " bytes for the next run");
@@ -938,10 +938,10 @@ public class DataFile_IT implements Serializable
      * Calculates the DataFiles size and digest
      * Since it calculates the digest of the external file
      * then this is only useful for detatched files
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     public void calculateFileSizeAndDigest(OutputStream os)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
 //    	if(m_logger.isDebugEnabled())
 //        	m_logger.debug("calculateFileSizeAndDigest(" + getId() + ")");
@@ -970,7 +970,7 @@ public class DataFile_IT implements Serializable
             	if(m_fDfCache != null) {
             		//VS: one attempt to solve temp fie decoding
             		/*if(m_contentType.equals(CONTENT_EMBEDDED_BASE64))
-        	        	is = new Base64InputStream_IT(new FileInputStream(m_fDfCache));
+        	        	is = new Base64InputStream(new FileInputStream(m_fDfCache));
             		else*/
             			is = new FileInputStream(m_fDfCache);
             		//setSize(m_fDfCache.length());
@@ -1105,12 +1105,12 @@ public class DataFile_IT implements Serializable
 //                    getSize() + " digest: " + Base64Util.encode(digest));
             m_fileName = longFileName;
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
         }
     }
     
     public byte[] calculateDetatchedFileDigest()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         byte[] digest = null;
         try {
@@ -1131,7 +1131,7 @@ public class DataFile_IT implements Serializable
             //System.out.println("DataFile: \'" + getId() + 
             //    "\' digest: " + Base64Util.encode(digest));
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
         }
         return digest;
     }
@@ -1139,20 +1139,20 @@ public class DataFile_IT implements Serializable
     /** 
      * Writes the DataFile to an outout file
      * @param fos output stream
-     * @throws SignedODFDocumentException_IT for all errors
+     * @throws SignedDocException for all errors
      */
     public void writeToFile(OutputStream fos)
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         //System.out.println("writeToFile(" + getId() + ")");
         // for detatched files just read them in
         // calculate digests and store a reference to them
         try {
            calculateFileSizeAndDigest(fos);
-        } catch(SignedODFDocumentException_IT ex) {
+        } catch(SignedDocException ex) {
            throw ex;
         } catch(Exception ex) {
-           SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_READ_FILE);
+           SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
         }
     }
     
@@ -1181,7 +1181,7 @@ public class DataFile_IT implements Serializable
      * @return xml header
      */
     protected byte[] xmlHeader()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         StringBuffer sb = new StringBuffer("<DataFile");
         if(m_codepage != null && !m_codepage.equals("UTF-8")) {
@@ -1210,15 +1210,15 @@ public class DataFile_IT implements Serializable
             sb.append("\"");
         }
         for(int i = 0; i < countAttributes(); i++) {
-            DataFileAttribute_IT attr = getAttribute(i);
+            DataFileAttribute attr = getAttribute(i);
             sb.append(" ");
             sb.append(attr.toXML());
         }
         // namespace
         if(m_sigDoc != null && 
-        	m_sigDoc.getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+        	m_sigDoc.getVersion().equals(SignedDoc.VERSION_1_3)) {
         	sb.append(" xmlns=\"");
-        	sb.append(SignedODFDocument_IT.xmlns_digidoc);
+        	sb.append(SignedDoc.xmlns_digidoc);
         	sb.append("\"");
         }
         sb.append(">");
@@ -1230,7 +1230,7 @@ public class DataFile_IT implements Serializable
      * @return xml trailer
      */
     protected byte[] xmlTrailer()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         return ConvertUtils.str2data("</DataFile>", "UTF-8");
     }
@@ -1240,7 +1240,7 @@ public class DataFile_IT implements Serializable
      * @return XML representation of DataFile
      */
     public byte[] toXML()
-       throws SignedODFDocumentException_IT
+       throws SignedDocException
     {
         ByteArrayOutputStream sb = new ByteArrayOutputStream();
         try {
@@ -1254,7 +1254,7 @@ public class DataFile_IT implements Serializable
         }
         sb.write(xmlTrailer());
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_ENCODING);
+            SignedDocException.handleException(ex, SignedDocException.ERR_ENCODING);
         }
         return sb.toByteArray();
     }

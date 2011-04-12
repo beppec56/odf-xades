@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignatureValue_IT.java.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/SignatureValue.java.
  *
  * The Initial Developer of the Original Code is
  * AUTHOR:  Veiko Sinivee, S|E|B IT Partner Estonia
@@ -54,7 +54,7 @@ import java.util.ArrayList;
  * @author  Veiko Sinivee
  * @version 1.0
  */
-public class SignatureValue_IT implements Serializable {
+public class SignatureValue implements Serializable {
     /** signature value id */
     private String m_id;
     /** actual signature value data */
@@ -66,7 +66,7 @@ public class SignatureValue_IT implements Serializable {
     /** 
      * Creates new SignatureValue 
      */
-    public SignatureValue_IT() {
+    public SignatureValue() {
         m_id = null;
         m_value = null;
     }
@@ -75,10 +75,10 @@ public class SignatureValue_IT implements Serializable {
      * Creates new SignatureValue 
      * @param id SignatureValue id
      * @param value actual RSA signature value
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public SignatureValue_IT(String id, byte[] value)
-        throws SignedODFDocumentException_IT
+    public SignatureValue(String id, byte[] value)
+        throws SignedDocException
     {
         setId(id);
         setValue(value);
@@ -88,10 +88,10 @@ public class SignatureValue_IT implements Serializable {
      * Creates new SignatureValue 
      * @param id SignatureValue id
      * @param value actual RSA signature value
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public SignatureValue_IT(SignatureXADES_IT sig, byte[] value)
-        throws SignedODFDocumentException_IT
+    public SignatureValue(Signature sig, byte[] value)
+        throws SignedDocException
     {
         setId(sig.getId() + "-SIG");
         setValue(value);
@@ -108,12 +108,12 @@ public class SignatureValue_IT implements Serializable {
     /**
      * Mutator for id attribute
      * @param str new value for id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateId(str);
+        SignedDocException ex = validateId(str);
         if(ex != null)
             throw ex;
         m_id = str;
@@ -124,11 +124,11 @@ public class SignatureValue_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str)
+    private SignedDocException validateId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNATURE_VALUE_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGNATURE_VALUE_ID, 
                 "Id is a required attribute", null);
         return ex;
     }
@@ -144,12 +144,12 @@ public class SignatureValue_IT implements Serializable {
     /**
      * Mutator for value attribute
      * @param str new value for value attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateValue(data);
+        SignedDocException ex = validateValue(data);
         if(ex != null)
             throw ex;
         m_value = data;
@@ -160,11 +160,11 @@ public class SignatureValue_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateValue(byte[] value)
+    private SignedDocException validateValue(byte[] value)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(value == null || value.length < SIGNATURE_VALUE_LENGTH)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNATURE_VALUE_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGNATURE_VALUE_ID, 
                 "RSA signature value must be at least 128 bytes", null);
         return ex;
     }
@@ -172,13 +172,13 @@ public class SignatureValue_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * SignatureValue object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
         // VS: 2.3.24 - fix to allowe SignatureValue without Id atribute
-		SignedODFDocumentException_IT ex = null; //validateId(m_id);
+		SignedDocException ex = null; //validateId(m_id);
         if(ex != null)
             errs.add(ex);
         ex = validateValue(m_value);
@@ -192,7 +192,7 @@ public class SignatureValue_IT implements Serializable {
      * @return XML representation of SignatureValue
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
             new ByteArrayOutputStream();
@@ -208,7 +208,7 @@ public class SignatureValue_IT implements Serializable {
             bos.write(ConvertUtils.str2data(Base64Util.encode(m_value, 64)));
             bos.write(ConvertUtils.str2data("</SignatureValue>"));
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }

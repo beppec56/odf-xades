@@ -11,16 +11,16 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**
  * @author beppe
  *
  */
-public class SignedPropertiesXADES_IT implements Serializable {
+public class SignedProperties implements Serializable {
     /** signature object to which this belongs */
-    private SignatureXADES_IT m_sig;
+    private Signature m_sig;
     /** id attribute */
     private String m_id;
     /** target attribute */
@@ -36,7 +36,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /** signers certs issuer serial number */
     private BigInteger m_certSerial;
     /** signature production place */
-    private SignatureProductionPlace_IT m_address;
+    private SignatureProductionPlace m_address;
     /** claimed roles */
     private ArrayList m_claimedRoles;
     /** digest over the original bytes read from XML file  */
@@ -48,7 +48,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * everything to null
      * @param sig parent signature
      */
-    public SignedPropertiesXADES_IT(SignatureXADES_IT sig) {
+    public SignedProperties(Signature sig) {
         m_sig = sig;
         m_id = null;
         m_target = null;
@@ -72,11 +72,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param certDigAlg signers cert digest algorithm id/uri
      * @param digest signers cert digest value
      * @param serial signers cert serial number
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public SignedPropertiesXADES_IT(SignatureXADES_IT sig, String id, String target, Date signingTime, 
+    public SignedProperties(Signature sig, String id, String target, Date signingTime, 
             String certId, String certDigAlg, byte[] digest, BigInteger serial) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         m_sig = sig;
         setId(id);
@@ -94,15 +94,15 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /** 
      * Creates new SignedProperties with default
      * values taken from signers certificate and signature
-     * @param sig SignatureXADES_IT reference
+     * @param sig Signature reference
      * @param cert signers certificate
      * @param claimedRoles signers claimed roles
      * @param adr signers address
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */
-    public SignedPropertiesXADES_IT(SignatureXADES_IT sig, X509Certificate cert,
-        String[] claimedRoles, SignatureProductionPlace_IT adr) 
-        throws SignedODFDocumentException_IT
+    public SignedProperties(Signature sig, X509Certificate cert,
+        String[] claimedRoles, SignatureProductionPlace adr) 
+        throws SignedDocException
     {
         m_sig = sig;
         
@@ -110,11 +110,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
         setTarget("#" + sig.getId());
         setSigningTime(new Date());
         setCertId(sig.getId() + "-CERTINFO");
-        setCertDigestAlgorithm(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM);
+        setCertDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
         try {
-            setCertDigestValue(SignedODFDocument_IT.digest(cert.getEncoded()));
+            setCertDigestValue(SignedDoc.digest(cert.getEncoded()));
         } catch(Exception ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_CALCULATE_DIGEST);
+            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST);
         }
         setCertSerial(cert.getSerialNumber());
         if((claimedRoles != null) && (claimedRoles.length > 0)) {
@@ -141,12 +141,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for id attribute
      * @param str new value for id attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateId(str);
+        SignedDocException ex = validateId(str);
         if(ex != null)
             throw ex;
         m_id = str;
@@ -174,11 +174,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateId(String str)
+    private SignedDocException validateId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGPROP_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGPROP_ID, 
                 "Id must be in form: <signature-id>-SignedProperties", null);
         return ex;
     }
@@ -194,12 +194,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for target attribute
      * @param str new value for target attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setTarget(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateTarget(str);
+        SignedDocException ex = validateTarget(str);
         if(ex != null)
             throw ex;
         m_target = str;
@@ -210,11 +210,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateTarget(String str)
+    private SignedDocException validateTarget(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null && !m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGPROP_TARGET, 
+        SignedDocException ex = null;
+        if(str == null && !m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3))
+            ex = new SignedDocException(SignedDocException.ERR_SIGPROP_TARGET, 
                 "Target must be in form: #<signature-id>", null);
         return ex;
     }
@@ -230,14 +230,14 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for certId attribute
      * @param str new value for certId attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertId(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
     	if(m_sig.getSignedDoc() != null &&
-    	  !m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
-        	SignedODFDocumentException_IT ex = validateCertId(str);
+    	  !m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)) {
+        	SignedDocException ex = validateCertId(str);
         	if(ex != null)
          	   throw ex;
     	}
@@ -249,29 +249,29 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateCertId(String str)
+    private SignedDocException validateCertId(String str)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(str == null)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGPROP_CERT_ID, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGPROP_CERT_ID, 
                 "Cert Id must be in form: <signature-id>-CERTINFO", null);
         return ex;
     }
     
     /**
      * Accessor for signatureProductionPlace attribute
-     * @return value of SignatureProductionPlace_IT attribute
+     * @return value of SignatureProductionPlace attribute
      */
-    public SignatureProductionPlace_IT getSignatureProductionPlace() {
+    public SignatureProductionPlace getSignatureProductionPlace() {
         return m_address;
     }
     
     /**
      * Mutator for signatureProductionPlace attribute
-     * @param str new value for SignatureProductionPlace_IT attribute
+     * @param str new value for SignatureProductionPlace attribute
      */    
-    public void setSignatureProductionPlace(SignatureProductionPlace_IT adr) 
-        throws SignedODFDocumentException_IT
+    public void setSignatureProductionPlace(SignatureProductionPlace adr) 
+        throws SignedDocException
     {
         m_address = adr;
     }
@@ -287,12 +287,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for signingTime attribute
      * @param str new value for signingTime attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setSigningTime(Date d) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateSigningTime(d);
+        SignedDocException ex = validateSigningTime(d);
         if(ex != null)
             throw ex;
         m_signingTime = d;
@@ -303,11 +303,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateSigningTime(Date d)
+    private SignedDocException validateSigningTime(Date d)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(d == null) // check the uri somehow ???
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_SIGNING_TIME, 
+            ex = new SignedDocException(SignedDocException.ERR_SIGNING_TIME, 
                 "Singing time cannot be empty!", null);
         return ex;
     }
@@ -323,12 +323,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for certDigestAlgorithm attribute
      * @param str new value for certDigestAlgorithm attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertDigestAlgorithm(String str) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateCertDigestAlgorithm(str);
+        SignedDocException ex = validateCertDigestAlgorithm(str);
         if(ex != null)
             throw ex;
         m_certDigestAlgorithm = str;
@@ -339,11 +339,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateCertDigestAlgorithm(String str)
+    private SignedDocException validateCertDigestAlgorithm(String str)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(str == null || !str.equals(SignedODFDocument_IT.SHA1_DIGEST_ALGORITHM))
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERT_DIGEST_ALGORITHM, 
+        SignedDocException ex = null;
+        if(str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+            ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM, 
                 "Currently supports only SHA1 digest algorithm", null);
         return ex;
     }
@@ -359,12 +359,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for certDigestValue attribute
      * @param data new value for certDigestValue attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertDigestValue(byte[] data) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateCertDigestValue(data);
+        SignedDocException ex = validateCertDigestValue(data);
         if(ex != null)
             throw ex;
         m_certDigestValue = data;
@@ -375,11 +375,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param data input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateCertDigestValue(byte[] data)
+    private SignedDocException validateCertDigestValue(byte[] data)
     {
-        SignedODFDocumentException_IT ex = null;
-        if(data == null || data.length != SignedODFDocument_IT.SHA1_DIGEST_LENGTH)
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_DIGEST_LENGTH, 
+        SignedDocException ex = null;
+        if(data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
                 "SHA1 digest data is allways 20 bytes of length", null);
         return ex;
     }
@@ -395,12 +395,12 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Mutator for certSerial attribute
      * @param str new value for certSerial attribute
-     * @throws SignedODFDocumentException_IT for validation errors
+     * @throws SignedDocException for validation errors
      */    
     public void setCertSerial(BigInteger i) 
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
-        SignedODFDocumentException_IT ex = validateCertSerial(i);
+        SignedDocException ex = validateCertSerial(i);
         if(ex != null)
             throw ex;
         m_certSerial = i;
@@ -411,11 +411,11 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @param str input data
      * @return exception or null for ok
      */
-    private SignedODFDocumentException_IT validateCertSerial(BigInteger i)
+    private SignedDocException validateCertSerial(BigInteger i)
     {
-        SignedODFDocumentException_IT ex = null;
+        SignedDocException ex = null;
         if(i == null) // check the uri somehow ???
-            ex = new SignedODFDocumentException_IT(SignedODFDocumentException_IT.ERR_CERT_SERIAL, 
+            ex = new SignedDocException(SignedDocException.ERR_CERT_SERIAL, 
                 "Certificates serial number cannot be empty!", null);
         return ex;
     }
@@ -451,18 +451,18 @@ public class SignedPropertiesXADES_IT implements Serializable {
     /**
      * Helper method to validate the whole
      * SignedProperties object
-     * @return a possibly empty list of SignedODFDocumentException_IT objects
+     * @return a possibly empty list of SignedDocException objects
      */
     public ArrayList validate()
     {
         ArrayList errs = new ArrayList();
-        SignedODFDocumentException_IT ex = validateId(m_id);
+        SignedDocException ex = validateId(m_id);
         if(ex != null)
             errs.add(ex);
         ex = validateTarget(m_target);
         if(ex != null)
             errs.add(ex);
-        if(!m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+        if(!m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)) {
         	ex = validateCertId(m_certId);
         	if(ex != null)
          	   errs.add(ex);
@@ -505,17 +505,17 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @return SignedProperties block digest
      */
     public byte[] calculateDigest()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
     	if(m_origDigest == null) {
-        	CanonicalizationFactory_IT canFac = ConfigManager.
+        	CanonicalizationFactory canFac = ConfigManager.
                     instance().getCanonicalizationFactory();
         	byte[] tmp = canFac.canonicalize(toXML(),  
-                    SignedODFDocument_IT.CANONICALIZATION_METHOD_20010315);
+                    SignedDoc.CANONICALIZATION_METHOD_20010315);
         	//debugWriteFile("SigProp2.xml", tmp);
         	//System.out.println("SigProp2: " + tmp.length 
-        	//            + " digest" + Base64Util.encode(SignedODFDocument_IT.digest(tmp), 0));
-        	return SignedODFDocument_IT.digest(tmp);
+        	//            + " digest" + Base64Util.encode(SignedDoc.digest(tmp), 0));
+        	return SignedDoc.digest(tmp);
     	}
     	else
     		return m_origDigest;
@@ -526,21 +526,21 @@ public class SignedPropertiesXADES_IT implements Serializable {
      * @return XML representation of SignedProperties
      */
     public byte[] toXML()
-        throws SignedODFDocumentException_IT
+        throws SignedDocException
     {
         ByteArrayOutputStream bos = 
         	new ByteArrayOutputStream();
         try {
           	// In version 1.3 we use xmlns atributes like specified in XAdES 
-           	if(m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+           	if(m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)) {
            		bos.write(ConvertUtils.str2data("<SignedProperties xmlns=\""));
-               	bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_etsi));
+               	bos.write(ConvertUtils.str2data(SignedDoc.xmlns_etsi));
                	bos.write(ConvertUtils.str2data("\" Id=\""));                	
                	bos.write(ConvertUtils.str2data(m_id));
                	bos.write(ConvertUtils.str2data("\">\n"));
             } else { // in prior versions we used the wrong namespace
                	bos.write(ConvertUtils.str2data("<SignedProperties xmlns=\""));
-               	bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_xmldsig));
+               	bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
                	bos.write(ConvertUtils.str2data("\" Id=\""));                	
                	bos.write(ConvertUtils.str2data(m_id));
                	bos.write(ConvertUtils.str2data("\" Target=\""));
@@ -550,7 +550,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
             bos.write(ConvertUtils.str2data("<SignedSignatureProperties>\n<SigningTime>"));
             bos.write(ConvertUtils.str2data(ConvertUtils.date2string(m_signingTime, m_sig.getSignedDoc())));
             bos.write(ConvertUtils.str2data("</SigningTime>\n<SigningCertificate>\n"));
-            if(m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+            if(m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)) {
               	bos.write(ConvertUtils.str2data("<Cert>"));
             } else {
                	bos.write(ConvertUtils.str2data("<Cert Id=\""));
@@ -564,15 +564,15 @@ public class SignedPropertiesXADES_IT implements Serializable {
             bos.write(ConvertUtils.str2data("</DigestValue>\n</CertDigest>\n"));
             // In version 1.3 we use correct <IssuerSerial> content 
             // e.g. subelements <X509IssuerName> and <X509SerialNumber>
-           	if(m_sig.getSignedDoc().getVersion().equals(SignedODFDocument_IT.VERSION_1_3)) {
+           	if(m_sig.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3)) {
            		bos.write(ConvertUtils.str2data("<IssuerSerial>"));
            		bos.write(ConvertUtils.str2data("\n<X509IssuerName xmlns=\""));
-           		bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_xmldsig));
+           		bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
            		bos.write(ConvertUtils.str2data("\">"));
            		bos.write(ConvertUtils.str2data(m_sig.getKeyInfo().getSignersCertificate().getIssuerX500Principal().getName("RFC1779")));
            		bos.write(ConvertUtils.str2data("</X509IssuerName>"));
            		bos.write(ConvertUtils.str2data("\n<X509SerialNumber xmlns=\""));
-           		bos.write(ConvertUtils.str2data(SignedODFDocument_IT.xmlns_xmldsig));
+           		bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
            		bos.write(ConvertUtils.str2data("\">"));
            		bos.write(ConvertUtils.str2data(m_certSerial.toString()));
            		bos.write(ConvertUtils.str2data("</X509SerialNumber>\n"));            		
@@ -603,7 +603,7 @@ public class SignedPropertiesXADES_IT implements Serializable {
             bos.write(ConvertUtils.str2data("\n<SignedDataObjectProperties>\n</SignedDataObjectProperties>"));
             bos.write(ConvertUtils.str2data("\n</SignedProperties>"));        
         } catch(IOException ex) {
-            SignedODFDocumentException_IT.handleException(ex, SignedODFDocumentException_IT.ERR_XML_CONVERT);
+            SignedDocException.handleException(ex, SignedDocException.ERR_XML_CONVERT);
         }
         return bos.toByteArray();
     }
