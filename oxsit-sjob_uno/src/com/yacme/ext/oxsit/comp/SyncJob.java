@@ -491,6 +491,8 @@ public class SyncJob extends ComponentBase
 			 * of a lot of images
 			 * 
 			 */
+			//FIXME: the signature should be checked by using the correct exported service
+			//in IT implementation the service is exported 
 			// check the signature status and init the proper value
 			// in the configuration, check the signature and set the
 			// status properly
