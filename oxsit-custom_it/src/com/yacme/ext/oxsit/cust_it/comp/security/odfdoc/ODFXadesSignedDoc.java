@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yacme.ext.oxsit.cust_it.comp.security.xades;
+package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -33,6 +33,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.CertID;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.CertValue;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.DataFile;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.KeyInfo;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.Reference;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignatureProductionPlace;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedInfo;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedProperties;
 
 /**
  * Represents an instance of signed doc in DIGIDOC format. Contains one or more

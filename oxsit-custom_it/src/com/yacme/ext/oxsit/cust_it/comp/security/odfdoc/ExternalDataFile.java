@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yacme.ext.oxsit.cust_it.comp.security.xades;
+package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,6 +10,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.Base64Util;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.DataFile;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yacme.ext.oxsit.cust_it.comp.security.xades;
+package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
