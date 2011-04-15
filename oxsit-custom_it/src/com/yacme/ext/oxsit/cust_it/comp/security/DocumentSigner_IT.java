@@ -84,6 +84,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
+import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
@@ -328,9 +329,27 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		 * form a digest for any of the document substorage (files) the document has according to the decided standard
 		 */
 		
+		//instantiate a subdescriptor of the document
+		ODFSignedDoc theDoc = new ODFSignedDoc(m_xMCF, m_xCC);
 		
-		
-		
+		//get the document storage,
+		XStorageBasedDocument xDocStorage =
+			(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
+
+		try {
+			m_xDocumentStorage = xDocStorage.getDocumentStorage();
+//continue the signing			
+
+//build the document description
+			theDoc.verifyDocumentSignature(m_xDocumentStorage, null);
+			
+			
+			
+		} catch (com.sun.star.io.IOException e) {
+			m_aLogger.log(e, true);
+		} catch (Exception e) {
+			m_aLogger.log(e, true);
+		}
 		return false;
 	}
 
