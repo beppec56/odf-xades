@@ -51,6 +51,7 @@ import java.net.URISyntaxException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.HashMap;
 
 import com.sun.star.beans.PropertyValue;
@@ -85,6 +86,7 @@ import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
@@ -324,32 +326,67 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 */
 	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] aCertArray) {
 		// TODO Auto-generated method stub
+    	Date d1, d2;
+		
+    	ODFSignedDoc sdoc = null;
+
+        try {
+        	        	
+			//get the document storage,
+			XStorageBasedDocument xDocStorage =
+				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
+			m_xDocumentStorage = xDocStorage.getDocumentStorage();
+            // create a new SignedDoc 
+            sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
+
+            byte[] manifestBytes = sdoc.addODFData();
+            
+            // test adding data from memory
+            //String myBody = "Eesti Vabariigi põhiseadus Põhilehekülg | Määrangud | Otsing Eesti Vabariigi põhiseadus rahvahääletuse seadus nr 1";
+            //byte[] u8b = Base64Util.encode(ConvertUtils.str2data(myBody)).getBytes();
+            //byte[] u8b = ConvertUtils.str2data(myBody);
+            //System.out.println("UTF8 body: " + Base64Util.encode(u8b));
+            //df.setBody(u8b, "UTF8");
+            
+            // Do card login and get certificate
+            
+			d1 = new Date();
+
+            
+		} catch (com.sun.star.io.IOException e) {
+			m_aLogger.log(e, true);
+        } catch(SignedDocException ex) {
+            System.err.println(ex);
+            ex.printStackTrace(System.err);
+        } catch(Exception ex) {
+            System.err.println(ex);
+            ex.printStackTrace(System.err);
+        }
+		
 		
 		/*
 		 * form a digest for any of the document substorage (files) the document has according to the decided standard
 		 */
 		
 		//instantiate a subdescriptor of the document
-		ODFSignedDoc theDoc = new ODFSignedDoc(m_xMCF, m_xCC);
-		
-		//get the document storage,
-		XStorageBasedDocument xDocStorage =
-			(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
-
-		try {
-			m_xDocumentStorage = xDocStorage.getDocumentStorage();
-//continue the signing			
-
-//build the document description
-			theDoc.verifyDocumentSignature(m_xDocumentStorage, null);
-			
-			
-			
-		} catch (com.sun.star.io.IOException e) {
-			m_aLogger.log(e, true);
-		} catch (Exception e) {
-			m_aLogger.log(e, true);
-		}
+//		ODFSignedDoc theDoc = new ODFSignedDoc(m_xMCF, m_xCC);
+//		
+//		try {
+//			m_xDocumentStorage = xDocStorage.getDocumentStorage();
+////continue the signing			
+//
+////build the document description
+//			theDoc.verifyDocumentSignature(m_xDocumentStorage, null);
+//			
+//			
+//			
+//			
+//			
+//		} catch (com.sun.star.io.IOException e) {
+//			m_aLogger.log(e, true);
+//		} catch (Exception e) {
+//			m_aLogger.log(e, true);
+//		}
 		return false;
 	}
 

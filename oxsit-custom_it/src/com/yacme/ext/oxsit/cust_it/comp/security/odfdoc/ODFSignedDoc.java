@@ -4,11 +4,21 @@
 package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 
+import java.io.InputStream;
 import java.util.Vector;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.xml.sax.SAXException;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
+import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.ElementModes;
 import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
@@ -27,6 +37,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 
 /**
@@ -45,15 +56,61 @@ public class ODFSignedDoc extends SignedDoc {
 	private DynamicLogger m_aLogger;
 	protected XComponentContext m_xCtx;
 	protected XMultiComponentFactory m_xMFC;
-  /** Creates a new instance of __NAME__ */
-  public ODFSignedDoc(XMultiComponentFactory _xMFC, XComponentContext _context) {
-  	m_xCtx = _context;
-  	m_xMFC = _xMFC;
-  	m_aLogger = new DynamicLogger(this, _context);
-  	m_aLogger.enableLogging();
-  	m_aLogger.info("ctor","");
-  }
+	private XStorage m_xDocumentStorage;
+	  
+	private class APackageElement {
+		public String m_stheName;
+		public String m_sMediaType;
+		public int	m_nSize;
+		public XInputStream m_xInputStream;
 
+		public APackageElement(String s,String mt, XInputStream _xInputStream, int sz ) {
+			m_stheName = s;
+			m_sMediaType = mt;
+			m_xInputStream = _xInputStream;
+			m_nSize = sz;
+		}
+
+		public String toString() {
+			String ret = "media type: '"+m_sMediaType+"' size: "+m_nSize+" bytes, position: '"+m_stheName+"'";
+			return ret;
+		}
+	}
+
+	
+	/** Creates a new instance of __NAME__ 
+	 * @param version13 
+	 * @param formatOdfXades 
+	 * @param mXDocumentStorage */
+//  public ODFSignedDoc(XMultiComponentFactory _xMFC, XComponentContext _context, XStorage mXDocumentStorage, String formatOdfXades, String version13) {
+//  	m_xCtx = _context;
+//  	m_xMFC = _xMFC;
+//  	m_aLogger = new DynamicLogger(this, _context);
+//  	m_aLogger.enableLogging();
+//  	m_aLogger.info("ctor","");
+//  }
+
+	/**
+	 * Creates new SignedDoc
+	 * 
+	 * @param format
+	 *            file format name
+	 * @param version
+	 *            file version number
+	 * @throws SignedDocException
+	 *             for validation errors
+	 */
+	public ODFSignedDoc(XMultiComponentFactory _xMFC, XComponentContext _context, XStorage _XDocumentStorage, String format, String version)
+			throws SignedDocException {
+		super(format, version);
+	  	m_xCtx = _context;
+	  	m_xMFC = _xMFC;
+	  	m_aLogger = new DynamicLogger(this, _context);
+	  	m_aLogger.enableLogging();
+	  	m_aLogger.info("ctor","");
+	  	m_xDocumentStorage = _XDocumentStorage;
+	}
+  
   public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
 		String[] aElements = xThePackage.getElementNames();
 /*		m_aLoggerDialog.info(_rootElement+" elements:");
@@ -83,8 +140,8 @@ public class ODFSignedDoc extends SignedDoc {
 							XStream xSt = (XStream)UnoRuntime.queryInterface(XStream.class, oObjXStreamSto);
 							XInputStream xI = xSt.getInputStream();
 							nSize = xI.available(); 
-							xI.closeInput();
-							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,nSize) );
+//							xI.closeInput();
+							_List.add( new APackageElement(_rootElement+aElements[i],sMediaType,xI,nSize) );
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
 							m_aLogger.warning("fillElementList", aElements[i]+" wrong password", e);
@@ -141,7 +198,7 @@ public class ODFSignedDoc extends SignedDoc {
   	Vector<APackageElement> aElements = new Vector<APackageElement>(20);
 
   	//print the storage ODF version
-  	
+
   	XStorage xThePackage;
   	if(_xStorage == null ){
   		xThePackage = (XStorage) UnoRuntime.queryInterface( XStorage.class, _othePackage );
@@ -312,6 +369,153 @@ public class ODFSignedDoc extends SignedDoc {
   	return aElements;
   }
 
+    /**
+   * @return
+   */
+  public byte[] addODFData() {
+		
+		byte[] manifestBytes = null;
+		
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+		DocumentBuilder documentBuilder;
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+			// Acceso al manifest.xml y a la lista de elementos que contiene
+//			InputStream manifest = new ByteArrayInputStream(odf
+//					.getEntry("META-INF/manifest.xml"));
+//
+//			Document docManifest = documentBuilder.parse(manifest);
+//			Element rootManifest = docManifest.getDocumentElement();
+//			NodeList listFileEntry = rootManifest
+//					.getElementsByTagName("manifest:file-entry");
+
+//insert a loop to read all the stuff from the external document, using the internal
+//OOo API
+			
+			Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
+			if(oObj != null) {
+				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)
+							UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
+/*	            Object args[]=new Object[2];
+	            args[0] = aTheDocURL;
+	            args[1] = ElementModes.READ;
+	            Object oMyStorage = xStorageFactory.createInstanceWithArguments(args);*/
+
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
+//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
+	            Vector<APackageElement> aElements = makeTheElementList(null, m_xDocumentStorage); // use of the package object from document
+	            m_aLogger.log("\nThis package contains the following elements:");
+	            
+	            for(int i = 0; i < aElements.size();i++) {
+	            	m_aLogger.log(aElements.get(i).toString());	            	
+	            }
+
+
+			}
+			
+
+//			for (int i = 0; i < listFileEntry.getLength(); i++) {
+//				Element e = ((Element) listFileEntry.item(i));
+//
+//				String fullPath = e.getAttribute("manifest:full-path");
+//				String mediaType = e.getAttribute("manifest:media-type");
+//
+//				// Solo procesamos los ficheros
+//				if (!fullPath.endsWith("/")
+//						&& !fullPath.equals("META-INF/documentsignatures.xml")) {
+//					if ((odf.getEntry(fullPath).length != 0)
+//							&& (fullPath.equals("manifest.rdf") || fullPath
+//									.endsWith(".xml"))) {
+//						// Obtenemos el fichero, canonizamos y calculamos el
+//						// digest
+//						InputStream xmlFile = new ByteArrayInputStream(odf
+//								.getEntry(fullPath));
+//
+//
+//						
+//						
+//						
+//						ExternalDataFile df = new ExternalDataFile(xmlFile,
+//								fullPath, mediaType, fullPath,
+//								ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY,
+//								this);
+//						addDataFile(df);
+//
+//					} else {
+//
+//						InputStream binaryStream = new ByteArrayInputStream(odf
+//								.getEntry(fullPath));
+//						ExternalDataFile df = new ExternalDataFile(binaryStream,
+//								fullPath, mediaType, fullPath,
+//								ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY,
+//								this);
+//						addDataFile(df);
+//
+//					}
+//
+//				}
+//			}
+//			// ROB: mimetype
+//			if (odf.hasEntry("mimetype")) {
+//
+//				InputStream xmlStream = new ByteArrayInputStream(odf
+//						.getEntry("mimetype"));
+//				ExternalDataFile df = new ExternalDataFile(xmlStream, "mimetype",
+//						"text/text", "mimetype",
+//						ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY, this);
+//				addDataFile(df);
+//			}
+//
+//			// ROB creazione del data file per manifest.xml aggiornato
+//			// Añadimos el fichero de firma al manifest.xml
+//			// Aggiungiamo a manifest.xml l'entry per documensignatures.xml
+//			Element nodeDocumentSignatures = docManifest
+//					.createElement("manifest:file-entry");
+//			nodeDocumentSignatures.setAttribute("manifest:media-type", "");
+//			nodeDocumentSignatures.setAttribute("manifest:full-path",
+//					"META-INF/xadessignatures.xml");
+//			rootManifest.appendChild(nodeDocumentSignatures);
+//
+//			Element nodeMetaInf = docManifest
+//					.createElement("manifest:file-entry");
+//			nodeMetaInf.setAttribute("manifest:media-type", "");
+//			nodeMetaInf.setAttribute("manifest:full-path", "META-INF/");
+//			rootManifest.appendChild(nodeMetaInf);
+//			
+//			ByteArrayOutputStream manifestOs = new ByteArrayOutputStream();
+//			writeXML(manifestOs, rootManifest, false);
+//			manifestBytes = manifestOs.toByteArray();
+//			ByteArrayInputStream manifestIs = new ByteArrayInputStream(manifestBytes);
+//			
+//			ExternalDataFile df = new ExternalDataFile(manifestIs, "META-INF/manifest.xml",
+//					"text/text", "META-INF/manifest.xml",
+//					ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY, this);
+//			addDataFile(df);
+//			
+//			
+//			
+
+		} catch (ParserConfigurationException e1) {
+			m_aLogger.log(e1, true);
+		} catch (IOException e) {
+			m_aLogger.log(e, true);
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			m_aLogger.log(e, true);
+//		} catch (TransformerException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+		} catch (Exception e) {
+			m_aLogger.log(e, true);
+		}
+		
+		return manifestBytes;
+  }
+
   /**
    * this one uses storage facity to access the ODF package
    * 
@@ -379,22 +583,5 @@ public class ODFSignedDoc extends SignedDoc {
 			e.printStackTrace();
 		}
   }
-
-  private class APackageElement {
-  	public String m_stheName;
-  	public String m_sMediaType;
-  	public int	m_nSize;
-
-  	public APackageElement(String s,String mt,int sz ) {
-      	m_stheName = s;
-      	m_sMediaType = mt;
-      	m_nSize = sz;
-  	}
-  	
-  	public String toString() {
-  		String ret = "media type: '"+m_sMediaType+"' size: "+m_nSize+" bytes, position: '"+m_stheName+"'";
-			return ret;
-  	}
-  }
-
+  
 }

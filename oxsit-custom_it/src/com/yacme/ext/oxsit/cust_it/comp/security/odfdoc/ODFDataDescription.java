@@ -5,11 +5,14 @@ package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 
+import com.sun.star.io.BufferSizeExceededException;
+import com.sun.star.io.NotConnectedException;
+import com.sun.star.io.XInputStream;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Base64Util;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.DataFile;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
@@ -47,7 +50,7 @@ public class ODFDataDescription extends DataFile implements Serializable {
 	 * @throws SignedDocException
 	 *             for validation errors
 	 */
-	public ODFDataDescription(InputStream entryStream, String id,
+	public ODFDataDescription(XInputStream entryStream, String id,
 			String mimeType, String fileName, String contentType, SignedDoc sdoc)
 			throws SignedDocException {
 		super(id, contentType, fileName, mimeType, sdoc);
@@ -168,7 +171,7 @@ public class ODFDataDescription extends DataFile implements Serializable {
 	 * @throws SignedDocException
 	 *             for all errors
 	 */
-	public void calculateFileSizeAndDigest(InputStream is)
+	public void calculateFileSizeAndDigest(XInputStream is)
 			throws SignedDocException {
 //		if (m_logger.isDebugEnabled())
 //			m_logger.debug("calculateFileSizeAndDigest(" + getId() + ")");
@@ -199,7 +202,7 @@ public class ODFDataDescription extends DataFile implements Serializable {
 		}
 	}
 
-	public byte[] calculateDetachedFileDigest(InputStream is)
+	public byte[] calculateDetachedFileDigest(XInputStream is)
 			throws SignedDocException {
 		byte[] digest = null;
 
@@ -209,11 +212,11 @@ public class ODFDataDescription extends DataFile implements Serializable {
 
 			if (getSize() != 0) {
 
-				byte[] buf = new byte[block_size]; // use 2KB bytes to avoid
+				byte[][] buf = new byte[block_size][1]; // use 2KB bytes to avoid
 													// base64 problems
 				int fRead = 0;
-				while ((fRead = is.read(buf)) == block_size) {
-					sha.update(buf);
+				while ((fRead = is.readBytes(buf, block_size)) == block_size) {
+					sha.update(buf[1]);
 				}
 				byte[] buf2 = new byte[fRead];
 				System.arraycopy(buf, 0, buf2, 0, fRead);
@@ -232,15 +235,27 @@ public class ODFDataDescription extends DataFile implements Serializable {
 
 	}
 
-	public static byte[] inputStreamToByteArray(InputStream in)
+	public static byte[] inputStreamToByteArray(XInputStream in)
 			throws IOException {
-		byte[] buffer = new byte[block_size];
+		byte[][] buffer = new byte[1][block_size];
+		
 		int length = 0;
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		while ((length = in.read(buffer)) >= 0) {
-			baos.write(buffer, 0, length);
+		try {
+			while ((length = in.readSomeBytes(buffer, block_size)) >= 0) {
+				baos.write(buffer[0], 0, length);
+			}
+		} catch (NotConnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BufferSizeExceededException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (com.sun.star.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return baos.toByteArray();
