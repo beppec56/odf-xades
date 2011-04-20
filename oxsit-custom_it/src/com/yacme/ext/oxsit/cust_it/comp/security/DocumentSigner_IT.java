@@ -87,6 +87,7 @@ import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
@@ -329,6 +330,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
     	Date d1, d2;
 		
     	ODFSignedDoc sdoc = null;
+    	
+    	ConfigManager.init("jar://ODFDocSigning.cfg");
 
         try {
         	        	

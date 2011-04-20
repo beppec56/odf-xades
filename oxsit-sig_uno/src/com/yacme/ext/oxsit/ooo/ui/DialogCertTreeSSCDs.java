@@ -191,13 +191,9 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 					else
 						throw (new NoSuchMethodException("Missing XOX_DocumentSigner interface !"));
 				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					m_aLogger.log(e, true);
 				}
-				
-				
 			}
-			
 		}
 //		addOneSignature();		
 	}

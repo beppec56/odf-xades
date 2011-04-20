@@ -408,11 +408,19 @@ public class ODFSignedDoc extends SignedDoc {
 	            Vector<APackageElement> aElements = makeTheElementList(null, m_xDocumentStorage); // use of the package object from document
 	            m_aLogger.log("\nThis package contains the following elements:");
 	            
+//loop to add the data to the internal object for signature
 	            for(int i = 0; i < aElements.size();i++) {
-	            	m_aLogger.log(aElements.get(i).toString());	            	
+	            	APackageElement aElm = aElements.get(i);
+	            	m_aLogger.log(aElm.toString());
+	            	if(aElm.m_sMediaType.equalsIgnoreCase("text/xml")) {
+	            		//is an xml file
+						ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
+						 aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
+						ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY,
+						this);
+						addDataFile(df);
+	            	}
 	            }
-
-
 			}
 			
 
@@ -509,6 +517,9 @@ public class ODFSignedDoc extends SignedDoc {
 //		} catch (TransformerException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
+		} catch (SignedDocException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
 			m_aLogger.log(e, true);
 		}

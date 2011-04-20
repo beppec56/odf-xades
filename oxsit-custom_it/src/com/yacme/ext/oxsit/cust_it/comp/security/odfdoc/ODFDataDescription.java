@@ -195,7 +195,6 @@ public class ODFDataDescription extends DataFile implements Serializable {
 				sha.update(canonicalizeXml(inputStreamToByteArray(is)));
 				setDigest(sha.digest());
 			}
-
 		} catch (Exception ex) {
 			SignedDocException
 					.handleException(ex, SignedDocException.ERR_READ_FILE);
@@ -232,7 +231,6 @@ public class ODFDataDescription extends DataFile implements Serializable {
 					.handleException(ex, SignedDocException.ERR_READ_FILE);
 		}
 		return digest;
-
 	}
 
 	public static byte[] inputStreamToByteArray(XInputStream in)
@@ -244,7 +242,7 @@ public class ODFDataDescription extends DataFile implements Serializable {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		try {
-			while ((length = in.readSomeBytes(buffer, block_size)) >= 0) {
+			while ((length = in.readSomeBytes(buffer, block_size)) > 0) {
 				baos.write(buffer[0], 0, length);
 			}
 		} catch (NotConnectedException e) {

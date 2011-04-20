@@ -74,6 +74,15 @@ the default target must be removed
 
 	<property name="bctsp_jar" value="bctsp-jdk16-146.jar"/>
 	
+	<!-- apache xerces libraries -->
+	<property name="comm_log_api" value="commons-logging-api-1.1.jar"/>
+	<property name="comm_log" value="commons-logging-1.1.jar"/>
+	<property name="xalan" value="xalan-2.7.1.jar"/>
+	<property name="serialize" value="serializer-2.7.1.jar"/>
+	<property name="xerces_impl" value="xercesImpl-2.9.1.jar"/>
+	<property name="xml_apis" value="xml-apis-1.3.03.jar"/>
+	<property name="xmlsec" value="xmlsec-1.4.4.jar"/>
+	
 	<!--
 		the OOo SDK root path, used for the custom loader
 		edit to suit your installation
@@ -165,6 +174,8 @@ the default target must be removed
 		</fail>
 		<echo>"${my_ooo_classes_path3}/${project_friendly_name}-sig_opt_uno.uno.jar"</echo>
 		<property name="bc_classes_path" value="${lib}" />
+		<property name="apache_classes_path" value="${lib}" />
+
 		<available file="${bc_classes_path}" type="dir" property="bc_classes_path.available" value="false" />
 		<fail message="No ${project_friendly_name}-sig_opt_uno classes available. Please edit the build file to correct it. (${bc_classes_path})">
 			<condition>
@@ -181,9 +192,18 @@ the default target must be removed
 				<pathelement path="${ooo_classes_path}/unoil.jar" />
 				<pathelement path="${my_uno_types_path}/${project_friendly_name}-uno_types.uno.jar" />
 				<pathelement path="${my_ooo_classes_path3}/${project_friendly_name}-sig_opt_uno.uno.jar" />
+
 				<pathelement path="${bc_classes_path}/${bcmail_jar}" />
 				<pathelement path="${bc_classes_path}/${bcprov_jar}" />
 				<pathelement path="${bc_classes_path}/${bctsp_jar}" />
+
+				<pathelement path="${apache_classes_path}/${comm_log_api}"/>
+				<pathelement path="${apache_classes_path}/${comm_log}"/>
+				<pathelement path="${apache_classes_path}/${xalan}"/>
+				<pathelement path="${apache_classes_path}/${serialize}"/>
+				<pathelement path="${apache_classes_path}/${xerces_impl}"/>
+				<pathelement path="${apache_classes_path}/${xml_apis}"/>
+				<pathelement path="${apache_classes_path}/${xmlsec}"/>		
 			</classpath>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -208,6 +228,15 @@ the default target must be removed
 			</fileset>
 		</copy -->
 		<!-- end of copy idlc generated classes -->
+		
+		<!-- copy configuration file for signer -->
+		<!-- copy todir="${build}/com/yacme/ext/oxsit/cust_it/comp/security/xades/utils" failonerror="true" -->
+		<copy todir="${build}" failonerror="true">
+			<fileset dir="${basedir}">
+				<include name="ODFDocSigning.cfg" />
+			</fileset>
+		</copy>
+		
 	</target>
 
 	<target name="build-jar" depends="compile" description="generate the specific Italian signature UNO components.">
@@ -233,7 +262,7 @@ the default target must be removed
 				<attribute name="UNO-Type-Path" value="" />
 				<attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" />
 				<!-- attribute name="RegistrationClassName" value="com.yacme.ext.oxsit.cust_it.RegisterServices" / -->
-				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${bcmail_jar} ${bcprov_jar} ${bctsp_jar}"/> 
+				<attribute name="Class-Path" value="${project_friendly_name}-sig_opt_uno.uno.jar ${bcmail_jar} ${bcprov_jar} ${bctsp_jar} ${comm_log_api} ${comm_log} ${xalan} ${serialize} ${xerces_impl} ${xml_apis} ${xmlsec}"/> 
 			</manifest>
 		</jar>
 	</target>
