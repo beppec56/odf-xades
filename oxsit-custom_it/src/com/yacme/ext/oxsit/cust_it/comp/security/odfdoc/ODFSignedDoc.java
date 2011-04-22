@@ -413,12 +413,19 @@ public class ODFSignedDoc extends SignedDoc {
 	            	APackageElement aElm = aElements.get(i);
 	            	m_aLogger.log(aElm.toString());
 	            	if(aElm.m_sMediaType.equalsIgnoreCase("text/xml")) {
+	            		m_aLogger.log(" Added an XML file");
 	            		//is an xml file
-						ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
-						 aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
-						ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY,
-						this);
-						addDataFile(df);
+	            		ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
+	            				aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
+	            				ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY, this);
+	            		addDataFile(df);
+	            	}
+	            	else if(!aElm.m_sMediaType.equalsIgnoreCase("")) {
+	            		m_aLogger.log(" Added a binary file");
+	            		ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
+	            				aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
+	            				ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY, this);
+	            		addDataFile(df);
 	            	}
 	            }
 			}

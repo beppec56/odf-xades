@@ -68,7 +68,7 @@ public interface SignatureFactory
 	 * to encrypt it). Decryption will be done on the card.
 	 * This operation closes the possibly opened previous
 	 * session with signature token and opens a new one with
-	 * authentication tokne if necessary
+	 * authentication token if necessary
 	 * @param data data to be decrypted.
 	 * @param token index of authentication token
 	 * @param pin PIN code

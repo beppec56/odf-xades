@@ -58,7 +58,6 @@ import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import javax.crypto.Cipher;
 
@@ -80,9 +79,9 @@ public class SignedDoc {
     /** format version */
     private String m_version;
     /** DataFile objects */
-    private ArrayList m_dataFiles;
+    private ArrayList<DataFile> m_dataFiles;
     /** Signature objects */
-    private ArrayList m_signatures;
+    private ArrayList<Signature> m_signatures;
     
     /** the only supported formats are SK-XML and DIGIDOC-XML */
     public static final String FORMAT_SK_XML = "SK-XML";
@@ -245,7 +244,7 @@ public class SignedDoc {
      */
     public void cleanupDfCache() {
     	for(int i = 0; (m_dataFiles != null) && (i < m_dataFiles.size()); i++) {
-    		DataFile df = (DataFile)m_dataFiles.get(i);
+    		DataFile df = m_dataFiles.get(i);
     		df.cleanupDfCache();
     	}
     }
@@ -355,7 +354,7 @@ public class SignedDoc {
             throw new SignedDocException(SignedDocException.ERR_SIGATURES_EXIST,
                 "Cannot add DataFiles when signatures exist!", null);
         if(m_dataFiles == null)
-            m_dataFiles = new ArrayList();
+            m_dataFiles = new ArrayList<DataFile>();
         if(df.getId() == null)
         	df.setId(getNewDataFileId());
         m_dataFiles.add(df);        
@@ -367,7 +366,7 @@ public class SignedDoc {
      * @return desired DataFile object
      */
     public DataFile getDataFile(int idx) {
-        return (DataFile)m_dataFiles.get(idx);
+        return m_dataFiles.get(idx);
     }
 
     /**
@@ -375,7 +374,7 @@ public class SignedDoc {
      * @return desired DataFile object
      */
     public DataFile getLastDataFile() {
-        return (DataFile)m_dataFiles.get(m_dataFiles.size()-1);
+        return m_dataFiles.get(m_dataFiles.size()-1);
     }
     
     /**
@@ -488,7 +487,7 @@ public class SignedDoc {
     public void addSignature(Signature sig) 
     {
         if(m_signatures == null)
-            m_signatures = new ArrayList();
+            m_signatures = new ArrayList<Signature>();
         m_signatures.add(sig);
     }
     
@@ -512,7 +511,7 @@ public class SignedDoc {
      * @return desired Signature object
      */
     public Signature getSignature(int idx) {
-        return (Signature)m_signatures.get(idx);
+        return m_signatures.get(idx);
     }
     
     /**
@@ -530,7 +529,7 @@ public class SignedDoc {
      */
     public Signature getLastSignature() {
     	if(m_signatures != null && m_signatures.size() > 0)
-    		return (Signature)m_signatures.get(m_signatures.size()-1);
+    		return m_signatures.get(m_signatures.size()-1);
     	else
     		return null;
     }
@@ -552,9 +551,9 @@ public class SignedDoc {
      * as required by XML-DSIG
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList validate(boolean bStrong)
+    public ArrayList<SignedDocException> validate(boolean bStrong)
     {
-        ArrayList errs = new ArrayList();
+        ArrayList<SignedDocException> errs = new ArrayList<SignedDocException>();
         SignedDocException ex = validateFormat(m_format);
         if(ex != null)
             errs.add(ex);
@@ -563,13 +562,13 @@ public class SignedDoc {
             errs.add(ex);
         for(int i = 0; i < countDataFiles(); i++) {
             DataFile df = getDataFile(i);
-            ArrayList e = df.validate(bStrong);
+            ArrayList<SignedDocException> e = df.validate(bStrong);
             if(!e.isEmpty())
                 errs.addAll(e);
         }
         for(int i = 0; i < countSignatures(); i++) {
             Signature sig = getSignature(i);
-            ArrayList e = sig.validate();
+            ArrayList<SignedDocException> e = sig.validate();
             if(!e.isEmpty())
                 errs.addAll(e);
         }                
@@ -584,12 +583,12 @@ public class SignedDoc {
      * every signature
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verify(boolean checkDate, boolean demandConfirmation)
+    public ArrayList<SignedDocException> verify(boolean checkDate, boolean demandConfirmation)
     {
-        ArrayList errs = validate(false);
+        ArrayList<SignedDocException> errs = validate(false);
         for(int i = 0; i < countSignatures(); i++) {
             Signature sig = getSignature(i);
-            ArrayList e = sig.verify(this, checkDate, demandConfirmation);
+            ArrayList<SignedDocException> e = sig.verify(this, checkDate, demandConfirmation);
             if(!e.isEmpty())
                 errs.addAll(e);
         }    
@@ -608,12 +607,12 @@ public class SignedDoc {
      * every signature. False if you want to check against CRL.
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verifyOcspOrCrl(boolean checkDate, boolean bUseOcsp)
+    public ArrayList<SignedDocException> verifyOcspOrCrl(boolean checkDate, boolean bUseOcsp)
     {
-        ArrayList errs = validate(false);
+        ArrayList<SignedDocException> errs = validate(false);
         for(int i = 0; i < countSignatures(); i++) {
             Signature sig = getSignature(i);
-            ArrayList e = sig.verifyOcspOrCrl(this, checkDate, bUseOcsp);
+            ArrayList<SignedDocException> e = sig.verifyOcspOrCrl(this, checkDate, bUseOcsp);
             if(!e.isEmpty())
                 errs.addAll(e);
         }    

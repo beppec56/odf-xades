@@ -42,9 +42,6 @@ import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
-import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
-import com.yacme.ext.oxsit.security.XOX_SSCDevice;
-import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -86,6 +83,7 @@ import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
@@ -101,6 +99,9 @@ import com.yacme.ext.oxsit.ooo.ui.MessageNoSignatureToken;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
 import com.yacme.ext.oxsit.security.PKCS11TokenAttributes;
 import com.yacme.ext.oxsit.security.ReadCerts;
+import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 /**
  * This service implements the real document signer.
@@ -325,7 +326,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * @param aCertArray
 	 * @return
 	 */
-	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] aCertArray) {
+	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] _aCertArray) {
 		// TODO Auto-generated method stub
     	Date d1, d2;
 		
@@ -351,21 +352,208 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
             //System.out.println("UTF8 body: " + Base64Util.encode(u8b));
             //df.setBody(u8b, "UTF8");
             
-            // Do card login and get certificate
-            
-			d1 = new Date();
+			XOX_X509Certificate aCert = _aCertArray[0];
 
+	        java.security.cert.CertificateFactory cf;
+
+	        cf = java.security.cert.CertificateFactory.getInstance("X.509");
+			java.io.ByteArrayInputStream bais = null;
+
+			bais = new java.io.ByteArrayInputStream(aCert.getCertificateAttributes().getDEREncoded());
+            X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
+			
+			m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+
+			// get the device this was seen on
+			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
+
+			m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
+
+			m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
+			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
+					// device
+					// description
+					xSSCD.getDescription(), // from device description
+					xSSCD.getTokenSerialNumber(), // from token
+					xSSCD.getTokenMaximumPINLenght()); // from token
             
-		} catch (com.sun.star.io.IOException e) {
-			m_aLogger.log(e, true);
+			// try to get a pin from the user
+			DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+			int BiasX = 100;
+			int BiasY = 30;
+			aDialog1.initialize(BiasX, BiasY);
+			aDialog1.executeDialog();
+			char[] myPin = aDialog1.getPin();
+			String pin = aDialog1.getThePin();
+			
+			if (myPin != null && myPin.length > 0) {
+				// user confirmed, check opening the session
+				byte[] encDigestBytes = null;									
+
+				// Do card login and get certificate
+				//        SignatureFactory sigFac = ConfigManager.
+				//            instance().getSignatureFactory();
+				//        System.out.println("GET Cert");
+				//            X509Certificate cert = sigFac.getCertificate(0, pin);
+
+				// add a Signature
+				d1 = new Date();
+				// add a Signature
+				m_aLogger.log("Prepare signature");
+				Signature sig = sdoc.prepareSignature(certChild, null, null);
+				byte[] sidigest = sig.calculateSignedInfoDigest();
+				d2 = new Date();
+				m_aLogger.log("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]" );
+				byte[] sigval = null;
+				//JDigiDoc
+				//byte[] sigval = sigFac.sign(sidigest, 0, pin);
+				// user confirmed, check opening the session
+				SecurityManager sm = System.getSecurityManager();
+				if (sm != null) {
+					m_aLogger.info("SecurityManager: " + sm);
+				} else {
+					m_aLogger.info("no SecurityManager.");
+				}			
+				try {
+					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+					if (m_sHelperCerts == null)
+						m_aHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
+					if (isTokenPresent(xSSCD.getTokenLabel(), // from device description
+							xSSCD.getTokenManufacturerID(), // from device description
+							xSSCD.getTokenSerialNumber())) {
+						//first get all supported mechanism (needed for logging, debug/tests
+						m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
+						m_aHelperPkcs11.setMechanism(PKCS11Constants.CKM_RSA_PKCS);
+						//it.infocamere.freesigner.gui.DigestSignTask.DigestSigner.encryptDigestAndGetCertificate(certHandle, helper);
+
+						m_aHelperPkcs11.openSession(myPin);
+		//				m_aHelperPkcs11.openSession();
+						try {
+							//now here start the true signature code, we sign the SHA1 sums we goto from
+							//digesting process.
+							long privateKeyHandle = m_aHelperPkcs11.findSignatureKeyFromID(aCert.getCertificateAttributes().getID());
+							//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
+							m_aLogger.log("privateKeyHandle: "+privateKeyHandle);
+							if (privateKeyHandle > 0) {
+								//////////// from JDigiDoc
+								//SHA1 prefix ???
+								/** SHA1 algortihm prefix */
+								final byte[] sha1AlgPrefix = { 
+										0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 
+										0x0e, 0x03, 0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
+
+								byte[] ddata = new byte[sha1AlgPrefix.length + sidigest.length];
+								System.arraycopy(sha1AlgPrefix, 0, ddata, 0, sha1AlgPrefix.length);
+								System.arraycopy(sidigest, 0, ddata, 
+										sha1AlgPrefix.length, sidigest.length);
+
+								////////// from JDigiDoc
+
+								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
+								m_aLogger.log("Finalize signature");
+								sig.setSignatureValue(sigval);
+								
+								byte[] theSignatureXML = sig.toXML();
+								
+								m_aLogger.log(sig.toString());
+//after this, add the file the signature just set.
+								
+//and write it back to the storage
+
+							}
+							//at list one certificate was signed
+							//					bRetValue = true;
+							//					bRetry = false;
+						} catch (Throwable e) {
+							//any exception thrown during signing process comes here
+							//close the pending session
+							m_aLogger.log("Throwable thrown! Closing session.");
+							m_aHelperPkcs11.closeSession();
+							throw(e);
+						} 
+						m_aHelperPkcs11.closeSession();
+					} else {
+						//0x000000E0 = CKR_TOKEN_NOT_PRESENT
+						//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
+						throw (new PKCS11Exception(0x000000E0));
+					}				
+				} catch (TokenException e) {
+// session can not be opened
+					m_aLogger.warning("",">TokenException",e);
+					//FIXME ??				throw(e);
+				} catch (Throwable e) {
+// session can not be opened
+					m_aLogger.severe(e);
+				}
+
+//            // get confirmation
+//            //ROB: Confirmation required by Estonian Law
+//            //System.out.println("Get confirmation");
+//            //sig.getConfirmation();
+//            //System.out.println("Confirmation OK!");
+//            
+//            //System.out.println("Signature: " + sig);
+//             
+//            // write it in a file
+//            System.out.println("Writing in file: " + xmloutputfile);
+//            sdoc.writeToFile(new File(xmloutputfile));
+//            
+//            //ROB: Generazione ODF di uscita
+//            // Generacion del ODF de salida
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ZipOutputStream zos = new ZipOutputStream(baos);
+//
+//            // Copiar el contenido existente al ODF de salida
+//            for (String fileName : odf.getFileList())
+//            {
+//                ZipEntry zeOut = new ZipEntry(fileName);
+//
+//                if (!fileName.equals("META-INF/xadessignatures.xml")
+//                        && !fileName.equals("META-INF/manifest.xml"))
+//                {
+//                    zos.putNextEntry(zeOut);
+//                    zos.write(odf.getEntry(fileName));
+//                }
+//            }
+//
+//            // Añadimos el documento de firmas al ODF de salida
+//            ZipEntry zeDocumentSignatures = new ZipEntry("META-INF/xadessignatures.xml");
+//            zos.putNextEntry(zeDocumentSignatures);
+//            ByteArrayOutputStream baosXML = new ByteArrayOutputStream();
+//            sdoc.writeToStream(baosXML);
+//            zos.write(baosXML.toByteArray());
+//            zos.closeEntry();
+//
+//            // Añadimos el manifest.xml al ODF de salida
+//            ZipEntry zeManifest = new ZipEntry("META-INF/manifest.xml");
+//            zos.putNextEntry(zeManifest);
+//            zos.write(manifestBytes);
+//            zos.closeEntry();
+//
+//            zos.close();
+//            
+//            new FileOutputStream(odfoutputfile).write(baos.toByteArray());
+//            
+//			d2 = new Date();
+//			System.out.println("Composing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]" );
+//			
+//			//System.out.println("Done!");
+//             
+//            
+//
+			}
+        } catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
         } catch(SignedDocException ex) {
             System.err.println(ex);
             ex.printStackTrace(System.err);
-        } catch(Exception ex) {
+		} catch (com.sun.star.io.IOException e) {
+			m_aLogger.log(e, true);
+        } catch(Throwable ex) {
             System.err.println(ex);
             ex.printStackTrace(System.err);
-        }
-		
+        }		
 		
 		/*
 		 * form a digest for any of the document substorage (files) the document has according to the decided standard

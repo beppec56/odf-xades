@@ -84,11 +84,11 @@ public class Signature implements Serializable {
     /** original bytes read from XML file  */
     private byte[] m_origContent;
 	/** CertID elements */
-	private ArrayList m_certIds;    
+	private ArrayList<CertID> m_certIds;    
     /** CertValue elements */
-	private ArrayList m_certValues;
+	private ArrayList<CertValue> m_certValues;
     /** TimestampInfo elements */
-	private ArrayList m_timestamps;
+	private ArrayList<TimestampInfo> m_timestamps;
     
     
     /** 
@@ -328,7 +328,7 @@ public class Signature implements Serializable {
     public void addCertID(CertID cid)
     {
     	if(m_certIds == null)
-    		m_certIds = new ArrayList();
+    		m_certIds = new ArrayList<CertID>();
     	cid.setSignature(this);
     	m_certIds.add(cid);
     }
@@ -408,7 +408,7 @@ public class Signature implements Serializable {
     public void addCertValue(CertValue cval)
     {
     	if(m_certValues == null)
-    		m_certValues = new ArrayList();
+    		m_certValues = new ArrayList<CertValue>();
     	cval.setSignature(this);
     	m_certValues.add(cval);
     }
@@ -508,9 +508,9 @@ public class Signature implements Serializable {
      * Retrieves TSA certificates
      * @return TSA certificates
      */
-    public ArrayList findTSACerts()
+    public ArrayList<X509Certificate> findTSACerts()
     {
-    	ArrayList vec = new ArrayList();
+    	ArrayList<X509Certificate> vec = new ArrayList<X509Certificate>();
     	for(int i = 0; (m_certValues != null) && (i < m_certValues.size()); i++) {
     		CertValue cval = (CertValue)m_certValues.get(i);
     		if(cval.getType() == CertValue.CERTVAL_TYPE_TSA)
@@ -535,7 +535,7 @@ public class Signature implements Serializable {
     public void addTimestampInfo(TimestampInfo ts)
     {
     	if(m_timestamps == null)
-    		m_timestamps = new ArrayList();
+    		m_timestamps = new ArrayList<TimestampInfo>();
     	ts.setSignature(this);
     	m_timestamps.add(ts);
     }
@@ -670,10 +670,10 @@ public class Signature implements Serializable {
      *every signature
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verify(SignedDoc sdoc, boolean checkDate, boolean demandConfirmation)
+    public ArrayList<SignedDocException> verify(SignedDoc sdoc, boolean checkDate, boolean demandConfirmation)
     {
     	Date do1 = null, dt1 = null, dt2 = null;
-        ArrayList errs = new ArrayList();
+        ArrayList<SignedDocException> errs = new ArrayList<SignedDocException>();
         // check the DataFile digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
             DataFile df = sdoc.getDataFile(i);
@@ -790,7 +790,7 @@ public class Signature implements Serializable {
         }
         // check confirmation
         if(m_unsigProp != null) {
-            ArrayList e = m_unsigProp.verify(sdoc);
+            ArrayList<SignedDocException> e = m_unsigProp.verify(sdoc);
             if(!e.isEmpty())
                 errs.addAll(e);
             if(m_unsigProp.getNotary() != null)
@@ -802,7 +802,7 @@ public class Signature implements Serializable {
                         "Signature has no OCSP confirmation!", null));
         }
         // verify timestamps
-        ArrayList tsaCerts = findTSACerts();
+        ArrayList<X509Certificate> tsaCerts = findTSACerts();
         if(m_timestamps != null && m_timestamps.size() > 0) {
         	TimestampFactory tsFac = null;
         	try {
@@ -811,7 +811,7 @@ public class Signature implements Serializable {
         		//m_logger.error("Failed to get TimestampFactory: " + ex);
         		errs.add(ex);
         	}
-        	ArrayList e = tsFac.verifySignaturesTimestamps(this);
+        	ArrayList<SignedDocException> e = tsFac.verifySignaturesTimestamps(this);
         	if(!e.isEmpty())
                 errs.addAll(e);
         	for(int i = 0; i < m_timestamps.size(); i++) {
@@ -846,10 +846,10 @@ public class Signature implements Serializable {
      * every signature. False if you want to check against CRL.
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verifyOcspOrCrl(SignedDoc sdoc, boolean checkDate, boolean bUseOcsp)
+    public ArrayList<SignedDocException> verifyOcspOrCrl(SignedDoc sdoc, boolean checkDate, boolean bUseOcsp)
     {
     	Date do1 = null, dt1 = null, dt2 = null;
-        ArrayList errs = new ArrayList();
+        ArrayList<SignedDocException> errs = new ArrayList<SignedDocException>();
         // check the DataFile digests
         for(int i = 0; i < sdoc.countDataFiles(); i++) {
             DataFile df = sdoc.getDataFile(i);
@@ -957,7 +957,7 @@ public class Signature implements Serializable {
         if(bUseOcsp) { // use OCSP
         	// check confirmation
         	if(m_unsigProp != null) {
-                ArrayList e = m_unsigProp.verify(sdoc);
+                ArrayList<SignedDocException> e = m_unsigProp.verify(sdoc);
                 if(!e.isEmpty())
                     errs.addAll(e);
             } else { // not OCSP confirmation
@@ -966,7 +966,7 @@ public class Signature implements Serializable {
                             "Signature has no OCSP confirmation!", null));
             }        	
         	// verify timestamps
-            ArrayList tsaCerts = findTSACerts();
+            ArrayList<X509Certificate> tsaCerts = findTSACerts();
             if(m_timestamps.size() > 0) {
             	TimestampFactory tsFac = null;
             	try {
@@ -975,7 +975,7 @@ public class Signature implements Serializable {
             		//m_logger.error("Failed to get TimestampFactory: " + ex);
             		errs.add(ex);
             	}
-            	ArrayList e = tsFac.verifySignaturesTimestamps(this);
+            	ArrayList<SignedDocException> e = tsFac.verifySignaturesTimestamps(this);
             	if(!e.isEmpty())
                     errs.addAll(e);
             	for(int i = 0; i < m_timestamps.size(); i++) {
@@ -1014,7 +1014,7 @@ public class Signature implements Serializable {
      * Signature object
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList validate()
+    public ArrayList<SignedDocException> validate()
     {
         ArrayList errs = new ArrayList();
         SignedDocException ex = validateId(m_id);

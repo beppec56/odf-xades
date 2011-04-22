@@ -98,7 +98,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
 		XOX_CertificatePKCS11Attributes, //added for convenience
 										//so we use this UNO component to pass
-										//certificate incormation when addig a certificate
+										//certificate information when adding a certificate
 										//to the list
 		XOX_SSCDManagement {
 

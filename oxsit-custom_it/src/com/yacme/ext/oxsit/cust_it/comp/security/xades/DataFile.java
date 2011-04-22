@@ -763,7 +763,7 @@ public class DataFile implements Serializable
      * as required by XML-DSIG
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList validate(boolean bStrong)
+    public ArrayList<SignedDocException> validate(boolean bStrong)
     {
         ArrayList errs = new ArrayList();
         SignedDocException ex = validateContentType(m_contentType);

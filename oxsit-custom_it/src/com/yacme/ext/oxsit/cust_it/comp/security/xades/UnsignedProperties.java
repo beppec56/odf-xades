@@ -188,7 +188,7 @@ public class UnsignedProperties implements Serializable {
      * @param sdoc parent doc object
      * @return a possibly empty list of SignedDocException objects
      */
-    public ArrayList verify(SignedDoc sdoc)
+    public ArrayList<SignedDocException> verify(SignedDoc sdoc)
     {
         ArrayList errs = new ArrayList();
         // verify notary certs serial number using CompleteCertificateRefs        

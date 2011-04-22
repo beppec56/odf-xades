@@ -39,7 +39,7 @@ public interface TimestampFactory {
      * @return list of errors. Empty if no errors.
      * @throws SignedDocException
      */
-    public ArrayList verifySignaturesTimestamps(Signature sig);
+    public ArrayList<SignedDocException> verifySignaturesTimestamps(Signature sig);
     //	throws SignedDocException;
     
 }
