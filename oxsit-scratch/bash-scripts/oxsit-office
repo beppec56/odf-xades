@@ -10,12 +10,17 @@ export OOO_FORCE_DESKTOP=gnome
 #./soffice -norestore -accept='socket,host=0,port=9000;urp;' "/home/beppe/Acca-Esse/Commesse/Esterne/in-corso/2011001-mynt.it-firma-digitale-ooo/Firma-digitale-XAdES-IT/test-docs/test doc 1 unsigned with spaces-3.0.1.odt"&
 
 #this line will start soffice as default, only the main desktop menu
-./soffice  -accept='socket,host=0,port=9000;urp;' &
+#./soffice  -accept='socket,host=0,port=9000;urp;' &
+./soffice  -norestore -accept='socket,host=0,port=9000;urp;' /home/beppe/Acca-Esse/Commesse/Esterne/in-corso/2011001-mynt.it-firma-digitale-ooo/Firma-digitale-XAdES-IT/test-docs/test-doc-to-compare-rob.odt &
+
 sleep 7
 ls `pwd`/*bin | grep soffice.bin
-ps | grep soffice.bin | sed 's/pts.*$//g'
+
+PROCESS_ID=`ps | grep soffice.bin | sed 's/pts.*$//g'`
+
 #The following line will show the tcp port opened by OOo
 #9000 is the port for UNO connection whereas the other is 
 #the port for remote Java debug connection
-netstat -taupln | grep soffice.bin
+echo "soffice process is: $PROCESS_ID"
+netstat -taupln | grep soffice.bin | grep $PROCESS_ID
 date
