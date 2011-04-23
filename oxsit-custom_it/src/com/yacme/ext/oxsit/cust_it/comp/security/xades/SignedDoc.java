@@ -97,12 +97,25 @@ public class SignedDoc {
     public static final String VERSION_1_4 = "1.4";
     /** the only supported algorithm is SHA1 */
     public static final String SHA1_DIGEST_ALGORITHM = "http://www.w3.org/2000/09/xmldsig#sha1";
-    /** SHA1 digest data is allways 20 bytes */
-    public static final int SHA1_DIGEST_LENGTH = 20;
-    /** the only supported canonicalization method is 20010315 */
-    public static final String CANONICALIZATION_METHOD_20010315 = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
     /** the only supported signature method is RSA-SHA1 */
     public static final String RSA_SHA1_SIGNATURE_METHOD = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+    
+    //ROB
+    public static final String SHA256_DIGEST_ALGORITHM = "http://www.w3.org/2000/09/xmldsig#sha256";    
+    /** the only valid (for Italy) signature method is RSA-SHA256 */
+    public static final String RSA_SHA256_SIGNATURE_METHOD = "http://www.w3.org/2000/09/xmldsig#rsa-sha256";
+
+    
+    /** SHA1 digest data is always 20 bytes */
+    public static final int SHA1_DIGEST_LENGTH = 20;
+    
+    //ROB
+    /** SHA256 digest data is always 32 bytes */
+    public static final int SHA256_DIGEST_LENGTH = 32;
+    
+    /** the only supported canonicalization method is 20010315 */
+    public static final String CANONICALIZATION_METHOD_20010315 = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+
     /** the only supported transform is digidoc detatched transform */
     public static final String DIGIDOC_DETATCHED_TRANSFORM = "http://www.sk.ee/2002/10/digidoc#detatched-document-signature";
     /** XML-DSIG namespace */
