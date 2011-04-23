@@ -43,10 +43,13 @@ import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
@@ -344,19 +347,18 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
             sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
             byte[] manifestBytes = sdoc.addODFData();
-            
+
             // test adding data from memory
             //String myBody = "Eesti Vabariigi põhiseadus Põhilehekülg | Määrangud | Otsing Eesti Vabariigi põhiseadus rahvahääletuse seadus nr 1";
             //byte[] u8b = Base64Util.encode(ConvertUtils.str2data(myBody)).getBytes();
             //byte[] u8b = ConvertUtils.str2data(myBody);
             //System.out.println("UTF8 body: " + Base64Util.encode(u8b));
             //df.setBody(u8b, "UTF8");
-            
+
 			XOX_X509Certificate aCert = _aCertArray[0];
 
-	        java.security.cert.CertificateFactory cf;
-
-	        cf = java.security.cert.CertificateFactory.getInstance("X.509");
+	        CertificateFactory cf;
+	        cf = CertificateFactory.getInstance("X.509");
 			java.io.ByteArrayInputStream bais = null;
 
 			bais = new java.io.ByteArrayInputStream(aCert.getCertificateAttributes().getDEREncoded());
@@ -435,9 +437,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
 							m_aLogger.log("privateKeyHandle: "+privateKeyHandle);
 							if (privateKeyHandle > 0) {
-								//////////// from JDigiDoc
+//////////// from JDigiDoc
 								//SHA1 prefix ???
-								/** SHA1 algortihm prefix */
+								/** SHA1 algorithm prefix */
 								final byte[] sha1AlgPrefix = { 
 										0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 
 										0x0e, 0x03, 0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
@@ -447,13 +449,25 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								System.arraycopy(sidigest, 0, ddata, 
 										sha1AlgPrefix.length, sidigest.length);
 
-								////////// from JDigiDoc
+////////// end from JDigiDoc
 
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 								m_aLogger.log("Finalize signature");
 								sig.setSignatureValue(sigval);
 								
 								byte[] theSignatureXML = sig.toXML();
+								
+								String sUserHome = System.getProperty("user.home");
+								
+								File aFile = new File(sUserHome+"/xadessignature.xml");
+
+								aFile.createNewFile();
+								FileOutputStream os = new FileOutputStream(aFile);
+								
+								os.write(theSignatureXML);
+								
+								os.close();
+				
 								
 								m_aLogger.log(sig.toString());
 //after this, add the file the signature just set.
@@ -479,6 +493,35 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					}				
 				} catch (TokenException e) {
 // session can not be opened
+//FIXME: change behavior if exception is: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT
+					/*
+					 * 
+S 17:56:00.390 752D7D02 com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT  >TokenException 
+iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT                      
+        iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.C_Login(Native Method) 
+        com.yacme.ext.oxsit.pkcs11.PKCS11Driver.login(PKCS11Driver.java:728) 
+        com.yacme.ext.oxsit.pkcs11.PKCS11Driver.openSession(PKCS11Driver.java:753) 
+        com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signAsFile(DocumentSigner_IT.java:431) 
+        com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signDocument(DocumentSigner_IT.java:288) 
+        com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.addButtonPressed(DialogCertTreeSSCDs.java:187) 
+        com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
+        com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
+        com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
+        $Proxy61.execute(Unknown Source) 
+        com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
+        com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.executeDialog(DialogCertTreeSSCDs.java:146) 
+        com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.addButtonPressed(DialogSignatureTreeDocument.java:164) 
+        com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
+        com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
+        com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
+        $Proxy61.execute(Unknown Source) 
+        com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
+        com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.executeDialog(DialogSignatureTreeDocument.java:135) 
+        com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.signatureDialog(ImplXAdESSignatureDispatchTB.java:359) 
+        com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.impl_dispatch(ImplXAdESSignatureDispatchTB.java:293) 
+        com.yacme.ext.oxsit.dispatchers.threads.OnewayDispatchExecutor.run(OnewayDispatchExecutor.java:63)
+         			 *
+					 */
 					m_aLogger.warning("",">TokenException",e);
 					//FIXME ??				throw(e);
 				} catch (Throwable e) {

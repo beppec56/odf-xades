@@ -371,8 +371,9 @@ public class ODFSignedDoc extends SignedDoc {
 
     /**
    * @return
+     * @throws SignedDocException 
    */
-  public byte[] addODFData() {
+  public byte[] addODFData() throws SignedDocException {
 		
 		byte[] manifestBytes = null;
 		
@@ -411,25 +412,25 @@ public class ODFSignedDoc extends SignedDoc {
 //loop to add the data to the internal object for signature
 	            for(int i = 0; i < aElements.size();i++) {
 	            	APackageElement aElm = aElements.get(i);
-	            	m_aLogger.log(aElm.toString());
-	            	if(aElm.m_sMediaType.equalsIgnoreCase("text/xml")) {
-	            		m_aLogger.log(" Added an XML file");
+	            	m_aLogger.log("Type: "+aElm.m_sMediaType+" name: "+aElm.m_stheName+ " size: "+aElm.m_nSize);
+	            	if((aElm.m_sMediaType.equalsIgnoreCase("text/xml") ||
+	            			aElm.m_stheName.endsWith(".xml")) && aElm.m_nSize != 0) {//FIXME: verify what to do in size == 0
+	            		m_aLogger.log(" Adding an XML file");
 	            		//is an xml file
 	            		ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
 	            				aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
-	            				ExternalDataFile.CONTENT_ODF_PKG_XML_ENTRY, this);
+	            				ODFDataDescription.CONTENT_ODF_PKG_XML_ENTRY, this);
 	            		addDataFile(df);
 	            	}
-	            	else if(!aElm.m_sMediaType.equalsIgnoreCase("")) {
-	            		m_aLogger.log(" Added a binary file");
+	            	else if(aElm.m_sMediaType.length() == 0 && aElm.m_nSize != 0) {//FIXME: verify what to do in size == 0
+	            		m_aLogger.log(" Adding a binary file");
 	            		ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream,
 	            				aElm.m_stheName, aElm.m_sMediaType, aElm.m_stheName,
-	            				ExternalDataFile.CONTENT_ODF_PKG_BINARY_ENTRY, this);
+	            				ODFDataDescription.CONTENT_ODF_PKG_BINARY_ENTRY, this);
 	            		addDataFile(df);
 	            	}
 	            }
 			}
-			
 
 //			for (int i = 0; i < listFileEntry.getLength(); i++) {
 //				Element e = ((Element) listFileEntry.item(i));
@@ -526,7 +527,8 @@ public class ODFSignedDoc extends SignedDoc {
 //			e.printStackTrace();
 		} catch (SignedDocException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_aLogger.log(e, true);
+			throw(e);
 		} catch (Exception e) {
 			m_aLogger.log(e, true);
 		}

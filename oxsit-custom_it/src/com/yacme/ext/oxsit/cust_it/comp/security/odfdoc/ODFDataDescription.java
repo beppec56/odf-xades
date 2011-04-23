@@ -211,14 +211,14 @@ public class ODFDataDescription extends DataFile implements Serializable {
 
 			if (getSize() != 0) {
 
-				byte[][] buf = new byte[block_size][1]; // use 2KB bytes to avoid
+				byte[][] buf = new byte[1][block_size]; // use 2KB bytes to avoid
 													// base64 problems
 				int fRead = 0;
 				while ((fRead = is.readBytes(buf, block_size)) == block_size) {
-					sha.update(buf[1]);
+					sha.update(buf[0]);
 				}
 				byte[] buf2 = new byte[fRead];
-				System.arraycopy(buf, 0, buf2, 0, fRead);
+				System.arraycopy(buf[0], 0, buf2, 0, fRead);
 				sha.update(buf2);
 
 				digest = sha.digest();
