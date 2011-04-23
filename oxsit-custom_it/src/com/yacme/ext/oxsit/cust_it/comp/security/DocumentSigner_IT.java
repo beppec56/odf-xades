@@ -59,6 +59,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
@@ -161,6 +162,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String m_sErroreIsReadOnly;
 	private String m_sErrorMacroPresent;
 	
+	//ROB
+	private static final String  DIGEST_SHA1 = OIWObjectIdentifiers.idSHA1.getId();
+	private static final String  DIGEST_SHA256 = NISTObjectIdentifiers.id_sha256.getId();
 
 	/**
 	 * 
@@ -455,7 +459,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								//ROB: end commented out
 								
 								//ROB: use encapsulateInDigestInfo 
-								byte[] ddata = encapsulateInDigestInfo(CMSSignedDataGenerator.DIGEST_SHA1, sidigest);
+								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA1, sidigest);
 
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 								m_aLogger.log("Finalize signature");
