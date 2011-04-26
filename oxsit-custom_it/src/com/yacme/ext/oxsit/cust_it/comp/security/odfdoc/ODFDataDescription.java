@@ -19,6 +19,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
+
 /** wraps the document data to be signed 
  * @author beppe
  *
@@ -69,11 +70,11 @@ public class ODFDataDescription extends DataFile implements Serializable {
 	 */
 	private SignedDocException validateDigestValue(byte[] data) {
 		SignedDocException ex = null;
-		if (data != null && data.length != SignedDoc.SHA1_DIGEST_LENGTH)
-			ex = new SignedDocException(
-					SignedDocException.ERR_DATA_FILE_DIGEST_VALUE,
-					"SHA1 digest value must be 20 bytes", null);
-		return ex;
+        //ROB
+        if(data != null && data.length != SignedDoc.SHA256_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_DIGEST_VALUE, 
+                "SHA256 digest value must be 32 bytes", null);
+        return ex;
 	}
 
 	/**
@@ -184,17 +185,20 @@ public class ODFDataDescription extends DataFile implements Serializable {
 
 			if (getContentType().equals(CONTENT_ODF_PKG_BINARY_ENTRY)
 					&& getDigestValue() == null) {
-				setDigestType(DIGEST_TYPE_SHA1);
+				//ROB
+				setDigestType(DIGEST_TYPE_SHA256);
 				setDigest(calculateDetachedFileDigest(is));
 			}
 			if (getContentType().equals(CONTENT_ODF_PKG_XML_ENTRY)
 					&& getDigestValue() == null) {
-				setDigestType(DIGEST_TYPE_SHA1);
-
-				MessageDigest sha = MessageDigest.getInstance("SHA-1");
+				//ROB
+				setDigestType(DIGEST_TYPE_SHA256);
+				
+				MessageDigest sha = MessageDigest.getInstance("SHA-256");
 				sha.update(canonicalizeXml(inputStreamToByteArray(is)));
 				setDigest(sha.digest());
 			}
+
 		} catch (Exception ex) {
 			SignedDocException
 					.handleException(ex, SignedDocException.ERR_READ_FILE);
@@ -204,9 +208,10 @@ public class ODFDataDescription extends DataFile implements Serializable {
 	public byte[] calculateDetachedFileDigest(XInputStream is)
 			throws SignedDocException {
 		byte[] digest = null;
-
 		try {
-			MessageDigest sha = MessageDigest.getInstance("SHA-1");
+			//MessageDigest sha = MessageDigest.getInstance("SHA-1");
+			//ROB
+			MessageDigest sha = MessageDigest.getInstance("SHA-256");
 			setSize(is.available());
 
 			if (getSize() != 0) {
