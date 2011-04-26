@@ -1,2 +1,2 @@
 #!/bin/bash
-svn info | grep "^Revision" | awk '{print $2}'
+svn info | grep "^Revision.:" | awk '{print $2}'
