@@ -406,7 +406,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				// add a Signature
 				d1 = new Date();
 				// add a Signature
-				m_aLogger.log("Prepare signature");
+				m_aLogger.log("Prepare ODF signature");
 				Signature sig = sdoc.prepareSignature(certChild, null, null);
 				byte[] sidigest = sig.calculateSignedInfoDigest();
 				d2 = new Date();
@@ -603,13 +603,16 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			}
 		} catch (CertificateException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_aLogger.log("Exception: "+e.getMessage());
+			e.printStackTrace(System.err);
 		} catch (SignedDocException ex) {
+			m_aLogger.log("Exception: "+ex.getMessage());
 			System.err.println(ex);
 			ex.printStackTrace(System.err);
 		} catch (com.sun.star.io.IOException e) {
 			m_aLogger.log(e, true);
 		} catch (Throwable ex) {
+			m_aLogger.log("Exception: "+ex.getMessage());
 			System.err.println(ex);
 			ex.printStackTrace(System.err);
 		}
