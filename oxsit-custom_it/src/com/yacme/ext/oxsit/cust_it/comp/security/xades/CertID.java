@@ -130,7 +130,8 @@ public class CertID implements Serializable {
         throws SignedDocException
     {        
         setId(sig.getId() + "-RESPONDER_CERTINFO");
-        setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
+        //ROB
+        setDigestAlgorithm(SignedDoc.SHA256_DIGEST_ALGORITHM);
         byte[] digest = null;
         try {
             digest = SignedDoc.digest(cert.getEncoded());
@@ -232,9 +233,10 @@ public class CertID implements Serializable {
     private SignedDocException validateDigestAlgorithm(String str)
     {
         SignedDocException ex = null;
-        if(str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
-            ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM, 
-                "Currently supports only SHA1 digest algorithm", null);
+        //ROB
+        if(str == null || !str.equals(SignedDoc.SHA256_DIGEST_ALGORITHM))
+            ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM,
+                "Currently supports only SHA256 digest algorithm", null);
         return ex;
     }
     
@@ -268,9 +270,9 @@ public class CertID implements Serializable {
     private SignedDocException validateDigestValue(byte[] data)
     {
         SignedDocException ex = null;
-        if(data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+        if(data == null || data.length != SignedDoc.SHA256_DIGEST_LENGTH)
             ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
-                "SHA1 digest data is allways 20 bytes of length", null);
+                "SHA256 digest data is always "+ SignedDoc.SHA256_DIGEST_LENGTH +" bytes of length", null);
         return ex;
     }
     
@@ -433,7 +435,9 @@ public class CertID implements Serializable {
             }
             bos.write(ConvertUtils.str2data("\n<CertDigest>\n<DigestMethod Algorithm=\""));
             bos.write(ConvertUtils.str2data(m_digestAlgorithm));
-            bos.write(ConvertUtils.str2data("\">\n</DigestMethod>\n<DigestValue>"));
+            //ROB for xades4j needings...
+            //bos.write(ConvertUtils.str2data("\">\n</DigestMethod>\n<DigestValue>"));
+            bos.write(ConvertUtils.str2data("\"/>\n<DigestValue>"));
             bos.write(ConvertUtils.str2data(Base64Util.encode(m_digestValue, 0)));
             bos.write(ConvertUtils.str2data("</DigestValue>\n</CertDigest>\n"));
             // In version 1.3 we use correct <IssuerSerial> content 

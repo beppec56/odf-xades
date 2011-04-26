@@ -162,9 +162,10 @@ public class SignedInfo implements Serializable {
     private SignedDocException validateSignatureMethod(String str)
     {
         SignedDocException ex = null;
-        if(str == null || !str.equals(SignedDoc.RSA_SHA1_SIGNATURE_METHOD))
+        //ROB
+        if(str == null || !str.equals(SignedDoc.RSA_SHA256_SIGNATURE_METHOD))
             ex = new SignedDocException(SignedDocException.ERR_SIGNATURE_METHOD, 
-                "Currently supports only RSA-SHA1 signatures", null);
+                "Currently supports only RSA-SHA256 signatures", null);
         return ex;
     }
 

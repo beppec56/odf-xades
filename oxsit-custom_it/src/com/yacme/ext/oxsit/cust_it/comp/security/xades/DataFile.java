@@ -27,6 +27,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationF
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.Base64InputStream;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
+
 /**
  * Represents a DataFile instance, that either
  * contains payload data or references and external
@@ -77,6 +78,8 @@ public class DataFile implements Serializable
     
     /** the only allowed value for digest type */
     public static final String DIGEST_TYPE_SHA1 = "sha1";
+    //ROB
+    public static final String DIGEST_TYPE_SHA256 = "sha256";
     private static int block_size = 2048;
     /** log4j logger */
 //	private Logger m_logger = null;
@@ -655,10 +658,10 @@ public class DataFile implements Serializable
      */
     private SignedDocException validateDigestType(String str)
     {
-        SignedDocException ex = null;
-        if(str != null && !str.equals(DIGEST_TYPE_SHA1))
+    	SignedDocException ex = null;
+        if(str != null && !str.equals(DIGEST_TYPE_SHA256))
             ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_DIGEST_TYPE, 
-                "The only supported digest type is sha1", null);
+                "The only supported digest type is sha256", null);
         return ex;
     }
 
@@ -719,10 +722,11 @@ public class DataFile implements Serializable
      */
     private SignedDocException validateDigestValue(byte[] data)
     {
-        SignedDocException ex = null;
-        if(data != null && data.length != SignedDoc.SHA1_DIGEST_LENGTH)
+    	SignedDocException ex = null;
+        //ROB
+        if(data != null && data.length != SignedDoc.SHA256_DIGEST_LENGTH)
             ex = new SignedDocException(SignedDocException.ERR_DATA_FILE_DIGEST_VALUE, 
-                "SHA1 digest value must be 20 bytes", null);
+                "SHA256 digest value must be 32 bytes", null);
         return ex;
     }
     
@@ -1110,31 +1114,32 @@ public class DataFile implements Serializable
     }
     
     public byte[] calculateDetatchedFileDigest()
-        throws SignedDocException
-    {
-        byte[] digest = null;
-        try {
-            //System.out.println("calculateDetatchedFileDigest(" + getId() + ")");
-            FileInputStream is = new FileInputStream(m_fileName);
-            setSize(is.available());
-            MessageDigest sha = MessageDigest.getInstance("SHA-1");
-            byte[] buf = new byte[block_size]; // use 2KB bytes to avoid base64 problems
-            int fRead = 0;
-            while((fRead = is.read(buf)) == block_size) {
-                sha.update(buf);
-            }
-            byte[] buf2 = new byte[fRead];
-            System.arraycopy(buf, 0, buf2, 0, fRead);
-            sha.update(buf2);
-            is.close();
-            digest = sha.digest();
-            //System.out.println("DataFile: \'" + getId() + 
-            //    "\' digest: " + Base64Util.encode(digest));
-        } catch(Exception ex) {
-            SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
+    throws SignedDocException
+{
+    byte[] digest = null;
+    try {
+        //System.out.println("calculateDetatchedFileDigest(" + getId() + ")");
+        FileInputStream is = new FileInputStream(m_fileName);
+        setSize(is.available());
+        //ROB
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] buf = new byte[block_size]; // use 2KB bytes to avoid base64 problems
+        int fRead = 0;
+        while((fRead = is.read(buf)) == block_size) {
+            sha.update(buf);
         }
-        return digest;
+        byte[] buf2 = new byte[fRead];
+        System.arraycopy(buf, 0, buf2, 0, fRead);
+        sha.update(buf2);
+        is.close();
+        digest = sha.digest();
+        //System.out.println("DataFile: \'" + getId() + 
+        //    "\' digest: " + Base64Util.encode(digest));
+    } catch(Exception ex) {
+    	SignedDocException.handleException(ex, SignedDocException.ERR_READ_FILE);
     }
+    return digest;
+}
     
     /** 
      * Writes the DataFile to an outout file

@@ -83,10 +83,15 @@ public class Reference implements Serializable {
 
 		m_sigInfo = sigInfo;
 		setUri("#" + df.getId());
-		setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
+		//ROB
+		setDigestAlgorithm(SignedDoc.SHA256_DIGEST_ALGORITHM);
 		setDigestValue(df.getDigest());
 		setTransformAlgorithm(df.getContentType().equals(
 				DataFile.CONTENT_DETATCHED) ? SignedDoc.DIGIDOC_DETATCHED_TRANSFORM
+				: null);
+		//ROB
+		setTransformAlgorithm(df.getContentType().equals(
+				DataFile.CONTENT_ODF_PKG_XML_ENTRY) ? SignedDoc.CANONICALIZATION_METHOD_20010315
 				: null);
 	}
 
@@ -124,7 +129,8 @@ public class Reference implements Serializable {
 			throws SignedDocException {
 		m_sigInfo = sigInfo;
 		setUri(sp.getTarget() + "-SignedProperties");
-		setDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
+		//ROB
+		setDigestAlgorithm(SignedDoc.SHA256_DIGEST_ALGORITHM);
 		setDigestValue(sp.calculateDigest());
 		setTransformAlgorithm(null);
 	}
@@ -201,9 +207,10 @@ public class Reference implements Serializable {
 	 */
 	private SignedDocException validateDigestAlgorithm(String str) {
 		SignedDocException ex = null;
-		if (str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+		//ROB
+		if (str == null || !str.equals(SignedDoc.SHA256_DIGEST_ALGORITHM))
 			ex = new SignedDocException(SignedDocException.ERR_DIGEST_ALGORITHM,
-					"Currently supports only SHA1 digest algorithm", null);
+					"Currently supports only SHA256 digest algorithm", null);
 		return ex;
 	}
 
@@ -240,10 +247,10 @@ public class Reference implements Serializable {
 	 */
 	private SignedDocException validateDigestValue(byte[] data) {
 		SignedDocException ex = null;
-		if (data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
-			ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH,
-					"SHA1 digest data is allways 20 bytes of length", null);
-		return ex;
+		if(data == null || data.length != SignedDoc.SHA256_DIGEST_LENGTH)
+            ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
+                "SHA256 digest data is always "+ SignedDoc.SHA256_DIGEST_LENGTH +" bytes of length", null);
+        return ex;
 	}
 
 	/**
@@ -281,10 +288,18 @@ public class Reference implements Serializable {
 	 */
 	private SignedDocException validateTransformAlgorithm(String str) {
 		SignedDocException ex = null;
+		/*
 		if (str != null && !str.equals(SignedDoc.DIGIDOC_DETATCHED_TRANSFORM))
 			ex = new SignedDocException(
 					SignedDocException.ERR_TRANSFORM_ALGORITHM,
 					"Currently supports either no transforms or one detatched document transform",
+					null);
+		*/
+		//ROB
+		if (str != null && !str.equals(SignedDoc.CANONICALIZATION_METHOD_20010315))
+			ex = new SignedDocException(
+					SignedDocException.ERR_TRANSFORM_ALGORITHM,
+					"Currently supports either no transforms or one canonicalization transform",
 					null);
 		return ex;
 	}
@@ -334,9 +349,10 @@ public class Reference implements Serializable {
 					SignedDoc.VERSION_1_2) || m_sigInfo.getSignature()
 					.getSignedDoc().getVersion().equals(SignedDoc.VERSION_1_3))
 					&& m_uri.indexOf("SignedProperties") != -1) {
+				//ROB
 				bos
 						.write(ConvertUtils
-								.str2data(" Type=\"http://uri.etsi.org/01903/v1.1.1#SignedProperties\""));
+								.str2data(" Type=\"http://uri.etsi.org/01903#SignedProperties\""));
 			}
 			bos.write(ConvertUtils.str2data(" URI=\""));
 			bos.write(ConvertUtils.str2data(m_uri));

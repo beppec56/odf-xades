@@ -14,6 +14,7 @@ import java.util.Date;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.CanonicalizationFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 
+
 /**
  * @author beppe
  *
@@ -104,26 +105,28 @@ public class SignedProperties implements Serializable {
         String[] claimedRoles, SignatureProductionPlace adr) 
         throws SignedDocException
     {
-        m_sig = sig;
-        
-        setId(sig.getId() + "-SignedProperties");
-        setTarget("#" + sig.getId());
-        setSigningTime(new Date());
-        setCertId(sig.getId() + "-CERTINFO");
-        setCertDigestAlgorithm(SignedDoc.SHA1_DIGEST_ALGORITHM);
-        try {
-            setCertDigestValue(SignedDoc.digest(cert.getEncoded()));
-        } catch(Exception ex) {
-            SignedDocException.handleException(ex, SignedDocException.ERR_CALCULATE_DIGEST);
-        }
-        setCertSerial(cert.getSerialNumber());
-        if((claimedRoles != null) && (claimedRoles.length > 0)) {
-        	for(int i = 0; i < claimedRoles.length; i++) 
-            addClaimedRole(claimedRoles[i]);
-        }
-        if(adr != null)
-            setSignatureProductionPlace(adr);
-        m_origDigest = null;
+		m_sig = sig;
+
+		setId(sig.getId() + "-SignedProperties");
+		setTarget("#" + sig.getId());
+		setSigningTime(new Date());
+		setCertId(sig.getId() + "-CERTINFO");
+		// ROB
+		setCertDigestAlgorithm(SignedDoc.SHA256_DIGEST_ALGORITHM);
+		try {
+			setCertDigestValue(SignedDoc.digest(cert.getEncoded()));
+		} catch (Exception ex) {
+			SignedDocException.handleException(ex,
+					SignedDocException.ERR_CALCULATE_DIGEST);
+		}
+		setCertSerial(cert.getSerialNumber());
+		if ((claimedRoles != null) && (claimedRoles.length > 0)) {
+			for (int i = 0; i < claimedRoles.length; i++)
+				addClaimedRole(claimedRoles[i]);
+		}
+		if (adr != null)
+			setSignatureProductionPlace(adr);
+		m_origDigest = null;
     }
     
 
@@ -342,9 +345,9 @@ public class SignedProperties implements Serializable {
     private SignedDocException validateCertDigestAlgorithm(String str)
     {
         SignedDocException ex = null;
-        if(str == null || !str.equals(SignedDoc.SHA1_DIGEST_ALGORITHM))
+        if(str == null || !str.equals(SignedDoc.SHA256_DIGEST_ALGORITHM))
             ex = new SignedDocException(SignedDocException.ERR_CERT_DIGEST_ALGORITHM, 
-                "Currently supports only SHA1 digest algorithm", null);
+                "Currently supports only SHA256 digest algorithm", null);
         return ex;
     }
     
@@ -377,11 +380,13 @@ public class SignedProperties implements Serializable {
      */
     private SignedDocException validateCertDigestValue(byte[] data)
     {
-        SignedDocException ex = null;
-        if(data == null || data.length != SignedDoc.SHA1_DIGEST_LENGTH)
-            ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH, 
-                "SHA1 digest data is allways 20 bytes of length", null);
-        return ex;
+    	SignedDocException ex = null;
+		if (data == null || data.length != SignedDoc.SHA256_DIGEST_LENGTH)
+			ex = new SignedDocException(SignedDocException.ERR_DIGEST_LENGTH,
+					"SHA256 digest data is always "
+							+ SignedDoc.SHA256_DIGEST_LENGTH
+							+ " bytes of length", null);
+		return ex;
     }
     
     /**
@@ -557,9 +562,15 @@ public class SignedProperties implements Serializable {
                	bos.write(ConvertUtils.str2data(m_certId));
                	bos.write(ConvertUtils.str2data("\">"));
             }
-            bos.write(ConvertUtils.str2data("\n<CertDigest>\n<DigestMethod Algorithm=\""));
+            bos.write(ConvertUtils.str2data("\n<CertDigest>\n<DigestMethod xmlns=\""));
+           		bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
+           		bos.write(ConvertUtils.str2data("\" Algorithm=\""));
             bos.write(ConvertUtils.str2data(m_certDigestAlgorithm));
-            bos.write(ConvertUtils.str2data("\">\n</DigestMethod>\n<DigestValue>"));
+            //ROB for xades4j needings...
+            //bos.write(ConvertUtils.str2data("\">\n</DigestMethod>\n<DigestValue>"));
+            bos.write(ConvertUtils.str2data("\"/>\n<DigestValue xmlns=\""));
+           		bos.write(ConvertUtils.str2data(SignedDoc.xmlns_xmldsig));
+           		bos.write(ConvertUtils.str2data("\">"));
             bos.write(ConvertUtils.str2data(Base64Util.encode(m_certDigestValue, 0)));
             bos.write(ConvertUtils.str2data("</DigestValue>\n</CertDigest>\n"));
             // In version 1.3 we use correct <IssuerSerial> content 
@@ -582,8 +593,9 @@ public class SignedProperties implements Serializable {
                	bos.write(ConvertUtils.str2data(m_certSerial.toString()));
                	bos.write(ConvertUtils.str2data("</IssuerSerial>"));
            	}
-            bos.write(ConvertUtils.str2data("</Cert></SigningCertificate>\n"));
-            bos.write(ConvertUtils.str2data("<SignaturePolicyIdentifier>\n<SignaturePolicyImplied>\n</SignaturePolicyImplied>\n</SignaturePolicyIdentifier>"));
+            bos.write(ConvertUtils.str2data("</Cert></SigningCertificate>"));
+            //ROB: not needed for BES
+            //bos.write(ConvertUtils.str2data("\n<SignaturePolicyIdentifier>\n<SignaturePolicyImplied>\n</SignaturePolicyImplied>\n</SignaturePolicyIdentifier>"));
             if(m_address != null) {
                 bos.write(ConvertUtils.str2data("\n"));
                 bos.write(m_address.toXML());
