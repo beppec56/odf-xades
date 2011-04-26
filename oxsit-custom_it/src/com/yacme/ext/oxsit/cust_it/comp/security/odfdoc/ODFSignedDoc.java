@@ -662,4 +662,14 @@ public class ODFSignedDoc extends SignedDoc {
 		return sig;
 	}
 
+	/**
+	 * return a new available Signature id
+	 * 
+	 * @return new Signature id
+	 */
+	public String getNewSignatureId() {
+		String id = "ID_"+UUID.randomUUID().toString();
+		return id;
+	}
+
 }
