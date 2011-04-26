@@ -63,6 +63,7 @@ import javax.crypto.Cipher;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
+import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
 /**
  * @author beppe
@@ -356,6 +357,49 @@ public class SignedDoc {
         }
     }
   
+    /** This method writes the signatures to the XStream given as parameter,
+     * wrapping them into the
+     * @param os output file stream, to be converted to XStream used in Store interface
+     * @throws SignedDocException
+     */
+    public void writeSignaturesToXStream(OutputStream os)
+        throws SignedDocException
+    {
+        
+        try {
+            os.write(xmlSignatureHeader().getBytes());
+            for(int i = 0; i < countSignatures(); i++) {
+                Signature sig = getSignature(i);
+                os.write(sig.toXML());
+                os.write("\n".getBytes());
+            }
+            os.write(xmlSignatureTrailer().getBytes());
+        } catch(SignedDocException ex) {
+            throw ex; // allready handled
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
+        }
+    }
+
+    /** same as writeSignaturesToXStream, logs the signatures
+     * @param _aLogger the standard internal OOo Logger
+     * @throws SignedDocException
+     */
+    public void writeSignaturesToXLogger(IDynamicLogger _aLogger)
+    	throws SignedDocException
+    {
+    	try {
+    		_aLogger.log(xmlSignatureHeader());
+    		for(int i = 0; i < countSignatures(); i++) {
+    			Signature sig = getSignature(i);
+    			_aLogger.log(sig.toString());
+    		}
+    		_aLogger.log(xmlSignatureTrailer());
+    	} catch(Exception ex) {
+    		SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
+    	}
+    }
+
     /**
      * Adds a new DataFile object
      * @param attr DataFile object to add
@@ -657,6 +701,20 @@ public class SignedDoc {
         return sb.toString();
     }
     
+	/**
+	 * Helper method to create the xml header for signature file
+	 * 
+	 * @return xml header
+	 */
+	private String xmlSignatureHeader() {
+		StringBuffer sb = new StringBuffer(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		sb.append("<document-signatures xmlns=\"");
+		sb.append(getFormat());
+		sb.append("\">\n");
+		return sb.toString();
+	}
+    
     /**
      * Helper method to create the xml trailer
      * @return xml trailer
@@ -665,6 +723,15 @@ public class SignedDoc {
     {
         return "\n</SignedDoc>";
     }
+    
+	/**
+	 * Helper method to create the xml trailer  for signature file
+	 * 
+	 * @return xml trailer
+	 */
+	private String xmlSignatureTrailer() {
+		return "\n</document-signatures>";
+	}
     
     /**
      * Converts the SignedDoc to XML form

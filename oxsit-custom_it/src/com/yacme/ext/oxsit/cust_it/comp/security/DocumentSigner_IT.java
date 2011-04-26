@@ -465,6 +465,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								m_aLogger.log("Finalize signature");
 								sig.setSignatureValue(sigval);
 
+								
+////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
 								byte[] theSignatureXML = sig.toXML();
 
 								String sUserHome = System.getProperty("user.home");
@@ -473,12 +475,17 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								aFile.createNewFile();
 								FileOutputStream os = new FileOutputStream(aFile);
-
-								os.write(theSignatureXML);
+								
+								sdoc.writeSignaturesToXStream(os);
 
 								os.close();
 
-								m_aLogger.log(sig.toString());
+								/// logging, only debug
+								sdoc.writeSignaturesToXLogger(m_aLogger);
+
+								//
+
+////// end of debug only code
 								//after this, add the file the signature just set.
 
 								//and write it back to the storage
