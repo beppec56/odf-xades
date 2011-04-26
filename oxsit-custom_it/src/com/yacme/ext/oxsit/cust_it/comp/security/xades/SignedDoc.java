@@ -65,9 +65,10 @@ import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
 
+
 /**
  * @author beppe
- * @Class this class encapsulate the current ODF Document being signed
+ * @Class this class encapsulates the current ODF Document being signed
  * 
  * FIXME: check if it can be used for the document being checked.
  * FIXME: we need this encapsulation for newly opened document as well, need to see how it can be done !
@@ -89,6 +90,7 @@ public class SignedDoc {
     public static final String FORMAT_DIGIDOC_XML = "DIGIDOC-XML";
     //ROB
 	public static final String FORMAT_ODF_XADES = "urn:oasis:names:tc:opendocument:xmlns:digitalsignature:1.0";
+	public static final String FORMAT_XADES = "XADES";
     
     /** supported versions are 1.0 and 1.1 */
     public static final String VERSION_1_0 = "1.0";
@@ -98,14 +100,11 @@ public class SignedDoc {
     public static final String VERSION_1_4 = "1.4";
     /** the only supported algorithm is SHA1 */
     public static final String SHA1_DIGEST_ALGORITHM = "http://www.w3.org/2000/09/xmldsig#sha1";
-    /** the only supported signature method is RSA-SHA1 */
     public static final String RSA_SHA1_SIGNATURE_METHOD = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
-    
     //ROB
-    public static final String SHA256_DIGEST_ALGORITHM = "http://www.w3.org/2000/09/xmldsig#sha256";    
+    public static final String SHA256_DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
     /** the only valid (for Italy) signature method is RSA-SHA256 */
-    public static final String RSA_SHA256_SIGNATURE_METHOD = "http://www.w3.org/2000/09/xmldsig#rsa-sha256";
-
+    public static final String RSA_SHA256_SIGNATURE_METHOD = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
     
     /** SHA1 digest data is always 20 bytes */
     public static final int SHA1_DIGEST_LENGTH = 20;
@@ -122,7 +121,8 @@ public class SignedDoc {
     /** XML-DSIG namespace */
     public static String xmlns_xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 	/** ETSI namespace */
-	public static String xmlns_etsi = "http://uri.etsi.org/01903/v1.1.1#";
+	//public static String xmlns_etsi = "http://uri.etsi.org/01903/v1.1.1#";
+    public static String xmlns_etsi = "http://uri.etsi.org/01903/v1.3.2#";
 	/** DigiDoc namespace */
 	public static String xmlns_digidoc = "http://www.sk.ee/DigiDoc/v1.3.0#";
 	/** program & library name */
@@ -509,8 +509,9 @@ public class SignedDoc {
         Signature sig = new Signature(this);
         sig.setId(getNewSignatureId());
         // create SignedInfo block
-        SignedInfo si = new SignedInfo(sig, RSA_SHA1_SIGNATURE_METHOD, 
-            CANONICALIZATION_METHOD_20010315);
+        //ROB
+        SignedInfo si = new SignedInfo(sig, RSA_SHA256_SIGNATURE_METHOD, 
+                CANONICALIZATION_METHOD_20010315);
         // add DataFile references
         for(int i = 0; i < countDataFiles(); i++) {
             DataFile df = getDataFile(i);
@@ -786,7 +787,8 @@ public class SignedDoc {
     {
         byte[] dig = null;
         try {
-            MessageDigest sha = MessageDigest.getInstance("SHA-1");
+        	//ROB
+            MessageDigest sha = MessageDigest.getInstance("SHA-256");
             sha.update(data);
             dig = sha.digest();
         } catch(Exception ex) {
