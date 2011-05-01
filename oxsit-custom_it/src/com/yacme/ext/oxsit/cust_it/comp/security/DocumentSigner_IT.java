@@ -458,7 +458,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								////////// end from JDigiDoc
 								//ROB: end commented out
 								
-								//ROB: use encapsulateInDigestInfo 
+								//ROB: use encapsulateInDigestInfo instead
 								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
 
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
