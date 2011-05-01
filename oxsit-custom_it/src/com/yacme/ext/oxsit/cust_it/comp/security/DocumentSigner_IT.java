@@ -459,7 +459,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								//ROB: end commented out
 								
 								//ROB: use encapsulateInDigestInfo 
-								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA1, sidigest);
+								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
 
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 								m_aLogger.log("Finalize signature");
@@ -471,7 +471,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								String sUserHome = System.getProperty("user.home");
 
-								File aFile = new File(sUserHome + "/xadessignature.xml");
+								File aFile = new File(sUserHome + "/xadessignatures.xml");
 
 								aFile.createNewFile();
 								FileOutputStream os = new FileOutputStream(aFile);
