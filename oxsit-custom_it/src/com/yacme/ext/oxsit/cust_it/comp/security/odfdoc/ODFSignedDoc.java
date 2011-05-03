@@ -119,7 +119,12 @@ public class ODFSignedDoc extends SignedDoc {
 		m_aLogger.info("ctor", "");
 		m_xDocumentStorage = _XDocumentStorage;
 	}
-
+	/**
+	 * @param xThePackage the storage element to examine
+	 * @param _List the list to be filled, or updated
+	 * @param _rootElement the name of the root element of the package 'xThePackage' 
+	 * @param _bRecurse if can recurse (true) or not (false)
+	 */
 	public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
 		String[] aElements = xThePackage.getElementNames();
 		/*		m_aLoggerDialog.info(_rootElement+" elements:");
@@ -150,6 +155,7 @@ public class ODFSignedDoc extends SignedDoc {
 							nSize = xI.available();
 							//							xI.closeInput();
 							_List.add(new APackageElement(_rootElement + aElements[i], sMediaType, xI, nSize));
+							m_aLogger.info("element: "+_rootElement+aElements[i]);
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
 							m_aLogger.warning("fillElementList", aElements[i] + " wrong password", e);
@@ -157,23 +163,23 @@ public class ODFSignedDoc extends SignedDoc {
 					} else if (_bRecurse && xThePackage.isStorageElement(aElements[i])) {
 						try {
 							XStorage xSubStore = xThePackage.openStorageElement(aElements[i], ElementModes.READ);
-							fillElementList(xSubStore, _List, _rootElement + aElements[i] + "/", _bRecurse);
+							m_aLogger.info("recurse into element: "+_rootElement+aElements[i]);							
+							fillElementList(xSubStore, _List, _rootElement+aElements[i]+"/", _bRecurse);
 							xSubStore.dispose();
-						} catch (IOException e) {
-							m_aLogger.info("fillElementList", "the substorage " + aElements[i]
-									+ " might be locked, get the last committed version of it");
-							try {
-								Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
-								XSingleServiceFactory xStorageFactory = (XSingleServiceFactory) UnoRuntime.queryInterface(
-										XSingleServiceFactory.class, oObj);
-								Object oMyStorage = xStorageFactory.createInstance();
-								XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface(XStorage.class, oMyStorage);
-								xThePackage.copyStorageElementLastCommitTo(aElements[i], xAnotherSubStore);
-								fillElementList(xAnotherSubStore, _List, _rootElement + aElements[i] + "/", true);
-								xAnotherSubStore.dispose();
-							} catch (Exception e1) {
-								m_aLogger.severe("fillElementList", "\"" + aElements[i] + "\"" + " missing", e1);
-							} // should create an empty temporary storage
+						}
+						catch (IOException e) {
+								m_aLogger.info("fillElementList", "the substorage "+aElements[i]+" might be locked, get the last committed version of it");
+								   try {
+									   Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
+									   XSingleServiceFactory xStorageFactory = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class,oObj);
+									   Object oMyStorage =xStorageFactory.createInstance();
+									   XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
+									   xThePackage.copyStorageElementLastCommitTo( aElements[i], xAnotherSubStore );
+									   fillElementList(xAnotherSubStore, _List,_rootElement+aElements[i]+"/", true);
+									   xAnotherSubStore.dispose();						   
+								   } catch (Exception e1) {
+										m_aLogger.severe("fillElementList", "\""+aElements[i]+"\""+" missing", e1);
+								   } // should create an empty temporary storage
 						}
 					}
 				} catch (InvalidStorageException e) {

@@ -109,4 +109,8 @@ public class ConstantCustomIT {
 	//MUST be updated as well, on cell E154
 	//after that a new message list shuold be generated
 	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110110.zip.p7m";
+	
+	
+	public static final String m_sSignatureFileName = "xadessignature.xml";
+
 }

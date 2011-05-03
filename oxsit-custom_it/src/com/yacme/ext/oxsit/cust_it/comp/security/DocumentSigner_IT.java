@@ -71,10 +71,14 @@ import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.document.XStorageBasedDocument;
+import com.sun.star.embed.ElementModes;
+import com.sun.star.embed.InvalidStorageException;
+import com.sun.star.embed.StorageWrappedTargetException;
 import com.sun.star.embed.XStorage;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStorable;
+import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -83,6 +87,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.packages.WrongPasswordException;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
@@ -95,6 +100,7 @@ import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
+import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
@@ -464,14 +470,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 								m_aLogger.log("Finalize signature");
 								sig.setSignatureValue(sigval);
-
 								
 ////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
 								byte[] theSignatureXML = sig.toXML();
 
 								String sUserHome = System.getProperty("user.home");
 
-								File aFile = new File(sUserHome + "/xadessignatures.xml");
+								File aFile = new File(sUserHome + "/"+ConstantCustomIT.m_sSignatureFileName);
 
 								aFile.createNewFile();
 								FileOutputStream os = new FileOutputStream(aFile);
@@ -489,7 +494,40 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								//after this, add the file the signature just set.
 
 								//and write it back to the storage
+								
+								//so, open the substorage META-INF form the main storage (e.g. the document)
+								try {
+									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF", ElementModes.READWRITE);
 
+									//try to remove the previous signature
+									try {
+										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
+									} catch (NoSuchElementException e1) {
+										m_aLogger.log("signAsFile", "\""+ConstantCustomIT.m_sSignatureFileName+
+												"\""+" does not exist");
+									}
+									//create the file xadessignature.xml
+									try {
+										XStream xTheSignature = xMetaInfStorage.openStreamElement(
+											ConstantCustomIT.m_sSignatureFileName,
+											ElementModes.WRITE);
+									} catch (InvalidStorageException e1) {
+										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+									} catch (IllegalArgumentException e1) {
+										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+									} catch (WrongPasswordException e1) {
+										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+									} catch (StorageWrappedTargetException e1) {
+										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+									} catch (com.sun.star.io.IOException e1) {
+										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+									}
+									
+									
+									xMetaInfStorage.dispose();
+								} catch (Exception e1) {
+									m_aLogger.severe("signAsFile", "\""+"META-INF"+"\""+" cannot open", e1);
+								}
 							}
 							//at list one certificate was signed
 							//					bRetValue = true;
