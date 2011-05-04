@@ -755,7 +755,7 @@ public class SignedDoc {
 	 * @return xml trailer
 	 */
 	private String xmlSignatureTrailer() {
-		return "\n</document-signatures>";
+		return "</document-signatures>";
 	}
     
     /**
