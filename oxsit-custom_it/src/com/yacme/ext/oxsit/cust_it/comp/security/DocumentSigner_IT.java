@@ -68,16 +68,20 @@ import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.comp.loader.FactoryHelper;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.ElementModes;
 import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
+import com.sun.star.embed.XCommonEmbedPersist;
 import com.sun.star.embed.XStorage;
+import com.sun.star.embed.XTransactedObject;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStorable;
+import com.sun.star.io.XOutputStream;
 import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
@@ -86,7 +90,10 @@ import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lib.uno.helper.ComponentBase;
+import com.sun.star.lib.uno.helper.Factory;
+import com.sun.star.linguistic2.XThesaurus;
 import com.sun.star.packages.WrongPasswordException;
 import com.sun.star.script.BasicErrorException;
 import com.sun.star.text.XTextContent;
@@ -94,6 +101,7 @@ import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextGraphicObjectsSupplier;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
@@ -290,11 +298,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		m_aLogger.log(custom_itStart.getVersion());
 
-		//get the document storage,
-		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
-				xDocumentModel);
-
-		m_xDocumentStorage = xDocStorage.getDocumentStorage();
+//		//get the document storage,
+//		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
+//				xDocumentModel);
+//
+//		m_xDocumentStorage = xDocStorage.getDocumentStorage();
 
 		//		return signAsCMSFile(xFrame, xDocumentModel, _aCertArray);
 		return signAsFile(xFrame, xDocumentModel, _aCertArray);
@@ -350,10 +358,99 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		try {
 
-			//get the document storage,
-			XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
-					xDocumentModel);
-			m_xDocumentStorage = xDocStorage.getDocumentStorage();
+			//get URL, open the storage from url
+			
+	        
+	        //we need to get the XStorage separately, from the document URL
+	        /* so study the OOo source code....
+	         * 
+	         * 
+	         * from:
+	         * http://svn.services.openoffice.org/opengrok/xref/DEV300_m105/comphelper/source/misc/storagehelper.cxx#GetStorageFactory
+// ----------------------------------------------------------------------
+     54 uno::Reference< lang::XSingleServiceFactory > OStorageHelper::GetStorageFactory(
+     55 							const uno::Reference< lang::XMultiServiceFactory >& xSF )
+     56 		throw ( uno::Exception )
+     57 {
+     58 	uno::Reference< lang::XMultiServiceFactory > xFactory = xSF.is() ? xSF : ::comphelper::getProcessServiceFactory();
+     59 	if ( !xFactory.is() )
+     60 		throw uno::RuntimeException();
+     61 
+     62 	uno::Reference < lang::XSingleServiceFactory > xStorageFactory(
+     63 					xFactory->createInstance ( ::rtl::OUString::createFromAscii( "com.sun.star.embed.StorageFactory" ) ),
+     64 					uno::UNO_QUERY );
+     65 
+     66 	if ( !xStorageFactory.is() )
+     67 		throw uno::RuntimeException();
+     68 
+     69 	return xStorageFactory;
+     70 }
+     
+     */
+
+			Object xFact = m_xMCF.createInstanceWithContext( "com.sun.star.embed.StorageFactory", m_xCC);
+			
+	        XSingleServiceFactory xStorageFact = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class, xFact); 
+	        
+	        if(xStorageFact != null)
+	        	m_aLogger.log("XSingleServiceFactory xStFact created !");
+	        	
+	        Utilities.showInfo(xStorageFact);
+	        	        
+	        
+        
+	         /* 
+	         * ooo code, from 
+	         * http://svn.services.openoffice.org/opengrok/xref/DEV300_m105/comphelper/source/misc/storagehelper.cxx#GetStorageFromURL
+	         * 
+	        104 // ----------------------------------------------------------------------
+	        105 uno::Reference< embed::XStorage > OStorageHelper::GetStorageFromURL(
+	        106 			const ::rtl::OUString& aURL,
+	        107 			sal_Int32 nStorageMode,
+	        108 			const uno::Reference< lang::XMultiServiceFactory >& xFactory )
+	        109 	throw ( uno::Exception )
+	        110 {
+	        111 	uno::Sequence< uno::Any > aArgs( 2 );
+	        112 	aArgs[0] <<= aURL;
+	        113 	aArgs[1] <<= nStorageMode;
+	        114 
+	        115 	uno::Reference< embed::XStorage > xTempStorage( GetStorageFactory( xFactory )->createInstanceWithArguments( aArgs ),
+	        116 													uno::UNO_QUERY );
+	        117 	if ( !xTempStorage.is() )
+	        118 		throw uno::RuntimeException();
+	        119 
+	        120 	return xTempStora	        
+
+			*
+			*/
+
+//	        com.sun.star.beans.PropertyValue[] lParams =
+//	            new com.sun.star.beans.PropertyValue[1];
+//
+//	        lParams[0] = new com.sun.star.beans.PropertyValue();
+//	        lParams[0].Name  = new String(xDocumentModel.getURL());
+//	        lParams[0].Value = ElementModes.READWRITE;			
+
+	        
+			Object[] aArguments = new Object[2];
+
+			aArguments[0] = xDocumentModel.getURL();
+			aArguments[1] = ElementModes.READWRITE; 
+	        
+			//get the document storage, 
+			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+			
+			if(xStdoc == null)
+				m_aLogger.log("xStdoc is null !!!!!!!!!!!!!!");
+				
+			Utilities.showInterfaces(xStdoc, xStdoc);
+			
+			XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
+			
+			
+			m_xDocumentStorage = (XStorage)UnoRuntime.queryInterface(XStorage.class, xStdoc);
+//				xDocStorage.getDocumentStorage();
+			
 			// create a new SignedDoc 
 			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
@@ -481,7 +578,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								aFile.createNewFile();
 								FileOutputStream os = new FileOutputStream(aFile);
 								
-								sdoc.writeSignaturesToXStream(os);
+								sdoc.writeSignaturesToStream(os);
 
 								os.close();
 
@@ -497,7 +594,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								
 								//so, open the substorage META-INF form the main storage (e.g. the document)
 								try {
-									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF", ElementModes.READWRITE);
+									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF", ElementModes.WRITE);
 
 									//try to remove the previous signature
 									try {
@@ -511,6 +608,46 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										XStream xTheSignature = xMetaInfStorage.openStreamElement(
 											ConstantCustomIT.m_sSignatureFileName,
 											ElementModes.WRITE);
+										//write to it (just a test now)
+										String aString = "a simple test...";
+										
+										byte[] theSignatureBytes = sig.toXML();
+
+							            XOutputStream xOutStream = xTheSignature.getOutputStream();
+
+										sdoc.writeSignaturesToXStream(xOutStream);
+							            
+//							            xOutStream.writeBytes( theSignatureBytes );
+							            xOutStream.flush();
+							            xOutStream.closeOutput();
+
+										XTransactedObject xTransObj = (XTransactedObject)UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
+										if(xTransObj != null) {
+											m_aLogger.log("XTransactedObject exists. ===================");
+											xTransObj.commit();
+										}
+
+										XComponent xStreamComp = ( XComponent ) UnoRuntime.queryInterface( XComponent.class, xTheSignature );
+							            if ( xStreamComp == null )
+							                throw new com.sun.star.uno.RuntimeException();
+							            xStreamComp.dispose();
+
+//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
+//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
+//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
+
+							            xTransObj = (XTransactedObject)UnoRuntime.queryInterface(XTransactedObject.class, m_xDocumentStorage);						            
+										if(xTransObj != null) {
+											m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
+											xTransObj.commit();
+										}
+							            
+//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
+//							            if(xCommPer != null ) {
+//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
+//											xCommPer.storeOwn();
+//							            }
+
 									} catch (InvalidStorageException e1) {
 										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
 									} catch (IllegalArgumentException e1) {
@@ -523,6 +660,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
 									}
 									
+									
+//save the document
 									
 									xMetaInfStorage.dispose();
 								} catch (Exception e1) {

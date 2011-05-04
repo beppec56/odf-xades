@@ -61,6 +61,7 @@ import java.util.ArrayList;
 
 import javax.crypto.Cipher;
 
+import com.sun.star.io.XOutputStream;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
@@ -351,18 +352,42 @@ public class SignedDoc {
             }
             os.write(xmlTrailer().getBytes());
         } catch(SignedDocException ex) {
-            throw ex; // allready handled
+            throw ex; // already handled
         } catch(Exception ex) {
             SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
         }
     }
   
-    /** This method writes the signatures to the XStream given as parameter,
+    /** This method writes the signatures to the XOutputStream given as parameter,
      * wrapping them into the
      * @param os output file stream, to be converted to XStream used in Store interface
      * @throws SignedDocException
      */
-    public void writeSignaturesToXStream(OutputStream os)
+    public void writeSignaturesToXStream(XOutputStream os)
+        throws SignedDocException
+    {
+        
+        try {
+            os.writeBytes(xmlSignatureHeader().getBytes());
+            for(int i = 0; i < countSignatures(); i++) {
+                Signature sig = getSignature(i);
+                os.writeBytes(sig.toXML());
+                os.writeBytes("\n".getBytes());
+            }
+            os.writeBytes(xmlSignatureTrailer().getBytes());
+        } catch(SignedDocException ex) {
+            throw ex; // already handled
+        } catch(Exception ex) {
+            SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
+        }
+    }
+
+    /** This method writes the signatures to the OutputStream given as parameter,
+     * wrapping them into the
+     * @param os output file stream
+     * @throws SignedDocException
+     */
+    public void writeSignaturesToStream(OutputStream os)
         throws SignedDocException
     {
         
@@ -375,12 +400,11 @@ public class SignedDoc {
             }
             os.write(xmlSignatureTrailer().getBytes());
         } catch(SignedDocException ex) {
-            throw ex; // allready handled
+            throw ex; // already handled
         } catch(Exception ex) {
             SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
         }
     }
-
     /** same as writeSignaturesToXStream, logs the signatures
      * @param _aLogger the standard internal OOo Logger
      * @throws SignedDocException

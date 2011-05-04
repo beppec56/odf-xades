@@ -111,6 +111,6 @@ public class ConstantCustomIT {
 	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110110.zip.p7m";
 	
 	
-	public static final String m_sSignatureFileName = "xadessignature.xml";
+	public static final String m_sSignatureFileName = "xadessignatures.xml";
 
 }
