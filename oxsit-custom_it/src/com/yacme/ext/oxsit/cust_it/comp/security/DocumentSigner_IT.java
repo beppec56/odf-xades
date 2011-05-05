@@ -359,109 +359,30 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		try {
 
 			//get URL, open the storage from url
-			
-	        
 	        //we need to get the XStorage separately, from the document URL
-	        /* so study the OOo source code....
-	         * 
-	         * 
-	         * from:
-	         * http://svn.services.openoffice.org/opengrok/xref/DEV300_m105/comphelper/source/misc/storagehelper.cxx#GetStorageFactory
-// ----------------------------------------------------------------------
-     54 uno::Reference< lang::XSingleServiceFactory > OStorageHelper::GetStorageFactory(
-     55 							const uno::Reference< lang::XMultiServiceFactory >& xSF )
-     56 		throw ( uno::Exception )
-     57 {
-     58 	uno::Reference< lang::XMultiServiceFactory > xFactory = xSF.is() ? xSF : ::comphelper::getProcessServiceFactory();
-     59 	if ( !xFactory.is() )
-     60 		throw uno::RuntimeException();
-     61 
-     62 	uno::Reference < lang::XSingleServiceFactory > xStorageFactory(
-     63 					xFactory->createInstance ( ::rtl::OUString::createFromAscii( "com.sun.star.embed.StorageFactory" ) ),
-     64 					uno::UNO_QUERY );
-     65 
-     66 	if ( !xStorageFactory.is() )
-     67 		throw uno::RuntimeException();
-     68 
-     69 	return xStorageFactory;
-     70 }
-     
-     */
-
+			//But first we need a StorageFactory object
 			Object xFact = m_xMCF.createInstanceWithContext( "com.sun.star.embed.StorageFactory", m_xCC);
-			
+			//then obtain the needed interface
 	        XSingleServiceFactory xStorageFact = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class, xFact); 
-	        
-	        if(xStorageFact != null)
-	        	m_aLogger.log("XSingleServiceFactory xStFact created !");
-	        	
-	        Utilities.showInfo(xStorageFact);
-	        	        
-	        
-        
-	         /* 
-	         * ooo code, from 
-	         * http://svn.services.openoffice.org/opengrok/xref/DEV300_m105/comphelper/source/misc/storagehelper.cxx#GetStorageFromURL
-	         * 
-	        104 // ----------------------------------------------------------------------
-	        105 uno::Reference< embed::XStorage > OStorageHelper::GetStorageFromURL(
-	        106 			const ::rtl::OUString& aURL,
-	        107 			sal_Int32 nStorageMode,
-	        108 			const uno::Reference< lang::XMultiServiceFactory >& xFactory )
-	        109 	throw ( uno::Exception )
-	        110 {
-	        111 	uno::Sequence< uno::Any > aArgs( 2 );
-	        112 	aArgs[0] <<= aURL;
-	        113 	aArgs[1] <<= nStorageMode;
-	        114 
-	        115 	uno::Reference< embed::XStorage > xTempStorage( GetStorageFactory( xFactory )->createInstanceWithArguments( aArgs ),
-	        116 													uno::UNO_QUERY );
-	        117 	if ( !xTempStorage.is() )
-	        118 		throw uno::RuntimeException();
-	        119 
-	        120 	return xTempStora	        
-
-			*
-			*/
-
-//	        com.sun.star.beans.PropertyValue[] lParams =
-//	            new com.sun.star.beans.PropertyValue[1];
-//
-//	        lParams[0] = new com.sun.star.beans.PropertyValue();
-//	        lParams[0].Name  = new String(xDocumentModel.getURL());
-//	        lParams[0].Value = ElementModes.READWRITE;			
-
-	        
+	        //now, using the only method available, open the storage
 			Object[] aArguments = new Object[2];
-
 			aArguments[0] = xDocumentModel.getURL();
 			aArguments[1] = ElementModes.READWRITE; 
-	        
-			//get the document storage, 
+			//get the document storage object 
 			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+
+			//this is for debug purposes only, not really needed here
+			//XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
 			
-			if(xStdoc == null)
-				m_aLogger.log("xStdoc is null !!!!!!!!!!!!!!");
-				
-			Utilities.showInterfaces(xStdoc, xStdoc);
-			
-			XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
-			
-			
+			//from the storage object (or better named, the service) obtain the interface we need
 			m_xDocumentStorage = (XStorage)UnoRuntime.queryInterface(XStorage.class, xStdoc);
-//				xDocStorage.getDocumentStorage();
 			
 			// create a new SignedDoc 
 			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
-			byte[] manifestBytes = sdoc.addODFData();
-
-			// test adding data from memory
-			//String myBody = "Eesti Vabariigi põhiseadus Põhilehekülg | Määrangud | Otsing Eesti Vabariigi põhiseadus rahvahääletuse seadus nr 1";
-			//byte[] u8b = Base64Util.encode(ConvertUtils.str2data(myBody)).getBytes();
-			//byte[] u8b = ConvertUtils.str2data(myBody);
-			//System.out.println("UTF8 body: " + Base64Util.encode(u8b));
-			//df.setBody(u8b, "UTF8");
+			//now read the data from the document and prepare to sign
+//			byte[] manifestBytes = 
+				sdoc.addODFData();
 
 			XOX_X509Certificate aCert = _aCertArray[0];
 
@@ -499,12 +420,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			if (myPin != null && myPin.length > 0) {
 				// user confirmed, check opening the session
 				byte[] encDigestBytes = null;
-
-				// Do card login and get certificate
-				//        SignatureFactory sigFac = ConfigManager.
-				//            instance().getSignatureFactory();
-				//        System.out.println("GET Cert");
-				//            X509Certificate cert = sigFac.getCertificate(0, pin);
 
 				// add a Signature
 				d1 = new Date();
