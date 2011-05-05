@@ -102,6 +102,11 @@ public class ConstantCustomIT {
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";
 	
 	
+	//FIXME there will be a European site which will hold the distribution points for certificate lists of other
+	//EU states, see here:
+	//http://ec.europa.eu/information_society/policy/esignature/eu_legislation/trusted_lists/index_en.htm
+	//for details
+	//
 	//name of the italian CA file (current version)
 	//FIXME: this solution should be changed, for example checking if a new one is available
 	//and downloading it in the user cache
