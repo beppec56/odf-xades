@@ -107,9 +107,9 @@ public class ConstantCustomIT {
 	//and downloading it in the user cache
 	//IMPORTANT: if this is changed, the file oxsit-l10n/localization-master.ods
 	//MUST be updated as well, on cell E154
-	//after that a new message list shuold be generated
-	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110110.zip.p7m";
-	
+	//after that a new message list should be generated
+	//update the build.xml of the oxsit-ext_conf as well
+	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110422.zip.p7m";
 	
 	public static final String m_sSignatureFileName = "xadessignatures.xml";
 
