@@ -61,7 +61,6 @@ import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
-import com.yacme.ext.oxsit.ooo.pack.TestWriteDigitalSignature;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument;
 
@@ -298,10 +297,6 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					m_aLogger
 							.info("impl_dispatch: \tthe url of the document under signature is: "
 									+ m_xModel.getURL());
-
-					TestWriteDigitalSignature aCls = new TestWriteDigitalSignature();
-					aCls.testWriteSignatureStream(m_xModel.getURL(),
-							m_aMultiComponentFctry, m_aComponentContext);
 
 					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
 					if (ret != 0) {
