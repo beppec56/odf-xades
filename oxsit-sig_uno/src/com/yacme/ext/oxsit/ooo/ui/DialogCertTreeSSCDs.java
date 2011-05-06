@@ -100,9 +100,9 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
-		m_aLogger.entering("initialize");
+		m_aLogger.entering("initialize (DialogCertTreeSSCD)");
 		insertButton(this,
-				CertifTreeDlgDims.DS_COL_PB2(),
+				CertifTreeDlgDims.DS_COL_PB3(),
 //				CertifTreeDlgDims.DS_COL_1()+CertifTreeDlgDims.DS_BTNWIDTH_1()/2,
 				CertifTreeDlgDims.DS_ROW_4(),
 				CertifTreeDlgDims.dsBtnWidthCertTree(),
@@ -110,13 +110,13 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				m_sBtn_ListCA,
 				(short) PushButtonType.STANDARD_value);
 
-			insertButton(this,
-					CertifTreeDlgDims.DS_COL_PB3(),
-					CertifTreeDlgDims.DS_ROW_4(),
-					CertifTreeDlgDims.dsBtnWidthCertTree(),
-					m_sSelectBtn,
-					m_sBtn_SelDevice,
-					(short) PushButtonType.STANDARD_value, 6);
+//			insertButton(this,
+//					CertifTreeDlgDims.DS_COL_PB3(),
+//					CertifTreeDlgDims.DS_ROW_4(),
+//					CertifTreeDlgDims.dsBtnWidthCertTree(),
+//					m_sSelectBtn,
+//					m_sBtn_SelDevice,
+//					(short) PushButtonType.STANDARD_value, 6);
 			insertButton(this,
 					CertifTreeDlgDims.DS_COL_PB4(),
 					CertifTreeDlgDims.DS_ROW_4(),
@@ -137,6 +137,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
+			displayCart();
+			
 	}
 
 	@Override
@@ -195,6 +197,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				}
 			}
 		}
+		endDialog();
 //		addOneSignature();		
 	}
 
@@ -209,8 +212,9 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#selectButtonPressed()
 	 */
-	@Override
-	public void selectButtonPressed() {
+//	@Override
+//	public void selectButtonPressed() {
+	public void displayCart() {
 		//select the certificate on tree for signature
 		//FIXME: need to filter out the certificates already used to sign the current document
 		

@@ -209,7 +209,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	public void initializeLocal(String _sName, String _sTitle, int posX, int posY) throws BasicErrorException {
-		m_aLogger.entering("initialize");
+		m_aLogger.entering("initialize (DialogCertTreeBase)");
 		try {
 			super.initialize(_sName, _sTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
 			//inserts the control elements needed to display properties
@@ -880,7 +880,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void selectButtonPressed() {
-		// TODO Auto-generated method stub
 		m_aLogger.log("selectButtonPressed");
 		//very crl status of the selected element
 	}
