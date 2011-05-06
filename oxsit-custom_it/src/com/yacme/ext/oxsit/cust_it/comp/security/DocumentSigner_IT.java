@@ -43,6 +43,7 @@ import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Constants;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +53,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -112,6 +114,7 @@ import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
@@ -129,6 +132,7 @@ import com.yacme.ext.oxsit.security.ReadCerts;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDevice;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+
 
 /**
  * This service implements the real document signer.
@@ -175,10 +179,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String m_sErrorGraphicNotEmbedded;
 	private String m_sErroreIsReadOnly;
 	private String m_sErrorMacroPresent;
-	
+
 	//ROB
-	private static final String  DIGEST_SHA1 = OIWObjectIdentifiers.idSHA1.getId();
-	private static final String  DIGEST_SHA256 = NISTObjectIdentifiers.id_sha256.getId();
+	private static final String DIGEST_SHA1 = OIWObjectIdentifiers.idSHA1.getId();
+	private static final String DIGEST_SHA256 = NISTObjectIdentifiers.id_sha256.getId();
 
 	/**
 	 * 
@@ -298,11 +302,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		m_aLogger.log(custom_itStart.getVersion());
 
-//		//get the document storage,
-//		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
-//				xDocumentModel);
-//
-//		m_xDocumentStorage = xDocStorage.getDocumentStorage();
+		//		//get the document storage,
+		//		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
+		//				xDocumentModel);
+		//
+		//		m_xDocumentStorage = xDocStorage.getDocumentStorage();
 
 		//		return signAsCMSFile(xFrame, xDocumentModel, _aCertArray);
 		return signAsFile(xFrame, xDocumentModel, _aCertArray);
@@ -359,30 +363,31 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		try {
 
 			//get URL, open the storage from url
-	        //we need to get the XStorage separately, from the document URL
+			//we need to get the XStorage separately, from the document URL
 			//But first we need a StorageFactory object
-			Object xFact = m_xMCF.createInstanceWithContext( "com.sun.star.embed.StorageFactory", m_xCC);
+			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
 			//then obtain the needed interface
-	        XSingleServiceFactory xStorageFact = (XSingleServiceFactory)UnoRuntime.queryInterface(XSingleServiceFactory.class, xFact); 
-	        //now, using the only method available, open the storage
+			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
+					xFact);
+			//now, using the only method available, open the storage
 			Object[] aArguments = new Object[2];
 			aArguments[0] = xDocumentModel.getURL();
-			aArguments[1] = ElementModes.READWRITE; 
+			aArguments[1] = ElementModes.READWRITE;
 			//get the document storage object 
 			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
 
 			//this is for debug purposes only, not really needed here
 			//XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
-			
+
 			//from the storage object (or better named, the service) obtain the interface we need
-			m_xDocumentStorage = (XStorage)UnoRuntime.queryInterface(XStorage.class, xStdoc);
-			
+			m_xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+
 			// create a new SignedDoc 
 			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
 			//now read the data from the document and prepare to sign
-//			byte[] manifestBytes = 
-				sdoc.addODFData();
+			//			byte[] manifestBytes = 
+			sdoc.addODFData();
 
 			XOX_X509Certificate aCert = _aCertArray[0];
 
@@ -461,7 +466,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
 							m_aLogger.log("privateKeyHandle: " + privateKeyHandle);
 							if (privateKeyHandle > 0) {
-								
+
 								//ROB: commented out
 								//////////// from JDigiDoc
 								//SHA1 prefix ???
@@ -475,24 +480,24 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								////////// end from JDigiDoc
 								//ROB: end commented out
-								
+
 								//ROB: use encapsulateInDigestInfo instead
 								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
 
 								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 								m_aLogger.log("Finalize signature");
 								sig.setSignatureValue(sigval);
-								
-////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
+
+								////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
 								byte[] theSignatureXML = sig.toXML();
 
 								String sUserHome = System.getProperty("user.home");
 
-								File aFile = new File(sUserHome + "/"+ConstantCustomIT.m_sSignatureFileName);
+								File aFile = new File(sUserHome + "/" + ConstantCustomIT.m_sSignatureFileName);
 
 								aFile.createNewFile();
 								FileOutputStream os = new FileOutputStream(aFile);
-								
+
 								sdoc.writeSignaturesToStream(os);
 
 								os.close();
@@ -502,85 +507,92 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								//
 
-////// end of debug only code
+								////// end of debug only code
 								//after this, add the file the signature just set.
 
 								//and write it back to the storage
-								
+
 								//so, open the substorage META-INF form the main storage (e.g. the document)
 								try {
-									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF", ElementModes.WRITE);
+									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF",
+											ElementModes.WRITE);
 
 									//try to remove the previous signature
 									try {
 										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
 									} catch (NoSuchElementException e1) {
-										m_aLogger.log("signAsFile", "\""+ConstantCustomIT.m_sSignatureFileName+
-												"\""+" does not exist");
+										m_aLogger.log("signAsFile", "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
+												+ " does not exist");
 									}
 									//create the file xadessignature.xml
 									try {
 										XStream xTheSignature = xMetaInfStorage.openStreamElement(
-											ConstantCustomIT.m_sSignatureFileName,
-											ElementModes.WRITE);
+												ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
 										//write to it (just a test now)
 										String aString = "a simple test...";
-										
+
 										byte[] theSignatureBytes = sig.toXML();
 
-							            XOutputStream xOutStream = xTheSignature.getOutputStream();
+										XOutputStream xOutStream = xTheSignature.getOutputStream();
 
 										sdoc.writeSignaturesToXStream(xOutStream);
-							            
-//							            xOutStream.writeBytes( theSignatureBytes );
-							            xOutStream.flush();
-							            xOutStream.closeOutput();
 
-										XTransactedObject xTransObj = (XTransactedObject)UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
-										if(xTransObj != null) {
+										//							            xOutStream.writeBytes( theSignatureBytes );
+										xOutStream.flush();
+										xOutStream.closeOutput();
+
+										XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
+												XTransactedObject.class, xMetaInfStorage);
+										if (xTransObj != null) {
 											m_aLogger.log("XTransactedObject exists. ===================");
 											xTransObj.commit();
 										}
 
-										XComponent xStreamComp = ( XComponent ) UnoRuntime.queryInterface( XComponent.class, xTheSignature );
-							            if ( xStreamComp == null )
-							                throw new com.sun.star.uno.RuntimeException();
-							            xStreamComp.dispose();
+										XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class,
+												xTheSignature);
+										if (xStreamComp == null)
+											throw new com.sun.star.uno.RuntimeException();
+										xStreamComp.dispose();
 
-//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
-//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
-//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
+										//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
+										//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
+										//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
 
-							            xTransObj = (XTransactedObject)UnoRuntime.queryInterface(XTransactedObject.class, m_xDocumentStorage);						            
-										if(xTransObj != null) {
+										xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,
+												m_xDocumentStorage);
+										if (xTransObj != null) {
 											m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
 											xTransObj.commit();
 										}
-							            
-//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
-//							            if(xCommPer != null ) {
-//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
-//											xCommPer.storeOwn();
-//							            }
+
+										//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
+										//							            if(xCommPer != null ) {
+										//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
+										//											xCommPer.storeOwn();
+										//							            }
 
 									} catch (InvalidStorageException e1) {
-										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+												+ "\"" + " error", e1);
 									} catch (IllegalArgumentException e1) {
-										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+												+ "\"" + " error", e1);
 									} catch (WrongPasswordException e1) {
-										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+												+ "\"" + " error", e1);
 									} catch (StorageWrappedTargetException e1) {
-										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+												+ "\"" + " error", e1);
 									} catch (com.sun.star.io.IOException e1) {
-										m_aLogger.severe("signAsFile", "\""+"META-INF/"+ConstantCustomIT.m_sSignatureFileName+"\""+" error", e1);
+										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+												+ "\"" + " error", e1);
 									}
-									
-									
-//save the document
-									
+
+									//save the document
+
 									xMetaInfStorage.dispose();
 								} catch (Exception e1) {
-									m_aLogger.severe("signAsFile", "\""+"META-INF"+"\""+" cannot open", e1);
+									m_aLogger.severe("signAsFile", "\"" + "META-INF" + "\"" + " cannot open", e1);
 								}
 							}
 							//at list one certificate was signed
@@ -695,16 +707,16 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			}
 		} catch (CertificateException e) {
 			// TODO Auto-generated catch block
-			m_aLogger.log("Exception: "+e.getMessage());
+			m_aLogger.log("Exception: " + e.getMessage());
 			e.printStackTrace(System.err);
 		} catch (SignedDocException ex) {
-			m_aLogger.log("Exception: "+ex.getMessage());
+			m_aLogger.log("Exception: " + ex.getMessage());
 			System.err.println(ex);
 			ex.printStackTrace(System.err);
 		} catch (com.sun.star.io.IOException e) {
 			m_aLogger.log(e, true);
 		} catch (Throwable ex) {
-			m_aLogger.log("Exception: "+ex.getMessage());
+			m_aLogger.log("Exception: " + ex.getMessage());
 			System.err.println(ex);
 			ex.printStackTrace(System.err);
 		}
@@ -1426,6 +1438,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return true;
 	}
 
+	//ROB
 	private byte[] encapsulateInDigestInfo(String digestAlg, byte[] digestBytes) throws IOException {
 
 		byte[] bcDigestInfoBytes = null;
@@ -1439,5 +1452,33 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		dOut.writeObject(dInfo);
 		return bOut.toByteArray();
 
+	}
+
+	//ROB: verification sample code
+	public void verifySample(String fileToVerify) {
+		DigiDocFactory digFac;
+		try {
+			digFac = ConfigManager.instance().getSignedDocFactory();
+
+			ODFSignedDoc sdoc = (ODFSignedDoc) digFac.readSignedDoc(fileToVerify);
+			// System.out.println("GOT: " + sdoc.toXML());
+
+			// verify signature
+			Signature sig = null;
+			for (int i = 0; i < sdoc.countSignatures(); i++) {
+				sig = sdoc.getSignature(i);
+				System.out.println("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+						+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+				ArrayList errs = sig.verify(sdoc, true, false);
+				if (errs.size() == 0)
+					System.out.println("Verification OK!");
+				for (int j = 0; j < errs.size(); j++)
+					System.out.println((SignedDocException) errs.get(i));
+				System.out.println();
+			}
+		} catch (SignedDocException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

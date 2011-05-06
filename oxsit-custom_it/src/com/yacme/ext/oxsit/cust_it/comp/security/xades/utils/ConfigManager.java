@@ -209,13 +209,14 @@ public class ConfigManager {
      * Returns the DigiDocFactory instance
      * @return DigiDocFactory implementation
      */
-    public DigiDocFactory getDigiDocFactory()
+    public DigiDocFactory getSignedDocFactory()
         throws SignedDocException
     {
     	DigiDocFactory digFac = null;
         try {
+        	//ROB
             digFac = (DigiDocFactory)Class.
-                    forName(getProperty("DIGIDOC_FACTORY_IMPL")).newInstance();
+                    forName(getProperty("SIGNEDDOC_FACTORY_IMPL")).newInstance();
             digFac.init();            
         } catch(SignedDocException ex) {
             throw ex;

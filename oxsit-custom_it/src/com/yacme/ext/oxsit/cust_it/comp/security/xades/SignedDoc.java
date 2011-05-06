@@ -583,7 +583,9 @@ public class SignedDoc {
     public void readSignature(InputStream is)
     	throws SignedDocException
     {
-    	DigiDocFactory ddfac = ConfigManager.instance().getDigiDocFactory();
+    	//ROB
+    	//DigiDocFactory ddfac = ConfigManager.instance().getDigiDocFactory();
+    	DigiDocFactory ddfac = ConfigManager.instance().getSignedDocFactory();
     	Signature sig = ddfac.readSignature(this, is);
     }
     

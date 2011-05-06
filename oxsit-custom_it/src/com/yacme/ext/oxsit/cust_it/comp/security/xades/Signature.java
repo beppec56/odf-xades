@@ -614,7 +614,9 @@ public class Signature implements Serializable {
         
         
         X509Certificate cert = m_keyInfo.getSignersCertificate();
-        DigiDocFactory ddocFac = ConfigManager.instance().getDigiDocFactory();
+        //ROB
+        //DigiDocFactory ddocFac = ConfigManager.instance().getDigiDocFactory();
+        DigiDocFactory ddocFac = ConfigManager.instance().getSignedDocFactory();
         X509Certificate caCert = ddocFac.findCAforCertificate(cert);
         //ROB
         notFac.checkCertificateOcspOrCrl(cert, false);
@@ -772,7 +774,9 @@ public class Signature implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+        	//ROB
+        	//DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+        	DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedDocException ex) {
             errs.add(ex);
@@ -948,7 +952,8 @@ public class Signature implements Serializable {
         }
         // check certificates CA
         try {
-        	DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+        	//ROB
+        	DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
         	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
         } catch(SignedDocException ex) {
             errs.add(ex);
@@ -1070,7 +1075,7 @@ public class Signature implements Serializable {
             		bos.write(ConvertUtils.str2data("\" Target=\"#"));
             		bos.write(ConvertUtils.str2data(m_id));
             		bos.write(ConvertUtils.str2data("\">"));
-            	} else // in versions prior to 1.3 we used atributes in wrong places
+            	} else // in versions prior to 1.3 we used attributes in wrong places
             		bos.write(ConvertUtils.str2data("\n<Object><QualifyingProperties>"));
             	if(m_sigProp != null)
                 	bos.write(m_sigProp.toXML());
@@ -1088,7 +1093,7 @@ public class Signature implements Serializable {
     }
 
     /**
-     * Returns the stringified form of Signature
+     * Returns the string form of Signature
      * @return Signature string representation
      */
     public String toString() {
