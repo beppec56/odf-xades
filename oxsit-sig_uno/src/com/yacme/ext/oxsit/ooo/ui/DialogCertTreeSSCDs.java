@@ -137,7 +137,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
-			displayCart();
+			showSSCD();
 			
 	}
 
@@ -209,12 +209,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		//not implemented here
 	}
 
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#selectButtonPressed()
-	 */
-//	@Override
-//	public void selectButtonPressed() {
-	public void displayCart() {
+	private void showSSCD() {
 		//select the certificate on tree for signature
 		//FIXME: need to filter out the certificates already used to sign the current document
 		
@@ -236,7 +231,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				//empy the tree, then add the new certificates
 				removeAllTreeNodes();
 				m_axoxAvailableSSCDs.scanDevices(m_xParentFrame,m_xContext);//true because we are calling from a GUI interface
-				m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				if(xDevices != null) {
 					//add the new available certificates
@@ -257,7 +251,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				}
 			}
 		} catch (Exception e) {
-			m_aLogger.severe("selectButtonPressed", e);
+			m_aLogger.severe("showSSCD", e);
 		}
 	}
 
@@ -285,7 +279,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			m_aLogger.severe("actionPerformed", "", e);
 			return;
 		}
-		
 	}	
 
 	/**
