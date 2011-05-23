@@ -169,23 +169,19 @@ public class ReadCerts {
 			m_aLogger.info(m_nTokens.length + " token rilevati con la lib "
 					+ cryptokiLib);
 			// confronto tra la stringa reader di pcsc e quelle rilevate con la
-			// libreria da helper
+			// libreria da helper,
 			for (int i = 0; i < m_nTokens.length; i++) {
 				String readerFromCiR = cIr.getReader();
-				String readerFromPKCS11 = helper
-						.getSlotDescription((long) m_nTokens[i]);
+				String readerFromPKCS11 = helper.getSlotDescription((long) m_nTokens[i]);
 				String readerFromPKCS112 = readerFromPKCS11.replaceAll(" ", "");
 				String readerFromCiR2 = readerFromCiR.replaceAll(" ", "");
-				readerFromPKCS11 = readerFromPKCS11.substring(0,
-						readerFromPKCS11.length() - 1);
+				readerFromPKCS11 = readerFromPKCS11.substring(0, readerFromPKCS11.length() - 1);
 				// log.println(readerFromCiR + " = " + readerFromPKCS11 + "?");
 				// log.println(readerFromCiR2 + " = " + readerFromPKCS112 +
 				// "?");
 
-				// riconoscimento lettore tramite name reader
-				if ((readerFromPKCS11.startsWith(readerFromCiR))
-						|| (readerFromCiR2.endsWith(readerFromPKCS112))) {
-
+//FIXME, set the current reader name to the slot name
+				m_aLogger.info("Slot description:"+ readerFromPKCS11);				
 					//FIXME the exceptions here need reworking
 					helper.setTokenHandle(m_nTokens[i]);
 					try {
@@ -201,7 +197,6 @@ public class ReadCerts {
 					} catch (CertificateException ex2) {
 					} catch (TokenException ex2) {
 					}
-				}
 			}
 		} catch (PKCS11Exception ex3) {
 			m_aLogger.severe("detectTokens, PKCS11Exception " + cryptokiLib,

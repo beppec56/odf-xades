@@ -47,8 +47,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import com.sun.star.frame.XFrame;
@@ -129,6 +131,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 	private byte[] m_aDEREncoded;
 	private byte[] m_aCertID;
 	private String m_sCertLabel;
+	private boolean m_bAutomaticDetection;
+	private OptionsParametersAccess m_xOptionsConfigAccess;
 
 	/**
 	 * 
@@ -346,101 +350,153 @@ public class AvailableSSCDs_IT extends ComponentBase
 	        	}
 	        }
 	
-			PCSCHelper pcsc = new PCSCHelper(_aFrame,m_xCC, true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
-
-//			m_aLogger.log("After 'new PCSCHelper'");
+	        //check if the search for card & readers should be automatic or trough the module (library) provided
+			m_xOptionsConfigAccess = new OptionsParametersAccess(m_xCC);
+			m_bAutomaticDetection = m_xOptionsConfigAccess.getBoolean("SSCDAutomaticDetection");
 			
-			if(pcsc.getReaders() != null ) {
-				java.util.List<CardInReaderInfo> infos = pcsc.findCardsAndReaders();
-		
-				CardInfoOOo ci = null;
-				Iterator<CardInReaderInfo> it = infos.iterator();
-				int indexReader = 0;
+			CardInfoOOo cardInfo = null;
+			List<CardInReaderInfo> infos = null;			
+			CardInReaderInfo cardReaderInfo = null;
+			
 
-				while (it.hasNext()) {
-					m_aLogger.log("Reader " + indexReader + ")");
-		
-					CardInReaderInfo cIr = it.next();
-					String currReader = cIr.getReader();
-					ci = cIr.getCard();
-					
-					if (ci != null) {
-		//instantiate a SSCDevice_IT service object to hold the token device information and
-						//the detected certificates
-						
-						Object oAnSSCD = null;
-						XOX_SSCDevice xSSCDevice = null;
-						try {
-
-							// set the library to be used, locally
-							String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-
-							m_aLogger.info(Pkcs11WrapperLocal);
-							ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cIr);
-							//get the number of token/slot (1 token = 1 slot)
-							long[] availableToken = rt.getTokens();
-
-							if (availableToken != null) {
-								for (int i = 0; i < availableToken.length; i++) {
-									PKCS11TokenAttributes aTk = rt.getTokenAttributes(availableToken[i]);
-									oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
-									xSSCDevice = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
-
-									xSSCDevice.setDescription(ci.m_sDescription);
-									xSSCDevice.setManufacturer(ci.m_sManufacturer);
-									xSSCDevice.setATRcode(ci.getATRCode());
-									m_aLogger.log("ATR code: " + ci.getATRCode());
-									String sLibs = ci.getDefaultLib() + " ("
-											+ ((ci.getOsLib().length() > 0) ? (ci.getOsLib()) : "")
-											+ ((ci.getOsLibAlt1().length() > 0) ? (", " + ci.getOsLibAlt1()) : "")
-											+ ((ci.getOsLibAlt2().length() > 0) ? (", " + ci.getOsLibAlt2()) : "")
-											+ ((ci.getOsLibAlt3().length() > 0) ? (", " + ci.getOsLibAlt3()) : "") + ")";
-
-									xSSCDevice.setCryptoLibrariesConfigured(sLibs);
-									xSSCDevice.setCryptoLibraryUsed(ci.getDefaultLib());
-
-									m_aLogger.log("\tRecupero certificati");
-									if (xStatusIndicator != null) {
-										xStatusIndicator.setText("Recupero certificati");
-										xStatusIndicator.setValue(5);
-									}
-
-									Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken(i);
-									if (certsOnToken != null && !certsOnToken.isEmpty()) {
-										Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
-										while (certIt.hasNext()) {
-											//add this certificate to our structure
-											CertificatePKCS11Attributes cert = certIt.next();
-						                	cert.setToken(aTk);
-											m_aLogger.log("found on token: " + cert.getToken().toString());
-											//all seems right, add the device the certificate
-											xSSCDevice.setTokenLabel(aTk.getLabel());
-											xSSCDevice.setTokenSerialNumber(aTk.getSerialNumber());
-											xSSCDevice.setTokenManufacturerID(aTk.getManufacturerID());
-											xSSCDevice.setTokenMinimumPINLenght((int) aTk.getMinPinLen());
-											xSSCDevice.setTokenMaximumPINLenght((int) aTk.getMaxPinLen());
-											setDEREncoded(cert.getCertificateValueDEREncoded());
-											setID(cert.getCertificateID());
-											setLabel(cert.getCertificateLabel());
-											xSSCDevice.addCertificate(this);
-										}
-										//add the token to the list
-										addSSCDevice(xSSCDevice);
-									}
-								}
-								rt.libFinalize();
-							}
-						} catch (java.io.IOException e) {
-							//thrown when there is something wrong on the pkcs#11 library...
-							m_aLogger.severe("scanDevices: ATR code:\n" + ci.getATRCode() + "\n", e);
-						} catch (java.lang.Exception e) {
-							m_aLogger.severe("scanDevices: ATR code: " + ci.getATRCode(), e);
-						}
-					} else {
-						m_aLogger.log("No card in reader '" + currReader + "'!");
-					}
-					indexReader++;
+			if(m_bAutomaticDetection) {
+				m_aLogger.log("detection SSCD auto");
+				//scan all available devices
+				PCSCHelper pcsc = new PCSCHelper(_aFrame,m_xCC, true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
+				if(pcsc.getReaders() != null ) {
+					infos = pcsc.findCardsAndReaders();
 				}
+			}
+			else {
+				m_aLogger.log("detection SSCD NOT auto");
+				//only module (library) provided should be used
+				//so a list with an only card/reader present
+				//instead of build the card list while
+				//FIXME to be implemented
+				//check se libreria presente per automatico
+				//riportare il codice da:
+				//it.infocamere.freesigner.gui.ReadCertsTask.findSlotsInfos(String, String, String)
+				String libCryptoi = m_xOptionsConfigAccess.getText("SSCDFilePath1");
+				m_aLogger.log("Custom library: " + libCryptoi);
+
+				//prepare a dummy card
+				// set the library to be used, locally
+				cardInfo = new CardInfoOOo();
+				cardInfo.setATRCode("FF");
+				cardInfo.setOsLib(libCryptoi);
+
+				cardReaderInfo = new CardInReaderInfo("Unknown reader",cardInfo);
+				cardReaderInfo.setLib(libCryptoi);
+
+				ArrayList<CardInReaderInfo> cardsAndReaders = new ArrayList<CardInReaderInfo>();
+		        
+				cardsAndReaders.add(cardReaderInfo);
+				
+				infos = cardsAndReaders;
+			}
+
+			if(infos != null) {
+				
+			Iterator<CardInReaderInfo> it = infos.iterator();
+			int indexReader = 0;
+
+			while (it.hasNext()) {
+				m_aLogger.log("Reader " + indexReader + ")");
+
+				cardReaderInfo = it.next();
+				String currReader = cardReaderInfo.getReader();
+				cardInfo = cardReaderInfo.getCard();
+
+				if (cardInfo != null) {
+					//instantiate a SSCDevice_IT service object to hold the token device information and
+					//the detected certificates
+
+					Object oAnSSCD = null;
+					XOX_SSCDevice xSSCDevice = null;
+					try {
+
+						// set the library to be used, locally
+						String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+
+						m_aLogger.info(Pkcs11WrapperLocal);
+						ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cardReaderInfo);
+						//get the number of token/slot (1 token = 1 slot)
+						long[] availableToken = rt.getTokens();
+
+						if (availableToken != null) {
+							for (int i = 0; i < availableToken.length; i++) {
+								PKCS11TokenAttributes aTk = rt.getTokenAttributes(availableToken[i]);
+								oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
+								xSSCDevice = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
+
+//								xSSCDevice.setDescription(cardInfo.m_sDescription);
+//								xSSCDevice.setManufacturer(cardInfo.m_sManufacturer);
+								xSSCDevice.setATRcode(cardInfo.getATRCode());
+								m_aLogger.log("ATR code: " + cardInfo.getATRCode());
+								String sLibs = cardInfo.getDefaultLib() + " ("
+								+ ((cardInfo.getOsLib().length() > 0) ? (cardInfo.getOsLib()) : "")
+								+ ((cardInfo.getOsLibAlt1().length() > 0) ? (", " + cardInfo.getOsLibAlt1()) : "")
+								+ ((cardInfo.getOsLibAlt2().length() > 0) ? (", " + cardInfo.getOsLibAlt2()) : "")
+								+ ((cardInfo.getOsLibAlt3().length() > 0) ? (", " + cardInfo.getOsLibAlt3()) : "") + ")";
+
+								xSSCDevice.setCryptoLibrariesConfigured(sLibs);
+								xSSCDevice.setCryptoLibraryUsed(cardInfo.getDefaultLib());
+
+								m_aLogger.log("\tRecupero certificati");
+								if (xStatusIndicator != null) {
+									xStatusIndicator.setText("Recupero certificati");
+									xStatusIndicator.setValue(5);
+								}
+
+								Collection<CertificatePKCS11Attributes> certsOnToken = rt.getCertsOnToken(i);
+								if (certsOnToken != null && !certsOnToken.isEmpty()) {
+									Iterator<CertificatePKCS11Attributes> certIt = certsOnToken.iterator();
+									while (certIt.hasNext()) {
+										//add this certificate to our structure
+										CertificatePKCS11Attributes cert = certIt.next();
+										cert.setToken(aTk);
+										m_aLogger.log("found on token: " + cert.getToken().toString()+"----------");
+										//all seems right, add the device the certificate
+										xSSCDevice.setDescription(aTk.getLabel()+" - "+aTk.getSerialNumber());
+										xSSCDevice.setManufacturer(aTk.getManufacturerID());
+
+										
+										xSSCDevice.setTokenLabel(aTk.getLabel());
+										xSSCDevice.setTokenSerialNumber(aTk.getSerialNumber());
+										xSSCDevice.setTokenManufacturerID(aTk.getManufacturerID());
+										xSSCDevice.setTokenMinimumPINLenght((int) aTk.getMinPinLen());
+										xSSCDevice.setTokenMaximumPINLenght((int) aTk.getMaxPinLen());
+										setDEREncoded(cert.getCertificateValueDEREncoded());
+										setID(cert.getCertificateID());
+										setLabel(cert.getCertificateLabel());
+
+										
+										xSSCDevice.addCertificate(this);
+									}
+									//add the token to the list
+									addSSCDevice(xSSCDevice);
+								}
+								else {
+									m_aLogger.log("Found NO certificates on token !");							
+									
+								}
+							}
+							rt.libFinalize();
+						}
+						else {
+							m_aLogger.log("No token found !");							
+						}
+					} catch (java.io.IOException e) {
+						//thrown when there is something wrong on the pkcs#11 library...
+						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode() + "\n", e);
+					} catch (java.lang.Exception e) {
+						m_aLogger.severe("scanDevices: ATR code: " + cardInfo.getATRCode(), e);
+					}
+				} else {
+					m_aLogger.log("No card in reader '" + currReader + "'!");
+				}
+				indexReader++;
+			}
 			}
 		} catch (Throwable e) {
 			m_aLogger.severe("scanDevices",e);
