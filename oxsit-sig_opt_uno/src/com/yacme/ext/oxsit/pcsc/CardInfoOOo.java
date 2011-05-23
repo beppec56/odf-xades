@@ -49,14 +49,15 @@ public class CardInfoOOo {
 	private String	m_sOsLibAlt3;
 
 	public CardInfoOOo() {
-		m_sDescription =
-		m_sManufacturer =
-		m_sCardType = 
-		m_sDefaultLib =
-		m_sOsLib =
-		m_sOsLibAlt1 =
-		m_sOsLibAlt2 =
+		m_sDescription = "Description not available";
+		m_sManufacturer = "Manufacturer not available";
+		m_sCardType = "Card type unknown";
+		m_sDefaultLib = "";
+		m_sOsLib = "";
+		m_sOsLibAlt1 = "";
+		m_sOsLibAlt2 = "";
 		m_sOsLibAlt3 = "";
+		m_sATRCode = "FF";
 	}
 
 	public String toString() {
