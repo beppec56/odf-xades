@@ -14,7 +14,7 @@ import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
  * @author beppe
  *
  */
-public class MessageNoTokens extends DialogGeneralMessage {
+public class MessageNoSSCDLib extends DialogGeneralMessage {
 
 	/**
 	 * @param frame
@@ -23,7 +23,7 @@ public class MessageNoTokens extends DialogGeneralMessage {
 	 * 
 	 * 
 	 */
-	public MessageNoTokens(XFrame frame, XMultiComponentFactory _axmcf,
+	public MessageNoSSCDLib(XFrame frame, XMultiComponentFactory _axmcf,
 			XComponentContext _xcc) {
 		super(frame, _axmcf, _xcc);
 	}
@@ -33,7 +33,7 @@ public class MessageNoTokens extends DialogGeneralMessage {
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess( m_xCC, m_axMCF );		
 		String sTitle = "id_error_extension";
-		String sFormatErr = "id_no_sign_cert_avlb";
+		String sFormatErr = "id_no_sscd_lib";
 		try {
 			sTitle = m_aRegAcc.getStringFromRegistry( sTitle );
 			sFormatErr = m_aRegAcc.getStringFromRegistry( sFormatErr );			
@@ -42,7 +42,8 @@ public class MessageNoTokens extends DialogGeneralMessage {
 		}			
 		m_aRegAcc.dispose();
 
-		return super.executeDialog(sTitle, sFormatErr,
+		return super.executeDialog(sTitle, 
+				String.format(sFormatErr, _nomeDispositivo),
 				MessageBoxButtons.BUTTONS_OK , MessageBoxButtons.DEFAULT_BUTTON_OK, "errorbox");
 	}
 

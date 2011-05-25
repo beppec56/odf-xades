@@ -133,6 +133,23 @@ Copyright 2009 Roberto Resoli
 non contiene Smart Card (SSCD).</value>
 			</prop>
 		</node>
+		<node oor:name="id_no_sign_cert_avlb" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Non ci sono lettori di Smart Card disponibili.
+Oppure, se collegati,
+Non contengono dispositivi SSCD leggibili.</value>
+			</prop>
+		</node>
+		<node oor:name="id_no_sscd_lib" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">La libreria per accedere a SSCD:
+
+%1$s
+
+Non è stata trovata.
+Oppure rilevati errori nel suo funzionamento.</value>
+			</prop>
+		</node>
 		<node oor:name="id_no_sscd_readers" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">Non ci sono lettori di Smart Card disponibili.</value>

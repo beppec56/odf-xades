@@ -43,11 +43,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import com.sun.star.frame.XFrame;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.task.XStatusIndicator;
+import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.logging.DynamicLazyLogger;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
+import com.yacme.ext.oxsit.ooo.ui.MessageNoSSCDLib;
+import com.yacme.ext.oxsit.ooo.ui.MessageNoTokens;
 import com.yacme.ext.oxsit.pcsc.CardInReaderInfo;
 import com.yacme.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
@@ -58,10 +63,12 @@ import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
  */
 public class ReadCerts {
 
+	private XFrame m_aFrame;
+	private XComponentContext m_XCC;
     private boolean isDownloadCRLForced;
 	private Hashtable<Integer,Collection<CertificatePKCS11Attributes>> certs;
 	private ArrayList signersList;
-	private CardInReaderInfo cIr;
+	private CardInReaderInfo m_cIr;
 	private IDynamicLogger m_aLogger;
 	private PKCS11Driver helper;
     private java.lang.String cryptokiLib = null;
@@ -73,17 +80,21 @@ public class ReadCerts {
     
     
     private XStatusIndicator m_aStatus;
+	private XMultiComponentFactory m_xMCF;
     
 	/**
      * Constructor
+	 * @param mXCC 
+	 * @param aFrame 
      * 
      * @param cIr :
      *            Object containing information about card in reader
      */
 
-    public ReadCerts(XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr) {
-        this(xStatus, aLogger, pkcs11WrapLib, cIr, false);
-        detectTokens();
+    public ReadCerts(XFrame aFrame, XComponentContext mXCC, XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr) {
+        this(aFrame, mXCC, xStatus, aLogger, pkcs11WrapLib, cIr, false);
+        if(helper != null)
+        	detectTokens();
     }
 
     /**
@@ -94,15 +105,18 @@ public class ReadCerts {
      * @param isDownloadCRLForced
      *            true if CRL is forced
      */
-    public ReadCerts(XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr, boolean isDownloadCRLForced) {
+    public ReadCerts(XFrame aFrame, XComponentContext mXCC, XStatusIndicator xStatus, IDynamicLogger aLogger, String pkcs11WrapLib, CardInReaderInfo cIr, boolean isDownloadCRLForced) {
 
     	setLogger(aLogger);
         this.isDownloadCRLForced = isDownloadCRLForced;
+    	m_aFrame = aFrame;
+    	m_XCC = mXCC;
+    	m_xMCF = m_XCC.getServiceManager();
         
         signersList = new ArrayList();
         // pcsc = new PCSCHelper(true);
         setCryptokiLib(cIr.getLib());
-        this.cIr = cIr;
+        this.m_cIr = cIr;
 
         helper = null;
         m_aLogger.info("Helper Class Loader: "
@@ -144,7 +158,9 @@ public class ReadCerts {
              */
         } catch (Exception e) {
             setStatus(ERROR, "Eccezione: " + e);
-            m_aLogger.severe("Exception",e);
+            //give the user some feedback
+            MessageNoSSCDLib	aMex = new MessageNoSSCDLib(m_aFrame,m_xMCF,m_XCC);
+            aMex.executeDialogLocal(cryptokiLib);
         }
     }
 
@@ -171,7 +187,7 @@ public class ReadCerts {
 			// confronto tra la stringa reader di pcsc e quelle rilevate con la
 			// libreria da helper,
 			for (int i = 0; i < m_nTokens.length; i++) {
-				String readerFromCiR = cIr.getReader();
+				String readerFromCiR = m_cIr.getReader();
 				String readerFromPKCS11 = helper.getSlotDescription((long) m_nTokens[i]);
 				String readerFromPKCS112 = readerFromPKCS11.replaceAll(" ", "");
 				String readerFromCiR2 = readerFromCiR.replaceAll(" ", "");
@@ -335,13 +351,13 @@ public class ReadCerts {
      */
 
     public void libFinalize() {
-        try {
-            helper.libFinalize();
-            m_aLogger.info("Lib finalized.");
-        } catch (Throwable e1) {
-            // TODO Auto-generated catch block
-        	m_aLogger.info("Error finalizing criptoki: " + e1);
-        }
+    	if(helper != null)
+	        try {
+	            helper.libFinalize();
+	            m_aLogger.info("Lib finalized.");
+	        } catch (Throwable e1) {
+	        	m_aLogger.info("Error finalizing criptoki: " + e1);
+	        }
         helper = null;
     }
 

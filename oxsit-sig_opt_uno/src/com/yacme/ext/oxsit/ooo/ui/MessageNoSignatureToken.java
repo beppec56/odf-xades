@@ -45,7 +45,6 @@ public class MessageNoSignatureToken extends DialogGeneralMessage {
 	 */
 	public MessageNoSignatureToken(XFrame frame, XMultiComponentFactory _axmcf, XComponentContext _xcc) {
 		super(frame, _axmcf, _xcc);
-		// TODO Auto-generated constructor stub
 	}
 
 	public short executeDialogLocal(String _SSCDManufacturer, String _SSCDModel, String _SSCDSerialNumber, String _CKR_error_found) {

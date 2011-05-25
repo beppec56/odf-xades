@@ -359,7 +359,7 @@ public class TestOnCertificates {
 
 				m_aLogger.log("\tLettura certificati");
 
-				ReadCerts rt = new ReadCerts(null, m_aLogger, currReader, cIr);
+				ReadCerts rt = new ReadCerts(null,null,null, m_aLogger, currReader, cIr);
 
 				long[] availableToken = rt.getTokens();
 

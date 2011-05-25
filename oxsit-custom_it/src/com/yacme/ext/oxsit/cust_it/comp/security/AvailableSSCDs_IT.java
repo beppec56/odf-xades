@@ -259,7 +259,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("dispose");
 //remove all the device, calling the dispose method of each one
 		if(!m_aSSCDList.isEmpty()) {
@@ -419,7 +418,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 						String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
 
 						m_aLogger.info(Pkcs11WrapperLocal);
-						ReadCerts rt = new ReadCerts(xStatusIndicator, aLogger, Pkcs11WrapperLocal, cardReaderInfo);
+						ReadCerts rt = new ReadCerts(_aFrame,m_xCC, xStatusIndicator, aLogger, Pkcs11WrapperLocal, cardReaderInfo);
 						//get the number of token/slot (1 token = 1 slot)
 						long[] availableToken = rt.getTokens();
 
@@ -467,8 +466,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 										setDEREncoded(cert.getCertificateValueDEREncoded());
 										setID(cert.getCertificateID());
 										setLabel(cert.getCertificateLabel());
-
-										
 										xSSCDevice.addCertificate(this);
 									}
 									//add the token to the list
@@ -486,9 +483,9 @@ public class AvailableSSCDs_IT extends ComponentBase
 						rt.libFinalize();
 					} catch (java.io.IOException e) {
 						//thrown when there is something wrong on the pkcs#11 library...
-						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode() + "\n", e);
+						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode()  + "\n", e);
 					} catch (java.lang.Exception e) {
-						m_aLogger.severe("scanDevices: ATR code: " + cardInfo.getATRCode(), e);
+						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode()  + "\n", e);
 					}
 				} else {
 					m_aLogger.log("No card in reader '" + currReader + "'!");

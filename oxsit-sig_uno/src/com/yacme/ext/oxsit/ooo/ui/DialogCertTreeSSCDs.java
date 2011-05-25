@@ -58,6 +58,8 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 
 	protected XOX_SSCDManagement	m_axoxAvailableSSCDs;
 
+	private int m_nNumOfSSCD;
+
 	/**
 	 * Note on the display:
 	 * two ways on right pane:
@@ -130,7 +132,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
-			if (showSSCD() == 0) {
+			if ((m_nNumOfSSCD = showSSCD()) == 0) {
             //give the user some feedback
 				MessageNoTokens	aMex = new MessageNoTokens(m_xParentFrame,m_xMCF,m_xContext);
 	            aMex.executeDialogLocal("");
@@ -139,6 +141,10 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 
 	@Override
 	public short executeDialog() throws BasicErrorException {
+		if(m_nNumOfSSCD == 0) {
+			endDialog();
+			return 0; //FIXME: may be a different result is needed (OK or Cancel)
+		}
 		enableSingleButton(m_sAddBtn,false);
 		enableSingleButton(m_sReportBtn,false);
 		return super.executeDialog();
