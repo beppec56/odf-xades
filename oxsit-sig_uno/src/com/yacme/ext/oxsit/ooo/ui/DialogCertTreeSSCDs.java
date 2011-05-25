@@ -22,15 +22,6 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
-import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
-import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
-import com.yacme.ext.oxsit.security.XOX_SSCDevice;
-import com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState;
-import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
-import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
-
-import java.net.URISyntaxException;
-
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XControl;
@@ -47,10 +38,12 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
-import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
-import com.yacme.ext.oxsit.ooo.ui.ControlDims;
 import com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
+import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
+import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 /**
  * @author beppec56
@@ -137,8 +130,11 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
-			showSSCD();
-			
+			if (showSSCD() == 0) {
+            //give the user some feedback
+				MessageNoTokens	aMex = new MessageNoTokens(m_xParentFrame,m_xMCF,m_xContext);
+	            aMex.executeDialogLocal("");
+			}
 	}
 
 	@Override
@@ -209,10 +205,11 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		//not implemented here
 	}
 
-	private void showSSCD() {
+	private int showSSCD() {
 		//select the certificate on tree for signature
 		//FIXME: need to filter out the certificates already used to sign the current document
 		
+		int nNumberofSSCD = 0;
 		m_aLogger.info("Seleziona dispositivo");
 //		addOneCertificate();
 		//instantiate the SSCDs service
@@ -233,6 +230,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				m_axoxAvailableSSCDs.scanDevices(m_xParentFrame,m_xContext);//true because we are calling from a GUI interface
 				XOX_SSCDevice[] xDevices = m_axoxAvailableSSCDs.getAvailableSSCDevices();
 				if(xDevices != null) {
+					nNumberofSSCD = xDevices.length;
 					//add the new available certificates
 					for(int idx = 0; idx < xDevices.length; idx++) {
 						XOX_SSCDevice oSSCDev = xDevices[idx];
@@ -253,6 +251,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		} catch (Exception e) {
 			m_aLogger.severe("showSSCD", e);
 		}
+		return nNumberofSSCD;
 	}
 
 	/* (non-Javadoc)

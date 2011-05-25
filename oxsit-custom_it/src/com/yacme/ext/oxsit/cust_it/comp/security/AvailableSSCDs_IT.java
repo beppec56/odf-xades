@@ -423,7 +423,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 						//get the number of token/slot (1 token = 1 slot)
 						long[] availableToken = rt.getTokens();
 
-						if (availableToken != null) {
+						if (availableToken != null && availableToken.length > 0) {
 							for (int i = 0; i < availableToken.length; i++) {
 								PKCS11TokenAttributes aTk = rt.getTokenAttributes(availableToken[i]);
 								oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
@@ -457,10 +457,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 										cert.setToken(aTk);
 										m_aLogger.log("found on token: " + cert.getToken().toString()+"----------");
 										//all seems right, add the device the certificate
-										xSSCDevice.setDescription(aTk.getLabel()+" - "+aTk.getSerialNumber());
+										xSSCDevice.setDescription(aTk.getSerialNumber());
 										xSSCDevice.setManufacturer(aTk.getManufacturerID());
-
-										
 										xSSCDevice.setTokenLabel(aTk.getLabel());
 										xSSCDevice.setTokenSerialNumber(aTk.getSerialNumber());
 										xSSCDevice.setTokenManufacturerID(aTk.getManufacturerID());
@@ -481,11 +479,11 @@ public class AvailableSSCDs_IT extends ComponentBase
 									
 								}
 							}
-							rt.libFinalize();
 						}
 						else {
-							m_aLogger.log("No token found !");							
+							m_aLogger.log("No token found !");	
 						}
+						rt.libFinalize();
 					} catch (java.io.IOException e) {
 						//thrown when there is something wrong on the pkcs#11 library...
 						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode() + "\n", e);
