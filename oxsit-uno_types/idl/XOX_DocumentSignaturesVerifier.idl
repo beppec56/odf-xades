@@ -1,0 +1,82 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesVerifier_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesVerifier_idl__
+
+#include <com/sun/star/lang/XComponent.idl>
+#include <com/sun/star/uno/Exception.idl>
+#include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/uno/XComponentContext.idl> 
+#include <com/sun/star/uno/XInterface.idl> 
+#include <com/sun/star/embed/XStorage.idl> 
+#include <com/sun/star/frame/XFrame.idl>
+#include <com/sun/star/frame/XModel.idl>
+#include "CertificateState.idl"
+#include "CertificateStateConditions.idl"
+#include "XOX_X509Certificate.idl"
+
+  module com { module yacme { module ext { module oxsit { module security {
+
+/** Interface to implement document signer.
+ */
+	interface XOX_DocumentSignaturesVerifier
+	{
+		/** The certificates this document contains. One for each signature
+		*/
+		[attribute,readonly]  sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
+
+	/** Used to check if the signed document is untampered and if the signare itself is correct<br>
+		@param xFrame the frame to be used as anchor for dialogs
+		@param xTheDocument the model of the document to be verified
+		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
+		@return true if the document can be signed, false otherwise.
+		*/
+		boolean verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::frame::XModel xTheDocumentModel,
+ 									[in] sequence<any> aArguments )
+
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
+	/** Used to check if the signed document is untampered with and if the signare itself is correct<br>
+		@param xFrame the frame to be used as anchor for dialogs
+		@param xTheDocument the model of the document to be verified
+		@param signaturePosition, the progressive number of the certificate of the signature to be removed, according to the position in the
+		sequence returned by getX509Certificates.
+		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
+		@return true if the document can be signed, false otherwise.
+		*/
+		boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
+						                        [in] com::sun::star::frame::XModel xTheDocumentModel,
+						                        [in] long signaturePosition,
+						                        [in] sequence<any> aArguments )
+
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
+	} ;
+
+  }; }; }; }; };
+ 
+#endif
+

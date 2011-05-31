@@ -247,6 +247,13 @@ the default target must be removed
 
 		<antcall target="compile-idl">
 			<!--interface name -->
+			<param name="parm1" value="XOX_DocumentSignaturesVerifier"/>
+			<!--interface path -->
+			<param name="parm2" value="com.yacme.ext.oxsit.security"/>
+		</antcall>
+
+		<antcall target="compile-idl">
+			<!--interface name -->
 			<param name="parm1" value="XOX_SingletonDataAccess"/>
 			<!--interface path -->
 			<param name="parm2" value="com.yacme.ext.oxsit"/>
