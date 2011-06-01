@@ -22,6 +22,7 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -56,7 +57,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 
 	private static final String DLG_SIGN_TREE = "DialogSignTree";
 
-	protected XOX_SSCDManagement	m_axoxAvailableSSCDs;
+	private XOX_DocumentSignaturesVerifier m_axoxDocumentVerifier;
 
 	/**
 	 * 
@@ -67,7 +68,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	public DialogSignatureTreeDocument(XFrame frame, XComponentContext context,
 			XMultiComponentFactory _xmcf) {
 		super(frame, context, _xmcf);
-		// TODO Auto-generated constructor stub
 		m_sDlgListCertTitle = "id_title_cert_tree"; // local value, different !
 		m_sFt_Hint_Doc = "id_title_cert_treew"; // local vale, different !
 		fillLocalizedString();
@@ -139,11 +139,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 * 
 	 */
 	public void disposeElements() {
-		if(m_axoxAvailableSSCDs != null) {
-			XComponent xC = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_axoxAvailableSSCDs);
-			if(xC != null)
-				xC.dispose();
-		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -208,7 +204,26 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void verifyButtonPressed() {
-		//not implemented here
+//for the moment, use this to load the document at hand , verify it and display the certificates of every signature found.
+		try {
+			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+			if(aDocVerService != null) {				
+				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+				if(m_axoxDocumentVerifier != null) {
+					m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame, 
+							getDocumentModel(), null);
+				}
+				else
+					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+		        // now clean up
+		        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+			}
+			else
+				m_aLogger.warning("verifyButtonPressed and "+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
+
+		} catch (Exception e) {
+			m_aLogger.severe("verifyButtonPressed", e);
+		}
 	}	
 	/**
 	 * 
@@ -226,14 +241,17 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.SIGNATURE) {
 				bEnableButton = true;
 			}
-			enableSingleButton(m_sVerifyBtn,bEnableButton);
+//			enableSingleButton(m_sVerifyBtn,bEnableButton);
 			enableSingleButton(m_sRemoveBtn,bEnableButton);
 			aCurrentNode.EnableDisplay(true);
 		}
 		else {
-			enableSingleButton(m_sVerifyBtn,false);
+//			enableSingleButton(m_sVerifyBtn,false);
 			enableSingleButton(m_sRemoveBtn,false);
 		}
+
+		//FIXME FOR TEST ONLY !
+		enableSingleButton(m_sVerifyBtn,true);
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {
