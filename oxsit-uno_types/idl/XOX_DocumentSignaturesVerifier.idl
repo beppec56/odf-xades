@@ -51,7 +51,7 @@
 		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
 		@return true if the document can be signed, false otherwise.
 		*/
-		boolean verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
+		long verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
 									[in] com::sun::star::frame::XModel xTheDocumentModel,
  									[in] sequence<any> aArguments )
 
