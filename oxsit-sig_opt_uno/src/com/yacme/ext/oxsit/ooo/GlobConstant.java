@@ -167,9 +167,8 @@ public class GlobConstant {
 	public static final String m_sTRUSTED_ENTITIES_MANAGEMENT_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.CertificationPath_IT";
 
 	public static final String m_sDOCUMENT_SIGNER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
-
-	//to be implemented
-	public static final String m_sDOCUMENT_VERIFER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentVerifier_IT";
+	// service to verify the document signatures present
+	public static final String m_sDOCUMENT_VERIFIER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.DocumentSignaturesVerifier_IT";
 
 	/////////// end of service to be moved to registryS
 

@@ -66,6 +66,9 @@ public class ConstantCustomIT {
 
 	public static final String m_sDOCUMENT_SIGNER_SERVICE = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
 
+	// service to verify the document signatures present
+	public static final String m_sDOCUMENT_VERIFIER_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.DocumentSignaturesVerifier_IT";
+
 	// service to hold all the information available from SSCD devices available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 

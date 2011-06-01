@@ -43,6 +43,7 @@ import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.lib.uno.helper.Factory;
 import com.sun.star.registry.XRegistryKey;
 import com.yacme.ext.oxsit.cust_it.comp.security.AvailableSSCDs_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.DocumentSignaturesVerifier_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.SSCDevice_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.ca.CertificationPathCache_IT;
@@ -74,6 +75,10 @@ public class RegisterServices {
 		if ( sImplementationName.equals( DocumentSigner_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSigner_IT.class, DocumentSigner_IT.m_sServiceNames );
 	//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+		}
+		else if ( sImplementationName.equals( DocumentSignaturesVerifier_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( DocumentSignaturesVerifier_IT.class, DocumentSignaturesVerifier_IT.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignaturesVerifier_IT.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateComplianceCA_IT.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateComplianceCA_IT.class, CertificateComplianceCA_IT.m_sServiceNames );
@@ -132,6 +137,9 @@ public class RegisterServices {
 		boolean retDocumSigner = 
 			Factory.writeRegistryServiceInfo( DocumentSigner_IT.m_sImplementationName, DocumentSigner_IT.m_sServiceNames, xRegistryKey );
 
+		boolean retDocumentSignaturesVerifier = 
+			Factory.writeRegistryServiceInfo( DocumentSignaturesVerifier_IT.m_sImplementationName, DocumentSignaturesVerifier_IT.m_sServiceNames, xRegistryKey );
+		
 		boolean retCertifComplCA = 
 			Factory.writeRegistryServiceInfo( CertificateComplianceCA_IT.m_sImplementationName, CertificateComplianceCA_IT.m_sServiceNames, xRegistryKey );
 
@@ -157,12 +165,14 @@ public class RegisterServices {
 
 		boolean retAvailSSCDs = 
 			Factory.writeRegistryServiceInfo( AvailableSSCDs_IT.m_sImplementationName, AvailableSSCDs_IT.m_sServiceNames, xRegistryKey );
-
 /*		if (!retSSCDOpts)
 			System.out.println("__writeRegistryServiceInfo: "+ManageSSCDOptions.m_sImplementationName + "failed");		
 
 */		if (!retDocumSigner)
 			System.out.println("__writeRegistryServiceInfo: "+DocumentSigner_IT.m_sImplementationName + "failed");		
+
+		if (!retDocumentSignaturesVerifier)
+			System.out.println("__writeRegistryServiceInfo: "+DocumentSignaturesVerifier_IT.m_sImplementationName + "failed");
 
 		if (!retCertifComplCA)
 			System.out.println("__writeRegistryServiceInfo: "+CertificateComplianceCA_IT.m_sImplementationName + "failed");
@@ -185,9 +195,10 @@ public class RegisterServices {
 			System.out.println("__writeRegistryServiceInfo: "+SSCDevice_IT.m_sImplementationName + "failed");		
 
 		if (!retAvailSSCDs)
-			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs_IT.m_sImplementationName + "failed");		
-
-		return (retDocumSigner && retSSCDevice && retAvailSSCDs &&
+			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs_IT.m_sImplementationName + "failed");
+		
+		return (retDocumSigner && retDocumentSignaturesVerifier &&
+					retSSCDevice && retAvailSSCDs &&
 					retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
 					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
