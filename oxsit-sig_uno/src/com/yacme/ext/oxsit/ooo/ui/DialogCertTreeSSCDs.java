@@ -214,7 +214,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	private int showSSCD() {
 		//select the certificate on tree for signature
 		//FIXME: need to filter out the certificates already used to sign the current document
-		
+
 		int nNumberofSSCD = 0;
 		m_aLogger.info("Seleziona dispositivo");
 //		addOneCertificate();

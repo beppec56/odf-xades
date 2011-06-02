@@ -391,8 +391,8 @@ public class ODFSignedDoc extends SignedDoc {
 
 			Object oObj = m_xMFC.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCtx);
 			if (oObj != null) {
-				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory) UnoRuntime.queryInterface(
-						XSingleServiceFactory.class, oObj);
+//				XSingleServiceFactory xStorageFactory = (XSingleServiceFactory) UnoRuntime.queryInterface(
+//						XSingleServiceFactory.class, oObj);
 				/*	            Object args[]=new Object[2];
 					            args[0] = aTheDocURL;
 					            args[1] = ElementModes.READ;

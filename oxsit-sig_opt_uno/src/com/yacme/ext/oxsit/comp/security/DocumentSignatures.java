@@ -44,7 +44,7 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 
 /**
- * THis is a specification, it may change!
+ * This is a specification, it may change!
  * This service implements the X509Certificate service.
  * receives the doc information from the task  
  *  

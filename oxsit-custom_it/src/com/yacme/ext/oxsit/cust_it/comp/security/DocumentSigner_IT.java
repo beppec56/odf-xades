@@ -353,7 +353,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * @return
 	 */
 	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] _aCertArray) {
-		// TODO Auto-generated method stub
 		Date d1, d2;
 
 		ODFSignedDoc sdoc = null;
@@ -512,12 +511,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								//and write it back to the storage
 
-								//so, open the substorage META-INF form the main storage (e.g. the document)
+								//so, open the substorage META-INF from the main storage (e.g. the document)
 								try {
-									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF",
-											ElementModes.WRITE);
+									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF",ElementModes.WRITE);
 
 									//try to remove the previous signature
+									//FIXME would be better to import the existent signatures and add the new one
 									try {
 										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
 									} catch (NoSuchElementException e1) {
@@ -526,8 +525,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									}
 									//create the file xadessignature.xml
 									try {
-										XStream xTheSignature = xMetaInfStorage.openStreamElement(
-												ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
+										XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
 										//write to it (just a test now)
 										String aString = "a simple test...";
 
@@ -1424,7 +1422,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		String[] aElements = m_xDocumentStorage.getElementNames();
 		String sBasicElement = "Basic";
 		for (int i = 0; i < aElements.length; i++) {
-			m_aLogger.log(aElements[i]);
+//DEBUG			m_aLogger.log(aElements[i]);
 			if (aElements[i].equals(sBasicElement)) {
 				m_aLogger.warning("verifyDocumentBeforeSigning",
 						"This document contains OpenOffice.org macro. It cannot be signed.");

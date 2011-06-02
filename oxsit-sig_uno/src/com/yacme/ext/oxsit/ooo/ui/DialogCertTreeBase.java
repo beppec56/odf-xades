@@ -890,7 +890,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	@Override
 	public void verifyButtonPressed() {
 		// TODO Auto-generated method stub
-		m_aLogger.log("verifyButtonPressed");		
+		m_aLogger.log("verifyButtonPressed");
 	}
 
 	/* (non-Javadoc)
