@@ -37,6 +37,7 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.Utilities;
+import com.yacme.ext.oxsit.cust_it.comp.security.ODFPackageItem;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.CertID;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.CertValue;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.DataFile;
@@ -67,25 +68,6 @@ public class ODFSignedDoc extends SignedDoc {
 	protected XComponentContext m_xCtx;
 	protected XMultiComponentFactory m_xMFC;
 	private XStorage m_xDocumentStorage;
-
-	private class APackageElement {
-		public String m_stheName;
-		public String m_sMediaType;
-		public int m_nSize;
-		public XInputStream m_xInputStream;
-
-		public APackageElement(String s, String mt, XInputStream _xInputStream, int sz) {
-			m_stheName = s;
-			m_sMediaType = mt;
-			m_xInputStream = _xInputStream;
-			m_nSize = sz;
-		}
-
-		public String toString() {
-			String ret = "media type: '" + m_sMediaType + "' size: " + m_nSize + " bytes, position: '" + m_stheName + "'";
-			return ret;
-		}
-	}
 
 	/** Creates a new instance of __NAME__ 
 	 * @param version13 
@@ -119,13 +101,14 @@ public class ODFSignedDoc extends SignedDoc {
 		m_aLogger.info("ctor", "");
 		m_xDocumentStorage = _XDocumentStorage;
 	}
+
 	/**
 	 * @param xThePackage the storage element to examine
 	 * @param _List the list to be filled, or updated
 	 * @param _rootElement the name of the root element of the package 'xThePackage' 
 	 * @param _bRecurse if can recurse (true) or not (false)
 	 */
-	public void fillElementList(XStorage xThePackage, Vector<APackageElement> _List, String _rootElement, boolean _bRecurse) {
+	private void fillElementList(XStorage xThePackage, Vector<ODFPackageItem> _List, String _rootElement, boolean _bRecurse) {
 		String[] aElements = xThePackage.getElementNames();
 		/*		m_aLoggerDialog.info(_rootElement+" elements:");
 				for(int i = 0; i < aElements.length; i++)
@@ -154,7 +137,7 @@ public class ODFSignedDoc extends SignedDoc {
 							XInputStream xI = xSt.getInputStream();
 							nSize = xI.available();
 							//							xI.closeInput();
-							_List.add(new APackageElement(_rootElement + aElements[i], sMediaType, xI, nSize));
+							_List.add(new ODFPackageItem(_rootElement + aElements[i], sMediaType, xI, nSize));
 							m_aLogger.info("element: "+_rootElement+aElements[i]);
 						} catch (WrongPasswordException e) {
 							// TODO Auto-generated catch block
@@ -206,9 +189,9 @@ public class ODFSignedDoc extends SignedDoc {
 	 * @param _thePackage
 	 * @return
 	 */
-	private Vector<APackageElement> makeTheElementList(Object _othePackage, XStorage _xStorage) {
+	private Vector<ODFPackageItem> makeTheElementList(Object _othePackage, XStorage _xStorage) {
 		//TODO check for ODF 1.0 structure, see what to do in that case.
-		Vector<APackageElement> aElements = new Vector<APackageElement>(20);
+		Vector<ODFPackageItem> aElements = new Vector<ODFPackageItem>(20);
 
 		//print the storage ODF version
 
@@ -417,12 +400,12 @@ public class ODFSignedDoc extends SignedDoc {
 
 				//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
 				//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
-				Vector<APackageElement> aElements = makeTheElementList(null, m_xDocumentStorage); // use of the package object from document
+				Vector<ODFPackageItem> aElements = makeTheElementList(null, m_xDocumentStorage); // use of the package object from document
 				m_aLogger.log("\nThis package contains the following elements:");
 
 				//loop to add the data to the internal object for signature
 				for (int i = 0; i < aElements.size(); i++) {
-					APackageElement aElm = aElements.get(i);
+					ODFPackageItem aElm = aElements.get(i);
 					m_aLogger.log("Type: " + aElm.m_sMediaType + " name: " + aElm.m_stheName + " size: " + aElm.m_nSize);
 					if ((aElm.m_sMediaType.equalsIgnoreCase("text/xml") || aElm.m_stheName.endsWith(".xml")) && aElm.m_nSize != 0) {//FIXME: verify what to do in size == 0
 						m_aLogger.log(" Adding an XML file");
@@ -564,7 +547,7 @@ public class ODFSignedDoc extends SignedDoc {
 
 				//	            Vector<String> aElements = makeTheElementList(oMyStorage, null); // force the use of the package object from URL
 				//	            Vector<String> aElements = makeTheElementList(oMyStorage, _xStorage); // use of the package object from document
-				Vector<APackageElement> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
+				Vector<ODFPackageItem> aElements = makeTheElementList(null, _xStorage); // use of the package object from document
 				m_aLogger.log("\nThis package contains the following elements:");
 				for (int i = 0; i < aElements.size(); i++) {
 					m_aLogger.log(aElements.get(i).toString());
