@@ -119,6 +119,6 @@ public class ConstantCustomIT {
 	//update the build.xml of the oxsit-ext_conf as well
 	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110422.zip.p7m";
 	
+	public static final String m_sSignatureStorageName = "META-INF";
 	public static final String m_sSignatureFileName = "xadessignatures.xml";
-
 }

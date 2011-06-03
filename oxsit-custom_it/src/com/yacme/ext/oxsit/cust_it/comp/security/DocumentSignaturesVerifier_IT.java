@@ -305,75 +305,52 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		//so, open the substorage META-INF form the main storage (e.g. the document)
 		try {
 			XStorage xMetaInfStorage = null;
-			String sMetaInfo = "META-INF";
 			try {
-				xMetaInfStorage = xDocumentStorage.openStorageElement(sMetaInfo,ElementModes.WRITE);
+				xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
 			}
 			catch (IOException e) {
-				m_aLogger.info(__FUNCTION__, "the substorage "+sMetaInfo+" might be locked, get the last committed version of it");
+				m_aLogger.info(__FUNCTION__, "the substorage "+ConstantCustomIT.m_sSignatureStorageName+" might be locked, get the last committed version of it");
 			   Object oMyStorage =xStorageFact.createInstance();
 			   XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
-			   xDocumentStorage.copyStorageElementLastCommitTo( sMetaInfo, xMetaInfStorage );
+			   xDocumentStorage.copyStorageElementLastCommitTo( ConstantCustomIT.m_sSignatureStorageName, xMetaInfStorage );
 			   xAnotherSubStore.dispose();						   
 			}	
 
 			//read the file xadessignature.xml
 			try {
+				//the only supported method appears
 				XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.READWRITE);
 
-				XInputStream xInpStream = xTheSignature.getInputStream();
+				if(xTheSignature != null) {
+					XInputStream xInpStream = xTheSignature.getInputStream();
 
-//				sdoc.writeSignaturesToXStream(xOutStream);
-
-//				XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
-//				if (xTransObj != null) {
-//					m_aLogger.log("XTransactedObject exists. ===================");
-//					xTransObj.commit();
-//				}
-
-				m_aLogger.log("file "+ConstantCustomIT.m_sSignatureFileName+" opened");
-				XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class,
-						xTheSignature);
-				if (xStreamComp == null)
-					throw new com.sun.star.uno.RuntimeException();
-				xStreamComp.dispose();
-
-				//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
-				//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
-				//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
-
-//				xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,xDocumentStorage);
-//				if (xTransObj != null) {
-//					m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
-//					xTransObj.commit();
-//				}
-
-				//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
-				//							            if(xCommPer != null ) {
-				//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
-				//											xCommPer.storeOwn();
-				//							            }
-
+					if(xInpStream != null)
+						m_aLogger.log("file "+ConstantCustomIT.m_sSignatureFileName+" opened, size: "+xInpStream.available());
+				
+					XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class, xTheSignature);
+					if (xStreamComp == null)
+						throw new com.sun.star.uno.RuntimeException();
+					xStreamComp.dispose();
+				}
 			} catch (InvalidStorageException e1) {
-				m_aLogger.severe(__FUNCTION__, "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+				m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+"/" + ConstantCustomIT.m_sSignatureFileName
 						+ "\"" + " error", e1);
 			} catch (IllegalArgumentException e1) {
-				m_aLogger.severe(__FUNCTION__, "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+				m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+"/" + ConstantCustomIT.m_sSignatureFileName
 						+ "\"" + " error", e1);
 			} catch (WrongPasswordException e1) {
-				m_aLogger.severe(__FUNCTION__, "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+				m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+"/" + ConstantCustomIT.m_sSignatureFileName
 						+ "\"" + " error", e1);
 			} catch (StorageWrappedTargetException e1) {
-				m_aLogger.severe(__FUNCTION__, "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+				m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+"/" + ConstantCustomIT.m_sSignatureFileName
 						+ "\"" + " error", e1);
 			} catch (com.sun.star.io.IOException e1) {
-				m_aLogger.severe(__FUNCTION__, "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+				m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+"/" + ConstantCustomIT.m_sSignatureFileName
 						+ "\"" + " error", e1);
 			}
-
 			xMetaInfStorage.dispose();
 		} catch (Exception e1) {
-			m_aLogger.severe(__FUNCTION__, "\"" + "META-INF" + "\"" + " cannot open", e1);
+			m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName+ "\"" + " cannot open", e1);
 				
 		}
 		//fill the signed document checker

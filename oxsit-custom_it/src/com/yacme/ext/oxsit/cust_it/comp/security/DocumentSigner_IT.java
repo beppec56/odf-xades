@@ -513,7 +513,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								//so, open the substorage META-INF from the main storage (e.g. the document)
 								try {
-									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement("META-INF",ElementModes.WRITE);
+									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
 
 									//try to remove the previous signature
 									//FIXME would be better to import the existent signatures and add the new one
@@ -570,19 +570,19 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										//							            }
 
 									} catch (InvalidStorageException e1) {
-										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 												+ "\"" + " error", e1);
 									} catch (IllegalArgumentException e1) {
-										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 												+ "\"" + " error", e1);
 									} catch (WrongPasswordException e1) {
-										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 												+ "\"" + " error", e1);
 									} catch (StorageWrappedTargetException e1) {
-										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 												+ "\"" + " error", e1);
 									} catch (com.sun.star.io.IOException e1) {
-										m_aLogger.severe("signAsFile", "\"" + "META-INF/" + ConstantCustomIT.m_sSignatureFileName
+										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 												+ "\"" + " error", e1);
 									}
 
@@ -590,7 +590,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 									xMetaInfStorage.dispose();
 								} catch (Exception e1) {
-									m_aLogger.severe("signAsFile", "\"" + "META-INF" + "\"" + " cannot open", e1);
+									m_aLogger.severe("signAsFile", "\"" +  ConstantCustomIT.m_sSignatureStorageName + "\"" + " cannot open", e1);
 								}
 							}
 							//at list one certificate was signed
