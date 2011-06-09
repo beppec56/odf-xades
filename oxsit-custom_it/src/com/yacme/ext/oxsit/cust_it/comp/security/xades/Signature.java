@@ -772,39 +772,40 @@ public class Signature implements Serializable {
                     SignedDocException.ERR_CERT_EXPIRED,
                     "Signers certificate has expired!", null));
         }
+       
         // check certificates CA
-        try {
-        	//ROB
-        	//DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
-        	DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
-        	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
-        } catch(SignedDocException ex) {
-            errs.add(ex);
-        }
+//        try {
+//        	//ROB
+//        	//DigiDocFactory digFac = ConfigManager.instance().getDigiDocFactory();
+//        	DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
+//        	digFac.verifyCertificate(m_keyInfo.getSignersCertificate());
+//        } catch(SignedDocException ex) {
+//            errs.add(ex);
+//        }
         // if we check signatures using CRL
-        String verifier = ConfigManager.instance().
-                getStringProperty("DIGIDOC_SIGNATURE_VERIFIER", "OCSP");
-        if(verifier != null && verifier.equals("CRL")) {
-        	try {
-        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
-            	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
-            } catch(SignedDocException ex) {
-         	   errs.add(ex);
-        	}
-        }
+//        String verifier = ConfigManager.instance().
+//                getStringProperty("DIGIDOC_SIGNATURE_VERIFIER", "OCSP");
+//        if(verifier != null && verifier.equals("CRL")) {
+//        	try {
+//        		CRLFactory crlFac = ConfigManager.instance().getCRLFactory();
+//            	crlFac.checkCertificate(m_keyInfo.getSignersCertificate(), new Date());
+//            } catch(SignedDocException ex) {
+//         	   errs.add(ex);
+//        	}
+//        }
         // check confirmation
-        if(m_unsigProp != null) {
-            ArrayList<SignedDocException> e = m_unsigProp.verify(sdoc);
-            if(!e.isEmpty())
-                errs.addAll(e);
-            if(m_unsigProp.getNotary() != null)
-            	do1 = m_unsigProp.getNotary().getProducedAt();
-        } else { // not OCSP confirmation
-            if(demandConfirmation)
-                errs.add(new SignedDocException(
-                    SignedDocException.ERR_NO_CONFIRMATION,
-                        "Signature has no OCSP confirmation!", null));
-        }
+//        if(m_unsigProp != null) {
+//            ArrayList<SignedDocException> e = m_unsigProp.verify(sdoc);
+//            if(!e.isEmpty())
+//                errs.addAll(e);
+//            if(m_unsigProp.getNotary() != null)
+//            	do1 = m_unsigProp.getNotary().getProducedAt();
+//        } else { // not OCSP confirmation
+//            if(demandConfirmation)
+//                errs.add(new SignedDocException(
+//                    SignedDocException.ERR_NO_CONFIRMATION,
+//                        "Signature has no OCSP confirmation!", null));
+//        }
         // verify timestamps
         ArrayList<X509Certificate> tsaCerts = findTSACerts();
         if(m_timestamps != null && m_timestamps.size() > 0) {
