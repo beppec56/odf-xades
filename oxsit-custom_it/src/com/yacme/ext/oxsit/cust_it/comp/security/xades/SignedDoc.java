@@ -847,8 +847,7 @@ public class SignedDoc {
             sig.update(digest);
             rc = sig.verify(signature);
             */
-            Cipher cryptoEngine = Cipher.getInstance(ConfigManager.
-            	instance().getProperty("DIGIDOC_VERIFY_ALGORITHM"), "BC");
+            Cipher cryptoEngine = Cipher.getInstance(ConfigManager.instance().getProperty("DIGIDOC_VERIFY_ALGORITHM"), "BC");
         	cryptoEngine.init(Cipher.DECRYPT_MODE, cert);
         	byte[] decryptedDigestValue = cryptoEngine.doFinal(signature);
         	byte[] cdigest = new byte[digest.length];

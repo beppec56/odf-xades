@@ -3,7 +3,16 @@
  */
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -12,12 +21,10 @@ import com.sun.star.embed.ElementModes;
 import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
 import com.sun.star.embed.XStorage;
-import com.sun.star.embed.XTransactedObject;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.io.IOException;
 import com.sun.star.io.XInputStream;
-import com.sun.star.io.XOutputStream;
 import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
@@ -32,12 +39,18 @@ import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
-import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFDataDescription;
+import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SAXSignedDocFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
@@ -259,7 +272,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		fillElementList(xThePackage, aElements, "", true);
 		return aElements;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#verifyDocumentSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
 	 */
@@ -270,6 +283,107 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	@Override
 	public int verifyDocumentSignatures(XFrame _xFrame, XModel _xDocumentModel, Object[] args) 
 			throws IllegalArgumentException, Exception {
+		final String __FUNCTION__ ="verifyDocumentSignatures: ";
+		//from the document model, get the docu storage
+		//get URL, open the storage from the url
+		ConfigManager.init("jar://ODFDocSigning.cfg");
+
+		try {
+			XStorage xDocumentStorage;		
+			//get URL, open the storage from url
+			//we need to get the XStorage separately, from the document URL
+			//But first we need a StorageFactory object
+			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
+			//then obtain the needed interface
+			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
+					xFact);
+			//now, using the only method available, open the storage
+			Object[] aArguments = new Object[2];
+			aArguments[0] = _xDocumentModel.getURL();
+			aArguments[1] = ElementModes.READWRITE;
+			//get the document storage object 
+			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+
+			//from the storage object (or better named, the service) obtain the interface we need
+			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+			
+			URL aUrl = new URL(_xDocumentModel.getURL());
+			//prepare a file from URL
+			File aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
+			ZipFile aTheDocuZip = new ZipFile(aZipFile);
+			
+			
+			if(aTheDocuZip != null) {
+				//openup the signature in META-INF zipped directory
+				//point to the signature file: "META-INF/xadessignatures.xml"
+				ZipEntry aSignaturesFileEntry = aTheDocuZip.getEntry(ConstantCustomIT.m_sSignatureStorageName+"/"+GlobConstant.m_sXADES_SIGNATURE_STREAM_NAME);
+				if(aSignaturesFileEntry != null) {
+				//read in the signature
+					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
+					if(fTheSignaturesFile != null) {
+						
+//DEBUG						m_aLogger.log("=============>>> bytes: "+fTheSignaturesFile.available());
+						// create a new SignedDoc 
+//						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
+						SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
+						ODFSignedDoc sdoc = (ODFSignedDoc) aFactory.readSignedDoc(fTheSignaturesFile);
+						// verify signature
+						Signature sig = null;
+						for (int i = 0; i < sdoc.countSignatures(); i++) {
+							sig = sdoc.getSignature(i);
+							
+							m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+									+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+							ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
+							if (errs.size() == 0)
+								m_aLogger.log("Verification OK!");
+							for (int j = 0; j < errs.size(); j++)
+								m_aLogger.severe(errs.get(i));
+						}
+						fTheSignaturesFile.close();
+					}
+					else
+						m_aLogger.warning(__FUNCTION__+" cannot open the signatures file into the document file");
+				
+				}
+				else
+					m_aLogger.warning(__FUNCTION__+" cannot open the signatures file entry into the document file");
+				//instantiate the document reader (a wrapper) 
+				aTheDocuZip.close();
+			}
+			else
+				m_aLogger.warning(__FUNCTION__+" cannot open the document file");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		} catch (ZipException e) {
+			m_aLogger.severe(e);
+		} catch (java.io.IOException e) {
+			m_aLogger.severe(e);
+		} catch (URISyntaxException e) {
+			m_aLogger.severe(e);
+		} catch (SignedDocException e) {
+			m_aLogger.severe(e);
+		}
+		
+
+		
+		
+		
+		return 0;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#verifyDocumentSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
+	 */
+	/*
+	 * verifies the document signatures present.
+	 * returns the document aggregated signature state
+	 */
+//	@Override
+	public int verifyDocumentSignatures_notused(XFrame _xFrame, XModel _xDocumentModel, Object[] args) 
+			throws IllegalArgumentException, Exception {
 		final String __FUNCTION__ ="verifyDocumentSignatures";
 // FIXME should return the status of the signatures, may be the state of the aggregate document signatures should be implemented as uno type
 		m_aLogger.log("verifyDocumentSignatures called");
@@ -278,6 +392,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		//get URL, open the storage from url
 		//we need to get the XStorage separately, from the document URL
 		//But first we need a StorageFactory object
+		
+		
 		Object xStorageFactService = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
 		//then obtain the needed interface
 		XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,xStorageFactService);
@@ -305,21 +421,21 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		//so, open the substorage META-INF form the main storage (e.g. the document)
 		try {
 			XStorage xMetaInfStorage = null;
-			try {
-				xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
-			}
-			catch (IOException e) {
-				m_aLogger.info(__FUNCTION__, "the substorage "+ConstantCustomIT.m_sSignatureStorageName+" might be locked, get the last committed version of it");
-			   Object oMyStorage =xStorageFact.createInstance();
-			   XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
-			   xDocumentStorage.copyStorageElementLastCommitTo( ConstantCustomIT.m_sSignatureStorageName, xMetaInfStorage );
-			   xAnotherSubStore.dispose();						   
-			}	
+//			try {
+				xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.READ);
+//			}
+//			catch (IOException e) {
+//				m_aLogger.info(__FUNCTION__, "the substorage "+ConstantCustomIT.m_sSignatureStorageName+" might be locked, get the last committed version of it");
+//			   Object oMyStorage =xStorageFact.createInstance();
+//			   XStorage xAnotherSubStore = (XStorage) UnoRuntime.queryInterface( XStorage.class, oMyStorage );
+//			   xDocumentStorage.copyStorageElementLastCommitTo( ConstantCustomIT.m_sSignatureStorageName, xMetaInfStorage );
+//			   xAnotherSubStore.dispose();						   
+//			}	
 
 			//read the file xadessignature.xml
 			try {
 				//the only supported method appears
-				XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.READWRITE);
+				XStream xTheSignature = xMetaInfStorage.openStreamElement(/*ConstantCustomIT.m_sSignatureFileName*/ "manifest.xml", ElementModes.READ);
 
 				if(xTheSignature != null) {
 					XInputStream xInpStream = xTheSignature.getInputStream();

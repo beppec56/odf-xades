@@ -273,6 +273,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(digiDocStream, handler);
 		} catch (SAXSignedDocException ex) {
+			m_aLogger.severe(ex);
 			throw ex.getSignedDocException();
 		} catch (Exception ex) {
 			SignedDocException.handleException(ex, SignedDocException.ERR_PARSE_XML);
@@ -1180,6 +1181,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 				m_sbCollectChars = null; // stop collecting
 				//debugWriteFile("SigInfo2.xml", si.toString());
 			} catch (SignedDocException ex) {
+				m_aLogger.severe(ex);
 				SAXSignedDocException.handleException(ex);
 			}
 
