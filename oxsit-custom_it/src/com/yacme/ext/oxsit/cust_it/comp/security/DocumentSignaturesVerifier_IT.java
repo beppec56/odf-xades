@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -328,6 +330,10 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
 						ODFSignedDoc sdoc = (ODFSignedDoc) aFactory.readSignedDoc(fTheSignaturesFile);
 						// verify signature
+
+					    // add BouncyCastle provider if not done yet
+						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
+						
 						Signature sig = null;
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
@@ -365,11 +371,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			m_aLogger.severe(e);
 		} catch (SignedDocException e) {
 			m_aLogger.severe(e);
+		} catch (InstantiationException e) {
+			m_aLogger.severe(e);
+		} catch (IllegalAccessException e) {
+			m_aLogger.severe(e);
+		} catch (ClassNotFoundException e) {
+			m_aLogger.severe(e);
 		}
-		
-
-		
-		
 		
 		return 0;
 	}	
