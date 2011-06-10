@@ -344,7 +344,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 							if (errs.size() == 0)
 								m_aLogger.log("Verification OK!");
 							for (int j = 0; j < errs.size(); j++)
-								m_aLogger.severe(errs.get(i));
+								m_aLogger.severe(errs.get(j));
 						}
 						fTheSignaturesFile.close();
 					}
