@@ -242,7 +242,7 @@ public class SignedInfo implements Serializable {
         Reference ref = null;
         for(int i = 0; (m_references != null) && (i < m_references.size()); i++) {
             Reference r1 = (Reference)m_references.get(i);
-            if(r1.getUri().equals("#" + df.getId())) {
+            if(r1.getUri().equals(/*"#" +*/ df.getId())) {
                 ref = r1;
                 break;
             }

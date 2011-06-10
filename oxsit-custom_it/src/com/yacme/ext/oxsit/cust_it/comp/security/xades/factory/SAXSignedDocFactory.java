@@ -65,7 +65,7 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
  */
 public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactory {
 	private Stack m_tags;
-	private SignedDoc m_doc;
+	private ODFSignedDoc m_doc;
 	private String m_strSigValTs, m_strSigAndRefsTs;
 	private StringBuffer m_sbCollectChars;
 	private StringBuffer m_sbCollectItem;
@@ -295,7 +295,8 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		SAXSignedDocFactory handler = this;
 		// Use the default (non-validating) parser
 		SAXParserFactory factory = SAXParserFactory.newInstance();
-		m_doc = sdoc;
+		//FIXME: hack (the casting) added to read in the ODF special document, needs to be checked
+		m_doc = (ODFSignedDoc)sdoc;
 		//m_doc.addSignature(new Signature(sdoc));
 		m_nCollectMode = 0;
 		try {
@@ -975,6 +976,9 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 					//m_doc = new SignedDoc(format, version);
 					m_doc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES,
 							SignedDoc.VERSION_1_3);
+					
+					//FIXME: BEPPEC56 check it !
+					m_doc.addODFData();
 				} catch (SignedDocException ex) {
 					SAXSignedDocException.handleException(ex);
 				}

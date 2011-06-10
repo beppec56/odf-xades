@@ -707,7 +707,8 @@ public class Signature implements Serializable {
             // then go and check it's digest
             // If the datafile doesn't exist the
             // just trust whatever is in the XML
-            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED)) {
+            if(df.getContentType().equals(DataFile.CONTENT_DETATCHED) /*|| df.getContentType().equals(DataFile.CONTENT_ODF_PKG_XML_ENTRY) ||
+            		df.getContentType().equals(DataFile.CONTENT_ODF_PKG_BINARY_ENTRY)*/) {
                 File fTest = new File(df.getFileName());
                 if(fTest.canRead()) {
                     //System.out.println("Check detatched file: " + fTest.getAbsolutePath());
