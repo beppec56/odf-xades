@@ -389,14 +389,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			sdoc.addODFData();
 
 			XOX_X509Certificate aCert = _aCertArray[0];
-
-			CertificateFactory cf;
-			cf = CertificateFactory.getInstance("X.509");
-			java.io.ByteArrayInputStream bais = null;
-
-			bais = new java.io.ByteArrayInputStream(aCert.getCertificateAttributes().getDEREncoded());
-			X509Certificate certChild = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
-
+			X509Certificate certChild =  Helpers.getCertificate(aCert);
 			m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
 
 			// get the device this was seen on
