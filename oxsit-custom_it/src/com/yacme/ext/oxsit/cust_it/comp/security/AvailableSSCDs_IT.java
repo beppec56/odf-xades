@@ -98,6 +98,8 @@ import com.yacme.ext.oxsit.security.ReadCerts;
 public class AvailableSSCDs_IT extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
+		//FIXME: remoce this interface, and change the behaviour accordingly.
+		//with this implementation there is a chance that with more than one SSCD on line the system will fail !
 		XOX_CertificatePKCS11Attributes, //added for convenience
 										//so we use this UNO component to pass
 										//certificate information when adding a certificate
