@@ -7,9 +7,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.Provider;
 import java.security.Security;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -31,6 +32,7 @@ import com.sun.star.io.XStream;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
@@ -64,10 +66,16 @@ public class DocumentSignaturesVerifier_IT extends ComponentBase //help class, i
 implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVerifier {
 
 	protected IDynamicLogger m_aLogger;
+	protected IDynamicLogger m_aLoggerDialog;
 	
 	protected XComponentContext m_xCC;
 	private XMultiComponentFactory m_xMCF;
 	private XFrame m_xFrame;
+
+	//the certificates corresponding to this document
+	//every certificate means one signature.
+	// this list can be retrieved using the method getX509Certificates() 
+	protected Vector<XOX_X509Certificate>	m_xQualCertList;
 
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = DocumentSignaturesVerifier_IT.class.getName();
@@ -78,12 +86,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		m_xCC = _ctx;
 		m_xMCF = _ctx.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);
-		m_aLogger = new DynamicLoggerDialog(this, _ctx);
+		m_aLoggerDialog = new DynamicLoggerDialog(this, _ctx);
 		m_aLogger.enableLogging();
+		m_aLoggerDialog.enableLogging();
 		m_aLogger.ctor();
-		
+
 //		fillLocalizedStrings();
-		
+		m_xQualCertList = new Vector<XOX_X509Certificate>(10,1);		
 	}
 
 	/* (non-Javadoc)
@@ -123,16 +132,137 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	public void initialize(Object[] _args) throws Exception {
 		
 	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seecom.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.
+	 * XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		super.addEventListener(arg0);
+	}
+
+	private void cleanUpCertificates() {
+		if(!m_xQualCertList.isEmpty()) {
+			for(int i=0; i< m_xQualCertList.size();i++) {
+				XOX_X509Certificate xQC = m_xQualCertList.elementAt(i);
+				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
+				if(xComp != null)
+					xComp.dispose();
+			}
+		}		
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.sun.star.lang.XComponent#dispose() called to clean up the class
+	 * before closing
+	 */
+	@Override
+	public void dispose() {
+		// FIXME need to check if this element is referenced somewhere before deallocating it		m_aLogger.entering("dispose");
+		//dispose of all the certificate
+		cleanUpCertificates();
+		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seecom.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.
+	 * XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		super.removeEventListener(arg0);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getX509Certificates()
 	 */
 	@Override
 	public XOX_X509Certificate[] getX509Certificates() {
-		// TODO Auto-generated method stub
-		return null;
+		XOX_X509Certificate[] ret = null;
+		//detect the number of vector present
+		if(!m_xQualCertList.isEmpty()) {
+			ret = new XOX_X509Certificate[m_xQualCertList.size()];
+			try {
+				m_xQualCertList.copyInto(ret);
+			} catch(NullPointerException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(IndexOutOfBoundsException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(ArrayStoreException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			}
+		}
+		return ret;
 	}
 
+	/* 
+	 * 
+	 */
+	private void addCertificate(X509Certificate _aCert) {
+		// instantiate the components needed to check this certificate
+		// create the Certificate Control UNO objects
+		// first the certificate compliance control
+		try {
+			Object oCertCompl;
+			oCertCompl = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+			// now the certification path control
+			Object oCertPath = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+			Object oCertRev = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+			Object oCertDisp = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
+					m_xCC);
+
+			// prepare objects for subordinate service
+			Object[] aArguments = new Object[6];
+			// byte[] aCert = cert.getEncoded();
+			// set the certificate raw value
+			aArguments[0] =   _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
+			aArguments[1] = new Boolean(false);// FIXME change according to UI
+												// (true) or not UI (false)
+			// the order used for the following three certificate check objects
+			// is the same that will be used for a full check of the certificate
+			// if one of your checker object implements more than one interface
+			// when XOX_X509Certificate.verifyCertificate will be called,
+			// the checkers will be called in a fixed sequence (compliance,
+			// certification path, revocation state).
+			aArguments[2] = oCertCompl; // the compliance checker object, which
+										// implements the needed interface
+			aArguments[3] = oCertPath;// the certification path checker
+			aArguments[4] = oCertRev; // the revocation state checker
+
+			// the display formatter can be passed in any order, here it's the
+			// last one
+			aArguments[5] = oCertDisp;
+
+			Object oACertificate;
+			oACertificate = m_xMCF
+					.createInstanceWithArgumentsAndContext(
+							GlobConstant.m_sX509_CERTIFICATE_SERVICE,
+							aArguments, m_xCC);
+			// get the main interface
+			XOX_X509Certificate xQualCert = (XOX_X509Certificate) UnoRuntime
+					.queryInterface(XOX_X509Certificate.class, oACertificate);
+			
+			//add this device as the source device for this certificate
+			//(will be handly if we sign with the corresponding private key)
+			xQualCert.setSSCDevice(null);
+//			xQualCert.setCertificateAttributes(aCertificateAttributes);
+			m_xQualCertList.add(xQualCert);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		} catch (CertificateEncodingException e) {
+			m_aLogger.severe(e);
+		}
+	}
+		
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, int, java.lang.Object[])
 	 */
@@ -207,19 +337,18 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 					}
 				}
 			} catch (InvalidStorageException e) {
-				m_aLogger.warning("fillElementList", aElements[i] + " missing", e);
+				m_aLoggerDialog.warning("fillElementList", aElements[i] + " missing", e);
 			} catch (NoSuchElementException e) {
-				m_aLogger.warning("fillElementList", aElements[i] + " missing", e);
+				m_aLoggerDialog.warning("fillElementList", aElements[i] + " missing", e);
 			} catch (IllegalArgumentException e) {
-				m_aLogger.warning("fillElementList", aElements[i] + " missing", e);
+				m_aLoggerDialog.warning("fillElementList", aElements[i] + " missing", e);
 			} catch (StorageWrappedTargetException e) {
-				m_aLogger.warning("fillElementList", aElements[i] + " missing", e);
+				m_aLoggerDialog.warning("fillElementList", aElements[i] + " missing", e);
 			} catch (IOException e) {
-				m_aLogger.warning("fillElementList", aElements[i] + " missing", e);
+				m_aLoggerDialog.warning("fillElementList", aElements[i] + " missing", e);
 			}
 		}
 	}
-
 	
 	/**
 	 * closely resembles the function  DocumentSignatureHelper::CreateElementList
@@ -309,8 +438,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//from the storage object (or better named, the service) obtain the interface we need
 			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 			
-			URL aUrl = new URL(_xDocumentModel.getURL());
-			//prepare a file from URL
+			//prepare a zip file from URL
 			File aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
 			ZipFile aTheDocuZip = new ZipFile(aZipFile);
 			
@@ -335,6 +463,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
 						
 						Signature sig = null;
+						cleanUpCertificates(); //free the current certificate list						
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
 							
@@ -345,6 +474,15 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 								m_aLogger.log("Verification OK!");
 							for (int j = 0; j < errs.size(); j++)
 								m_aLogger.severe(errs.get(j));
+							// add the certificate of this signature to the certificate list and
+							X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
+							if(aCert != null) {
+//add the certificate to the internal list of certificates
+								addCertificate(aCert);
+							}
+							
+							// add the certificate the error status detected (not the check using OCSP or CRL
+							
 						}
 						fTheSignaturesFile.close();
 					}
