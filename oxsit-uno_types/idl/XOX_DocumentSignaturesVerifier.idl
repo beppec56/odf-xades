@@ -45,6 +45,17 @@
 		*/
 		[attribute,readonly]  sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
 
+	  /** Load the certificates from the signatures of the gived document.
+	   * @param xFrame the frame to be used as anchor for dialogs
+	   * @param xTheDocument the model of the document from which the signature certificates should loaded
+           * @return the sequence of the certificates found or null if no certificates (then no signatures)
+	   */
+		sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> loadAndGetCertificates([in] com::sun::star::frame::XFrame xFrame,
+									[in] com::sun::star::frame::XModel xTheDocumentModel )
+
+						raises( ::com::sun::star::lang::IllegalArgumentException,
+								::com::sun::star::uno::Exception );
+
 	/** Used to check if the signed document is untampered and if the signare itself is correct<br>
 		@param xFrame the frame to be used as anchor for dialogs
 		@param xTheDocument the model of the document to be verified
