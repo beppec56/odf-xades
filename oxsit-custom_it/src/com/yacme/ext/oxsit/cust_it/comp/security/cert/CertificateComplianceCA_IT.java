@@ -270,12 +270,8 @@ public class CertificateComplianceCA_IT extends ComponentBase //help class, impl
 			throw (new IllegalArgumentException("XOX_CertificateComplianceControlProcedure#verifyCertificateCertificateCompliance wrong argument"));
 		m_aCertificateState = CertificateState.OK;
 		//convert the certificate to java internal representation
-        java.security.cert.CertificateFactory cf;
 		try {
-			cf = java.security.cert.CertificateFactory.getInstance("X.509");
-			java.io.ByteArrayInputStream bais = null;
-            bais = new java.io.ByteArrayInputStream(m_xQc.getCertificateAttributes().getDEREncoded());
-            m_JavaCert = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
+            m_JavaCert = Helpers.getCertificate(m_xQc);// (java.security.cert.X509Certificate) cf.generateCertificate(bais);
             //check for version, if version is not 3, exits, certificate cannot be used
             
 			m_aCAState = CertificationAuthorityState.TRUSTED;

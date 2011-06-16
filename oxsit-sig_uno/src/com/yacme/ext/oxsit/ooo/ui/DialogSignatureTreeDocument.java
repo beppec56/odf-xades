@@ -60,7 +60,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	private XOX_DocumentSignaturesVerifier m_axoxDocumentVerifier;
 
 	/**
-	 * 
+	 * Display the signatures present inside the ODF document
 	 * @param frame
 	 * @param context
 	 * @param _xmcf
@@ -86,6 +86,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 * 
 	 */
 	public void initialize(XWindowPeer _xParentWindow, int posX, int posY) throws BasicErrorException {
+		final String __FUNCTION__ = "initialize: ";
 		m_aLogger.entering("initialize");
 		insertButton(this,
 				CertifTreeDlgDims.DS_COL_PB2(),
@@ -128,6 +129,41 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 //			xTFWindow.addKeyListener( this );
 //			Utilities.showControlNames(m_xDlgContainer);
 //			Utilities.showNames(m_xDlgModelNameContainer);
+			
+			//Add init of signatures, check, verify and add certificates
+//			/oxsit-sig_uno/src/com/yacme/ext/oxsit/ooo/ui/DialogCertTreeSSCDs.java
+			
+			//verify document (always when dialog started)
+
+			try {
+				Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+				if(aDocVerService != null) {				
+					m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+					if(m_axoxDocumentVerifier != null) {
+						//grab the certificates and add them to the dialog						
+						m_axoxDocumentVerifier.loadAndGetCertificates(m_xParentFrame,getDocumentModel());
+//						m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(),null);
+						
+						
+					}
+					else
+						m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+			        // now clean up
+			        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+				}
+				else
+					m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
+
+			} catch (Throwable e) {
+				m_aLogger.severe(__FUNCTION__, e);
+			}
+
+			
+//			if ((m_nNumOfSSCD = showSSCD()) == 0) {
+//	            //give the user some feedback
+//					MessageNoTokens	aMex = new MessageNoTokens(m_xParentFrame,m_xMCF,m_xContext);
+//		            aMex.executeDialogLocal("");
+//				}			
 	}
 
 	@Override

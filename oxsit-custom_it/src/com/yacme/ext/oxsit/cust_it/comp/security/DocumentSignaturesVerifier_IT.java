@@ -179,91 +179,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	}
 
 	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getX509Certificates()
-	 */
-	@Override
-	public XOX_X509Certificate[] getX509Certificates() {
-		XOX_X509Certificate[] ret = null;
-		//detect the number of vector present
-		if(!m_xQualCertList.isEmpty()) {
-			ret = new XOX_X509Certificate[m_xQualCertList.size()];
-			try {
-				m_xQualCertList.copyInto(ret);
-			} catch(NullPointerException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
-			} catch(IndexOutOfBoundsException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
-			} catch(ArrayStoreException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
-			}
-		}
-		return ret;
-	}
-
-	/* 
-	 * 
-	 */
-	private void addCertificate(X509Certificate _aCert) {
-		// instantiate the components needed to check this certificate
-		// create the Certificate Control UNO objects
-		// first the certificate compliance control
-		try {
-			Object oCertCompl;
-			oCertCompl = m_xMCF.createInstanceWithContext(
-					ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
-			// now the certification path control
-			Object oCertPath = m_xMCF.createInstanceWithContext(
-					ConstantCustomIT.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
-			Object oCertRev = m_xMCF.createInstanceWithContext(
-					ConstantCustomIT.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
-			Object oCertDisp = m_xMCF.createInstanceWithContext(
-					ConstantCustomIT.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
-					m_xCC);
-
-			// prepare objects for subordinate service
-			Object[] aArguments = new Object[6];
-			// byte[] aCert = cert.getEncoded();
-			// set the certificate raw value
-			aArguments[0] =   _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
-			aArguments[1] = new Boolean(false);// FIXME change according to UI
-												// (true) or not UI (false)
-			// the order used for the following three certificate check objects
-			// is the same that will be used for a full check of the certificate
-			// if one of your checker object implements more than one interface
-			// when XOX_X509Certificate.verifyCertificate will be called,
-			// the checkers will be called in a fixed sequence (compliance,
-			// certification path, revocation state).
-			aArguments[2] = oCertCompl; // the compliance checker object, which
-										// implements the needed interface
-			aArguments[3] = oCertPath;// the certification path checker
-			aArguments[4] = oCertRev; // the revocation state checker
-
-			// the display formatter can be passed in any order, here it's the
-			// last one
-			aArguments[5] = oCertDisp;
-
-			Object oACertificate;
-			oACertificate = m_xMCF
-					.createInstanceWithArgumentsAndContext(
-							GlobConstant.m_sX509_CERTIFICATE_SERVICE,
-							aArguments, m_xCC);
-			// get the main interface
-			XOX_X509Certificate xQualCert = (XOX_X509Certificate) UnoRuntime
-					.queryInterface(XOX_X509Certificate.class, oACertificate);
-			
-			//add this device as the source device for this certificate
-			//(will be handly if we sign with the corresponding private key)
-			xQualCert.setSSCDevice(null);
-//			xQualCert.setCertificateAttributes(aCertificateAttributes);
-			m_xQualCertList.add(xQualCert);
-		} catch (Exception e) {
-			m_aLogger.severe(e);
-		} catch (CertificateEncodingException e) {
-			m_aLogger.severe(e);
-		}
-	}
-		
-	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, int, java.lang.Object[])
 	 */
 	@Override
@@ -404,6 +319,193 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		return aElements;
 	}
 
+	/* 
+	 * 
+	 */
+	private void addCertificate(X509Certificate _aCert) {
+		// instantiate the components needed to check this certificate
+		// create the Certificate Control UNO objects
+		// first the certificate compliance control
+		try {
+			Object oCertCompl;
+			oCertCompl = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATE_COMPLIANCE_SERVICE_IT, m_xCC);
+			// now the certification path control
+			Object oCertPath = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATION_PATH_SERVICE_IT, m_xCC);
+			Object oCertRev = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sCERTIFICATE_REVOCATION_SERVICE_IT, m_xCC);
+			Object oCertDisp = m_xMCF.createInstanceWithContext(
+					ConstantCustomIT.m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT,
+					m_xCC);
+
+			// prepare objects for subordinate service
+			Object[] aArguments = new Object[6];
+			// byte[] aCert = cert.getEncoded();
+			// set the certificate raw value
+			// prepare the DER encoded form
+			
+			
+			aArguments[0] =   _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
+			aArguments[1] = new Boolean(false);// FIXME change according to UI
+												// (true) or not UI (false)
+			// the order used for the following three certificate check objects
+			// is the same that will be used for a full check of the certificate
+			// if one of your checker object implements more than one interface
+			// when XOX_X509Certificate.verifyCertificate will be called,
+			// the checkers will be called in a fixed sequence (compliance,
+			// certification path, revocation state).
+			aArguments[2] = oCertCompl; // the compliance checker object, which
+										// implements the needed interface
+			aArguments[3] = oCertPath;// the certification path checker
+			aArguments[4] = oCertRev; // the revocation state checker
+
+			// the display formatter can be passed in any order, here it's the
+			// last one
+			aArguments[5] = oCertDisp;
+
+			Object oACertificate;
+			oACertificate = m_xMCF.createInstanceWithArgumentsAndContext(GlobConstant.m_sX509_CERTIFICATE_SERVICE,
+							aArguments, m_xCC);
+			// get the main interface
+			XOX_X509Certificate xQualCert = (XOX_X509Certificate) UnoRuntime
+					.queryInterface(XOX_X509Certificate.class, oACertificate);
+			
+			//add this device as the source device for this certificate
+			//(will be handly if we sign with the corresponding private key)
+			xQualCert.setSSCDevice(null);
+//			xQualCert.setCertificateAttributes(aCertificateAttributes);
+			m_xQualCertList.add(xQualCert);
+		} catch (Exception e) {
+			m_aLogger.severe(e);
+		} catch (CertificateEncodingException e) {
+			m_aLogger.severe(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getX509Certificates()
+	 */
+	@Override
+	public XOX_X509Certificate[] getX509Certificates() {
+		XOX_X509Certificate[] ret = null;
+		//detect the number of vector present
+		if(!m_xQualCertList.isEmpty()) {
+			ret = new XOX_X509Certificate[m_xQualCertList.size()];
+			try {
+				m_xQualCertList.copyInto(ret);
+			} catch(NullPointerException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(IndexOutOfBoundsException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			} catch(ArrayStoreException ex) {
+				m_aLogger.severe("getQualifiedCertificates",ex);
+			}
+		}
+		return ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#loadAndGetCertificates(com.sun.star.frame.XFrame, com.sun.star.frame.XModel)
+	 */
+	@Override
+	public XOX_X509Certificate[] loadAndGetCertificates(XFrame _xFrame, XModel _xDocumentModel) throws IllegalArgumentException, Exception {
+		final String __FUNCTION__ ="loadAndGetCertificates: ";
+		XOX_X509Certificate[] ret = null;
+		try {
+			ConfigManager.init("jar://ODFDocSigning.cfg");
+			//remove the certificates eventually present in the list.
+			cleanUpCertificates();
+			//load the signatures from the provided document references	
+			XStorage xDocumentStorage;		
+			//get URL, open the storage from url
+			//we need to get the XStorage separately, from the document URL
+			//But first we need a StorageFactory object
+			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
+			//then obtain the needed interface
+			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
+					xFact);
+			//now, using the only method available, open the storage
+			Object[] aArguments = new Object[2];
+			aArguments[0] = _xDocumentModel.getURL();
+			aArguments[1] = ElementModes.READWRITE;
+			//get the document storage object 
+			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+			//from the storage object (or better named, the service) obtain the interface we need
+			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+			
+			//prepare a zip file from URL
+			File aZipFile;
+			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
+			ZipFile aTheDocuZip = new ZipFile(aZipFile);
+			
+			if(aTheDocuZip != null) {
+				//do not verify it,
+				//openup the signature in META-INF zipped directory
+				//point to the signature file: "META-INF/xadessignatures.xml"
+				ZipEntry aSignaturesFileEntry = aTheDocuZip.getEntry(ConstantCustomIT.m_sSignatureStorageName+"/"+GlobConstant.m_sXADES_SIGNATURE_STREAM_NAME);
+				if(aSignaturesFileEntry != null) {
+				//read in the signature
+					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
+					if(fTheSignaturesFile != null) {
+						
+//DEBUG						m_aLogger.log("=============>>> bytes: "+fTheSignaturesFile.available());
+						// create a new SignedDoc 
+//						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
+						SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
+						ODFSignedDoc sdoc = (ODFSignedDoc) aFactory.readSignedDoc(fTheSignaturesFile);
+						// verify signature
+
+					    // add BouncyCastle provider if not done yet
+						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
+
+						Signature sig = null;
+						for (int i = 0; i < sdoc.countSignatures(); i++) {
+							sig = sdoc.getSignature(i);
+							
+							m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+									+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+							// add the certificate of this signature to the certificate list and
+							X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
+							if(aCert != null) {
+								// add the certificate the error status detected (not the check using OCSP or CRL
+								//add the certificate to the internal list of certificates
+								addCertificate(aCert);
+							}
+						}
+						fTheSignaturesFile.close();
+					}
+					else
+						m_aLogger.warning(__FUNCTION__+" cannot open the signatures file into the document file");
+				
+				}
+				else
+					m_aLogger.warning(__FUNCTION__+" cannot open the signatures file entry into the document file");
+				//instantiate the document reader (a wrapper) 
+				aTheDocuZip.close();
+			}
+			else
+				m_aLogger.warning(__FUNCTION__+" cannot open the document file");
+				//simply load certificates
+				
+				//and return them
+				ret = getX509Certificates();
+		} catch (URISyntaxException e) {
+			m_aLogger.severe(e);
+		} catch (java.io.IOException e) {
+			m_aLogger.severe(e);
+		} catch (InstantiationException e) {
+			m_aLogger.severe(e);
+		} catch (IllegalAccessException e) {
+			m_aLogger.severe(e);
+		} catch (ClassNotFoundException e) {
+			m_aLogger.severe(e);
+		} catch (SignedDocException e) {
+			m_aLogger.severe(e);
+		}
+		return ret;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#verifyDocumentSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
 	 */
@@ -418,7 +520,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		//from the document model, get the docu storage
 		//get URL, open the storage from the url
 		ConfigManager.init("jar://ODFDocSigning.cfg");
-
+		if(_xDocumentModel == null || _xFrame == null)
+			throw new IllegalArgumentException();
+		
 		try {
 			XStorage xDocumentStorage;		
 			//get URL, open the storage from url
@@ -498,9 +602,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			else
 				m_aLogger.warning(__FUNCTION__+" cannot open the document file");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
+			m_aLogger.severe(e);
 		} catch (ZipException e) {
 			m_aLogger.severe(e);
 		} catch (java.io.IOException e) {

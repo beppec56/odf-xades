@@ -276,6 +276,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 			m_aLogger.severe(ex);
 			throw ex.getSignedDocException();
 		} catch (Exception ex) {
+			m_aLogger.severe(ex);
 			SignedDocException.handleException(ex, SignedDocException.ERR_PARSE_XML);
 		}
 		if (m_doc == null)
@@ -439,7 +440,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 	 */
 	public void startElement(String namespaceURI, String lName, String qName, Attributes attrs) throws SAXSignedDocException {
 		//if(m_logger.isDebugEnabled())
-		m_aLogger.log("Start Element: " + qName + " lname: " + lName + " uri: " + namespaceURI);
+//		m_aLogger.log("Start Element: " + qName + " lname: " + lName + " uri: " + namespaceURI);
 		m_tags.push(qName);
 		if (qName.equals("SigningTime") || qName.equals("IssuerSerial") || qName.equals("X509SerialNumber")
 				|| qName.equals("X509IssuerName") || qName.equals("ClaimedRole") || qName.equals("City")
@@ -1042,7 +1043,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 	 */
 	public void endElement(String namespaceURI, String sName, String qName) throws SAXException {
 		//if(m_logger.isDebugEnabled())
-		m_aLogger.log("End Element: " + qName + " collect: " + m_nCollectMode);
+//		m_aLogger.log("End Element: " + qName + " collect: " + m_nCollectMode);
 		// remove last tag from stack
 		String currTag = (String) m_tags.pop();
 		// collect SAX event data to original XML data
