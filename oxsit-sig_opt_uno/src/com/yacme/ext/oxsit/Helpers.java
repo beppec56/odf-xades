@@ -134,11 +134,25 @@ public class Helpers {
 		cf = java.security.cert.CertificateFactory.getInstance("X.509");
 		java.io.ByteArrayInputStream bais = null;
 		bais = new java.io.ByteArrayInputStream(_aCert.getCertificateAttributes().getDEREncoded());
-		X509Certificate certJava = (java.security.cert.X509Certificate) cf
-				.generateCertificate(bais);
+		X509Certificate certJava = (java.security.cert.X509Certificate) cf.generateCertificate(bais);
 		return certJava;
 	}
 
+	/** Returns the DER encoded form of a X509 certificate.
+	 * @param _aCert the X509Certificate to encode
+	 * @return a byte array representing the DER encoded form of the certificate
+	 * @throws CertificateEncodingException
+	 * @throws IOException
+	 */
+	public static byte[] getDEREncoded(X509Certificate _aCert) throws CertificateEncodingException, IOException {
+		ByteArrayInputStream as;
+		as = new ByteArrayInputStream(_aCert.getEncoded());
+		ASN1InputStream aderin = new ASN1InputStream(as);
+		DERObject ado;
+		ado = aderin.readObject();
+		return  ado.getEncoded("DER"); // _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
+	}
+	                   
 	public static String getCRLCacheSystemPath(XComponentContext _xCC) throws Exception, URISyntaxException, IOException {
 		String filesep = System.getProperty("file.separator");
 		return Helpers.getExtensionStorageSystemPath(_xCC)+
