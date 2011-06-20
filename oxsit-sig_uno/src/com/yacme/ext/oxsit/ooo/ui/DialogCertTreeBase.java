@@ -591,6 +591,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 		//link to our data
 		xaCNode.setDataValue(aNewNode);
+		// link back to the graphical element in the tree
+		aNewNode.setTheTreeNode(xaCNode);
 		//add it to the parent node
 		//if parent node == null create a node from
 		try {

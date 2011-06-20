@@ -95,6 +95,7 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 
 	public void updateCertificateStates() {
 		if(getCertificate() != null) {
+			setCertificateGraficStateValue(getCertificate().getCertificateState());
 			setCertificateState(getCertificate().getCertificateState());
 			setCertificateStateConditions(getCertificate().getCertificateStateConditions());
 			setCertificationAutorityState(getCertificate().getCertificationAuthorityState());			
@@ -131,8 +132,6 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	public void setCertificateGraficStateValue(
 			int m_nCertificateGraficStateValue) {
 		this.m_nCertificateGraficStateValue = m_nCertificateGraficStateValue;
-//set the right string
-		
 	}
 
 	/**

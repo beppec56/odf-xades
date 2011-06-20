@@ -239,6 +239,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 //for the moment, use this to load the document at hand , verify it and display the certificates of every signature found.
 		//first identify the type of selected element
 //		XComponent xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
+		final String __FUNCTION__ = "verifyButtonPressed: "; 
 		
 		if(m_aTheCurrentlySelectedTreeNode != null) {
 			//disable it, that is un-display it
@@ -256,15 +257,15 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 											getDocumentModel(), null);
 								}
 								else
-									m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+									m_aLogger.warning(__FUNCTION__+"XOX_DocumentSignaturesVerifier interface NOT available");
 						        // now clean up
 						        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
 							}
 							else
-								m_aLogger.warning("verifyButtonPressed and "+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
+								m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
 
 						} catch (Exception e) {
-							m_aLogger.severe("verifyButtonPressed", e);
+							m_aLogger.severe(__FUNCTION__, e);
 						}						
 					}
 					else if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
@@ -277,25 +278,25 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							XOX_X509Certificate aCert = aCurrentCertNode.getCertificate();
 							if(aCert != null) {
 								try {
-									aCert.verifyCertificateRevocationState(m_xParentFrame);
+									aCert.verifyCertificate(m_xParentFrame);
 									//now update the string and the text on screen
 									aCurrentCertNode.updateCertificateStates();
 									aCurrentCertNode.updateString();
+									aCurrentCertNode.setNodeGraphic(setCertificateNodeGraficStringHelper(aCert));
+									aCurrentCertNode.getTheTreeNode().setNodeGraphicURL(aCurrentCertNode.getNodeGraphic());
+									//update the graphic simbol						
 									aCurrentCertNode.EnableDisplay(true);
-								} catch (IllegalArgumentException e) {
-									m_aLogger.severe(e);
 								} catch (Throwable e) {
-									m_aLogger.severe(e);
+									m_aLogger.severe(__FUNCTION__,e);
 								}
 							}
 						}
 						else
-							m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
-						
+							m_aLogger.warning(__FUNCTION__+"(1) Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());						
 					}
 				}
 				else
-					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+					m_aLogger.warning(__FUNCTION__+"(2) Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
 		}
 	}	

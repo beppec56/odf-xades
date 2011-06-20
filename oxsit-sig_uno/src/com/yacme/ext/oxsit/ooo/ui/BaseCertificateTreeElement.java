@@ -35,6 +35,7 @@ import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XFixedText;
 import com.sun.star.awt.XWindow;
+import com.sun.star.awt.tree.XMutableTreeNode;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -163,6 +164,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 
 
 	protected MessageConfigurationAccess m_aRegAcc = null; 
+	
+	private XMutableTreeNode	m_aTheTreeNode;
 
 	public BaseCertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		setNodeType(TreeNodeType.CERTIFICATE);
@@ -294,7 +297,6 @@ public class BaseCertificateTreeElement extends TreeElement {
 		}
 		m_aRegAcc.dispose();
 	}
-
 	
 	public void updateString() {
 		//grab the string for certificate status
@@ -471,5 +473,19 @@ public class BaseCertificateTreeElement extends TreeElement {
 	@Override
 	public void removeEventListener(XEventListener arg0) {
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @param m_aTheTreeNode the m_aTheTreeNode to set
+	 */
+	public void setTheTreeNode(XMutableTreeNode m_aTheTreeNode) {
+		this.m_aTheTreeNode = m_aTheTreeNode;
+	}
+
+	/**
+	 * @return the m_aTheTreeNode
+	 */
+	public XMutableTreeNode getTheTreeNode() {
+		return m_aTheTreeNode;
 	}
 }
