@@ -52,6 +52,8 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	protected boolean 	m_bInfoEnabled = true;
 	protected boolean 	m_bWarningEnabled = true;
 	
+	private boolean 	m_bDebugEnabled = true;
+
 	protected XComponentContext m_xCC;
 	protected XMultiComponentFactory m_xMCF;
 
@@ -78,7 +80,9 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 			}
 		}
 		m_sOwnerClassHashHex = String.format( "%8H", _theOwner );
-		m_sOwnerClass =  _theOwner.getClass().getName();		
+		m_sOwnerClass =  _theOwner.getClass().getName();
+		
+		//FIXME enable levels according to configuration ?
 	}
 
 	/**
@@ -97,6 +101,15 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	public void ctor(String _message) {
 		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init> "+_message);
+	}
+
+	/**
+	 * outputs a log with the class hex hash + one message
+	 * @param the message to output
+	 */
+	public void debug(String _message) {
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "", _message);
 	}
 
 	/**
@@ -256,6 +269,20 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	public void disableWarning() {
 		m_bWarningEnabled = false;
 		
+	}
+
+	/**
+	 * @param m_bDebugEnabled the m_bDebugEnabled to set
+	 */
+	public void enableDebug(boolean _bEnable) {
+		this.m_bDebugEnabled = _bEnable;
+	}
+
+	/**
+	 * @return the m_bDebugEnabled
+	 */
+	public boolean isDebugEnabled() {
+		return m_bDebugEnabled;
 	}
 
 	/**

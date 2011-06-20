@@ -46,6 +46,8 @@ public interface IDynamicLogger {
 
 	abstract void ctor(String _message);
 
+	abstract void debug(String _message);
+
 	abstract void log(String _message);
 
 	abstract void log(Throwable e, boolean _useDialog);

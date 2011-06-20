@@ -35,7 +35,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 * 
 	 */
 	public DynamicLazyLogger() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -43,8 +42,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void ctor() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -52,8 +49,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void ctor(String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +56,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void disableInfo() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -70,8 +63,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void disableLogging() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -79,8 +70,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void disableWarning() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -88,8 +77,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void enableInfo() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -97,8 +84,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void enableLogging() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -106,8 +91,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void enableWarning() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -115,8 +98,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void entering(String method) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -124,8 +105,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void entering(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -133,8 +112,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void exiting(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -142,8 +119,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void info(String method) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -151,8 +126,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void info(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -160,8 +133,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void log(String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -169,8 +140,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void log(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -178,8 +147,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void severe(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -187,8 +154,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void severe(Throwable ex) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -196,8 +161,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void severe(String method, String _message, Throwable ex) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -205,8 +168,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void severe(String method, Throwable ex) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -214,8 +175,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void stopLogging() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -223,8 +182,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void warning(String method) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -232,8 +189,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void warning(String method, String _message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -241,8 +196,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void warning(String method, String _message, Throwable ex) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -251,8 +204,6 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	@Override
 	public void log_exception(int theLevel, String method, String _message,
 			Throwable ex, boolean useDialog) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -260,8 +211,13 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	 */
 	@Override
 	public void log(Throwable e, boolean dialog) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.logging.IDynamicLogger#debug(java.lang.String)
+	 */
+	@Override
+	public void debug(String message) {
 	}
 
 }
