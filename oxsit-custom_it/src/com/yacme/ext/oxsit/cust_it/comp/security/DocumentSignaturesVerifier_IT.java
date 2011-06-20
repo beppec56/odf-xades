@@ -3,6 +3,7 @@
  */
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -16,6 +17,9 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DERObject;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -343,10 +347,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			Object[] aArguments = new Object[6];
 			// byte[] aCert = cert.getEncoded();
 			// set the certificate raw value
-			// prepare the DER encoded form
-			
-			
-			aArguments[0] =   _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
+			// prepare the certificate DER encoded form
+			aArguments[0] =  Helpers.getDEREncoded(_aCert); // _aCert.getTBSCertificate();//       aCertificateAttributes.getDEREncoded();//_aDERencoded;// aCert;
 			aArguments[1] = new Boolean(false);// FIXME change according to UI
 												// (true) or not UI (false)
 			// the order used for the following three certificate check objects
@@ -379,6 +381,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		} catch (Exception e) {
 			m_aLogger.severe(e);
 		} catch (CertificateEncodingException e) {
+			m_aLogger.severe(e);
+		} catch (java.io.IOException e) {
 			m_aLogger.severe(e);
 		}
 	}

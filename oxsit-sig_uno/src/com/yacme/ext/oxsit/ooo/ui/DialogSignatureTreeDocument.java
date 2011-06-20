@@ -118,11 +118,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					CertifTreeDlgDims.DLGS_BOTTOM_FL_Y(CertifTreeDlgDims.dsHeigh()), 
 					CertifTreeDlgDims.dsWidth(), "");
 
-			//must be called AFTER the local init
-			m_sTreeCtl = "certsigntree"; // the tree element for this dialog, new name
-			super.initializeLocal(DLG_SIGN_TREE, m_sDlgListCertTitle, posX, posY);
+		//must be called AFTER the local init
+		m_sTreeCtl = "certsigntree"; // the tree element for this dialog, new name
+		super.initializeLocal(DLG_SIGN_TREE, m_sDlgListCertTitle, posX, posY);
 
-			center();
+		center();
 			
 //			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
 //					super.m_xDialogControl );
@@ -133,37 +133,33 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			//Add init of signatures, check, verify and add certificates
 //			/oxsit-sig_uno/src/com/yacme/ext/oxsit/ooo/ui/DialogCertTreeSSCDs.java
 			
-			//verify document (always when dialog started)
+		//load the certificates from the document signatures (always when dialog starts)
 
-			try {
-				Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
-				if(aDocVerService != null) {				
-					m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
-					if(m_axoxDocumentVerifier != null) {
-						//grab the certificates and add them to the dialog						
+		try {
+			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+			if(aDocVerService != null) {				
+				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+				if(m_axoxDocumentVerifier != null) {
+					//grab the certificates and add them to the dialog						
+					XOX_X509Certificate[] oCertifs = 
 						m_axoxDocumentVerifier.loadAndGetCertificates(m_xParentFrame,getDocumentModel());
-//						m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(),null);
-						
-						
+					for(int idx = 0; idx < oCertifs.length; idx++) {
+						//add the certificate to the dialog tree
+						m_aLogger.debug(__FUNCTION__+"certificate added");
+						addASignature(oCertifs[idx]);
 					}
-					else
-						m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
-			        // now clean up
-			        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
 				}
 				else
-					m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
-
-			} catch (Throwable e) {
-				m_aLogger.severe(__FUNCTION__, e);
+					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+		        // now clean up
+		        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
 			}
+			else
+				m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
 
-			
-//			if ((m_nNumOfSSCD = showSSCD()) == 0) {
-//	            //give the user some feedback
-//					MessageNoTokens	aMex = new MessageNoTokens(m_xParentFrame,m_xMCF,m_xContext);
-//		            aMex.executeDialogLocal("");
-//				}			
+		} catch (Throwable e) {
+			m_aLogger.severe(__FUNCTION__, e);
+		}
 	}
 
 	@Override
@@ -241,24 +237,66 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	@Override
 	public void verifyButtonPressed() {
 //for the moment, use this to load the document at hand , verify it and display the certificates of every signature found.
-		try {
-			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
-			if(aDocVerService != null) {				
-				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
-				if(m_axoxDocumentVerifier != null) {
-					m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame, 
-							getDocumentModel(), null);
+		//first identify the type of selected element
+//		XComponent xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
+		
+		if(m_aTheCurrentlySelectedTreeNode != null) {
+			//disable it, that is un-display it
+			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
+			if(oTreeNodeObject != null) {
+				if(oTreeNodeObject instanceof TreeElement) {
+					TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
+					if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.SIGNATURE) {
+						try {
+							Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+							if(aDocVerService != null) {				
+								m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+								if(m_axoxDocumentVerifier != null) {
+									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame, 
+											getDocumentModel(), null);
+								}
+								else
+									m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+						        // now clean up
+						        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+							}
+							else
+								m_aLogger.warning("verifyButtonPressed and "+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
+
+						} catch (Exception e) {
+							m_aLogger.severe("verifyButtonPressed", e);
+						}						
+					}
+					else if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
+						//if it's a certificate, check the certificate
+						//get the XOX_Certitificate and test it
+						if(oTreeNodeObject instanceof CertificateTreeElement) {
+							CertificateTreeElement aCurrentCertNode = (CertificateTreeElement)oTreeNodeObject;					
+//							aCurrentNode.EnableDisplay(false);
+		//duplicate the certificate, then simply do the check for revocation list					
+							XOX_X509Certificate aCert = aCurrentCertNode.getCertificate();
+							if(aCert != null) {
+								try {
+									aCert.verifyCertificateRevocationState(m_xParentFrame);
+									//now update the string and the text on screen
+									aCurrentCertNode.updateCertificateStates();
+									aCurrentCertNode.updateString();
+									aCurrentCertNode.EnableDisplay(true);
+								} catch (IllegalArgumentException e) {
+									m_aLogger.severe(e);
+								} catch (Throwable e) {
+									m_aLogger.severe(e);
+								}
+							}
+						}
+						else
+							m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
+						
+					}
 				}
 				else
-					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
-		        // now clean up
-		        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
-			else
-				m_aLogger.warning("verifyButtonPressed and "+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
-
-		} catch (Exception e) {
-			m_aLogger.severe("verifyButtonPressed", e);
 		}
 	}	
 	/**

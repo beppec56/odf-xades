@@ -473,9 +473,9 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
-	protected XMutableTreeNode addToTreeRootHelper() {		
-		//add the device to the dialog, a single node, with the device as a description
-		return 		m_xTreeDataModel.createNode("Elenco CA", true);
+	//add the device to the dialog, a single node, with the device as a description
+	protected XMutableTreeNode addToTreeRootHelper(String _title) {		
+		return 		m_xTreeDataModel.createNode(_title, true);
 	}
 	
 	protected XMutableTreeNode addSSCDToTreeRootHelper(XOX_SSCDevice _aSSCDev) {		
@@ -555,7 +555,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	////// methods to manage the certificate display
-	protected void addX509CertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif, TreeNodeType _NodeType) {
+	protected CertificateTreeElement addX509CertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif, TreeNodeType _NodeType) {
 		//instantiate a certificate node
 		CertificateTreeElement aNewNode = new CertificateTreeElement(m_xContext,m_xMCF);
 		//set the type
@@ -592,6 +592,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//link to our data
 		xaCNode.setDataValue(aNewNode);
 		//add it to the parent node
+		//if parent node == null create a node from
 		try {
 			_aParentNode.appendChild(xaCNode);			
 			m_xTreeControl.expandNode(_aParentNode);
@@ -718,17 +719,18 @@ public class DialogCertTreeBase extends BasicDialog implements
 		//add the certificate path
 		//first see if there is a path
 		addCACertificateToTree(xaCNode, _aCertif);
+		return aNewNode;
 	}
 
 	//test function, remove when ready!
-	public void addOneSignature() {
+	protected void addOneSignature() {
 		//create a fake certificate description
 		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
 		addOneFakeCertificateToTreeRootHelper(aCert);
 	}
 
-	protected XMutableTreeNode addOneFakeCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
+	private XMutableTreeNode addOneFakeCertificateToTreeRootHelper(BaseCertificateTreeElement aCert) {		
 		//connect it to the right dialog pane
 		aCert.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
@@ -744,15 +746,44 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_aTreeRootNode.appendChild(xaCNode);			
 			m_xTreeControl.expandNode(m_aTreeRootNode);			
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			m_aLogger.severe("addOneCertificate", e);
 		} catch (ExpandVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			m_aLogger.severe("addOneCertificate", e);
 		}
 		return xaCNode;
 	}
 
+	//add a single signature
+	public void addASignature(XOX_X509Certificate _aCert) {
+		//create the node
+		SignatureTreeElement aSignat = new SignatureTreeElement(m_xContext, m_xMCF);
+		aSignat.initialize();
+		//prepare the layout for the signature data
+		//connect it to the right dialog pane, fill it with empty lines
+		aSignat.setBackgroundControl(m_xDlgContainer.getControl( m_sTextLinesBackground ));
+		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
+			aSignat.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
+		}
+		//create the graphical part of the signature representation
+		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aSignat.getNodeName(), true);
+		if(aSignat.getNodeGraphic() != null)
+			xaCNode.setNodeGraphicURL(aSignat.getNodeGraphic());
+
+		xaCNode.setDataValue(aSignat);
+		try {
+			m_aTreeRootNode.appendChild(xaCNode);			
+			m_xTreeControl.expandNode(m_aTreeRootNode);			
+		} catch (IllegalArgumentException e) {
+			m_aLogger.severe("addOneCertificate", e);
+		} catch (ExpandVetoException e) {
+			m_aLogger.severe("addOneCertificate", e);
+		}
+//after this add the signee certificate as a subnode of the signature
+		CertificateTreeElement aNewCNode = addX509CertificateToTree(xaCNode, _aCert, TreeNodeType.CERTIFICATE);
+		xaCNode.setDisplayValue(aNewCNode.getNodeName());
+//		aSignat.setNodeName(aNewCNode.getNodeName());
+	}
+	
 	//////////////////////////
 	private XMutableTreeNode addMultilineTreeElementHelper(XMutableTreeNode _Node, MultilineTreeElementBase _aElm, String _sLabel) {
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(_sLabel, true);

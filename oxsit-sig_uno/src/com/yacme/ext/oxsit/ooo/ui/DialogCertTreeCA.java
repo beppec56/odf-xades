@@ -154,7 +154,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 				XComponent[] aList = aCtl.getCertificationAuthorities(m_xParentFrame);
 
 				if(aList != null) {
-					XMutableTreeNode xCertifNode = addToTreeRootHelper();
+					XMutableTreeNode xCertifNode = addToTreeRootHelper("Elenco CA");
 					//prepare the status object to give the user some feedback
 					//iterate through the list and set the element in the tree, before display
 					for(int idx1=0; idx1<aList.length;idx1++) {

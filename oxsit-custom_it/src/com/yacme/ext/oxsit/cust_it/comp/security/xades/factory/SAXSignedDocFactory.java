@@ -170,17 +170,14 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 	public void initCACerts() throws SignedDocException {
 		try {
 			m_rootCerts = new Hashtable();
-			//if (m_aLogger.isDebugEnabled())
-			m_aLogger.info("Loading CA certs");
+			m_aLogger.debug("Loading CA certs");
 			int nCerts = ConfigManager.instance().getIntProperty("DIGIDOC_CA_CERTS", 0);
 			for (int i = 0; i < nCerts; i++) {
 				String certFile = ConfigManager.instance().getProperty("DIGIDOC_CA_CERT" + (i + 1));
-				//if (m_logger.isDebugEnabled())
-				m_aLogger.info("CA: " + ("DIGIDOC_CA_CERT" + (i + 1)) + " file: " + certFile);
+				m_aLogger.debug("CA: " + ("DIGIDOC_CA_CERT" + (i + 1)) + " file: " + certFile);
 				X509Certificate cert = SignedDoc.readCertificate(certFile);
 				if (cert != null) {
-					//if (m_aLogger.isDebugEnabled())
-					m_aLogger.info("CA subject: " + cert.getSubjectDN() + " issuer: "
+					m_aLogger.debug("CA subject: " + cert.getSubjectDN() + " issuer: "
 							+ cert.getIssuerX500Principal().getName("RFC1779"));
 					m_rootCerts.put(cert.getSubjectX500Principal().getName("RFC1779"), cert);
 				}
@@ -223,11 +220,9 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		if (cert != null && m_rootCerts != null && !m_rootCerts.isEmpty()) {
 			//String cn = SignedDoc.getCommonName(cert.getIssuerX500Principal().getName("RFC1779"));
 			String dn = cert.getIssuerX500Principal().getName("RFC1779");
-			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("Find CA cert for issuer: " + dn);
+			m_aLogger.debug("Find CA cert for issuer: " + dn);
 			caCert = (X509Certificate) m_rootCerts.get(dn);
-			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("CA: " + ((caCert == null) ? "NULL" : "OK"));
+			m_aLogger.debug("CA: " + ((caCert == null) ? "NULL" : "OK"));
 		}
 		return caCert;
 	}
@@ -1252,16 +1247,13 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		// </Signature>
 		if (qName.equals("Signature")) {
 			if (m_nCollectMode == 0) {
-				//if (m_logger.isDebugEnabled()) 
-				m_aLogger.log("End collecting <Signature>");
+				m_aLogger.debug("End collecting <Signature>");
 				try {
 					Signature sig = getLastSignature();
-					//if (m_logger.isDebugEnabled()) 
-					m_aLogger.log("Set sig content:\n---\n" + m_sbCollectSignature.toString() + "\n---\n");
+					m_aLogger.debug("Set sig content:\n---\n" + m_sbCollectSignature.toString() + "\n---\n");
 					if (m_sbCollectSignature != null) {
 						sig.setOrigContent(ConvertUtils.str2data(m_sbCollectSignature.toString(), "UTF-8"));
-						//if (m_logger.isDebugEnabled()) 
-						m_aLogger.log("SIG orig content set: " + sig.getId() + " len: "
+						m_aLogger.debug("SIG orig content set: " + sig.getId() + " len: "
 								+ ((sig.getOrigContent() == null) ? 0 : sig.getOrigContent().length));
 						//debugWriteFile("SIG-" + sig.getId() + ".txt", m_sbCollectSignature.toString()); 
 						m_sbCollectSignature = null; // reset collecting
@@ -1273,8 +1265,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		}
 		// </SignatureTimeStamp>
 		if (qName.equals("SignatureTimeStamp")) {
-			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("End collecting <SignatureTimeStamp>");
+			m_aLogger.debug("End collecting <SignatureTimeStamp>");
 			try {
 				Signature sig = getLastSignature();
 				TimestampInfo ts = sig.getTimestampInfoOfType(TimestampInfo.TIMESTAMP_TYPE_SIGNATURE);
