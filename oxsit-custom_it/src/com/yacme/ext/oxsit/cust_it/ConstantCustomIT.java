@@ -117,7 +117,7 @@ public class ConstantCustomIT {
 	//MUST be updated as well, on cell E154
 	//after that a new message list should be generated
 	//update the build.xml of the oxsit-ext_conf as well
-	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110422.zip.p7m";
+	public static final String m_sCA_LIST_SIGNED_FILE = "LISTACER_20110526.zip.p7m";
 	
 	public static final String m_sSignatureStorageName = "META-INF";
 	public static final String m_sSignatureFileName = "xadessignatures.xml";
