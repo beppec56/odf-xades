@@ -499,9 +499,10 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 	 */
 	@Override
 	public void verifyCertificate(XFrame _aFrame) {
-		//FIXME add the reset of states: certificate, CA, and the respective  state conditions
+		final String __FUNCTION__="verifyCertificate: ";
 		m_nCertificateState = CertificateState.NOT_YET_VERIFIED_value;
 		m_nCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value;
+		m_nCAState = CertificateState.NOT_YET_VERIFIED_value;
 
 		for(int i = 0; i <3; i++) {
 			Object oProc = m_oTheProcedures[i];
@@ -509,6 +510,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			if(oProc instanceof XOX_CertificateComplianceProcedure) {
 				try {
 					verifyCertificateCompliance(_aFrame);
+					m_aLogger.debug(__FUNCTION__+"verifyCertificateCompliance done");
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
@@ -518,6 +520,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			if(oProc instanceof XOX_CertificationPathProcedure) {
 				try {
 					verifyCertificationPath(_aFrame);
+					m_aLogger.debug(__FUNCTION__+"verifyCertificationPath done");
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
@@ -527,6 +530,7 @@ public class X509Certificate extends ComponentBase //help class, implements XTyp
 			if(oProc instanceof XOX_CertificateRevocationStateProcedure) {
 				try {
 					verifyCertificateRevocationState(_aFrame);
+					m_aLogger.debug(__FUNCTION__+"verifyCertificateRevocationState done");
 				} catch (IllegalArgumentException e) {
 					m_aLogger.severe(e);
 				} catch (Exception e) {
