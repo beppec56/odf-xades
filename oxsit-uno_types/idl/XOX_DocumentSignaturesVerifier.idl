@@ -34,6 +34,7 @@
 #include "CertificateState.idl"
 #include "CertificateStateConditions.idl"
 #include "XOX_X509Certificate.idl"
+#include "XOX_SignatureState.idl"
 
   module com { module yacme { module ext { module oxsit { module security {
 
@@ -41,19 +42,22 @@
  */
 	interface XOX_DocumentSignaturesVerifier
 	{
-		/** The certificates this document contains. One for each signature
+	  /** The certificates this document contains. One for each signature
 		*/
-		[attribute,readonly]  sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;
+	  /*		[attribute,readonly]  sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> X509Certificates;*/
+
+		/** The signatures this document contains
+		*/
+	  [attribute,readonly]  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> SignaturesState;
 
 	  /** Load the certificates from the signatures of the gived document.
 	   * @param xFrame the frame to be used as anchor for dialogs
 	   * @param xTheDocument the model of the document from which the signature certificates should loaded
            * @return the sequence of the certificates found or null if no certificates (then no signatures)
 	   */
-		sequence<com::yacme::ext::oxsit::security::cert::XOX_X509Certificate> loadAndGetCertificates([in] com::sun::star::frame::XFrame xFrame,
-									[in] com::sun::star::frame::XModel xTheDocumentModel )
-
-						raises( ::com::sun::star::lang::IllegalArgumentException,
+	  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> loadAndGetSignatures([in] com::sun::star::frame::XFrame xFrame,
+											      [in] com::sun::star::frame::XModel xTheDocumentModel )
+	                                                        raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 	/** Used to check if the signed document is untampered and if the signare itself is correct<br>
@@ -62,10 +66,9 @@
 		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
 		@return true if the document can be signed, false otherwise.
 		*/
-		long verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
-									[in] com::sun::star::frame::XModel xTheDocumentModel,
- 									[in] sequence<any> aArguments )
-
+	  long verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
+					[in] com::sun::star::frame::XModel xTheDocumentModel,
+					[in] sequence<any> aArguments )
 						raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
@@ -73,16 +76,15 @@
 		@param xFrame the frame to be used as anchor for dialogs
 		@param xTheDocument the model of the document to be verified
 		@param signaturePosition, the progressive number of the certificate of the signature to be removed, according to the position in the
-		sequence returned by getX509Certificates.
+		sequence returned by the corresponding element contained in
 		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
 		@return true if the document can be signed, false otherwise.
 		*/
-		boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
-						                        [in] com::sun::star::frame::XModel xTheDocumentModel,
-						                        [in] long signaturePosition,
-						                        [in] sequence<any> aArguments )
-
-						raises( ::com::sun::star::lang::IllegalArgumentException,
+	  boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
+					  [in] com::sun::star::frame::XModel xTheDocumentModel,
+					  [in] long signaturePosition,
+					  [in] sequence<any> aArguments )
+	                                  raises( ::com::sun::star::lang::IllegalArgumentException,
 								::com::sun::star::uno::Exception );
 
 	} ;

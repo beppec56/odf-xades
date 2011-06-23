@@ -36,17 +36,20 @@
 	 */
   interface XOX_SignatureState
   {
-		/** This document storage
-		*/
-    /*		[attribute] com::sun::star: date ??? DateOfSignature; */
+    /** This document storage
+     */
+    /*[attribute] com::sun::star: date ??? DateOfSignature; */
 
-		/** self describing name
-		*/
-                [attribute, readonly] long SignatureRelativeNumberInDocument;
+    /** self describing name
+     */
+    [attribute] long SignatureRelativeNumberInDocument;
 
-		/** The state of this signature, enum and number. Used to display the user the state.
-		*/
-		[attribute, readonly] com::yacme::ext::oxsit::security::SignatureState State ;
+    /** The state of this signature, enum and number. Used to display the user the state.
+     */
+    [attribute] com::yacme::ext::oxsit::security::SignatureState State ;
+    /** The state of this signature, enum and number. Used to display the user the state.
+     */
+    [attribute] com::yacme::ext::oxsit::security::cert::XOX_X509Certificate SignersCerficate;
   };
  
   }; }; }; }; };
