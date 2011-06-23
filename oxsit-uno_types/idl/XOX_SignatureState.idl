@@ -20,11 +20,12 @@
  *
  ************************************************************************/
 
-#ifndef __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
-#define __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
+#ifndef __com_yacme_ext_oxsit_security_cert_XOX_SignatureState_idl__
+#define __com_yacme_ext_oxsit_security_cert_XOX_SignatureState_idl__
 
 #include <com/sun/star/embed/XStorage.idl>
 #include "XOX_X509Certificate.idl"
+#include "SignatureState.idl"
 
   module com { module yacme { module ext { module oxsit { module security {
 
@@ -33,23 +34,19 @@
 	  It is used to track the state of the signature in global document status (for saving/editing operations).
 	  <p>That is, the state of all the signatures in a document.</p>
 	 */
-  interface XOX_DocumentSignaturesState
+  interface XOX_SignatureState
   {
 		/** This document storage
 		*/
-		[attribute] com::sun::star::embed::XStorage DocumentStorage;
+    /*		[attribute] com::sun::star: date ??? DateOfSignature; */
 
-		/** this document combined signature state
+		/** self describing name
 		*/
-		[attribute] long DocumentSignatureState;
+                [attribute, readonly] long SignatureRelativeNumberInDocument;
 
-		/** this document id
+		/** The state of this signature, enum and number. Used to display the user the state.
 		*/
-		[attribute] string DocumentId;
-
-		/** The certificates contained in the document.
-		*/
-		[attribute, readonly] sequence< com::yacme::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
+		[attribute, readonly] com::yacme::ext::oxsit::security::SignatureState State ;
   };
  
   }; }; }; }; };

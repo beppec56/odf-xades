@@ -1,0 +1,75 @@
+/*************************************************************************
+ * 
+ *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
+ *  
+ *  The Contents of this file are made available subject to
+ *  the terms of European Union Public License (EUPL) version 1.1
+ *  as published by the European Community.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the EUPL.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  EUPL for more details.
+ *
+ *  You should have received a copy of the EUPL along with this
+ *  program.  If not, see:
+ *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ *
+ ************************************************************************/
+
+#ifndef __com_yacme_ext_oxsit_security_cert_SignatureState_idl__
+#define __com_yacme_ext_oxsit_security_cert_SignatureState_idl__
+
+  module com { module yacme { module ext { module oxsit { module security {
+
+/** State of a signature, for string display
+ */
+	enum SignatureState
+	{
+		/** The Signature was verified, it's ok.
+		 */
+		OK,
+
+		/** The Signature was not verified.
+		 */
+		NOT_YET_VERIFIED,
+
+		/** The signature is not valid (general error).
+		 */
+		NOT_VALID, 
+
+		/** Wrong digest of an embedded document
+		 */
+		ERR_DIGEST_COMPARE,
+	
+		/** A document contained in the package was not signed
+		 */
+		ERR_DATA_FILE_NOT_SIGNED,
+	
+		/** A document (in the package) was signed but now it's no longer available 
+		 */
+		ERR_SIG_PROP_NOT_SIGNED,
+	
+		/** Error verifying the signature 
+		 */
+		ERR_VERIFY,
+	
+		/** The certificate in the signature has expired
+		 */
+		ERR_CERT_EXPIRED,
+
+		/** SignAndRefsTimeStamp is before SignatureTimeStamp or OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp
+		 */
+		ERR_TIMESTAMP_VERIFY,
+
+		/** Last state (maximum state).
+		*/
+		LAST_STATE
+	}; 
+ 
+  }; }; }; };  };
+ 
+#endif

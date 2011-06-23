@@ -45,7 +45,7 @@
 <p>The certificate accessed through this interface can only be created in two ways:</p>
 <p>by instantiating an AvailableSSCDs service and callig the scanDevices() method of its
 XOX_AvailableSSCDs interface or</p>
-<p>by opening an ODF document that contains one it it in its XAdES signature.</p>
+<p>by opening an ODF document that contains one in its XAdES signature.</p>
 <p>See service QualifiedCertificate for details.</p>
  */
 	interface XOX_X509Certificate
@@ -55,7 +55,7 @@ XOX_AvailableSSCDs interface or</p>
 //		[attribute] sequence< byte > DEREncoded ;
 
 		/**
-		this is a simple way to obtain an interface usefull to set certificate data
+		this is a simple way to obtain an interface useful to set certificate data
 		*/
 		[attribute, readonly] com::yacme::ext::oxsit::security::cert::XOX_CertificatePKCS11Attributes	CertificateAttributes;
 
