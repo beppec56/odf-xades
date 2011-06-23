@@ -158,7 +158,8 @@ public class GlobConstant {
 	public static final String m_sDISPATCH_INTERCEPTOR_SERVICE = m_sWEBIDENTBASE + ".oxsit.DipatchIntercept";	
 	
 	////////// the following UNO service names should go to the registry
-	// under a key tree specifying the current signature profile
+	// under a key tree specifying the current signature profile.
+	//currently they are mirroring the same name in IT specialized jar library
 	// service to hold all the information available from SSCD devices (PKCS 11 m_nTokens) available on system.
 	public static final String m_sAVAILABLE_SSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.AvailableSSCDs_IT";
 
@@ -169,6 +170,9 @@ public class GlobConstant {
 	public static final String m_sDOCUMENT_SIGNER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.ooo.cust_it.security.DocumentSigner_IT";
 	// service to verify the document signatures present
 	public static final String m_sDOCUMENT_VERIFIER_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.DocumentSignaturesVerifier_IT";
+
+	// service to implement the interfaces needed to hold the signature state after verification
+	public static final String m_sSIGNATURE_STATE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.SignatureState_IT";
 
 	/////////// end of service to be moved to registryS
 

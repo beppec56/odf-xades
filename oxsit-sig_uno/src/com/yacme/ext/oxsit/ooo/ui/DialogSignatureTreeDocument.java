@@ -25,6 +25,7 @@ package com.yacme.ext.oxsit.ooo.ui;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.awt.PushButtonType;
@@ -141,12 +142,12 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
 				if(m_axoxDocumentVerifier != null) {
 					//grab the certificates and add them to the dialog						
-					XOX_X509Certificate[] oCertifs = 
-						m_axoxDocumentVerifier.loadAndGetCertificates(m_xParentFrame,getDocumentModel());
+					XOX_SignatureState[] oCertifs = 
+						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
 					for(int idx = 0; idx < oCertifs.length; idx++) {
 						//add the certificate to the dialog tree
 						m_aLogger.debug(__FUNCTION__+"certificate added");
-						addASignature(oCertifs[idx]);
+						addASignature(oCertifs[idx].getSignersCerficate());
 					}
 				}
 				else
@@ -213,14 +214,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void reportButtonPressed() {
-		//prints a report of the selected CERTIFICATE
-		m_aLogger.info("reportButtonPressed","FAKE IMPLEMENTATION!");
-//		addOneSignature();
-		
-//dirty trick, do not instantiate the UNO component this way !
-		// this is just for test !
-/*		AvailableSSCDs aSSCDS = new AvailableSSCDs(m_xContext);
-		aSSCDS.testCertificateDisplay();*/
+		//prints a report of the selected CERTIFICATE / signature
+		m_aLogger.debug("reportButtonPressed "+"FAKE IMPLEMENTATION!");
 	}
 
 	/* (non-Javadoc)
@@ -239,8 +234,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 //for the moment, use this to load the document at hand , verify it and display the certificates of every signature found.
 		//first identify the type of selected element
 //		XComponent xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
-		final String __FUNCTION__ = "verifyButtonPressed: "; 
-		
+		final String __FUNCTION__ = "verifyButtonPressed: ";
+
 		if(m_aTheCurrentlySelectedTreeNode != null) {
 			//disable it, that is un-display it
 			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
@@ -253,8 +248,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							if(aDocVerService != null) {				
 								m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
 								if(m_axoxDocumentVerifier != null) {
-									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame, 
-											getDocumentModel(), null);
+									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), null);
+									//now traverse the tree from this element on and verify the certificate attached
 								}
 								else
 									m_aLogger.warning(__FUNCTION__+"XOX_DocumentSignaturesVerifier interface NOT available");

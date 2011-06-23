@@ -179,7 +179,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				
 				//instantiate the signer
 				try {
-					//FIXME get the object name form the parameters
+					//FIXME get the object name from the parameters
 					Object oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
 					
 					XOX_DocumentSigner xSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);

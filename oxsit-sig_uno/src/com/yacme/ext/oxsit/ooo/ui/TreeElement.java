@@ -90,18 +90,49 @@ public abstract class TreeElement
 
 	/**
 	 * constants for signature state
+	 * The same constants as the the ones defined in emun SignatureState (idl element)
 	 * 
 	 */
 	public static final int m_nSIGNATURE_STATE_VALID = 0;
-	public static final int m_nSIGNATURE_STATE_NOT_VALID = 1;
-	public static final int m_nSIGNATURE_STATE_TO_BE_VERIFIED = 2;
+	
+	public static final int m_nSIGNATURE_STATE_TO_BE_VERIFIED = 1;
+	
+	//not valid, the log file can give more information about why it's not valid
+	public static final int m_nSIGNATURE_STATE_NOT_VALID = 2;
+	//
+	//Wrong digest of an embedded document
+	public static final int m_nSIGNATURE_STATE_ERR_DIGEST_COMPARE = 3;
+	
+	//A document contained in the package was not signed
+	public static final int m_nSIGNATURE_STATE_ERR_DATA_FILE_NOT_SIGNED = 4;
+	
+	//A document (in the package) was signed but now it's no longer available 
+	public static final int m_nSIGNATURE_STATE_ERR_SIG_PROP_NOT_SIGNED = 5;
+	
+	//Error verifying the signature 
+	public static final int m_nSIGNATURE_STATE_ERR_VERIFY = 6;
+	
+	//The certificate in the signature has expired
+	public static final int m_nSIGNATURE_STATE_ERR_CERT_EXPIRED = 7;
+
+	//SignAndRefsTimeStamp is before SignatureTimeStamp or OCSP time is not between SignAndRefsTimeStamp and SignatureTimeStamp
+	public static final int m_nSIGNATURE_STATE_ERR_TIMESTAMP_VERIFY = 8;
+
 	/**
 	 * the corresponding strings identifier, to retrieve the string from resources.
 	 */
 	public static final String[]  m_sSIGNATURE_STATE =  { 
 							"err_txt_sign_ok",
+							"err_txt_sign_to_ver",
 							"err_txt_sign_not_val",
-							"err_txt_sign_to_ver"
+
+							//FIXME: add the strings !
+							"err_txt_sign_err_dig_comp",
+							"err_txt_sign_err_data_file_not_signed",
+							"err_txt_sign_err_sig_prop_not_signed",
+							"err_txt_sign_err_sig_prop_verif",
+							"err_txt_sign_err_sig_prop_cert_exp",
+							"err_txt_sign_err_sig_prop_time_stamp_verf",
 						};
 
 	/**

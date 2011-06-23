@@ -46,6 +46,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.AvailableSSCDs_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.DocumentSignaturesVerifier_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.SSCDevice_IT;
+import com.yacme.ext.oxsit.cust_it.comp.security.SignatureState_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.ca.CertificationPathCache_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.ca.CertificationPath_IT;
 import com.yacme.ext.oxsit.cust_it.comp.security.cert.CertificateComplianceCA_IT;
@@ -116,6 +117,10 @@ public class RegisterServices {
 			xFactory = Factory.createComponentFactory( AvailableSSCDs_IT.class, AvailableSSCDs_IT.m_sServiceNames );
 //DEBUG		System.out.println("__getComponentFactory: "+AvailableSSCDs_IT.m_sImplementationName);
 		}
+		else if ( sImplementationName.equals( SignatureState_IT.m_sImplementationName ) ) {
+			xFactory = Factory.createComponentFactory( SignatureState_IT.class, SignatureState_IT.m_sServiceNames );
+//DEBUG		System.out.println("__getComponentFactory: "+SignatureState_IT.m_sImplementationName);
+		}
 		return xFactory;
 	}
 
@@ -165,6 +170,9 @@ public class RegisterServices {
 
 		boolean retAvailSSCDs = 
 			Factory.writeRegistryServiceInfo( AvailableSSCDs_IT.m_sImplementationName, AvailableSSCDs_IT.m_sServiceNames, xRegistryKey );
+
+		boolean retSignState = 
+			Factory.writeRegistryServiceInfo( SignatureState_IT.m_sImplementationName, SignatureState_IT.m_sServiceNames, xRegistryKey );
 /*		if (!retSSCDOpts)
 			System.out.println("__writeRegistryServiceInfo: "+ManageSSCDOptions.m_sImplementationName + "failed");		
 
@@ -197,11 +205,14 @@ public class RegisterServices {
 		if (!retAvailSSCDs)
 			System.out.println("__writeRegistryServiceInfo: "+AvailableSSCDs_IT.m_sImplementationName + "failed");
 		
+		if (!retSignState)
+			System.out.println("__writeRegistryServiceInfo: "+SignatureState_IT.m_sImplementationName + "failed");
+		
 		return (retDocumSigner && retDocumentSignaturesVerifier &&
 					retSSCDevice && retAvailSSCDs &&
 					retCertifCompl &&
 					retCertifPath && retCertifPathCache &&
 					retCertifRevoc && retCertifDispIssIT && retCertifDispSubjIT &&
-					retCertifComplCA);
+					retCertifComplCA && retSignState);
 	}
 }

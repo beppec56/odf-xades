@@ -212,7 +212,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}

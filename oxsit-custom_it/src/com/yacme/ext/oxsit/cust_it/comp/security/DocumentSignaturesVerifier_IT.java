@@ -59,7 +59,9 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.security.SignatureState;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 /** Verify a document signatures and the document
@@ -79,7 +81,10 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	//the certificates corresponding to this document
 	//every certificate means one signature.
 	// this list can be retrieved using the method getX509Certificates() 
-	protected Vector<XOX_X509Certificate>	m_xQualCertList;
+//	protected Vector<XOX_X509Certificate>	m_xQualCertList;
+
+	//The signatures in this document
+	protected Vector<XOX_SignatureState>	m_xSignatures;
 
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = DocumentSignaturesVerifier_IT.class.getName();
@@ -96,7 +101,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		m_aLogger.ctor();
 
 //		fillLocalizedStrings();
-		m_xQualCertList = new Vector<XOX_X509Certificate>(10,1);		
+		m_xSignatures = new Vector<XOX_SignatureState>(10,1);		
 	}
 
 	/* (non-Javadoc)
@@ -136,6 +141,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	public void initialize(Object[] _args) throws Exception {
 		
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -148,9 +154,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	}
 
 	private void cleanUpCertificates() {
-		if(!m_xQualCertList.isEmpty()) {
-			for(int i=0; i< m_xQualCertList.size();i++) {
-				XOX_X509Certificate xQC = m_xQualCertList.elementAt(i);
+		if(!m_xSignatures.isEmpty()) {
+			for(int i=0; i< m_xSignatures.size();i++) {
+				XOX_SignatureState xQC = m_xSignatures.elementAt(i);
 				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
 				if(xComp != null)
 					xComp.dispose();
@@ -326,7 +332,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	/* 
 	 * 
 	 */
-	private void addCertificate(X509Certificate _aCert) {
+	private void addCertificate(XOX_SignatureState _xSignState, X509Certificate _aCert) {
 		// instantiate the components needed to check this certificate
 		// create the Certificate Control UNO objects
 		// first the certificate compliance control
@@ -376,8 +382,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//add this device as the source device for this certificate
 			//(will be handly if we sign with the corresponding private key)
 			xQualCert.setSSCDevice(null);
-//			xQualCert.setCertificateAttributes(aCertificateAttributes);
-			m_xQualCertList.add(xQualCert);
+			_xSignState.setSignersCerficate(xQualCert);
 		} catch (Exception e) {
 			m_aLogger.severe(e);
 		} catch (CertificateEncodingException e) {
@@ -388,16 +393,16 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	}
 
 	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getX509Certificates()
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getSignaturesState()
 	 */
 	@Override
-	public XOX_X509Certificate[] getX509Certificates() {
-		XOX_X509Certificate[] ret = null;
+	public XOX_SignatureState[] getSignaturesState() {
+		XOX_SignatureState[] ret = null;
 		//detect the number of vector present
-		if(!m_xQualCertList.isEmpty()) {
-			ret = new XOX_X509Certificate[m_xQualCertList.size()];
+		if(!m_xSignatures.isEmpty()) {
+			ret = new XOX_SignatureState[m_xSignatures.size()];
 			try {
-				m_xQualCertList.copyInto(ret);
+				m_xSignatures.copyInto(ret);
 			} catch(NullPointerException ex) {
 				m_aLogger.severe("getQualifiedCertificates",ex);
 			} catch(IndexOutOfBoundsException ex) {
@@ -410,12 +415,12 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	}
 
 	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#loadAndGetCertificates(com.sun.star.frame.XFrame, com.sun.star.frame.XModel)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#loadAndGetSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel)
 	 */
 	@Override
-	public XOX_X509Certificate[] loadAndGetCertificates(XFrame _xFrame, XModel _xDocumentModel) throws IllegalArgumentException, Exception {
+	public XOX_SignatureState[] loadAndGetSignatures(XFrame _xFrame, XModel _xDocumentModel) throws IllegalArgumentException, Exception {
 		final String __FUNCTION__ ="loadAndGetCertificates: ";
-		XOX_X509Certificate[] ret = null;
+		XOX_SignatureState[] ret = null;
 		try {
 			ConfigManager.init("jar://ODFDocSigning.cfg");
 			//remove the certificates eventually present in the list.
@@ -466,15 +471,26 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						Signature sig = null;
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
-							
-							m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
-									+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
-							// add the certificate of this signature to the certificate list and
-							X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
-							if(aCert != null) {
-								// add the certificate the error status detected (not the check using OCSP or CRL
-								//add the certificate to the internal list of certificates
-								addCertificate(aCert);
+							//create a new signature state object
+							Object aSigObj = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT, m_xCC);
+							XOX_SignatureState aSignState = null;
+							if(aSigObj != null) {
+								aSignState = (XOX_SignatureState)UnoRuntime.queryInterface(XOX_SignatureState.class, aSigObj);
+								if(aSignState == null)
+									m_aLogger.severe(__FUNCTION__, "CANNOT OBTAIN A XOX_SignatureState INTERFACE !");
+								else {
+									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+									
+									aSignState.setState(SignatureState.NOT_YET_VERIFIED);
+									// add the certificate of this signature to the certificate list and
+									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
+									if(aCert != null) {
+		//add the certificate to the internal list of certificates
+										addCertificate(aSignState,aCert);
+									}
+									m_xSignatures.add(aSignState);
+								}
 							}
 						}
 						fTheSignaturesFile.close();
@@ -493,7 +509,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				//simply load certificates
 				
 				//and return them
-				ret = getX509Certificates();
+				ret = getSignaturesState();
 		} catch (URISyntaxException e) {
 			m_aLogger.severe(e);
 		} catch (java.io.IOException e) {
@@ -575,22 +591,37 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
 							
-							m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
-									+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
-							ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
-							if (errs.size() == 0)
-								m_aLogger.log("Verification OK!");
-							for (int j = 0; j < errs.size(); j++)
-								m_aLogger.severe(errs.get(j));
-							// add the certificate of this signature to the certificate list and
-							X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
-							if(aCert != null) {
-//add the certificate to the internal list of certificates
-								addCertificate(aCert);
+							//create a new signature state object
+							Object aSigObj = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT, m_xCC);
+							XOX_SignatureState aSignState = null;
+							if(aSigObj != null) {
+								aSignState = (XOX_SignatureState)UnoRuntime.queryInterface(XOX_SignatureState.class, aSigObj);
+								if(aSignState == null)
+									m_aLogger.severe(__FUNCTION__, "CANNOT OBTAIN A XOX_SignatureState INTERFACE !");
+								else {
+									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+									
+									ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
+									
+									if (errs.size() == 0) {
+										m_aLogger.log("Verification OK!");
+										aSignState.setState(SignatureState.OK);
+									}
+									else {
+										aSignState.setState(SignatureState.ERR_VERIFY);
+										for (int j = 0; j < errs.size(); j++)
+											m_aLogger.severe(errs.get(j));
+									}
+									// add the certificate of this signature to the certificate list and
+									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
+									if(aCert != null) {
+		//add the certificate to the internal list of certificates
+										addCertificate(aSignState,aCert);
+									}
+									m_xSignatures.add(aSignState);
+								}
 							}
-							
-							// add the certificate the error status detected (not the check using OCSP or CRL
-							
 						}
 						fTheSignaturesFile.close();
 					}

@@ -75,6 +75,9 @@ public class ConstantCustomIT {
 	// service to hold all the information available for a single SSCD device available on system.
 	public static final String m_sSSCD_SERVICE = m_sWEBIDENTBASE + ".oxsit.cust_it.security.SSCDevice";
 
+	// service to implement the interfaces needed to hold the signature state after verification
+	public static final String m_sSIGNATURE_STATE_SERVICE_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.SignatureState_IT";
+	
 	////////// the following UNO service names should go to the registry
 	//services to display data of a certificate in a human readable way
 	public static final String m_sX509_CERTIFICATE_DISPLAY_SERVICE_SUBJ_IT = m_sWEBIDENTBASE + ".oxsit.cust_it.security.cert.X509CertDisplaySubj_IT";
