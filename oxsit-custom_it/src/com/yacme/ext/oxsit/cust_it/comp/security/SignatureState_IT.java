@@ -32,7 +32,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 
 	//XServiceInfo
 	// the name of the class implementing this object
-	public static final String m_sImplementationName = DocumentSigner_IT.class.getName();
+	public static final String m_sImplementationName = SignatureState_IT.class.getName();
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[] m_sServiceNames = { GlobConstant.m_sSIGNATURE_STATE_SERVICE_IT };
 
