@@ -40,7 +40,12 @@
      */
     /*[attribute] com::sun::star: date ??? DateOfSignature; */
 
-    /** self describing name
+    /** This signature UUID, created while signing.
+	Can be used to identify the signature inside the document.
+     */
+    [attribute] string SignatureUUID;
+
+    /** self describing name (this is marked for deletion !)
      */
     [attribute] long SignatureRelativeNumberInDocument;
 

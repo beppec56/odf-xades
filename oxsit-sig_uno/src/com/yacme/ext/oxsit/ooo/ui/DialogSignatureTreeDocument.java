@@ -124,18 +124,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		super.initializeLocal(DLG_SIGN_TREE, m_sDlgListCertTitle, posX, posY);
 
 		center();
-			
-//			XWindow xTFWindow = (XWindow) UnoRuntime.queryInterface( XWindow.class,
-//					super.m_xDialogControl );
-//			xTFWindow.addKeyListener( this );
-//			Utilities.showControlNames(m_xDlgContainer);
-//			Utilities.showNames(m_xDlgModelNameContainer);
-			
-			//Add init of signatures, check, verify and add certificates
-//			/oxsit-sig_uno/src/com/yacme/ext/oxsit/ooo/ui/DialogCertTreeSSCDs.java
-			
-		//load the certificates from the document signatures (always when dialog starts)
-
+		//load the document signature states (always when dialog starts)
 		try {
 			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
 			if(aDocVerService != null) {				
@@ -144,11 +133,13 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					//grab the certificates and add them to the dialog						
 					XOX_SignatureState[] oCertifs = 
 						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
-					for(int idx = 0; idx < oCertifs.length; idx++) {
-						//add the certificate to the dialog tree
-						m_aLogger.debug(__FUNCTION__+"certificate added");
-						addASignature(oCertifs[idx].getSignersCerficate());
-					}
+//					if(oCertifs != null) {
+						for(int idx = 0; idx < oCertifs.length; idx++) {
+							//add the certificate to the dialog tree
+							m_aLogger.debug(__FUNCTION__+"signature state added");
+							addASignatureState(oCertifs[idx]);
+						}
+//					} //else there are no signatures !
 				}
 				else
 					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
@@ -244,11 +235,15 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
 					if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.SIGNATURE) {
 						try {
+							SignatureTreeElement aSignature = (SignatureTreeElement)aCurrentNode; 
 							Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
 							if(aDocVerService != null) {				
 								m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
-								if(m_axoxDocumentVerifier != null) {
-									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), null);
+								if(m_axoxDocumentVerifier != null) {									
+									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), 
+											aSignature.getSignatureUUID());
+									//get the signature state (all signatures)
+									//and update this element accordingly
 									//now traverse the tree from this element on and verify the certificate attached
 								}
 								else

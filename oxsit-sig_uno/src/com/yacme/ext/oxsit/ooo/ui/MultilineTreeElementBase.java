@@ -157,30 +157,9 @@ public class MultilineTreeElementBase extends TreeElement {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
-	 */
-	@Override
-	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XComponent#dispose()
 	 */
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-
+	public void disposeUNOComponents() {
+		//FIXME: clean up UNO components used here, if any
 	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
-	 */
-	@Override
-	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

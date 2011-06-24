@@ -3,7 +3,9 @@
  */
 package com.yacme.ext.oxsit.ooo.ui;
 
+import com.yacme.ext.oxsit.security.SignatureState;
 import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.CertificateElementID;
 import com.yacme.ext.oxsit.security.cert.CertificateElementState;
 import com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState;
@@ -756,7 +758,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	//add a single signature
-	public void addASignature(XOX_X509Certificate _aCert) {
+	public void addASignatureState(XOX_SignatureState _aSign) {
 		//create the node
 		SignatureTreeElement aSignat = new SignatureTreeElement(m_xContext, m_xMCF);
 		aSignat.initialize();
@@ -766,6 +768,24 @@ public class DialogCertTreeBase extends BasicDialog implements
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
 			aSignat.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
 		}
+		int _nSignatureState = TreeElement.m_nSIGNATURE_STATE_TO_BE_VERIFIED; 
+
+		switch(_aSign.getState().getValue()) {
+		case SignatureState.NOT_VALID_value:
+		default:
+			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_NOT_VALID;
+			break;
+		case SignatureState.OK_value:
+			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_VALID;
+			break;			
+		case SignatureState.NOT_YET_VERIFIED_value:
+			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_TO_BE_VERIFIED;
+			break;			
+		}
+
+		aSignat.setSignatureState(_nSignatureState);
+		aSignat.setSignatureUUID(_aSign.getSignatureUUID());
+		
 		//create the graphical part of the signature representation
 		XMutableTreeNode xaCNode = m_xTreeDataModel.createNode(aSignat.getNodeName(), true);
 		if(aSignat.getNodeGraphic() != null)
@@ -781,7 +801,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_aLogger.severe("addOneCertificate", e);
 		}
 //after this add the signee certificate as a subnode of the signature
-		CertificateTreeElement aNewCNode = addX509CertificateToTree(xaCNode, _aCert, TreeNodeType.CERTIFICATE);
+		CertificateTreeElement aNewCNode = addX509CertificateToTree(xaCNode, _aSign.getSignersCerficate(),
+					TreeNodeType.CERTIFICATE);
 		xaCNode.setDisplayValue(aNewCNode.getNodeName());
 //		aSignat.setNodeName(aNewCNode.getNodeName());
 	}

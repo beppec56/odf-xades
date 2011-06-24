@@ -65,6 +65,10 @@
 		 */
 		ERR_TIMESTAMP_VERIFY,
 
+		/** The signature no longer exists in the document (may be document changed while operating on it ?).
+		 */
+		ERR_SIGNATURE_NO_LONGER_EXISTS,
+
 		/** Last state (maximum state).
 		*/
 		LAST_STATE

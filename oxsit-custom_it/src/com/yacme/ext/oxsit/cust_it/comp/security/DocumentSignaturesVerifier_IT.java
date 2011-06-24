@@ -13,6 +13,9 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -84,7 +87,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 //	protected Vector<XOX_X509Certificate>	m_xQualCertList;
 
 	//The signatures in this document
-	protected Vector<XOX_SignatureState>	m_xSignatures;
+//	protected Vector<XOX_SignatureState>	m_xSignatures;
+	
+	protected HashMap<String, XOX_SignatureState> m_hSignatures;
 
 	// the name of the class implementing this object
 	public static final String m_sImplementationName = DocumentSignaturesVerifier_IT.class.getName();
@@ -101,7 +106,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		m_aLogger.ctor();
 
 //		fillLocalizedStrings();
-		m_xSignatures = new Vector<XOX_SignatureState>(10,1);		
+		m_hSignatures = new HashMap<String, XOX_SignatureState>(10);
 	}
 
 	/* (non-Javadoc)
@@ -153,16 +158,24 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		super.addEventListener(arg0);
 	}
 
-	private void cleanUpCertificates() {
-		if(!m_xSignatures.isEmpty()) {
-			for(int i=0; i< m_xSignatures.size();i++) {
-				XOX_SignatureState xQC = m_xSignatures.elementAt(i);
-				XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
-				if(xComp != null)
-					xComp.dispose();
+	private void cleanUpSignatures() {
+		if(!m_hSignatures.isEmpty()) {
+			Set<String> aSet =  m_hSignatures.keySet();
+			Object	sUUIDs[] =  aSet.toArray();
+			for(int i= 0; i < sUUIDs.length; i++) {
+				//the signature states and the corresponding certificates are taken care of in the GUI side
+				//which deallocate them when GUI is shut down.
+//				XOX_SignatureState xQC = m_hSignatures.get(sUUIDs[i]);
+//				if (xQC != null) {
+//					XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
+//					if(xComp != null)
+//						xComp.dispose();					
+//				}
+				m_hSignatures.remove(sUUIDs[i]);
 			}
-		}		
+		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,7 +186,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	public void dispose() {
 		// FIXME need to check if this element is referenced somewhere before deallocating it		m_aLogger.entering("dispose");
 		//dispose of all the certificate
-		cleanUpCertificates();
+		cleanUpSignatures();
 		super.dispose();
 	}
 
@@ -193,7 +206,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	 */
 	@Override
 	public boolean removeDocumentSignature(XFrame _xFrame, 
-					XModel _xDocumentModel, int _nCertificatePosition, Object[] args)
+					XModel _xDocumentModel, String _sSignatureUUID)
 			throws IllegalArgumentException, Exception {
 		// TODO Auto-generated method stub
 		return false;
@@ -396,19 +409,31 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getSignaturesState()
 	 */
 	@Override
-	public XOX_SignatureState[] getSignaturesState() {
+	public XOX_SignatureState[] getSignatureStates() {
+		final String __FUNCTION__ = "getSignatureStates: ";
 		XOX_SignatureState[] ret = null;
+
 		//detect the number of vector present
-		if(!m_xSignatures.isEmpty()) {
-			ret = new XOX_SignatureState[m_xSignatures.size()];
+		if(!m_hSignatures.isEmpty()) {
 			try {
-				m_xSignatures.copyInto(ret);
+				ret = new XOX_SignatureState[m_hSignatures.size()];
+				Collection<XOX_SignatureState> retC = m_hSignatures.values();
+				Object xObs[] = retC.toArray();
+				for(int y = 0; y < xObs.length; y++)
+					ret[y] = (XOX_SignatureState)xObs[y]; 
+
 			} catch(NullPointerException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
 			} catch(IndexOutOfBoundsException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
 			} catch(ArrayStoreException ex) {
-				m_aLogger.severe("getQualifiedCertificates",ex);
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
+			}  catch(Throwable ex) {
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
 			}
 		}
 		return ret;
@@ -424,7 +449,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		try {
 			ConfigManager.init("jar://ODFDocSigning.cfg");
 			//remove the certificates eventually present in the list.
-			cleanUpCertificates();
+			cleanUpSignatures();
 			//load the signatures from the provided document references	
 			XStorage xDocumentStorage;		
 			//get URL, open the storage from url
@@ -488,8 +513,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									if(aCert != null) {
 		//add the certificate to the internal list of certificates
 										addCertificate(aSignState,aCert);
+										
 									}
-									m_xSignatures.add(aSignState);
+									m_hSignatures.put(aSignState.getSignatureUUID(), aSignState);
 								}
 							}
 						}
@@ -509,7 +535,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				//simply load certificates
 				
 				//and return them
-				ret = getSignaturesState();
+				ret = getSignatureStates();
 		} catch (URISyntaxException e) {
 			m_aLogger.severe(e);
 		} catch (java.io.IOException e) {
@@ -531,10 +557,11 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	 */
 	/*
 	 * verifies the document signatures present.
+	 * IMPORTANT, the loadAndGetSignatures MUST have been called first ! 
 	 * returns the document aggregated signature state
 	 */
 	@Override
-	public int verifyDocumentSignatures(XFrame _xFrame, XModel _xDocumentModel, Object[] args) 
+	public int verifyDocumentSignatures(XFrame _xFrame, XModel _xDocumentModel, String _ssignatureUUID ) 
 			throws IllegalArgumentException, Exception {
 		final String __FUNCTION__ ="verifyDocumentSignatures: ";
 		//from the document model, get the docu storage
@@ -542,7 +569,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		ConfigManager.init("jar://ODFDocSigning.cfg");
 		if(_xDocumentModel == null || _xFrame == null)
 			throw new IllegalArgumentException();
-		
+
 		try {
 			XStorage xDocumentStorage;		
 			//get URL, open the storage from url
@@ -587,9 +614,14 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
 						
 						Signature sig = null;
-						cleanUpCertificates(); //free the current certificate list						
+//						cleanUpSignatures(); //free the current certificate list						
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
+
+							//now check, if the check is for all the signatures, this means we check the entire document signature list AND
+							//update the signature list accordingly, if a single signature is to be checked
+							
+							//lookup in the list if the signature is contained within the list of already loaded signatures
 							
 							//create a new signature state object
 							Object aSigObj = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT, m_xCC);
@@ -599,6 +631,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 								if(aSignState == null)
 									m_aLogger.severe(__FUNCTION__, "CANNOT OBTAIN A XOX_SignatureState INTERFACE !");
 								else {
+									
+									aSignState.setSignatureUUID(sig.getId());
+
 									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
 									
@@ -617,9 +652,11 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
 									if(aCert != null) {
 		//add the certificate to the internal list of certificates
-										addCertificate(aSignState,aCert);
+		// the signature just checked is updated in the list
+
+//										addCertificate(aSignState,aCert);
 									}
-									m_xSignatures.add(aSignState);
+									m_hSignatures.put(aSignState.getSignatureUUID(), aSignState);
 								}
 							}
 						}

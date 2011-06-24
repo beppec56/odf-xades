@@ -34,6 +34,10 @@ import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
  *
  */
 public class SignatureTreeElement extends BaseCertificateTreeElement {
+	
+	//the signature UUID inside a document.
+	private String	m_sSignatureUUID;
+
 	protected final int m_nFIELD_SIGNATURE_STATE = 0;
 	protected final int m_nFIELD_DOCUMENT_VERF_STATE = 1;
 	protected final int m_nFIELD_DOCUMENT_VERF_CONDT = 2;
@@ -103,5 +107,19 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
+	}
+
+	/**
+	 * @param _sSignatureUUID the m_s_SignatureUUID to set
+	 */
+	public void setSignatureUUID(String _sSignatureUUID) {
+		this.m_sSignatureUUID = _sSignatureUUID;
+	}
+
+	/**
+	 * @return the m_s_SignatureUUID
+	 */
+	public String getSignatureUUID() {
+		return m_sSignatureUUID;
 	}
 }

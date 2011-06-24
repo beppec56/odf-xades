@@ -38,6 +38,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 
 //service attributes:
 	//XOX_SignatureState:
+	private String m_sSignatureUUID;
 	private int m_nRelativeNumberInDocument = -1;
 	private SignatureState	m_eState;
 	private XOX_X509Certificate m_aCert;
@@ -169,5 +170,20 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	public void setSignersCerficate(XOX_X509Certificate _aCert) {
 		m_aCert = _aCert;		
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#getSignatureUUID()
+	 */
+	@Override
+	public String getSignatureUUID() {
+		return m_sSignatureUUID;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#setSignatureUUID(java.lang.String)
+	 */
+	@Override
+	public void setSignatureUUID(String _sUUID) {
+		m_sSignatureUUID = _sUUID;		
+	}
 }

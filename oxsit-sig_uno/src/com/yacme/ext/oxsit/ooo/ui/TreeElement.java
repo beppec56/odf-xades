@@ -22,10 +22,13 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 
@@ -38,8 +41,9 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
  *
  */
 public abstract class TreeElement
-		implements XComponent // XComponent implement for convenience, to be able to implement a dispose method
-		{
+//the XComponent interface is needed to use this base object as a data for XMutableTreeNode
+//as well as clean up along the way...
+	implements XComponent {
 
 	/** enum to mark the type of the node.
 	 * The node type is used in rendering the node on the right side
@@ -78,7 +82,7 @@ public abstract class TreeElement
 			X509V3_CRL_DISTRIBUTION_POINTS,
 		EXTENSIONS_CRITICAL,
 			X509V3_KEY_USAGE,
-		CERTIFICATION_PATH,
+		CERTIFICATION_PATH;
 	};
 
 	/**
@@ -195,6 +199,8 @@ public abstract class TreeElement
 	private String			m_sNodeGraphic;
 	
 	private XOX_X509Certificate		m_aCertificate;
+	
+	private XOX_SignatureState		m_xSignatureState;
 
 	private XComponentContext		m_xCC;
 
@@ -401,4 +407,59 @@ public abstract class TreeElement
 		return m_aCertificate;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#addEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void addEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		//if there is a signature state, then the corresponding
+		//certificate is cleared with the signature state
+		//if there is only a certificate, then dispose only of the certificate. 
+		if(m_xSignatureState != null) {
+			XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_xSignatureState);
+			if(xComp != null)
+				xComp.dispose();
+			
+			m_xSignatureState = null;
+		}
+		else if(m_aCertificate != null) {
+			XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_aCertificate);
+			if(xComp != null)
+				xComp.dispose();
+			
+			m_aCertificate = null;
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#removeEventListener(com.sun.star.lang.XEventListener)
+	 */
+	@Override
+	public void removeEventListener(XEventListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * @param m_xSignatureState the m_xSignatureState to set
+	 */
+	public void set_xSignatureState(XOX_SignatureState m_xSignatureState) {
+		this.m_xSignatureState = m_xSignatureState;
+	}
+
+	/**
+	 * @return the m_xSignatureState
+	 */
+	public XOX_SignatureState get_xSignatureState() {
+		return m_xSignatureState;
+	}
 }

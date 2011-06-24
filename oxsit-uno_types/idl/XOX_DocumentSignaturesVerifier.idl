@@ -48,45 +48,43 @@
 
 		/** The signatures this document contains
 		*/
-	  [attribute,readonly]  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> SignaturesState;
+	  [attribute,readonly]  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> SignatureStates;
 
 	  /** Load the certificates from the signatures of the gived document.
+	      Must be called to register the signatures present, before doing enything else.<br>
 	   * @param xFrame the frame to be used as anchor for dialogs
 	   * @param xTheDocument the model of the document from which the signature certificates should loaded
            * @return the sequence of the certificates found or null if no certificates (then no signatures)
 	   */
 	  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> loadAndGetSignatures([in] com::sun::star::frame::XFrame xFrame,
 											      [in] com::sun::star::frame::XModel xTheDocumentModel )
-	                                                        raises( ::com::sun::star::lang::IllegalArgumentException,
-								::com::sun::star::uno::Exception );
+	    raises( ::com::sun::star::lang::IllegalArgumentException,
+		    ::com::sun::star::uno::Exception );
 
-	/** Used to check if the signed document is untampered and if the signare itself is correct<br>
+	/** Used to check if the signed document is untampered and if the signature itself is correct.
+	    Should be called AFTER loadAndGetSignatures has been called !<br>
 		@param xFrame the frame to be used as anchor for dialogs
 		@param xTheDocument the model of the document to be verified
-		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
-		@return true if the document can be signed, false otherwise.
+		@param sSignatureUUID The UUID of the signature to be checked. If null all the signatures will be checked.
+   		@return In case sSignatureUUID is null, returns the aggregate state of the document signatures, else returns the state of the signature checked.
 		*/
 	  long verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
 					[in] com::sun::star::frame::XModel xTheDocumentModel,
-					[in] sequence<any> aArguments )
-						raises( ::com::sun::star::lang::IllegalArgumentException,
-								::com::sun::star::uno::Exception );
+					[in] string sSignatureUUID )
+	    raises( ::com::sun::star::lang::IllegalArgumentException,
+		    ::com::sun::star::uno::Exception );
 
-	/** Used to check if the signed document is untampered with and if the signare itself is correct<br>
+	/** Used to remove the selected signature or all the signatures.<br>
 		@param xFrame the frame to be used as anchor for dialogs
 		@param xTheDocument the model of the document to be verified
-		@param signaturePosition, the progressive number of the certificate of the signature to be removed, according to the position in the
-		sequence returned by the corresponding element contained in
-		@param aArguments an array of UNO objects implementation dependent. Can be used to pass more arguments to the function
+		@param sSignatureUUID The UUID of the signature to be removed. If null all the signatures will be removed.
 		@return true if the document can be signed, false otherwise.
 		*/
 	  boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
 					  [in] com::sun::star::frame::XModel xTheDocumentModel,
-					  [in] long signaturePosition,
-					  [in] sequence<any> aArguments )
-	                                  raises( ::com::sun::star::lang::IllegalArgumentException,
-								::com::sun::star::uno::Exception );
-
+					  [in] string sSignatureUUID )
+	    raises( ::com::sun::star::lang::IllegalArgumentException,
+		    ::com::sun::star::uno::Exception );
 	} ;
 
   }; }; }; }; };
