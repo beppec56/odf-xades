@@ -124,6 +124,7 @@ public abstract class TreeElement
 
 	/**
 	 * the corresponding strings identifier, to retrieve the string from resources.
+	 * the strings maps the value in emun com.yacme.ext.oxsit.security.SignatureState, using the direct value
 	 */
 	public static final String[]  m_sSIGNATURE_STATE =  { 
 							"err_txt_sign_ok",
@@ -337,6 +338,9 @@ public abstract class TreeElement
 	
 	abstract void EnableDisplay(boolean bWhat);
 
+	//will be called to update the GUI display, to be implemented if needed
+	abstract void updateForDisplay();
+	
 	/**
 	 * @param m_nNodeDescriptiveName the m_nNodeDescriptiveName to set
 	 */
@@ -412,15 +416,12 @@ public abstract class TreeElement
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.star.lang.XComponent#dispose()
+	/** free ( dispose() ) the XOX UNO objects.
+	 * 
 	 */
-	@Override
-	public void dispose() {
+	void cleanupXOXElements() {
 		//if there is a signature state, then the corresponding
 		//certificate is cleared with the signature state
 		//if there is only a certificate, then dispose only of the certificate. 
@@ -438,6 +439,14 @@ public abstract class TreeElement
 			
 			m_aCertificate = null;
 		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XComponent#dispose()
+	 */
+	@Override
+	public void dispose() {
+		cleanupXOXElements();
 	}
 
 	/* (non-Javadoc)

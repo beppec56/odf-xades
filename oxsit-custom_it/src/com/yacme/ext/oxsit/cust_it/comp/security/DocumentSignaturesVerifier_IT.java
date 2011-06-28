@@ -448,7 +448,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		XOX_SignatureState[] ret = null;
 		try {
 			ConfigManager.init("jar://ODFDocSigning.cfg");
-			//remove the certificates eventually present in the list.
+			//remove the signature states currently in the list.
 			cleanUpSignatures();
 			//load the signatures from the provided document references	
 			XStorage xDocumentStorage;		
@@ -508,12 +508,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
 									
 									aSignState.setState(SignatureState.NOT_YET_VERIFIED);
+									aSignState.setSignatureUUID(sig.getId());
 									// add the certificate of this signature to the certificate list and
 									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
 									if(aCert != null) {
 		//add the certificate to the internal list of certificates
 										addCertificate(aSignState,aCert);
-										
+
 									}
 									m_hSignatures.put(aSignState.getSignatureUUID(), aSignState);
 								}
@@ -558,10 +559,10 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	/*
 	 * verifies the document signatures present.
 	 * IMPORTANT, the loadAndGetSignatures MUST have been called first ! 
-	 * returns the document aggregated signature state
+	 * returns the document aggregated signature state of the state of the single signature cheked
 	 */
 	@Override
-	public int verifyDocumentSignatures(XFrame _xFrame, XModel _xDocumentModel, String _ssignatureUUID ) 
+	public int verifyDocumentSignatures(XFrame _xFrame, XModel _xDocumentModel, XOX_SignatureState xSignState) 
 			throws IllegalArgumentException, Exception {
 		final String __FUNCTION__ ="verifyDocumentSignatures: ";
 		//from the document model, get the docu storage
@@ -614,51 +615,66 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
 						
 						Signature sig = null;
-//						cleanUpSignatures(); //free the current certificate list						
+//						cleanUpSignatures(); //free the current certificate list
+						boolean foundTheSignatureID = false;
 						for (int i = 0; i < sdoc.countSignatures(); i++) {
 							sig = sdoc.getSignature(i);
 
+							//FIXME, TODO: check in case of all the signatures checked, what to do in this case ?
 							//now check, if the check is for all the signatures, this means we check the entire document signature list AND
 							//update the signature list accordingly, if a single signature is to be checked
-							
-							//lookup in the list if the signature is contained within the list of already loaded signatures
-							
-							//create a new signature state object
-							Object aSigObj = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT, m_xCC);
-							XOX_SignatureState aSignState = null;
-							if(aSigObj != null) {
-								aSignState = (XOX_SignatureState)UnoRuntime.queryInterface(XOX_SignatureState.class, aSigObj);
-								if(aSignState == null)
-									m_aLogger.severe(__FUNCTION__, "CANNOT OBTAIN A XOX_SignatureState INTERFACE !");
-								else {
-									
-									aSignState.setSignatureUUID(sig.getId());
-
-									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
-											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
-									
-									ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
-									
-									if (errs.size() == 0) {
-										m_aLogger.log("Verification OK!");
-										aSignState.setState(SignatureState.OK);
-									}
-									else {
-										aSignState.setState(SignatureState.ERR_VERIFY);
-										for (int j = 0; j < errs.size(); j++)
-											m_aLogger.severe(errs.get(j));
-									}
-									// add the certificate of this signature to the certificate list and
-									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
-									if(aCert != null) {
-		//add the certificate to the internal list of certificates
-		// the signature just checked is updated in the list
-
-//										addCertificate(aSignState,aCert);
-									}
-									m_hSignatures.put(aSignState.getSignatureUUID(), aSignState);
+							if(xSignState == null || 
+									(xSignState != null && xSignState.getSignatureUUID().equalsIgnoreCase(sig.getId()))) {
+								foundTheSignatureID = true;
+								//lookup in the list if the signature is contained within the list of already loaded signatures
+								//create a new signature state object
+								//or update the former one
+								XOX_SignatureState aSignState = null;
+								if(xSignState == null) {
+									//need a new element
+									Object aSigObj = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT, m_xCC);
+									if(aSigObj != null)
+										aSignState = (XOX_SignatureState)UnoRuntime.queryInterface(XOX_SignatureState.class, aSigObj);
 								}
+								else
+									aSignState = xSignState;
+
+									if(aSignState == null)
+										m_aLogger.severe(__FUNCTION__, "CANNOT INSTANTIaATE A: "+ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT+" SERVICE !");
+									else {
+
+										aSignState.setSignatureUUID(sig.getId());
+
+										m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+												+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
+										
+										ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
+										
+										if (errs.size() == 0) {
+											m_aLogger.log("Verification OK!");
+											aSignState.setState(SignatureState.OK);
+										}
+										else {
+											aSignState.setState(SignatureState.ERR_VERIFY);
+											for (int j = 0; j < errs.size(); j++)
+												m_aLogger.severe(errs.get(j));
+										}
+										// add the certificate of this signature to the certificate list and
+										X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
+										if(aCert != null) {
+			//add the certificate to the internal list of certificates
+			// the signature just checked is updated in the list
+	
+	//										addCertificate(aSignState,aCert);
+											//in case of all signatures verified, what need to be done about certificates ?
+										}
+										m_hSignatures.put(aSignState.getSignatureUUID(), aSignState);
+									}
 							}
+						}
+						if( xSignState != null && !foundTheSignatureID) {
+							//then: no signature id found 
+							
 						}
 						fTheSignaturesFile.close();
 					}

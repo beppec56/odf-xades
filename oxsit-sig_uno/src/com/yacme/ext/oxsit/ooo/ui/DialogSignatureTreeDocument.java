@@ -239,12 +239,36 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
 							if(aDocVerService != null) {				
 								m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
-								if(m_axoxDocumentVerifier != null) {									
-									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), 
-											aSignature.getSignatureUUID());
-									//get the signature state (all signatures)
-									//and update this element accordingly
-									//now traverse the tree from this element on and verify the certificate attached
+								if(m_axoxDocumentVerifier != null) {
+									XOX_SignatureState xTheState = aSignature.get_xSignatureState();
+									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), aSignature.get_xSignatureState());
+									//get the signature state (all signatures), the signature just checked is updated
+									//and update this GUI element accordingly
+									aSignature.updateSignaturesStates();
+									aSignature.updateSignatureStrings();
+									aSignature.EnableDisplay(true);
+									//now verify the certificate attached
+									XOX_X509Certificate xACert = null;
+									if(xTheState != null)
+										xACert = xTheState.getSignersCerficate(); 
+									if(xACert != null) {
+										try {
+											xACert.verifyCertificate(m_xParentFrame);
+											//now update the string and the text on screen
+											CertificateTreeElement aChild = aSignature.getChildCertificate(); 
+											if(aChild != null) {
+												aChild.updateCertificateStates();
+												aChild.updateCertificateStrings();
+												aChild.setNodeGraphic(setCertificateNodeGraficStringHelper(xACert));
+												aChild.getTheTreeNode().setNodeGraphicURL(aChild.getNodeGraphic());												
+											}
+										} catch (Throwable e) {
+											m_aLogger.severe(__FUNCTION__,e);
+										}
+
+										//copy the attached certificate state as well
+										//
+									}
 								}
 								else
 									m_aLogger.warning(__FUNCTION__+"XOX_DocumentSignaturesVerifier interface NOT available");
@@ -271,7 +295,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 									aCert.verifyCertificate(m_xParentFrame);
 									//now update the string and the text on screen
 									aCurrentCertNode.updateCertificateStates();
-									aCurrentCertNode.updateString();
+									aCurrentCertNode.updateCertificateStrings();
 									aCurrentCertNode.setNodeGraphic(setCertificateNodeGraficStringHelper(aCert));
 									aCurrentCertNode.getTheTreeNode().setNodeGraphicURL(aCurrentCertNode.getNodeGraphic());
 									//update the graphic simbol						

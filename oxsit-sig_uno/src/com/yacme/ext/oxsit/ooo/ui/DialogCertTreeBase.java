@@ -524,6 +524,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 	}
 
+	//FIXME: check the dispose of certificate !
 	protected void addCACertificateToTree(XMutableTreeNode _aParentNode, XOX_X509Certificate _aCertif) {
 
     //this adds the starting point of the certification path, from now on we have only CA certificates
@@ -770,6 +771,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		int _nSignatureState = TreeElement.m_nSIGNATURE_STATE_TO_BE_VERIFIED; 
 
+		aSignat.set_xSignatureState(_aSign);
 		switch(_aSign.getState().getValue()) {
 		case SignatureState.NOT_VALID_value:
 		default:
@@ -804,6 +806,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		CertificateTreeElement aNewCNode = addX509CertificateToTree(xaCNode, _aSign.getSignersCerficate(),
 					TreeNodeType.CERTIFICATE);
 		xaCNode.setDisplayValue(aNewCNode.getNodeName());
+		aSignat.setChildCertificate(aNewCNode);
 //		aSignat.setNodeName(aNewCNode.getNodeName());
 	}
 	

@@ -242,7 +242,7 @@ public class DialogCertTreeCA extends DialogCertTreeBase
 							aCert.verifyCertificateRevocationState(m_xParentFrame);
 							//now update the string and the text on screen
 							aCurrentNode.updateCertificateStates();
-							aCurrentNode.updateString();
+							aCurrentNode.updateCertificateStrings();
 							aCurrentNode.EnableDisplay(true);
 						} catch (IllegalArgumentException e) {
 							m_aLogger.severe(e);

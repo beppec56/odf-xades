@@ -23,10 +23,16 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import com.yacme.ext.oxsit.security.SignatureState;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
 
 /** to hold the signature data, for a single signature
  * 
@@ -48,6 +54,32 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 	public final int m_nFIELD_DATE_SIGN_CONDT_L1			= 12;
 	public final int m_nFIELD_DATE_SIGN_CONDT_L2			= 13;
 
+	//hash tables to convert the enum of various states to the string IDs in resources
+	/* the mapping from strings to emun state is:
+	 * 1) the enum is edited/changed in the IDL file
+	 * 2) the corresponding string plus id is added to the localization file
+	 * 3) change this hashmap to connect the enum to the id of the string
+	 * 
+	 *   the code will take care of the rest
+	 */
+	public static Hashtable<SignatureState,String>	m_aSIGNATURE_STATE = new Hashtable< SignatureState , String>(15);
+	static {
+		m_aSIGNATURE_STATE.put(SignatureState.OK, "err_txt_sign_ok");
+		m_aSIGNATURE_STATE.put(SignatureState.NOT_YET_VERIFIED, "err_txt_sign_to_ver");
+		m_aSIGNATURE_STATE.put(SignatureState.NOT_VALID, "err_txt_sign_not_val");
+		//FIXME: add the strings !
+		m_aSIGNATURE_STATE.put(SignatureState.ERR_DIGEST_COMPARE, "err_txt_sign_err_dig_comp");
+		m_aSIGNATURE_STATE.put(SignatureState.ERR_DATA_FILE_NOT_SIGNED, "err_txt_sign_err_data_file_not_signed");
+		m_aSIGNATURE_STATE.put(SignatureState.ERR_SIG_PROP_NOT_SIGNED, "err_txt_sign_err_sig_prop_not_signed");
+//		m_aSIGNATURE_STATE.put(SignatureState., "err_txt_sign_err_sig_prop_verif");
+		m_aSIGNATURE_STATE.put(SignatureState.ERR_CERT_EXPIRED, "err_txt_sign_err_sig_prop_cert_exp");
+		m_aSIGNATURE_STATE.put(SignatureState.ERR_TIMESTAMP_VERIFY, "err_txt_sign_err_sig_prop_time_stamp_verf");
+	};
+	//hash table to convert the enum of the certificate state to the actual strings in resources
+	public static Hashtable<SignatureState,String>	m_aSIGNATURE_STATE_STRINGS;
+
+	private	CertificateTreeElement	m_aChildCertificate;
+
 	/**
 	 * @param context
 	 * @param _xmcf
@@ -68,6 +100,8 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 		m_nFIELD_TITLE_ISSUER	 				= 7;
 		m_nFIELD_ISSUER 						= 8;
 		m_nFIELD_ISSUER_VERF_CONDITIONS			= 9;
+		
+		initStaticSignatureStaticStrings();
 	}
 
 	public void initialize() {
@@ -110,6 +144,56 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 	}
 
 	/**
+	 * 
+	 */
+	private void initStaticSignatureStaticStrings() {
+		if(m_aSIGNATURE_STATE_STRINGS == null) {
+			//init it once per element
+			m_aSIGNATURE_STATE_STRINGS = new Hashtable<SignatureState, String>(10);
+			if(m_aRegAcc == null)
+				m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
+			if(m_aRegAcc != null) {
+				Set<SignatureState> aKeySet = m_aSIGNATURE_STATE.keySet();
+				Iterator<SignatureState> it = aKeySet.iterator();
+		        while (it.hasNext()) {
+					try {
+						SignatureState cs = it.next();
+						m_aSIGNATURE_STATE_STRINGS.put(cs, 
+								m_aRegAcc.getStringFromRegistry(
+										m_aSIGNATURE_STATE.get(cs)
+															   )
+													   );
+					} catch (com.sun.star.uno.Exception e) {
+						getLogger().severe(e);
+					}
+		        }
+			}
+		}		
+	}
+	
+	public void updateSignaturesStates() {
+		if(get_xSignatureState() != null) {
+			setSignatureState(get_xSignatureState().getState().getValue()); //grab the signature state from the signature verifier
+//			setDocumentVerificationState(0);
+//			setSignatureAndDocumentStateConditions(0);
+			
+//			setCertificateGraficStateValue(getCertificate().getCertificateState());
+//			setCertificateState(getCertificate().getCertificateState());
+//			setCertificateStateConditions(getCertificate().getCertificateStateConditions());
+//			setCertificationAutorityState(getCertificate().getCertificationAuthorityState());			
+		}
+	}
+
+	public void updateSignatureStrings() {
+		//initializes string for signature and document state
+			//grab the string for certificate status
+			m_sStringList[m_nFIELD_SIGNATURE_STATE] =
+							m_aSIGNATURE_STATE_STRINGS.get(
+									SignatureState.fromInt(getCertificateState())
+											);
+	}
+
+	/**
 	 * @param _sSignatureUUID the m_s_SignatureUUID to set
 	 */
 	public void setSignatureUUID(String _sSignatureUUID) {
@@ -121,5 +205,19 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 	 */
 	public String getSignatureUUID() {
 		return m_sSignatureUUID;
+	}
+
+	/**
+	 * @param m_aChildCertificate the m_aChildCertificate to set
+	 */
+	public void setChildCertificate(CertificateTreeElement m_aChildCertificate) {
+		this.m_aChildCertificate = m_aChildCertificate;
+	}
+
+	/**
+	 * @return the m_aChildCertificate
+	 */
+	public CertificateTreeElement getChildCertificate() {
+		return m_aChildCertificate;
 	}
 }

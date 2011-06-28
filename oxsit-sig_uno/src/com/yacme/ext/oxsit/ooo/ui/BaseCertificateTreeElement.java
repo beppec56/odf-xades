@@ -22,6 +22,7 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
+import com.yacme.ext.oxsit.security.SignatureState;
 import com.yacme.ext.oxsit.security.cert.CertificateState;
 import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
 import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
@@ -88,7 +89,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 							"err_txt_verf_condt_no_inet"
 						};
 
-	//hash table to convert the enum of the certificate state to the id string in resources
+	//hash tables to convert the enum of various states to the string IDs in resources
 	/* the mapping from strings to emun state is:
 	 * 1) the enum is edited/changed in the IDL file
 	 * 2) the corresponding string plus id is added to the localization file
@@ -205,8 +206,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 						CertificationAuthorityState cs = it.next();
 						m_aCA_STATE_CONDITIONS_STRINGS.put(cs, 
 								m_aRegAcc.getStringFromRegistry(
-										m_aCA_STATE_CONDITIONS.get(cs
-																)
+										m_aCA_STATE_CONDITIONS.get(cs)
 																)
 														);
 					} catch (com.sun.star.uno.Exception e) {
@@ -291,14 +291,14 @@ public class BaseCertificateTreeElement extends TreeElement {
 			//initializes fixed string (titles)
 			m_sStringList[m_nFIELD_TITLE_ISSUER] = m_aRegAcc.getStringFromRegistry("cert_title_issuer" );
 
-			updateString();
+			updateCertificateStrings();
 		} catch (java.lang.Throwable e) {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
 	}
 	
-	public void updateString() {
+	public void updateCertificateStrings() {
 		//grab the string for certificate status
 		m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
 						m_aCERTIFICATE_STATE_STRINGS.get(
@@ -314,6 +314,15 @@ public class BaseCertificateTreeElement extends TreeElement {
 							CertificationAuthorityState.fromInt(getCertificationAutorityState())
 									);		
 	}
+	
+	/** updates the element for display.
+	 * Should be implmented in subclass
+	 * 
+	 */
+	@Override
+	public void updateForDisplay() {
+	}
+
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.ooo.ui.TreeElement#EnableDisplay(boolean)
 	 * this methods simply enabled/disable the display of the controls
@@ -334,6 +343,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 			}
 		}
 		else {
+			//update current node displayed data
+			updateForDisplay();
 			/*ouput them
 			 * for every string meant for the multi fixed text display
 			 *  devise a method to change the character font strike

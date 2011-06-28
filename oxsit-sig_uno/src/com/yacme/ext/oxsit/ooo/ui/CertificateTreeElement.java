@@ -94,13 +94,21 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	}
 
 	public void updateCertificateStates() {
-		if(getCertificate() != null) {
-			setCertificateGraficStateValue(getCertificate().getCertificateState());
-			setCertificateState(getCertificate().getCertificateState());
-			setCertificateStateConditions(getCertificate().getCertificateStateConditions());
-			setCertificationAutorityState(getCertificate().getCertificationAuthorityState());			
+		XOX_X509Certificate aCert = getCertificate(); 
+		if(aCert != null) {
+			setCertificateGraficStateValue(aCert.getCertificateState());
+			setCertificateState(aCert.getCertificateState());
+			setCertificateStateConditions(aCert.getCertificateStateConditions());
+			setCertificationAutorityState(aCert.getCertificationAuthorityState());			
 		}
 	}
+	
+	//usually called when elemented gets selected
+	public void updateForDisplay() {
+		updateCertificateStates();
+		System.out.println("updateForDisplay");
+	}
+
 	/** specific initialization for certificate
 	 * 
 	 * @param _aCertif

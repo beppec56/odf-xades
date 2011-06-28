@@ -51,7 +51,7 @@
 	  [attribute,readonly]  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> SignatureStates;
 
 	  /** Load the certificates from the signatures of the gived document.
-	      Must be called to register the signatures present, before doing enything else.<br>
+	      Must be called to register the signatures present, before doing anything else.<br>
 	   * @param xFrame the frame to be used as anchor for dialogs
 	   * @param xTheDocument the model of the document from which the signature certificates should loaded
            * @return the sequence of the certificates found or null if no certificates (then no signatures)
@@ -65,12 +65,13 @@
 	    Should be called AFTER loadAndGetSignatures has been called !<br>
 		@param xFrame the frame to be used as anchor for dialogs
 		@param xTheDocument the model of the document to be verified
-		@param sSignatureUUID The UUID of the signature to be checked. If null all the signatures will be checked.
+		@param xSignatureState the state of the signature to be checked. If null all the signatures will be checked.
+		If not null, the state is updated and the coresponding csigner certificate is checked as well.
    		@return In case sSignatureUUID is null, returns the aggregate state of the document signatures, else returns the state of the signature checked.
 		*/
 	  long verifyDocumentSignatures([in] com::sun::star::frame::XFrame xFrame,
 					[in] com::sun::star::frame::XModel xTheDocumentModel,
-					[in] string sSignatureUUID )
+					[in] com::yacme::ext::oxsit::security::XOX_SignatureState xSignatureState )
 	    raises( ::com::sun::star::lang::IllegalArgumentException,
 		    ::com::sun::star::uno::Exception );
 

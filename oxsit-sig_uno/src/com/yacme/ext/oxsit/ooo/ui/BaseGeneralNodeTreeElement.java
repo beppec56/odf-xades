@@ -240,4 +240,14 @@ public class BaseGeneralNodeTreeElement extends TreeElement {
 	public void disposeUNOComponents() {
 		//FIXME: clean up UNO components used here, if any
 	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.ooo.ui.TreeElement#updateForDisplay()
+	 */
+	@Override
+	void updateForDisplay() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
