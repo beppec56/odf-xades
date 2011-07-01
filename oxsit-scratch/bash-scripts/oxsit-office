@@ -22,5 +22,5 @@ PROCESS_ID=`ps | grep soffice.bin | sed 's/pts.*$//g'`
 #9000 is the port for UNO connection whereas the other is 
 #the port for remote Java debug connection
 echo "soffice process is: $PROCESS_ID"
-netstat -taupln | grep soffice.bin | grep $PROCESS_ID
+netstat -taupln | grep soffice.bin | grep $PROCESS_ID | awk '{ print $4 " <-= access tport to =-> " $7}' | sed 's/0.0.0.0://g'
 date
