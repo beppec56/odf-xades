@@ -145,7 +145,7 @@ public abstract class TreeElement
 	 * 
 	 */
 	public static final int m_nDOCUMENT_VERIF_STATE_VALID = 0;
-	public static final int m_nDOCUMENT_VERIF_MOD = 1;
+	public static final int m_nDOCUMENT_VERIF_STATE_MODIFIED = 1;
 	public static final int m_nDOCUMENT_VERIF_TO_BE_VERIFIED = 2;
 	/**
 	 * the corresponding strings identifier, to retrieve the string from resources.
@@ -198,14 +198,14 @@ public abstract class TreeElement
 	private int				m_nSignatureDateMode;
 
 	private String			m_sNodeGraphic;
-	
+
 	private XOX_X509Certificate		m_aCertificate;
-	
+
 	private XOX_SignatureState		m_xSignatureState;
 
-	private XComponentContext		m_xCC;
+	protected XComponentContext		m_xCC;
 
-	private XMultiComponentFactory	m_xMCF;
+	protected XMultiComponentFactory	m_xMCF;
 
 	/**
 	 * @param m_nType the m_nType to set

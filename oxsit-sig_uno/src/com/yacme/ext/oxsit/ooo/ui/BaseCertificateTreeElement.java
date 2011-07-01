@@ -76,8 +76,8 @@ public class BaseCertificateTreeElement extends TreeElement {
 	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_ENABLED = 0;
 	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_SIG_OPT = 1;
 	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_DOC_OPT = 2;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_DISAB = 3;
-	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_INET = 4;
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_DISAB = 3;   //set when both OCSP and CRL check are disabled
+	public static final int m_nDOCUMENT_VERIF_STATE_CONDT_NO_INET = 4; //set when off-line is enabled
 	/**
 	 * the corresponding strings identifier, to retrieve the string from resources.
 	 */
@@ -88,7 +88,10 @@ public class BaseCertificateTreeElement extends TreeElement {
 							"err_txt_docum_verf_condt_disb",
 							"err_txt_verf_condt_no_inet"
 						};
-
+	//hash table to convert the string code of the document verification state condition to the actual strings in resources
+	//is filled at the first class instantiation
+	public static Hashtable<String,String>	m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS;	
+	
 	//hash tables to convert the enum of various states to the string IDs in resources
 	/* the mapping from strings to emun state is:
 	 * 1) the enum is edited/changed in the IDL file
@@ -188,7 +191,7 @@ public class BaseCertificateTreeElement extends TreeElement {
 			m_aRegAcc = null;
 		}
 	}
-
+	
 	/**
 	 * 
 	 */

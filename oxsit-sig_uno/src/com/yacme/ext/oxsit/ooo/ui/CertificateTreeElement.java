@@ -57,6 +57,8 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	//state of this certificate, comes from controls of the certificate itself
 	// the returned value will be in the range of com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState.
 	private int m_nCertificateGraficStateValue;
+	
+	private SignatureTreeElement m_aTheParentSignature;
 
 	public CertificateTreeElement(XComponentContext _xContext, XMultiComponentFactory _xMCF) {
 		super(_xContext,_xMCF);
@@ -149,5 +151,19 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	 */
 	public int getCertificateGraficStateValue() {
 		return m_nCertificateGraficStateValue;
+	}
+
+	/**
+	 * @param m_aTheParentSignature the m_aTheParentSignature to set
+	 */
+	public void setParentSignature(SignatureTreeElement m_aTheParentSignature) {
+		this.m_aTheParentSignature = m_aTheParentSignature;
+	}
+
+	/**
+	 * @return the m_aTheParentSignature
+	 */
+	public SignatureTreeElement getParentSignature() {
+		return m_aTheParentSignature;
 	}
 }

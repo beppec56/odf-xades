@@ -769,23 +769,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 		for(int i=0; i < CertifTreeDlgDims.m_nMAXIMUM_FIELDS; i++ ) {
 			aSignat.setAControlLine(m_xDlgContainer.getControl( sEmptyTextLine+i ), i);
 		}
-		int _nSignatureState = TreeElement.m_nSIGNATURE_STATE_TO_BE_VERIFIED; 
 
 		aSignat.set_xSignatureState(_aSign);
-		switch(_aSign.getState().getValue()) {
-		case SignatureState.NOT_VALID_value:
-		default:
-			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_NOT_VALID;
-			break;
-		case SignatureState.OK_value:
-			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_VALID;
-			break;			
-		case SignatureState.NOT_YET_VERIFIED_value:
-			_nSignatureState = TreeElement.m_nSIGNATURE_STATE_TO_BE_VERIFIED;
-			break;			
-		}
-
-		aSignat.setSignatureState(_nSignatureState);
 		aSignat.setSignatureUUID(_aSign.getSignatureUUID());
 		
 		//create the graphical part of the signature representation
@@ -805,9 +790,13 @@ public class DialogCertTreeBase extends BasicDialog implements
 //after this add the signee certificate as a subnode of the signature
 		CertificateTreeElement aNewCNode = addX509CertificateToTree(xaCNode, _aSign.getSignersCerficate(),
 					TreeNodeType.CERTIFICATE);
+		aNewCNode.setParentSignature(aSignat);		
 		xaCNode.setDisplayValue(aNewCNode.getNodeName());
 		aSignat.setChildCertificate(aNewCNode);
-//		aSignat.setNodeName(aNewCNode.getNodeName());
+//update the certificate string value in the signature display area
+		//the signature states uses the certififcate state as well
+		aSignat.updateSignaturesStates();
+		aSignat.updateSignatureStrings();
 	}
 	
 	//////////////////////////

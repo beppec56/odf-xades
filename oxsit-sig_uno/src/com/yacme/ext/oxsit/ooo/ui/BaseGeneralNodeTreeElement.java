@@ -126,8 +126,8 @@ public class BaseGeneralNodeTreeElement extends TreeElement {
 			 *   b	the string will be in bold
 			 *   B
 			 *   i	the string will be output in italic single underlined 
-			 *   s  the string will striken out regular
-			 *   S  the string will striken out bold
+			 *   s  the string will strike out regular
+			 *   S  the string will strike out bold
 			 *   w	text background will be in ControlDims.DLG_CERT_TREE_STATE_WARNING_COLOR
 			 *   e  text background will be in ControlDims.DLG_CERT_TREE_STATE_ERROR_COLOR;
 			 */

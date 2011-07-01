@@ -260,7 +260,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 												aChild.updateCertificateStates();
 												aChild.updateCertificateStrings();
 												aChild.setNodeGraphic(setCertificateNodeGraficStringHelper(xACert));
-												aChild.getTheTreeNode().setNodeGraphicURL(aChild.getNodeGraphic());												
+												aChild.getTheTreeNode().setNodeGraphicURL(aChild.getNodeGraphic());
+												//update again the signature string, so the certificate 
+												//strings will be udated as
+												aSignature.updateSignatureStrings();
+												aSignature.EnableDisplay(true);
 											}
 										} catch (Throwable e) {
 											m_aLogger.severe(__FUNCTION__,e);

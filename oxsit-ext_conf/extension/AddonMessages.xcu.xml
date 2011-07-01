@@ -252,8 +252,8 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="id_pb_verif_sign" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Verify signature</value>
-				<value xml:lang="it">Verifica firma</value>
+				<value xml:lang="en">Verify</value>
+				<value xml:lang="it">Verifica</value>
 			</prop>
 		</node>
 		<!--

@@ -29,10 +29,15 @@ import java.util.Set;
 
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
+import com.yacme.ext.oxsit.options.OptionsParametersAccess;
 import com.yacme.ext.oxsit.security.SignatureState;
 import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
+import com.yacme.ext.oxsit.security.cert.CertificationAuthorityState;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 /** to hold the signature data, for a single signature
  * 
@@ -100,7 +105,7 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 		m_nFIELD_TITLE_ISSUER	 				= 7;
 		m_nFIELD_ISSUER 						= 8;
 		m_nFIELD_ISSUER_VERF_CONDITIONS			= 9;
-		
+		initStaticDocumentVerifiStateStrings();
 		initStaticSignatureStaticStrings();
 	}
 
@@ -121,13 +126,30 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 			//initializes string for signature and document state
 			m_sStringList[m_nFIELD_SIGNATURE_STATE] = 
 				m_aRegAcc.getStringFromRegistry( m_sSIGNATURE_STATE[getSignatureState()]);
-
-			m_sStringList[m_nFIELD_DOCUMENT_VERF_STATE] =
-				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_VERIF_STATE[getDocumentVerificationState()]);
+			
+			m_sStringList[m_nFIELD_DOCUMENT_VERF_STATE] = 
+					m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS.get( m_sDOCUMENT_VERIF_STATE[getDocumentVerificationState()]);
 			//set the string for document and signature verification condt
+			//check the verification options, set the string accordingly
+			//only when on line and OCSP enabled or CRL enabled or both OCSP and CRL enbaled
+			//the verification options are considered active
+
+			OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(m_xCC);
+			boolean bOffLineOperation = xOptionsConfigAccess.getBoolean("OperationOffLine");
+			boolean bDisableOCSPControl = xOptionsConfigAccess.getBoolean("DisableOCSPControl");
+			boolean bDisableCRLControl = xOptionsConfigAccess.getBoolean("DisableCRLControl");
+//			boolean bAlwaysDownloadCRL = xOptionsConfigAccess.getBoolean("ForceDownloadCRL");
+			xOptionsConfigAccess.dispose();		
+			if(bOffLineOperation)
+				setSignatureAndDocumentStateConditions(m_nDOCUMENT_VERIF_STATE_CONDT_NO_INET);
+			else if(bDisableOCSPControl && bDisableCRLControl)
+				setSignatureAndDocumentStateConditions(m_nDOCUMENT_VERIF_STATE_CONDT_DISAB);
+			else
+				setSignatureAndDocumentStateConditions(m_nDOCUMENT_VERIF_STATE_CONDT_ENABLED);
+
 			m_sStringList[m_nFIELD_DOCUMENT_VERF_CONDT] =
 				m_aRegAcc.getStringFromRegistry( m_sDOCUMENT_VERIF_STATE_CONDT[getSignatureAndDocumentStateConditions()]);
-
+			
 			// set the strings for the signature date conditions 
 			m_sStringList[m_nFIELD_DATE_SIGN] = "r<una data di firma>";
 			int sigMode = getSignatureDateMode();
@@ -141,6 +163,30 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 			getLogger().severe("initialize", e);
 		}
 		m_aRegAcc.dispose();
+	}
+
+	/** Initialize the string for document state conditions
+	 * 
+	 */
+	private void initStaticDocumentVerifiStateStrings() {
+		if(m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS == null) {
+			//init it once per element
+			m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS = new Hashtable<String, String>(10);
+			if(m_aRegAcc == null)
+				m_aRegAcc = new MessageConfigurationAccess(getComponentContext(), getMultiComponentFactory());
+			if(m_aRegAcc != null) {
+				
+				for(int st = 0; st < m_sDOCUMENT_VERIF_STATE.length; st++ ) {
+					try {
+						m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS.put(m_sDOCUMENT_VERIF_STATE[st], 
+								m_aRegAcc.getStringFromRegistry(m_sDOCUMENT_VERIF_STATE[st])
+														          );
+					} catch (com.sun.star.uno.Exception e) {
+						getLogger().severe(e);
+					}
+		        }
+			}
+		}		
 	}
 
 	/**
@@ -170,17 +216,24 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 			}
 		}		
 	}
-	
+
 	public void updateSignaturesStates() {
 		if(get_xSignatureState() != null) {
-			setSignatureState(get_xSignatureState().getState().getValue()); //grab the signature state from the signature verifier
-//			setDocumentVerificationState(0);
-//			setSignatureAndDocumentStateConditions(0);
-			
-//			setCertificateGraficStateValue(getCertificate().getCertificateState());
-//			setCertificateState(getCertificate().getCertificateState());
-//			setCertificateStateConditions(getCertificate().getCertificateStateConditions());
-//			setCertificationAutorityState(getCertificate().getCertificationAuthorityState());			
+			//we don't need to map the internal state, since the string mapping is performed using
+			//the enum in the signature state XOX_SignatureState UNO object				
+			setSignatureState(get_xSignatureState().getState().getValue());
+			switch(get_xSignatureState().getState().getValue()) {
+			case SignatureState.OK_value:
+				setDocumentVerificationState(m_nDOCUMENT_VERIF_STATE_VALID);
+				break;
+			case SignatureState.ERR_DATA_FILE_NOT_SIGNED_value:
+			case SignatureState.ERR_DIGEST_COMPARE_value:				
+				setDocumentVerificationState(m_nDOCUMENT_VERIF_STATE_MODIFIED);
+				break;
+			default:
+				setDocumentVerificationState(m_nDOCUMENT_VERIF_TO_BE_VERIFIED);
+				break;
+			}
 		}
 	}
 
@@ -189,8 +242,40 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 			//grab the string for certificate status
 			m_sStringList[m_nFIELD_SIGNATURE_STATE] =
 							m_aSIGNATURE_STATE_STRINGS.get(
-									SignatureState.fromInt(getCertificateState())
+									SignatureState.fromInt(getSignatureState())
+														  );
+			m_sStringList[m_nFIELD_DOCUMENT_VERF_STATE] = 
+				m_aDOCUMENT_VERIF_STATE_CONDT_STRINGS.get( m_sDOCUMENT_VERIF_STATE[getDocumentVerificationState()]);
+			
+			if(m_aChildCertificate != null) {
+				//the certificate state value should be udated elsewhere
+				//set the node name
+				XOX_X509CertificateDisplay aCertDisplay = 
+					(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, 
+							m_aChildCertificate.getCertificate());
+				
+				if(aCertDisplay != null) {
+					//set the certificate owner
+					m_sStringList[m_nFIELD_OWNER_NAME] = "b"+aCertDisplay.getSubjectDisplayName();	
+					//grab the CA
+					m_sStringList[m_nFIELD_ISSUER] = "r"+aCertDisplay.getIssuerDisplayName();
+				}
+				//set the CA state and the certificate state
+				//the certificate state value (only to the string fields)
+				//grab the string for certificate status
+				m_sStringList[m_nFIELD_CERTIFICATE_STATE] =
+								m_aCERTIFICATE_STATE_STRINGS.get(
+										CertificateState.fromInt( m_aChildCertificate.getCertificateState())
+												);
+				m_sStringList[m_nFIELD_CERTIFICATE_VERF_CONDITIONS] =
+							m_aCERTIFICATE_STATE_CONDITIONS_STRINGS.get(
+									CertificateStateConditions.fromInt(m_aChildCertificate.getCertificateStateConditions())
 											);
+				m_sStringList[m_nFIELD_ISSUER_VERF_CONDITIONS] =
+							m_aCA_STATE_CONDITIONS_STRINGS.get(
+									CertificationAuthorityState.fromInt(m_aChildCertificate.getCertificationAutorityState())
+											);		
+			}
 	}
 
 	/**
