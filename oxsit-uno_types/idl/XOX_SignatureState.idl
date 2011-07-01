@@ -36,9 +36,9 @@
 	 */
   interface XOX_SignatureState
   {
-    /** This document storage
+    /** The date of the signature
      */
-    /*[attribute] com::sun::star: date ??? DateOfSignature; */
+    [attribute] string SigningTime;
 
     /** This signature UUID, created while signing.
 	Can be used to identify the signature inside the document.

@@ -42,6 +42,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	private int m_nRelativeNumberInDocument = -1;
 	private SignatureState	m_eState;
 	private XOX_X509Certificate m_aCert;
+	private String m_sSignintTime;
 
 	/**
 	 * 
@@ -185,5 +186,21 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	@Override
 	public void setSignatureUUID(String _sUUID) {
 		m_sSignatureUUID = _sUUID;		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#getSigningTime()
+	 */
+	@Override
+	public String getSigningTime() {
+		return m_sSignintTime;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#setSigningTime(java.lang.String)
+	 */
+	@Override
+	public void setSigningTime(String _signTime) {
+		m_sSignintTime = _signTime;
 	}
 }
