@@ -133,13 +133,13 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					//grab the certificates and add them to the dialog						
 					XOX_SignatureState[] oCertifs = 
 						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
-//					if(oCertifs != null) {
+					if(oCertifs != null) {
 						for(int idx = 0; idx < oCertifs.length; idx++) {
 							//add the certificate to the dialog tree
 							m_aLogger.debug(__FUNCTION__+"signature state added");
 							addASignatureState(oCertifs[idx]);
 						}
-//					} //else there are no signatures !
+					} //else there are no signatures !
 				}
 				else
 					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");

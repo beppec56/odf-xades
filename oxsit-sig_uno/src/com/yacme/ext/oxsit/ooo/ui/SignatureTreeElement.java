@@ -276,6 +276,9 @@ public class SignatureTreeElement extends BaseCertificateTreeElement {
 									CertificationAuthorityState.fromInt(m_aChildCertificate.getCertificationAutorityState())
 											);		
 			}
+			//retrieve the signing time and display it
+			if(get_xSignatureState() != null)
+				m_sStringList[m_nFIELD_DATE_SIGN] = "s"+get_xSignatureState().getSigningTime();
 	}
 
 	/**

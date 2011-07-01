@@ -773,7 +773,7 @@ public class Signature implements Serializable {
                     SignedDocException.ERR_CERT_EXPIRED,
                     "Signers certificate has expired!", null));
         }
-       
+
         // check certificates CA
 //        try {
 //        	//ROB

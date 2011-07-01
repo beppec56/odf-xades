@@ -12,10 +12,13 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -55,6 +58,7 @@ import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SAXSignedDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
@@ -644,6 +648,16 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									else {
 
 										aSignState.setSignatureUUID(sig.getId());
+										
+										final String m_dateFormatXAdES = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+										Date signTime = sig.getSignedProperties().getSigningTime();
+										
+							            SimpleDateFormat f = new SimpleDateFormat(m_dateFormatXAdES);
+							            f.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+							            String dateStr = f.format(signTime);
+							            
+							            //pass the string to the signature state
+							            aSignState.setSigningTime(dateStr);
 
 										m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 												+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
