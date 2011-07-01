@@ -37,9 +37,12 @@ import java.security.CodeSource;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -73,6 +76,14 @@ public class Helpers {
 	protected Helpers() {
 	}
 
+	public static String date2string(Date _aDate) {
+		final String m_dateFormatXAdES = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        SimpleDateFormat f = new SimpleDateFormat(m_dateFormatXAdES);
+        f.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+        String dateStr = f.format(_aDate);
+        return dateStr;
+	}
+	
 	public static String getIssuerName(X509Certificate _Cert) {
 		//convert to bouncycaste
 		String sRet = "";
