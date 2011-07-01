@@ -125,6 +125,50 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 
 		center();
 		//load the document signature states (always when dialog starts)
+		readAllSignatures();
+//		try {
+//			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+//			if(aDocVerService != null) {				
+//				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+//				if(m_axoxDocumentVerifier != null) {
+//					//grab the certificates and add them to the dialog						
+//					XOX_SignatureState[] oCertifs = 
+//						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
+//					if(oCertifs != null) {
+//						for(int idx = 0; idx < oCertifs.length; idx++) {
+//							//add the certificate to the dialog tree
+//							m_aLogger.debug(__FUNCTION__+"signature state added");
+//							addASignatureState(oCertifs[idx]);
+//						}
+//					} //else there are no signatures !
+//				}
+//				else
+//					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
+//		        // now clean up
+//		        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+//			}
+//			else
+//				m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
+//
+//		} catch (Throwable e) {
+//			m_aLogger.severe(__FUNCTION__, e);
+//		}
+	}
+
+	@Override
+	public short executeDialog() throws BasicErrorException {
+		return super.executeDialog();
+	}
+
+	/** called when the dialog is closing, to dispose of available certificate list
+	 * 
+	 */
+	public void disposeElements() {
+		
+	}
+
+	private void readAllSignatures() {
+		final String __FUNCTION__ = "readAllSignatures: ";
 		try {
 			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
 			if(aDocVerService != null) {				
@@ -152,20 +196,9 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		} catch (Throwable e) {
 			m_aLogger.severe(__FUNCTION__, e);
 		}
-	}
-
-	@Override
-	public short executeDialog() throws BasicErrorException {
-		return super.executeDialog();
-	}
-
-	/** called when the dialog is closing, to dispose of available certificate list
-	 * 
-	 */
-	public void disposeElements() {
 		
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#addButtonPressed()
 	 */
@@ -181,11 +214,19 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 				int BiasY = ControlDims.RSC_CD_PUSHBUTTON_HEIGHT * 4;//to see the underlying certificates already in the document
 				aDialog1.setDocumentModel(getDocumentModel());
 				aDialog1.initialize(BiasX, BiasY);
-				aDialog1.executeDialog();
+				short valueRet = aDialog1.executeDialog();
+				m_aLogger.log("returned: "+valueRet);
 				aDialog1.disposeElements();
 			} catch (BasicErrorException e) {
 				m_aLogger.severe("actionPerformed", "", e);
 			}
+//reload the signatures
+			
+			//cleanup the signature tree
+			removeAllTreeNodes();
+			//add the new ones
+			readAllSignatures();
+			
 		} catch (Throwable e1) {
 			m_aLogger.severe("actionPerformed", "", e1);
 		}

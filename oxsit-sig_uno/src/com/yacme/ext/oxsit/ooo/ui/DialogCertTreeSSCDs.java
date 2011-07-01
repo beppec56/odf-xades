@@ -166,7 +166,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	 */
 	@Override
 	public void addButtonPressed() {
-		// TODO Auto-generated method stub
 		//add the certificate to ?? check the spec
 		m_aLogger.info("firma document con un certificato");
 		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
@@ -181,9 +180,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				try {
 					//FIXME get the object name from the parameters
 					Object oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
-					
 					XOX_DocumentSigner xSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
-					
 					if(xSigner != null) {
 						XOX_X509Certificate[] aCert = new XOX_X509Certificate[1]; 						
 						aCert[0] = ct.getCertificate();

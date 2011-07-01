@@ -510,9 +510,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 								else {
 									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
-									
+
 									aSignState.setState(SignatureState.NOT_YET_VERIFIED);
 									aSignState.setSignatureUUID(sig.getId());
+						            //pass the string to the signature state
+						            aSignState.setSigningTime(
+						            		Helpers.date2string(sig.getSignedProperties().getSigningTime()));
+									
 									// add the certificate of this signature to the certificate list and
 									X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
 									if(aCert != null) {
@@ -648,16 +652,10 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									else {
 
 										aSignState.setSignatureUUID(sig.getId());
-										
-										final String m_dateFormatXAdES = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-										Date signTime = sig.getSignedProperties().getSigningTime();
-										
-							            SimpleDateFormat f = new SimpleDateFormat(m_dateFormatXAdES);
-							            f.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
-							            String dateStr = f.format(signTime);
 							            
 							            //pass the string to the signature state
-							            aSignState.setSigningTime(dateStr);
+							            aSignState.setSigningTime(
+							            		Helpers.date2string(sig.getSignedProperties().getSigningTime()));
 
 										m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 												+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
@@ -720,7 +718,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		} catch (ClassNotFoundException e) {
 			m_aLogger.severe(e);
 		}
-		
+
 		return 0;
 	}	
 	
