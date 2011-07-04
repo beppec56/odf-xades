@@ -1436,7 +1436,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	}
 
 	//ROB: verification sample code
-	public void verifySample(String fileToVerify) {
+	private void verifySample(String fileToVerify) {
 		DigiDocFactory digFac;
 		try {
 			digFac = ConfigManager.instance().getSignedDocFactory();

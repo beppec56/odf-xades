@@ -103,7 +103,7 @@ public class GlobalLogger extends ComponentBase
 		configureLogger();
 
 		if(m_bCanLogMyself)
-			m_aLogger.info("ctor");
+			m_aLogger.fine("ctor"); //this correspond to the application DEBUG level
 	}
 
 	/* (non-Javadoc)

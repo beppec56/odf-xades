@@ -25,9 +25,6 @@ import java.security.cert.X509Certificate;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TSPException;
 
-// Logging classes
-//import org.apache.log4j.Logger;
-
 import com.sun.star.embed.XStorage;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
@@ -343,11 +340,11 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 
 	private void findCertIDandCertValueTypes(Signature sig) {
 		//if(m_logger.isDebugEnabled())
-		m_aLogger.log("Sig: " + sig.getId() + " certids: " + sig.countCertIDs());
+		m_aLogger.debug("Sig: " + sig.getId() + " certids: " + sig.countCertIDs());
 		for (int i = 0; (sig != null) && (i < sig.countCertIDs()); i++) {
 			CertID cid = sig.getCertID(i);
 			//if(m_logger.isDebugEnabled())
-			m_aLogger.log("CertId: " + cid.getId() + " type: " + cid.getType() + " nr: " + cid.getSerial());
+			m_aLogger.debug("CertId: " + cid.getId() + " type: " + cid.getType() + " nr: " + cid.getSerial());
 			if (cid.getType() == CertID.CERTID_TYPE_UNKNOWN) {
 				CertValue cval = sig.findCertValueWithSerial(cid.getSerial());
 				if (cval != null) {
@@ -355,7 +352,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 					try {
 						cn = SignedDoc.getCommonName(cval.getCert().getSubjectDN().getName());
 						//if(m_logger.isDebugEnabled())
-						m_aLogger.log("CertId type: " + cid.getType() + " nr: " + cid.getSerial() + " cval: " + cval.getId()
+						m_aLogger.debug("CertId type: " + cid.getType() + " nr: " + cid.getSerial() + " cval: " + cval.getId()
 								+ " CN: " + cn);
 						if (ConvertUtils.isKnownOCSPCert(cn)) {
 							//if(m_logger.isInfoEnabled())
@@ -365,11 +362,11 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 						}
 						if (ConvertUtils.isKnownTSACert(cn)) {
 							//if(m_logger.isDebugEnabled())
-							m_aLogger.log("Cert: " + cn + " is TSA cert");
+							m_aLogger.debug("Cert: " + cn + " is TSA cert");
 							cid.setType(CertID.CERTID_TYPE_TSA);
 							cval.setType(CertValue.CERTVAL_TYPE_TSA);
 							//if(m_logger.isDebugEnabled())
-							m_aLogger.log("CertId: " + cid.getId() + " type: " + cid.getType() + " nr: " + cid.getSerial());
+							m_aLogger.debug("CertId: " + cid.getId() + " type: " + cid.getType() + " nr: " + cid.getSerial());
 						}
 					} catch (SignedDocException ex) {
 						m_aLogger.severe("Error setting type on certid or certval: ", cn);
@@ -379,23 +376,23 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 
 		} // for i < sig.countCertIDs()
 			//if(m_logger.isDebugEnabled())
-		m_aLogger.log("Sig: " + sig.getId() + " certvals: " + sig.countCertValues());
+		m_aLogger.debug("Sig: " + sig.getId() + " certvals: " + sig.countCertValues());
 		for (int i = 0; (sig != null) && (i < sig.countCertValues()); i++) {
 			CertValue cval = sig.getCertValue(i);
 			//if(m_logger.isDebugEnabled())
-			m_aLogger.log("CertValue: " + cval.getId() + " type: " + cval.getType());
+			m_aLogger.debug("CertValue: " + cval.getId() + " type: " + cval.getType());
 			if (cval.getType() == CertValue.CERTVAL_TYPE_UNKNOWN) {
 				String cn = null;
 				try {
 					cn = SignedDoc.getCommonName(cval.getCert().getSubjectDN().getName());
 					if (ConvertUtils.isKnownOCSPCert(cn)) {
 						//if(m_logger.isDebugEnabled())
-						m_aLogger.log("Cert: " + cn + " is OCSP responders cert");
+						m_aLogger.debug("Cert: " + cn + " is OCSP responders cert");
 						cval.setType(CertValue.CERTVAL_TYPE_RESPONDER);
 					}
 					if (ConvertUtils.isKnownTSACert(cn)) {
 						//if(m_logger.isDebugEnabled())
-						m_aLogger.log("Cert: " + cn + " is TSA cert");
+						m_aLogger.debug("Cert: " + cn + " is TSA cert");
 						cval.setType(CertValue.CERTVAL_TYPE_TSA);
 					}
 				} catch (SignedDocException ex) {
@@ -435,7 +432,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 	 */
 	public void startElement(String namespaceURI, String lName, String qName, Attributes attrs) throws SAXSignedDocException {
 		//if(m_logger.isDebugEnabled())
-//		m_aLogger.log("Start Element: " + qName + " lname: " + lName + " uri: " + namespaceURI);
+//		m_aLogger.debug("Start Element: " + qName + " lname: " + lName + " uri: " + namespaceURI);
 		m_tags.push(qName);
 		if (qName.equals("SigningTime") || qName.equals("IssuerSerial") || qName.equals("X509SerialNumber")
 				|| qName.equals("X509IssuerName") || qName.equals("ClaimedRole") || qName.equals("City")
@@ -453,7 +450,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 			CertValue cval = null;
 			try {
 				//if(m_logger.isDebugEnabled())
-				m_aLogger.log("Adding signers cert to: " + sig.getId());
+				m_aLogger.debug("Adding signers cert to: " + sig.getId());
 				cval = sig.getOrCreateCertValueOfType(CertValue.CERTVAL_TYPE_SIGNER);
 			} catch (SignedDocException ex) {
 				SAXSignedDocException.handleException(ex);
@@ -482,7 +479,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 				}
 			}
 			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("Adding cval " + cval.getId() + " type: " + cval.getType() + " to: " + sig.getId());
+			m_aLogger.debug("Adding cval " + cval.getId() + " type: " + cval.getType() + " to: " + sig.getId());
 			sig.addCertValue(cval);
 			m_sbCollectItem = new StringBuffer();
 		}
@@ -541,7 +538,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 					if (df.schouldUseTempFile()) {
 						File fCache = df.createCacheFile();
 						//if(m_logger.isDebugEnabled())
-						m_aLogger.log("DF: " + Id + " size: " + df.getSize() + " cache-file: " + fCache.getAbsolutePath());
+						m_aLogger.debug("DF: " + Id + " size: " + df.getSize() + " cache-file: " + fCache.getAbsolutePath());
 						m_dfCacheOutStream = new FileOutputStream(fCache);
 					}
 					m_doc.addDataFile(df);
@@ -563,7 +560,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 					if (ContentType.equals(DataFile.CONTENT_EMBEDDED_BASE64)) {
 						nSize *= 2;
 						m_bCollectDigest = true;
-						System.out.println("Start collecting digest");
+						m_aLogger.debug("Start collecting digest");
 					}
 					//System.out.println("Allocating buf: " + nSize + " Element: "	+ qName + " lname: "  + lName + " uri: " + namespaceURI);
 					if (m_dfCacheOutStream == null) // if we use temp files then we don't cache in memory 
@@ -618,12 +615,12 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		// <Signature>
 		if (qName.equals("Signature") && m_nCollectMode == 0) {
 			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("Start collecting <Signature>");
+			m_aLogger.debug("Start collecting <Signature>");
 			String str1 = attrs.getValue("Id");
 			Signature sig = getLastSignature();
 			if (sig == null || !sig.getId().equals(str1)) {
 				//if (m_logger.isDebugEnabled())
-				m_aLogger.log("Create signature: " + str1);
+				m_aLogger.debug("Create signature: " + str1);
 				sig = new Signature(m_doc);
 				m_doc.addSignature(sig);
 			}
@@ -688,7 +685,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 				strCan = canonicalizeXml(strCan);
 				strCan = strCan.substring(0, strCan.length() - 11);
 				//if(m_logger.isDebugEnabled())
-				m_aLogger.log("Canonicalized: \'" + strCan + "\'");
+				m_aLogger.debug("Canonicalized: \'" + strCan + "\'");
 				try {
 					updateDigest(ConvertUtils.str2data(strCan));
 				} catch (SignedDocException ex) {
@@ -1038,7 +1035,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 	 */
 	public void endElement(String namespaceURI, String sName, String qName) throws SAXException {
 		//if(m_logger.isDebugEnabled())
-//		m_aLogger.log("End Element: " + qName + " collect: " + m_nCollectMode);
+//		m_aLogger.debug("End Element: " + qName + " collect: " + m_nCollectMode);
 		// remove last tag from stack
 		String currTag = (String) m_tags.pop();
 		// collect SAX event data to original XML data
@@ -1286,7 +1283,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		// </SigAndRefsTimeStamp>
 		if (qName.equals("SigAndRefsTimeStamp")) {
 			//if (m_logger.isDebugEnabled())
-			m_aLogger.log("End collecting <SigAndRefsTimeStamp>");
+			m_aLogger.debug("End collecting <SigAndRefsTimeStamp>");
 			try {
 				Signature sig = getLastSignature();
 				TimestampInfo ts = sig.getTimestampInfoOfType(TimestampInfo.TIMESTAMP_TYPE_SIG_AND_REFS);

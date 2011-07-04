@@ -228,7 +228,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				for(int i = 0; i < aElements.length; i++)
 					m_aLoggerDialog.info("'"+aElements[i]+"'");*/
 		for (int i = 0; i < aElements.length; i++) {
-			m_aLogger.log("el: "+aElements[i]);
+			m_aLogger.debug("el: "+aElements[i]);
 			try {
 				if (xThePackage.isStreamElement(aElements[i])) {
 					//try to open the element, read a few bytes, close it
@@ -332,12 +332,12 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				m_aLogger.warning("makeTheElementList", "Version missing", e);
 			}
 			if (sVersion.length() != 0)
-				m_aLogger.log("Version is: " + sVersion); // this should be 1.2 or more
+				m_aLogger.debug("Version is: " + sVersion); // this should be 1.2 or more
 			else
-				m_aLogger.log("Version is 1.0 or 1.1");
+				m_aLogger.debug("Version is 1.0 or 1.1");
 		}
 		/*		else
-					m_aLogger.log("Version does not exists! May be this is not a ODF package?");*/
+					m_aLogger.debug("Version does not exists! May be this is not a ODF package?");*/
 
 		//if version <1.2 then all excluding META-INF
 		// else only the ones indicated
@@ -487,7 +487,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
 					if(fTheSignaturesFile != null) {
 						
-//DEBUG						m_aLogger.log("=============>>> bytes: "+fTheSignaturesFile.available());
+//DEBUG						m_aLogger.debug("=============>>> bytes: "+fTheSignaturesFile.available());
 						// create a new SignedDoc 
 //						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
 						SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
@@ -508,7 +508,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 								if(aSignState == null)
 									m_aLogger.severe(__FUNCTION__, "CANNOT OBTAIN A XOX_SignatureState INTERFACE !");
 								else {
-									m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+									m_aLogger.debug("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 											+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
 
 									aSignState.setState(SignatureState.NOT_YET_VERIFIED);
@@ -612,7 +612,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
 					if(fTheSignaturesFile != null) {
 						
-//DEBUG						m_aLogger.log("=============>>> bytes: "+fTheSignaturesFile.available());
+//DEBUG						m_aLogger.debug("=============>>> bytes: "+fTheSignaturesFile.available());
 						// create a new SignedDoc 
 //						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
 						SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
@@ -657,13 +657,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 							            aSignState.setSigningTime(
 							            		Helpers.date2string(sig.getSignedProperties().getSigningTime()));
 
-										m_aLogger.log("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
+										m_aLogger.debug("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
 												+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
 										
 										ArrayList<SignedDocException> errs = sig.verify(sdoc, true, false);
 										
 										if (errs.size() == 0) {
-											m_aLogger.log("Verification OK!");
+											m_aLogger.debug("Verification OK!");
 											aSignState.setState(SignatureState.OK);
 										}
 										else {
