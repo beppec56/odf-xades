@@ -143,6 +143,15 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 * outputs a log with the class hex hash + two message
 	 * @param _theMethod
 	 */
+	public void debug(String _theMethod, String _message) {
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, _theMethod, _message);
+	}
+
+	/**
+	 * outputs a log with the class hex hash + two message
+	 * @param _theMethod
+	 */
 	public void log(String _theMethod, String _message) {
 		if(m_bLogEnabled && m_bInfoEnabled)
 			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, _theMethod, _message);

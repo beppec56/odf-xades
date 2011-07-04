@@ -38,15 +38,8 @@
 
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
-import iaik.pkcs.pkcs11.wrapper.PKCS11Implementation;
-import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
-import com.yacme.ext.oxsit.security.XOX_SSCDevice;
-import com.yacme.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -80,6 +73,9 @@ import com.yacme.ext.oxsit.pcsc.PCSCHelper;
 import com.yacme.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
 import com.yacme.ext.oxsit.security.PKCS11TokenAttributes;
 import com.yacme.ext.oxsit.security.ReadCerts;
+import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
+import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 
 /**
  * This is a specification, it may change! This service implements a service to
@@ -193,7 +189,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService", _sService);
+		m_aLogger.debug("supportsService", _sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals(m_sServiceNames[i]))
 				return true;
@@ -211,7 +207,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 */
 	@Override
 	public void addChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
 	}
 
 	/*
@@ -223,7 +218,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 */
 	@Override
 	public void removeChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
 	}
 
 	/*
@@ -238,7 +232,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("initialize");
 	}
 
@@ -331,8 +324,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 		try {
 			//get the library path property
 			//
-			m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
-			m_aLogger.log("java.library.path: \""+
+			m_aLogger.debug("java.class.path: \""+System.getProperty("java.class.path")+"\"");
+			m_aLogger.debug("java.library.path: \""+
 					System.getProperty("java.library.path")+"\"");
 	
 			IDynamicLogger aLogger = null;
@@ -361,7 +354,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 			
 
 			if(m_bAutomaticDetection) {
-				m_aLogger.log("detection SSCD auto");
+				m_aLogger.debug("detection SSCD auto");
 				//scan all available devices
 				PCSCHelper pcsc = new PCSCHelper(_aFrame,m_xCC, true, Helpers.getLocalNativeLibraryPath(m_xCC, GlobConstant.m_sPCSC_WRAPPER_NATIVE), aLogger);
 				if(pcsc.getReaders() != null ) {
@@ -369,7 +362,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 				}
 			}
 			else {
-				m_aLogger.log("detection SSCD NOT auto");
+				m_aLogger.debug("detection SSCD NOT auto");
 				//only module (library) provided should be used
 				//so a list with an only card/reader present
 				//instead of build the card list while
@@ -378,7 +371,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 				//riportare il codice da:
 				//it.infocamere.freesigner.gui.ReadCertsTask.findSlotsInfos(String, String, String)
 				String libCryptoi = m_xOptionsConfigAccess.getText("SSCDFilePath1");
-				m_aLogger.log("Custom library: " + libCryptoi);
+				m_aLogger.debug("Custom library: " + libCryptoi);
 
 				//prepare a dummy card
 				// set the library to be used, locally
@@ -402,7 +395,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 			int indexReader = 0;
 
 			while (it.hasNext()) {
-				m_aLogger.log("Reader " + indexReader + ")");
+				m_aLogger.debug("Reader " + indexReader + ")");
 
 				cardReaderInfo = it.next();
 				String currReader = cardReaderInfo.getReader();
@@ -419,7 +412,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 						// set the library to be used, locally
 						String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
 
-						m_aLogger.info(Pkcs11WrapperLocal);
+						m_aLogger.debug(Pkcs11WrapperLocal);
 						ReadCerts rt = new ReadCerts(_aFrame,m_xCC, xStatusIndicator, aLogger, Pkcs11WrapperLocal, cardReaderInfo);
 						//get the number of token/slot (1 token = 1 slot)
 						long[] availableToken = rt.getTokens();
@@ -433,7 +426,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 //								xSSCDevice.setDescription(cardInfo.m_sDescription);
 //								xSSCDevice.setManufacturer(cardInfo.m_sManufacturer);
 								xSSCDevice.setATRcode(cardInfo.getATRCode());
-								m_aLogger.log("ATR code: " + cardInfo.getATRCode());
+								m_aLogger.debug("ATR code: " + cardInfo.getATRCode());
 								String sLibs = cardInfo.getDefaultLib() + " ("
 								+ ((cardInfo.getOsLib().length() > 0) ? (cardInfo.getOsLib()) : "")
 								+ ((cardInfo.getOsLibAlt1().length() > 0) ? (", " + cardInfo.getOsLibAlt1()) : "")
@@ -443,7 +436,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 								xSSCDevice.setCryptoLibrariesConfigured(sLibs);
 								xSSCDevice.setCryptoLibraryUsed(cardInfo.getDefaultLib());
 
-								m_aLogger.log("\tRecupero certificati");
+								m_aLogger.debug("\tRecupero certificati");
 								if (xStatusIndicator != null) {
 									xStatusIndicator.setText("Recupero certificati");
 									xStatusIndicator.setValue(5);
@@ -456,7 +449,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 										//add this certificate to our structure
 										CertificatePKCS11Attributes cert = certIt.next();
 										cert.setToken(aTk);
-										m_aLogger.log("found on token: " + cert.getToken().toString()+"----------");
+										m_aLogger.debug("found on token: " + cert.getToken().toString()+"----------");
 										//all seems right, add the device the certificate
 										xSSCDevice.setDescription(aTk.getSerialNumber());
 										xSSCDevice.setManufacturer(aTk.getManufacturerID());
@@ -474,13 +467,13 @@ public class AvailableSSCDs_IT extends ComponentBase
 									addSSCDevice(xSSCDevice);
 								}
 								else {
-									m_aLogger.log("Found NO certificates on token !");							
+									m_aLogger.debug("Found NO certificates on token !");							
 									
 								}
 							}
 						}
 						else {
-							m_aLogger.log("No token found !");	
+							m_aLogger.debug("No token found !");	
 						}
 						rt.libFinalize();
 					} catch (java.io.IOException e) {
@@ -490,7 +483,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 						m_aLogger.severe("scanDevices: ATR code:\n" + cardInfo.getATRCode()  + "\n", e);
 					}
 				} else {
-					m_aLogger.log("No card in reader '" + currReader + "'!");
+					m_aLogger.debug("No card in reader '" + currReader + "'!");
 				}
 				indexReader++;
 			}

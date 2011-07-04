@@ -58,6 +58,8 @@ public interface IDynamicLogger {
 
 	abstract void exiting(String _theMethod, String _message);
 
+	abstract void debug(String _theMethod, String _message);
+
 	abstract void log(String _theMethod, String _message);
 
 	abstract void info(String _theMethod);

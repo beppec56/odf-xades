@@ -416,7 +416,7 @@ public class GlobalLogger extends ComponentBase
 	@Override
 	public void dispose() {
 		if(m_bCanLogMyself)
-			m_aLogger.entering("dispose", "");
+			m_aLogger.entering("disposing of global logger", "");
 		stopLogging();
 		super.dispose();
 	}

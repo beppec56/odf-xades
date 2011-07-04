@@ -195,21 +195,20 @@ public class ImplXAdESSignatureDispatch extends ImplDispatchAsynch implements
 					if (m_xSingletonDataAccess != null) {
 						// add this to the document-signatures list
 						m_xDocumentSignatures = m_xSingletonDataAccess
-								.initDocumentAndListener(Helpers
-										.getHashHex(m_xModel), null);
-						int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-						if (ret != 0) {
-							localstate = m_xDocumentSignatures
-									.getDocumentSignatureState();
-							m_aLogger.info("localstate: " + localstate + " "
-									+ m_xDocumentSignatures.getDocumentId());
-							localstate = localstate + 1;
-							localstate = (localstate > 4) ? 0 : localstate;
-						}
-
-						// now change the frame location
-						m_xDocumentSignatures
-								.setDocumentSignatureState(localstate);
+								.initDocumentAndListener(Helpers.getHashHex(m_xModel), null);
+//						int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
+//						if (ret != 0) {
+//							localstate = m_xDocumentSignatures
+//									.getDocumentSignatureState();
+//							m_aLogger.info("localstate: " + localstate + " "
+//									+ m_xDocumentSignatures.getDocumentId());
+//							localstate = localstate + 1;
+//							localstate = (localstate > 4) ? 0 : localstate;
+//						}
+//
+//						// now change the frame location
+//						m_xDocumentSignatures
+//								.setDocumentSignatureState(localstate);
 					} else
 						m_aLogger.severe("ctor",
 								"XOX_SingletonDataAccess missing!");

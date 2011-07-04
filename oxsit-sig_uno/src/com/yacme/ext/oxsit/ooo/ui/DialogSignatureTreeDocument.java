@@ -22,6 +22,9 @@
 
 package com.yacme.ext.oxsit.ooo.ui;
 
+import com.yacme.ext.oxsit.Helpers;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
@@ -37,12 +40,16 @@ import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XTreeExpansionListener;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.ChangesEvent;
+import com.sun.star.util.XChangesListener;
 import com.sun.star.view.XSelectionChangeListener;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.ooo.ui.ControlDims;
@@ -53,7 +60,7 @@ import com.yacme.ext.oxsit.ooo.ui.ControlDims;
  */
 public class DialogSignatureTreeDocument extends DialogCertTreeBase 
 		implements	IDialogCertTreeBase,
-		XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener
+		XActionListener, XItemListener, XTreeExpansionListener, XSelectionChangeListener, XChangesListener
 		{
 
 	private static final String DLG_SIGN_TREE = "DialogSignTree";
@@ -126,33 +133,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		center();
 		//load the document signature states (always when dialog starts)
 		readAllSignatures();
-//		try {
-//			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
-//			if(aDocVerService != null) {				
-//				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
-//				if(m_axoxDocumentVerifier != null) {
-//					//grab the certificates and add them to the dialog						
-//					XOX_SignatureState[] oCertifs = 
-//						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
-//					if(oCertifs != null) {
-//						for(int idx = 0; idx < oCertifs.length; idx++) {
-//							//add the certificate to the dialog tree
-//							m_aLogger.debug(__FUNCTION__+"signature state added");
-//							addASignatureState(oCertifs[idx]);
-//						}
-//					} //else there are no signatures !
-//				}
-//				else
-//					m_aLogger.warning("verifyButtonPressed and XOX_DocumentSignaturesVerifier interface NOT available");
-//		        // now clean up
-//		        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
-//			}
-//			else
-//				m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
-//
-//		} catch (Throwable e) {
-//			m_aLogger.severe(__FUNCTION__, e);
-//		}
 	}
 
 	@Override
@@ -196,7 +176,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		} catch (Throwable e) {
 			m_aLogger.severe(__FUNCTION__, e);
 		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -306,6 +285,28 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 												//strings will be udated as
 												aSignature.updateSignatureStrings();
 												aSignature.EnableDisplay(true);
+//update the signature aggregate graphic element
+												XOX_SingletonDataAccess	  xSingletonDataAccess = null;
+												XOX_DocumentSignaturesState xDocumentSignatures = null;
+												
+												try {
+													xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xContext);
+													m_aLogger.debug(" singleton service data "+Helpers.getHashHex(xSingletonDataAccess) );
+													xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(getDocumentModel()), this);
+													if(xDocumentSignatures != null)
+														xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK);													
+												}
+												catch (ClassCastException e) {
+													e.printStackTrace();
+												} catch (ServiceNotFoundException e) {
+													m_aLogger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+												} catch (NoSuchMethodException e) {
+													m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+												}
+
+												
+												
+												
 											}
 										} catch (Throwable e) {
 											m_aLogger.severe(__FUNCTION__,e);
@@ -398,5 +399,14 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			if(xaWNode != null )
 				xaWNode.setEnable(bEnable);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.util.XChangesListener#changesOccurred(com.sun.star.util.ChangesEvent)
+	 */
+	@Override
+	public void changesOccurred(ChangesEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

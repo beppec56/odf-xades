@@ -4,6 +4,7 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 import com.yacme.ext.oxsit.security.SignatureState;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_SSCDevice;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.CertificateElementID;
@@ -44,6 +45,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.view.XSelectionChangeListener;
 import com.yacme.ext.oxsit.Helpers;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.BasicDialog;
@@ -208,6 +210,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 			m_aLogger.severe("fillLocalizedString", e);
 		}
 		m_aRegAcc.dispose();
+//istantiate the singleton data element
+		
 	}
 
 	public void initializeLocal(String _sName, String _sTitle, int posX, int posY) throws BasicErrorException {

@@ -93,7 +93,7 @@ public class ImplInterceptSaveAsDispatch  extends ImplDispatchAsynch implements 
 				if (m_xModel != null) {	
 					try {
 						 XOX_DocumentSignaturesState xoxDocSigns = Helpers.getDocumentSignatures(m_xCC,m_xModel);						 
-						 int sigState = xoxDocSigns.getDocumentSignatureState();
+						 int sigState = xoxDocSigns.getAggregatedDocumentSignatureStates();
 						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES &&
 								 sigState != GlobConstant.m_nSIGNATURESTATE_UNKNOWN) {
 							DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		

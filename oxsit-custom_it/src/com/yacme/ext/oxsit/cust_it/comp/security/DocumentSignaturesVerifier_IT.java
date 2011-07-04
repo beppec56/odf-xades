@@ -3,7 +3,6 @@
  */
 package com.yacme.ext.oxsit.cust_it.comp.security;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -12,20 +11,14 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERObject;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -39,7 +32,9 @@ import com.sun.star.frame.XModel;
 import com.sun.star.io.IOException;
 import com.sun.star.io.XInputStream;
 import com.sun.star.io.XStream;
+import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -49,16 +44,19 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.packages.WrongPasswordException;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.ChangesEvent;
+import com.sun.star.util.XChangesListener;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.Utilities;
+import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
 import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SAXSignedDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
@@ -67,6 +65,7 @@ import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.security.SignatureState;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
@@ -76,7 +75,7 @@ import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
  *
  */
 public class DocumentSignaturesVerifier_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
-implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVerifier {
+implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVerifier, XChangesListener {
 
 	protected IDynamicLogger m_aLogger;
 	protected IDynamicLogger m_aLoggerDialog;
@@ -562,6 +561,24 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	}
 
 	/* (non-Javadoc)
+	 * @see com.sun.star.util.XChangesListener#changesOccurred(com.sun.star.util.ChangesEvent)
+	 */
+	@Override
+	public void changesOccurred(ChangesEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
+	 */
+	@Override
+	public void disposing(EventObject arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#verifyDocumentSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, java.lang.Object[])
 	 */
 	/*
@@ -578,6 +595,21 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		ConfigManager.init("jar://ODFDocSigning.cfg");
 		if(_xDocumentModel == null || _xFrame == null)
 			throw new IllegalArgumentException();
+
+		XOX_SingletonDataAccess	  xSingletonDataAccess = null;
+		XOX_DocumentSignaturesState xDocumentSignatures = null;
+		try {
+			xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xCC);
+			m_aLogger.debug(" singleton service data "+Helpers.getHashHex(xSingletonDataAccess) );
+			xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(_xDocumentModel), this);			
+		}
+		catch (ClassCastException e) {
+			e.printStackTrace();
+		} catch (ServiceNotFoundException e) {
+			m_aLogger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+		} catch (NoSuchMethodException e) {
+			m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+		}
 
 		try {
 			XStorage xDocumentStorage;		
@@ -597,12 +629,11 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 
 			//from the storage object (or better named, the service) obtain the interface we need
 			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
-			
+
 			//prepare a zip file from URL
 			File aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
 			ZipFile aTheDocuZip = new ZipFile(aZipFile);
-			
-			
+
 			if(aTheDocuZip != null) {
 				//openup the signature in META-INF zipped directory
 				//point to the signature file: "META-INF/xadessignatures.xml"
@@ -611,7 +642,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				//read in the signature
 					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
 					if(fTheSignaturesFile != null) {
-						
 //DEBUG						m_aLogger.debug("=============>>> bytes: "+fTheSignaturesFile.available());
 						// create a new SignedDoc 
 //						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();
@@ -652,7 +682,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									else {
 
 										aSignState.setSignatureUUID(sig.getId());
-							            
+
 							            //pass the string to the signature state
 							            aSignState.setSigningTime(
 							            		Helpers.date2string(sig.getSignedProperties().getSigningTime()));
@@ -665,11 +695,15 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 										if (errs.size() == 0) {
 											m_aLogger.debug("Verification OK!");
 											aSignState.setState(SignatureState.OK);
+											if(xDocumentSignatures != null)
+												xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED);
 										}
 										else {
 											aSignState.setState(SignatureState.ERR_VERIFY);
 											for (int j = 0; j < errs.size(); j++)
 												m_aLogger.severe(errs.get(j));
+											if(xDocumentSignatures != null)
+												xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN);											
 										}
 										// add the certificate of this signature to the certificate list and
 										X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
@@ -832,4 +866,5 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		
 		return 0;
 	}
+
 }

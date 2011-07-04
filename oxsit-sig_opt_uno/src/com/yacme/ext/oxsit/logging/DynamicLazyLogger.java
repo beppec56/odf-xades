@@ -220,4 +220,12 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	public void debug(String message) {
 	}
 
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.logging.IDynamicLogger#debug(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void debug(String theMethod, String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }

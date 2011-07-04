@@ -428,7 +428,7 @@ public class SyncJob extends ComponentBase
 					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 					if(m_aDocSign != null) {
 						//determine the storage, it may be different, set it to the document
-						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+						m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
 						m_aLogger.severe("execute","Missing XOX_DocumentSignaturesState interface");						
@@ -449,7 +449,7 @@ public class SyncJob extends ComponentBase
 					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 					if(m_aDocSign != null) {
 						//determine the storage, it may be different, set it to the document
-						m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+						m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
 						m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignaturesState interface");						
@@ -504,9 +504,9 @@ public class SyncJob extends ComponentBase
 			if(m_axoxSingletonDataAccess != null) {
 				m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 				m_aDocSign.setDocumentStorage(xStorage);
-				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+				m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
 //verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
-				m_aDocSign.setDocumentSignatureState(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+				m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 
 //just for test, analyze the document package structure
 				DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xServiceManager,m_xComponentContext);
@@ -555,14 +555,12 @@ public class SyncJob extends ComponentBase
 		//at this stage, remove cache used in running
 		//in Italian implementation this contains the CA list and the CRL used to control the 
 		// certificates
-//grab the singleton
-		
+//grab the singleton, the dispose will stop the logging function as well
 		XComponent xSingle = (XComponent)UnoRuntime.queryInterface(XComponent.class, m_oSingleLogObj);
 		if(xSingle != null)
 			xSingle.dispose();
 		else
-			m_aLogger.log("Singleton doesn't exists !");
-		m_aLogger.stopLogging();		
+			System.out.println("Singleton doesn't exists !");
 	}
 
 	/*

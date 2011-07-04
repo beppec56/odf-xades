@@ -142,7 +142,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			m_aLogger.severe("ctor","no package location !");
 		try {
 			m_xSingletonDataAccess = Helpers.getSingletonDataAccess(xContext);
-			m_aLogger.info(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			
+			m_aLogger.debug(" singleton service data "+Helpers.getHashHex(m_xSingletonDataAccess) );			
 		}
 		catch (ClassCastException e) {
 			e.printStackTrace();
@@ -181,7 +181,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		}
 		m_bObjectActive = true;
 		if(m_xDocumentSignatures != null )
-			changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
+			changeSignatureStatus(m_xDocumentSignatures.getAggregatedDocumentSignatureStates());
 
 		MessageConfigurationAccess aMex = new MessageConfigurationAccess( xContext, xMCF );
 		try {
@@ -294,20 +294,19 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					 * the next lines of code are not needed in the end. These
 					 * are here only to test extension behavior.
 					 */
-					m_aLogger
-							.info("impl_dispatch: \tthe url of the document under signature is: "
+					m_aLogger.debug("impl_dispatch: \tthe url of the document under signature is: "
 									+ m_xModel.getURL());
 
-					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-					if (ret != 0) {
-						localstate = m_xDocumentSignatures
-								.getDocumentSignatureState();
-						localstate = localstate + 1;
-						localstate = (localstate > 4) ? 0 : localstate;
-					}
-
-					// now change the frame location
-					m_xDocumentSignatures.setDocumentSignatureState(localstate);
+//					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
+//					if (ret != 0) {
+//						localstate = m_xDocumentSignatures
+//								.getDocumentSignatureState();
+////FIXME: this needs to be addressed, set the status according to the signature						localstate = localstate + 1;
+//						localstate = (localstate > 4) ? 0 : localstate;
+//					}
+//
+//					// now change the frame location
+////the state should be changed by the dialog procedures above, or left unchanged					m_xDocumentSignatures.setDocumentSignatureState(localstate);
 					// println( "m_nState is: " +
 					// ImplCNIPASignatureDispatch.m_nState );
 					/**
@@ -749,7 +748,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				m_bIsFrameActionRegistered = false;
 				aLog = aLog + ", frame listening (2)";
 			}
-			m_aLogger.info(aLog);
+			m_aLogger.debug(aLog);
 		}
 	}
 
@@ -761,7 +760,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	//start the Java thread to manage the task, this is a [oneway] method
 	@Override
 	public void changesOccurred(com.sun.star.util.ChangesEvent aChangesEvent) {
-		m_aLogger.info("changesOccurred()" );
+		m_aLogger.debug("changesOccurred()" );
 		
 /*		ImplXAdESThread aWorkerThread = new ImplXAdESThread(this,ImplXAdESThread.RUN_changesOccurred, aChangesEvent);
 		aWorkerThread.start();*/
@@ -770,11 +769,11 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				m_aLogger.log(" thread changesOccurred()" );
+				m_aLogger.debug(" thread changesOccurred()" );
 				// refresh status of the document model/component
 				grabModel();
 				synchronized(m_aFrameConfMutex) {
-					changeSignatureStatus(m_xDocumentSignatures.getDocumentSignatureState());
+					changeSignatureStatus(m_xDocumentSignatures.getAggregatedDocumentSignatureStates());
 				}				
 			}
 		}		
