@@ -154,10 +154,12 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	protected void configureLogger() {
+		//set the general level
 		m_aLogger.setLevel(Level.FINEST);
 
 		if(m_bEnableConsoleOutput) {
 			m_aConsoleHandl = new ConsoleHandler();
+			m_aConsoleHandl.setLevel(Level.FINEST);
 			m_aLogFormatter = new LocalLogFormatter();
 			m_aConsoleHandl.setFormatter(m_aLogFormatter);		
 			m_aLogger.addHandler(m_aConsoleHandl);
@@ -184,6 +186,7 @@ public class GlobalLogger extends ComponentBase
 				else
 					sFileName = "%h/"+sFileName;
 				m_aLogFileHandl = new FileHandler( sFileName,m_nMaxFileSize,m_nFileRotationCount);
+				m_aLogFileHandl.setLevel(Level.FINEST);
 				m_aLogFileFormatter = new LocalLogFormatter();
 				m_aLogFileHandl.setFormatter(m_aLogFileFormatter);
 				m_aLogger.addHandler(m_aLogFileHandl);
