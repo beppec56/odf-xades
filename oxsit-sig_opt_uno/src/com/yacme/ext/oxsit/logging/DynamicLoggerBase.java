@@ -81,7 +81,6 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 		}
 		m_sOwnerClassHashHex = String.format( "%8H", _theOwner );
 		m_sOwnerClass =  _theOwner.getClass().getName();
-		
 		//FIXME enable levels according to configuration ?
 	}
 
@@ -90,8 +89,8 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 * @param _theMethod
 	 */
 	public void ctor() {
-		if(m_bLogEnabled && m_bInfoEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init>");
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, m_sOwnerClass, "<init>");
 	}
 
 	/**
@@ -99,8 +98,8 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 * @param _theMethod
 	 */
 	public void ctor(String _message) {
-		if(m_bLogEnabled && m_bInfoEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, m_sOwnerClass, "<init> "+_message);
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, m_sOwnerClass, "<init> "+_message);
 	}
 
 	/**
@@ -109,7 +108,7 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	 */
 	public void debug(String _message) {
 		if(m_bLogEnabled && m_bDebugEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "", _message);
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, "", _message);
 	}
 
 	/**
@@ -126,18 +125,18 @@ abstract class DynamicLoggerBase implements IDynamicLogger {
 	}
 
 	public void entering(String _theMethod) {
-		if(m_bLogEnabled && m_bInfoEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "entering "+_theMethod, "");
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, "entering "+_theMethod, "");
 	}
 
 	public void entering(String _theMethod, String _message) {
-		if(m_bLogEnabled && m_bInfoEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "entering "+_theMethod, _message);
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, "entering "+_theMethod, _message);
 	}
 
 	public void exiting(String _theMethod, String _message) {
-		if(m_bLogEnabled && m_bInfoEnabled)
-			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_INFO, m_sOwnerClassHashHex, "exiting " + _theMethod, _message);
+		if(m_bLogEnabled && m_bDebugEnabled)
+			m_xLogger.logp(GlobConstant.m_nLOG_LEVEL_DEBUG, m_sOwnerClassHashHex, "exiting " + _theMethod, _message);
 	}
 
 	/**

@@ -193,10 +193,10 @@
 				</info>
 				<value>true</value>
 			</prop>
-			<prop oor:name="EnableWarningLevel" oor:type="xs:boolean">
+			<prop oor:name="EnableDebugLogging" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
-					<desc>true to enable the Level.WARNING in logging</desc>
+					<desc>true to enable the Level.FINER in logging, used for debugging log</desc>
 				</info>
 				<value>true</value>
 			</prop>

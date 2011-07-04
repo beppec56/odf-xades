@@ -68,7 +68,7 @@ public class GlobalLogger extends ComponentBase
 
 	protected static String		m_sName;
 	protected static boolean	m_bEnableInfoLevel = true;
-	protected static boolean	m_bEnableWarningLevel = true;
+	protected static boolean	m_bEnableDebugLogging = true;
 	protected static boolean	m_bEnableConsoleOutput = false;
 	protected static boolean	m_bEnableFileOutput = true;
 	protected static String		m_sLogFilePath = "";
@@ -145,7 +145,7 @@ public class GlobalLogger extends ComponentBase
 	 */
 	protected void getLoggingConfiguration() {
 		m_bEnableInfoLevel = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_INFO_LEVEL);
-		m_bEnableWarningLevel = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_WARNING_LEVEL);
+		m_bEnableDebugLogging = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_DEBUG_LOGGING);
 		m_bEnableConsoleOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_CONSOLE_OUTPUT);
 		m_bEnableFileOutput = m_aLoggerConfigAccess.getBoolean(GlobConstant.m_sENABLE_FILE_OUTPUT);
 		m_sLogFilePath = m_aLoggerConfigAccess.getText(GlobConstant.m_sLOG_FILE_PATH);
@@ -154,6 +154,8 @@ public class GlobalLogger extends ComponentBase
 	}
 
 	protected void configureLogger() {
+		m_aLogger.setLevel(Level.FINEST);
+
 		if(m_bEnableConsoleOutput) {
 			m_aConsoleHandl = new ConsoleHandler();
 			m_aLogFormatter = new LocalLogFormatter();
@@ -162,7 +164,7 @@ public class GlobalLogger extends ComponentBase
 			System.out.println("console logging enabled");
 		}
 //DEBUG		else	System.out.println("console logging NOT enabled");
-
+		
 		if(m_bEnableFileOutput) {
 			String sFileName = GlobConstant.m_sEXTENSION_IDENTIFIER+".log";
 			try {
@@ -201,6 +203,7 @@ public class GlobalLogger extends ComponentBase
 			m_bEnableLogging = false;
 
 		m_bCanLogMyself =  m_bEnableLogging && m_bEnableInfoLevel;
+		//set all levels, the levels are filtered by this class.
 	}
 
 	/* (non-Javadoc)
@@ -234,11 +237,16 @@ public class GlobalLogger extends ComponentBase
 						if(m_bEnableInfoLevel)
 							m_aLogger.logp(Level.INFO, arg1, arg2, arg3);						
 						break;
+					case GlobConstant.m_nLOG_LEVEL_DEBUG:
+						if(m_bEnableDebugLogging)
+							m_aLogger.logp(Level.FINE, arg1, arg2, arg3);						
+						break;
 					case GlobConstant.m_nLOG_LEVEL_SEVERE:
 						m_aLogger.logp(Level.SEVERE, arg1, arg2, arg3);						
 						break;			
 					case GlobConstant.m_nLOG_LEVEL_WARNING:
-						if(m_bEnableWarningLevel)
+//FIXME: for the time being a warning is always logged
+//						if(m_bEnableDebugLogging)
 							m_aLogger.logp(Level.WARNING, arg1, arg2, arg3);						
 						break;
 					}
@@ -253,7 +261,7 @@ public class GlobalLogger extends ComponentBase
 	@Override
 	public void setLevel(int _nNewVal) {
 		synchronized (m_bLogConfigChanged) {
-			m_nLogLevel = _nNewVal;
+//			m_nLogLevel = _nNewVal;
 		}
 	}
 
@@ -293,8 +301,8 @@ public class GlobalLogger extends ComponentBase
 	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#getEnableWarningLevel()
 	 */
 	@Override
-	public boolean getEnableWarningLevel() {
-		return m_bEnableWarningLevel;
+	public boolean getEnableDebugLogging() {
+		return m_bEnableDebugLogging;
 	}
 
 	/* (non-Javadoc)
@@ -310,9 +318,9 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void optionsConfigurationChanged() {
-		// TODO Auto-generated method stub
 		synchronized (m_bLogConfigChanged) {
 			m_aLogger.info("setLevel (change config) called");
+			Level aLev = m_aLogger.getLevel();
 			// protected area to change base elements of configuration			
 			getLoggingConfiguration();
 // restart logger, what is possible to restart, that is...		
@@ -374,9 +382,9 @@ public class GlobalLogger extends ComponentBase
 	 * @see com.yacme.ext.oxsit.logging.XOX_Logger#setEnableWarningLevel(boolean)
 	 */
 	@Override
-	public void setEnableWarningLevel(boolean _bNewVal) {
+	public void setEnableDebugLogging(boolean _bNewVal) {
 		synchronized(m_bLogConfigChanged) {
-			m_bEnableWarningLevel = _bNewVal;
+			m_bEnableDebugLogging = _bNewVal;
 		}
 	}
 

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import sun.awt.GlobalCursorManager;
+
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.ItemEvent;
@@ -43,6 +45,8 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.Helpers;
+import com.yacme.ext.oxsit.logging.XOX_Logger;
+import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogFileOrFolderPicker;
 import com.yacme.ext.oxsit.options.SingleControlDescription;
@@ -85,6 +89,8 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 
 		//the parameter sName comes from basic dialog
 		//the parameter sProperty comes from file AddonConfiguration.xcs.xml
+		//Important the string sName is the name in the basic part of the dialog (the GUI part)
+		//
 		int iter = 0;
 		//checkbox
 		SingleControlDescription aControl = 
@@ -92,7 +98,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		ArrayOfControls[iter++] = aControl;
 //checkbox
 		aControl = 
-			new SingleControlDescription("CheckWarning", ControlTypeCode.CHECK_BOX, -1, "EnableWarningLevel", 0, 0, true);
+			new SingleControlDescription("CheckDebugLog", ControlTypeCode.CHECK_BOX, -1, GlobConstant.m_sENABLE_DEBUG_LOGGING, 0, 0, true);
 		ArrayOfControls[iter++] = aControl;
 		aControl = 
 			new SingleControlDescription("CheckEnConsole", ControlTypeCode.CHECK_BOX, -1, "EnableConsoleOutput", 0, 0, true);
@@ -176,6 +182,23 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 			m_aLogger.severe("enableTheFileControls", "there is no window!");
 	}
 
+	protected void saveData(com.sun.star.awt.XWindow aWindow)
+		throws com.sun.star.lang.IllegalArgumentException, com.sun.star.uno.Exception {
+		super.saveData(aWindow);
+//data saved, now, notifies the Global Logger
+		//instantiates the global logger
+		
+		//and call the updated module
+		XOX_Logger m_xLogger = (XOX_Logger)UnoRuntime.queryInterface(XOX_Logger.class, 
+				m_xComponentContext.getValueByName(GlobConstant.m_sSINGLETON_LOGGER_SERVICE_INSTANCE));
+			if(m_xLogger != null) {
+				m_xLogger.optionsConfigurationChanged();
+			}
+			else {
+//notifies the changed config
+				System.out.println("no main logger!");
+			}
+	}	
 	/* (non-Javadoc)
 	 * @see com.sun.star.awt.XActionListener#actionPerformed(com.sun.star.awt.ActionEvent)
 	 */

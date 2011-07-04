@@ -111,7 +111,7 @@ public class GlobConstant {
 	// extension_conf_files/extension/AddonConfiguration.xcs.xml
 	//// logging configuration
 	public static final String	m_sENABLE_INFO_LEVEL 							= "EnableInfoLevel";// boolean
-	public static final String	m_sENABLE_WARNING_LEVEL 						= "EnableWarningLevel";// boolean
+	public static final String	m_sENABLE_DEBUG_LOGGING 						= "EnableDebugLogging";// boolean
 	public static final String	m_sENABLE_CONSOLE_OUTPUT 						= "EnableConsoleOutput";// boolean
 	public static final String	m_sENABLE_FILE_OUTPUT 							= "EnableFileOutput";// boolean
 	public static final String	m_sLOG_FILE_PATH 								= "LogFilePath";// string
@@ -128,8 +128,9 @@ public class GlobConstant {
 		
 	public static final int	m_nLOG_LEVEL_FINE									= 0;
 	public static final int	m_nLOG_LEVEL_INFO									= 1;
-	public static final int	m_nLOG_LEVEL_WARNING								= 2;
-	public static final int	m_nLOG_LEVEL_SEVERE									= 3;
+	public static final int	m_nLOG_LEVEL_DEBUG									= 2;
+	public static final int	m_nLOG_LEVEL_WARNING								= 3;
+	public static final int	m_nLOG_LEVEL_SEVERE									= 4;
 
 	//service for document signatures, this service implements specific interfaces, not available in
 	// standard OOo, with functionality similar to some stock OOo interfaces declared unpublished

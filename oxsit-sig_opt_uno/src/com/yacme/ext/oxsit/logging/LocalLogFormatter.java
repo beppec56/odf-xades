@@ -57,6 +57,8 @@ public class LocalLogFormatter extends Formatter {
 			sLevel = "S ";
 		else if (_rec.getLevel() == Level.WARNING)
 			sLevel = "W ";
+		else if (_rec.getLevel() == Level.FINE)
+			sLevel = "d ";
 		else
 			sLevel = "i ";			
 

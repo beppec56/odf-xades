@@ -37,7 +37,7 @@
 
 		[attribute]		boolean	EnableInfoLevel;
 
-		[attribute]		boolean	EnableWarningLevel;
+		[attribute]		boolean	EnableDebugLogging;
 
 		[attribute]		boolean	EnableConsoleOutput;
 
@@ -47,7 +47,7 @@
 		*/
 		void	optionsConfigurationChanged();
 
-		/** configuraion changed programmatically
+		/** configuration changed programmatically
 		*/
 		void	localConfigurationChanged();
 
