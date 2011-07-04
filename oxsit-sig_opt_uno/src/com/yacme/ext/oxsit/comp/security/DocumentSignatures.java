@@ -23,6 +23,7 @@
 package com.yacme.ext.oxsit.comp.security;
 
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Collection;
@@ -201,15 +202,6 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	}	
 
 	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.cert.XOX_DocumentSignaturesState#getDocumentCertificates()
-	 */
-	@Override
-	public XOX_X509Certificate[] getDocumentCertificates() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.cert.XOX_DocumentSignaturesState#getDocumentStorage()
 	 * 
 	 * IMPORTANT the manipulation of storage variable is Sync Job only responsability!
@@ -230,34 +222,6 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		// TODO Auto-generated method stub
 		m_logger.info("setDocumentStorage");		
 		m_xDocumentStorage = _xStore;		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.cert.XOX_DocumentSignaturesState#getDocumentSignatureState()
-	 */
-	@Override
-	public int getDocumentSignatureState() {
-		// TODO Auto-generated method stub
-		m_logger.log("getDocumentSignatureState");
-		synchronized (m_aMtx_setDocumentSignatureState) {
-			return m_nDocumentSignatureState;			
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.cert.XOX_DocumentSignaturesState#setDocumentSignatureState(int)
-	 * when this method is called, the signature state is notified to all the m_aListeners
-	 * 
-	 */
-	@Override
-	public void setDocumentSignatureState(int _nState) {
-		// TODO Auto-generated method stub
-		m_logger.entering("setDocumentSignatureState","_nState is: "+_nState);
-		synchronized (m_aMtx_setDocumentSignatureState) {			
-			m_nDocumentSignatureState = _nState;
-			m_aMtx_setDocumentSignatureState.notify();
-		}
-//		m_aLoggerDialog.exiting("setDocumentSignatureState","");
 	}
 
 	/* (non-Javadoc)
@@ -312,5 +276,66 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		// TODO Auto-generated method stub
 		m_logger.log("removeEventListener");		
 		super.removeEventListener(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#getAggregatedDocumentSignatureStates()
+	 */
+	@Override
+	public int getAggregatedDocumentSignatureStates() {
+		m_logger.debug("getAggregatedDocumentSignatureStates");
+		synchronized (m_aMtx_setDocumentSignatureState) {
+			return m_nDocumentSignatureState;			
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#getDocumentSignatureStates()
+	 */
+	@Override
+	public XOX_SignatureState[] getDocumentSignatureStates() {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#setAggregatedDocumentSignatureStates(int)
+	 * when this method is called, the signature state is notified to all the m_aListeners
+	 */
+	@Override
+	public void setAggregatedDocumentSignatureStates(int _nState) {
+		m_logger.entering("setDocumentSignatureState","_nState is: "+_nState);
+		synchronized (m_aMtx_setDocumentSignatureState) {			
+			m_nDocumentSignatureState = _nState;
+			m_aMtx_setDocumentSignatureState.notify();
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#addSignatureState(com.yacme.ext.oxsit.security.XOX_SignatureState)
+	 */
+	@Override
+	public int addSignatureState(XOX_SignatureState _xSignatureState) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#getSignatureState(java.lang.String)
+	 */
+	@Override
+	public XOX_SignatureState getSignatureState(String _sSignatureID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState#removeSignatureState(java.lang.String)
+	 */
+	@Override
+	public int removeSignatureState(String _sSignatureID) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

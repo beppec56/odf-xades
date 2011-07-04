@@ -24,7 +24,7 @@
 #define __com_yacme_ext_oxsit_security_cert_XOX_DocumentSignaturesState_idl__
 
 #include <com/sun/star/embed/XStorage.idl>
-#include "XOX_X509Certificate.idl"
+#include "XOX_SignatureState.idl"
 
   module com { module yacme { module ext { module oxsit { module security {
 
@@ -39,17 +39,34 @@
 		*/
 		[attribute] com::sun::star::embed::XStorage DocumentStorage;
 
+                /** this document signatures states, this is a sequence of UNO object
+                 *
+                 */
+               [attribute, readonly]  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> DocumentSignatureStates;
+
 		/** this document combined signature state
 		*/
-		[attribute] long DocumentSignatureState;
+		[attribute] long AggregatedDocumentSignatureStates;
 
 		/** this document id
 		*/
 		[attribute] string DocumentId;
 
-		/** The certificates contained in the document.
-		*/
-		[attribute, readonly] sequence< com::yacme::ext::oxsit::security::cert::XOX_X509Certificate > DocumentCertificates ;
+                /** Returns the signaturestate whose id is the one passed.
+                    returns the UNO object if ok, else null if ID doesn't exist.
+                */
+                com::yacme::ext::oxsit::security::XOX_SignatureState getSignatureState( [in] string signatureID );
+            
+                /** Remove the signaturestate whose id is the one passed.
+		    The object is disposed of
+                    returns 1 if all ok, 0 if ID doesn't exist.
+                */
+                long removeSignatureState( [in] string signatureID );
+            
+                /** Adds the signaturestate passed as parameter.
+                    returns 1 if all ok, 0 if ID doesn't exist.
+                */
+                long addSignatureState( [in] com::yacme::ext::oxsit::security::XOX_SignatureState xSignatureState );
   };
  
   }; }; }; }; };
