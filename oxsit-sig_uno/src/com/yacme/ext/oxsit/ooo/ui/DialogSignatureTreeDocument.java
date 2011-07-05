@@ -154,14 +154,45 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			if(aDocVerService != null) {				
 				m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
 				if(m_axoxDocumentVerifier != null) {
-					//grab the certificates and add them to the dialog						
-					XOX_SignatureState[] oCertifs = 
+					//grab the certificates and add them to the dialog
+					//get this document resident data (a singleton)
+					XOX_SingletonDataAccess	  xSingletonDataAccess = null;
+					XOX_DocumentSignaturesState xDocumentSignatures = null;
+					try {
+						xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xContext);
+						m_aLogger.debug(" singleton service data "+Helpers.getHashHex(xSingletonDataAccess) );
+						xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(getDocumentModel()), this);			
+					}
+					catch (ClassCastException e) {
+						e.printStackTrace();
+					} catch (ServiceNotFoundException e) {
+						m_aLogger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+					} catch (NoSuchMethodException e) {
+						m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+					}
+					
+					XOX_SignatureState[] aSigStates = 
 						m_axoxDocumentVerifier.loadAndGetSignatures(m_xParentFrame,getDocumentModel());
-					if(oCertifs != null) {
-						for(int idx = 0; idx < oCertifs.length; idx++) {
+					if(aSigStates != null) {
+						for(int idx = 0; idx < aSigStates.length; idx++) {
 							//add the certificate to the dialog tree
-							m_aLogger.debug(__FUNCTION__+"signature state added");
-							addASignatureState(oCertifs[idx]);
+							XOX_SignatureState aSignState = aSigStates[idx]; 
+							if(xDocumentSignatures != null) {
+								XOX_SignatureState aState = xDocumentSignatures.getSignatureState(aSignState.getSignatureUUID());
+								if(aState != null) {
+									//if the state was already loaded for this document, then use the former
+									m_aLogger.debug(__FUNCTION__+"signature state retrieved");
+									aSignState = aState;
+								}
+								else {
+									//sign id doesn't exist, add it:
+									xDocumentSignatures.addSignatureState(aSignState);
+								}
+							}
+							else
+							//else use this and add to the local storage
+								m_aLogger.debug(__FUNCTION__+"signature state added");
+							addASignatureState(aSignState);
 						}
 					} //else there are no signatures !
 				}

@@ -29,6 +29,7 @@ import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.sun.star.embed.XStorage;
 import com.sun.star.lang.XComponent;
@@ -37,6 +38,7 @@ import com.sun.star.lang.XInitialization;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.Exception;
+import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XChangesListener;
 import com.sun.star.util.XChangesNotifier;
@@ -72,10 +74,12 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	// the Object name, used to instantiate it inside the OOo API
 	public static final String[]		m_sServiceNames			= { GlobConstant.m_sDOCUMENT_SIGNATURES_SERVICE };
 
-	protected DynamicLogger m_logger;
+	protected DynamicLogger m_aLogger;
 
 	// these are the listeners on this document signatures changes
 	public HashMap<XChangesListener,XChangesListener> m_aListeners = new HashMap<XChangesListener, XChangesListener>(10);
+	
+	public HashMap<String,XOX_SignatureState> m_aSignatureStates = new HashMap<String, XOX_SignatureState>(10);
 
 	protected XStorage		m_xDocumentStorage;
 	// this document signature state
@@ -92,9 +96,9 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 * @param _ctx the UNO context
 	 */
 	public DocumentSignatures(XComponentContext _ctx) {
-		m_logger = new DynamicLogger(this, _ctx);
-    	m_logger.enableLogging();
-    	m_logger.ctor();
+		m_aLogger = new DynamicLogger(this, _ctx);
+    	m_aLogger.enableLogging();
+    	m_aLogger.ctor();
     	m_aMtx_setDocumentSignatureState = new Boolean(false);
     	
     	//prepare and start the thread to notify changes
@@ -102,7 +106,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		//call all the listeners, start a new thread for this
 		(new Thread(new Runnable() {
 			public void run() {
-				m_logger.log("inter thread created");
+				m_aLogger.log("inter thread created");
 				while(m_bThreadNotifyChangesCanRun) {
 					synchronized (m_aMtx_setDocumentSignatureState) {
 						try {
@@ -111,7 +115,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 						catch (InterruptedException e) {
 						}
 						if(m_bThreadNotifyChangesCanRun) {
-							m_logger.log("inter thread started");
+							m_aLogger.log("inter thread started");
 							Collection<XChangesListener> aColl = m_aListeners.values();
 							if(!aColl.isEmpty()) {
 								Iterator<XChangesListener> aIter = aColl.iterator();
@@ -121,11 +125,11 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 									aThisOne.changesOccurred(null);
 								}
 							}
-							m_logger.log("inter thread wraps, there were ", ((aColl.isEmpty()) ? "no" : aColl.size())+" listener");
+							m_aLogger.log("inter thread wraps, there were ", ((aColl.isEmpty()) ? "no" : aColl.size())+" listener");
 						}
 					}
 				}
-				m_logger.log("inter thread removed");
+				m_aLogger.log("inter thread removed");
 			}
 		}
 		)).start();
@@ -133,8 +137,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 
 	@Override
 	public String getImplementationName() {
-		// TODO Auto-generated method stub
-		m_logger.entering("getImplementationName");
+		m_aLogger.entering("getImplementationName");
 		return m_sImplementationName;
 	}
 	
@@ -143,7 +146,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_logger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -154,7 +157,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_logger.info("supportsService",_sService);
+		m_aLogger.debug("supportsService",_sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -168,12 +171,10 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void addChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
-		
 		if(!m_aListeners.containsKey(_ChangesListener) &&
 				_ChangesListener != null ) {
 			m_aListeners.put(_ChangesListener, _ChangesListener);
-			m_logger.entering("addChangesListener "+Helpers.getHashHex(_ChangesListener));
+			m_aLogger.entering("addChangesListener "+Helpers.getHashHex(_ChangesListener));
 		}		
 	}
 
@@ -182,10 +183,9 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void removeChangesListener(XChangesListener _ChangesListener) {
-		// TODO Auto-generated method stub
 		if(m_aListeners.containsKey(_ChangesListener) ) {
 			m_aListeners.remove(_ChangesListener);
-			m_logger.entering("removeChangesListener "+Helpers.getHashHex(_ChangesListener));		
+			m_aLogger.entering("removeChangesListener "+Helpers.getHashHex(_ChangesListener));		
 		}
 	}
 
@@ -197,8 +197,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
-		// TODO Auto-generated method stub
-		m_logger.entering("initialize");		
+		m_aLogger.entering("initialize");		
 	}	
 
 	/* (non-Javadoc)
@@ -208,8 +207,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public XStorage getDocumentStorage() {
-		// TODO Auto-generated method stub
-		m_logger.info("getDocumentStorage");		
+		m_aLogger.debug("getDocumentStorage");		
 		return m_xDocumentStorage;
 	}
 
@@ -219,8 +217,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void setDocumentStorage(XStorage _xStore) {
-		// TODO Auto-generated method stub
-		m_logger.info("setDocumentStorage");		
+		m_aLogger.debug("setDocumentStorage");		
 		m_xDocumentStorage = _xStore;		
 	}
 
@@ -229,8 +226,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public String getDocumentId() {
-		// TODO Auto-generated method stub
-		m_logger.log("getDocumentId");
+		m_aLogger.debug("getDocumentId");
 		return m_sDocumentId;
 	}
 
@@ -239,9 +235,8 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void setDocumentId(String arg0) {
-		// TODO Auto-generated method stub
 		m_sDocumentId = arg0;
-		m_logger.log("setDocumentId");
+		m_aLogger.debug("setDocumentId");
 	}
 
 	/* (non-Javadoc)
@@ -249,8 +244,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void addEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_logger.log("addEventListener");
+		m_aLogger.debug("addEventListener");
 		super.addEventListener(arg0);
 	}
 
@@ -259,11 +253,23 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		m_logger.log("dispose");
+		m_aLogger.debug("dispose");
 		m_bThreadNotifyChangesCanRun = false;
 		synchronized (m_aMtx_setDocumentSignatureState) {
+//this whill notifies the listeners still attached to detach.			
 			m_aMtx_setDocumentSignatureState.notify();
+		}
+//free the SignatureStat elements, if any
+		try {
+			Set aSignIDs = m_aSignatureStates.keySet();
+			Iterator<String> aIter = aSignIDs.iterator();
+			while(aIter.hasNext()) {
+				XOX_SignatureState aState = m_aSignatureStates.remove(aIter.next());
+				((XComponent) UnoRuntime.queryInterface(XComponent.class, aState)).dispose();				
+			}
+		}
+		catch (Throwable ex) {
+			m_aLogger.severe(ex);
 		}
 		super.dispose();
 	}
@@ -273,8 +279,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void removeEventListener(XEventListener arg0) {
-		// TODO Auto-generated method stub
-		m_logger.log("removeEventListener");		
+		m_aLogger.debug("removeEventListener");		
 		super.removeEventListener(arg0);
 	}
 
@@ -283,7 +288,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public int getAggregatedDocumentSignatureStates() {
-		m_logger.debug("getAggregatedDocumentSignatureStates");
+		m_aLogger.debug("getAggregatedDocumentSignatureStates");
 		synchronized (m_aMtx_setDocumentSignatureState) {
 			return m_nDocumentSignatureState;			
 		}
@@ -294,9 +299,33 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public XOX_SignatureState[] getDocumentSignatureStates() {
-		// TODO Auto-generated method stub
-		
-		return null;
+		final String __FUNCTION__ = "getDocumentSignatureStates: ";
+		XOX_SignatureState[] ret = null;
+
+		//detect the number of vector present
+		if(!m_aSignatureStates.isEmpty()) {
+			try {
+				ret = new XOX_SignatureState[m_aSignatureStates.size()];
+				Collection<XOX_SignatureState> retC = m_aSignatureStates.values();
+				Object xObs[] = retC.toArray();
+				for(int y = 0; y < xObs.length; y++)
+					ret[y] = (XOX_SignatureState)xObs[y]; 
+
+			} catch(NullPointerException ex) {
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
+			} catch(IndexOutOfBoundsException ex) {
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
+			} catch(ArrayStoreException ex) {
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
+			}  catch(Throwable ex) {
+				m_aLogger.severe(__FUNCTION__,ex);
+				ret = null;
+			}
+		}
+		return ret;
 	}
 
 	/* (non-Javadoc)
@@ -305,7 +334,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public void setAggregatedDocumentSignatureStates(int _nState) {
-		m_logger.entering("setDocumentSignatureState","_nState is: "+_nState);
+		m_aLogger.entering("setDocumentSignatureState","_nState is: "+_nState);
 		synchronized (m_aMtx_setDocumentSignatureState) {			
 			m_nDocumentSignatureState = _nState;
 			m_aMtx_setDocumentSignatureState.notify();
@@ -317,8 +346,8 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public int addSignatureState(XOX_SignatureState _xSignatureState) {
-		// TODO Auto-generated method stub
-		return 0;
+		m_aSignatureStates.put(_xSignatureState.getSignatureUUID(), _xSignatureState);
+		return 1;
 	}
 
 	/* (non-Javadoc)
@@ -326,8 +355,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public XOX_SignatureState getSignatureState(String _sSignatureID) {
-		// TODO Auto-generated method stub
-		return null;
+		return m_aSignatureStates.get(_sSignatureID);
 	}
 
 	/* (non-Javadoc)
@@ -335,7 +363,18 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 	 */
 	@Override
 	public int removeSignatureState(String _sSignatureID) {
-		// TODO Auto-generated method stub
-		return 0;
+		XOX_SignatureState aState = m_aSignatureStates.remove(_sSignatureID);
+		if(aState != null) {
+//clean up the object retrieved
+			try {
+				((XComponent) UnoRuntime.queryInterface(XComponent.class, aState)).dispose();
+			}
+			catch (Throwable e) {
+				m_aLogger.severe(e);
+			}
+			return 1;
+		}
+		else
+			return 0;
 	}
 }
