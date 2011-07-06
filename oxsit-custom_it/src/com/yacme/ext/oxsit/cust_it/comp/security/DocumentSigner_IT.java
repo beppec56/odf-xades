@@ -47,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.cert.CertificateEncodingException;
@@ -152,7 +153,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	// these are the listeners on this document signatures changes
 	public HashMap<XChangesListener, XChangesListener> m_aListeners = new HashMap<XChangesListener, XChangesListener>(10);
 
-	protected XStorage m_xDocumentStorage;
 	protected XComponentContext m_xCC;
 	private XMultiComponentFactory m_xMCF;
 	private XFrame m_xFrame;
@@ -169,7 +169,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	private String m_sErrorNoDocumentType;
 	private String m_sErrorNotYetSaved;
 	private String m_sErrorGraphicNotEmbedded;
-	private String m_sErroreIsReadOnly;
+	private String m_sErroreIsNotReadOnly;
 	private String m_sErrorMacroPresent;
 
 	//ROB
@@ -203,7 +203,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_sErrorNoDocumentType = _aRegAcc.getStringFromRegistry("id_wrong_format_document");
 			m_sErrorNotYetSaved = _aRegAcc.getStringFromRegistry("id_wrong_docum_not_saved");
 			m_sErrorGraphicNotEmbedded = _aRegAcc.getStringFromRegistry("id_url_linked_graphics");
-			m_sErroreIsReadOnly = _aRegAcc.getStringFromRegistry("id_docum_is_readonly");
+			m_sErroreIsNotReadOnly = _aRegAcc.getStringFromRegistry("id_docum_is_not_readonly");
 			m_sErrorMacroPresent = _aRegAcc.getStringFromRegistry("id_docum_contains_macro");
 		} catch (com.sun.star.uno.Exception e) {
 			m_aLogger.severe("", "", e);
@@ -339,11 +339,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * 		goto next certificate
 	 * 
 	 * @param xFrame
-	 * @param xDocumentModel
+	 * @param _xDocumentModel
 	 * @param aCertArray
 	 * @return
 	 */
-	private boolean signAsFile(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] _aCertArray) {
+	private boolean signAsFile(XFrame xFrame, XModel _xDocumentModel, XOX_X509Certificate[] _aCertArray) {
 		Date d1, d2;
 
 		ODFSignedDoc sdoc = null;
@@ -351,10 +351,26 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		ConfigManager.init("jar://ODFDocSigning.cfg");
 
 		try {
+			XStorage xDocumentStorage;
 
-		boolean openWithURL = true;
+//		boolean openWithURL = true;
+//		if(openWithURL) {
+			//now, using the only method available, open the storage
+			URL aURL = new URL(_xDocumentModel.getURL());
 			
-		if(openWithURL) {
+			URI aURI = aURL.toURI();
+
+			m_aLogger.debug(_xDocumentModel.getURL());
+			m_aLogger.debug(" aURL: "+aURL.toString());
+			m_aLogger.debug(" aURL.getFile() "+aURL.getFile());
+			m_aLogger.debug(" aURI.getPath() "+aURI.getPath());
+			m_aLogger.debug(" aURL.getHost() "+aURL.getHost());
+			m_aLogger.debug(" aURI: "+aURL.toURI().toString());
+
+			String aPath = Helpers.fromURLtoSystemPath(_xDocumentModel.getURL());
+
+			m_aLogger.debug(" aPath: "+aPath); // this is the host path
+			
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
 			//But first we need a StorageFactory object
@@ -362,15 +378,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//then obtain the needed interface
 			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
 					xFact);
-			//now, using the only method available, open the storage
-			URL aURL = new URL(xDocumentModel.getURL());
 
 			Object[] aArguments = new Object[2];
-			aArguments[0] = aURL.toString();//xDocumentModel.getURL();
-
-			m_aLogger.debug(xDocumentModel.getURL()+" aURL: "+aURL.toString());
-
+			aArguments[0] = aPath;//aURL.toString();//xDocumentModel.getURL();
 			aArguments[1] = ElementModes.READWRITE;
+//			aArguments[1] = ElementModes.READ;
+			//get the document storage object 
 			//get the document storage object 
 			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
 
@@ -378,21 +391,21 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
 
 			//from the storage object (or better named, the service) obtain the interface we need
-			m_xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
 			//from the storage object (or better named, the service) obtain the interface we need
-		}
-		else {
-				//open with storage from doc model
-			XStorageBasedDocument xDocStorage =
-				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
-				
-				//from the storage object (or better named, the service) obtain the interface we need
-			m_xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);				
-		}
+//		}
+//		else {
+//				//open with storage from doc model
+//			XStorageBasedDocument xDocStorage =
+//				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
+//				
+//				//from the storage object (or better named, the service) obtain the interface we need
+//			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);				
+//		}
 			
 			// create a new SignedDoc 
-			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
+			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
 			//now read the data from the document and prepare to sign
 			//			byte[] manifestBytes = 
@@ -507,8 +520,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								/// logging, only debug
 								sdoc.writeSignaturesToXLogger(m_aLogger);
 
-								//
-
 								////// end of debug only code
 								//after this, add the file the signature just set.
 
@@ -516,7 +527,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 								//so, open the substorage META-INF from the main storage (e.g. the document)
 								try {
-									XStorage xMetaInfStorage = m_xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
+									XStorage xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
 
 									//try to remove the previous signature
 									//FIXME would be better to import the existent signatures and add the new one
@@ -559,7 +570,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
 
 										xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,
-												m_xDocumentStorage);
+												xDocumentStorage);
 										if (xTransObj != null) {
 											m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
 											xTransObj.commit();
@@ -705,6 +716,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				//            
 				//
 			}
+			//get rid of the document storage: frees it and in the case of Windows the file is released as well
+			//PLEASE NOTE: the following line of code has meaning ONLY
+			//if the xDocumentStorage was created independently from the main document !
+			//grab the needed XComponent interface
+			((XComponent)UnoRuntime.queryInterface(XComponent.class, xStdoc)).dispose();			
 		} catch (CertificateException e) {
 			// TODO Auto-generated catch block
 			m_aLogger.log("Exception: " + e.getMessage());
@@ -1346,6 +1362,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		//check if the document is modified, e.g. not yet saved
 		//it must be saved
 		XStorable xStore = (XStorable) UnoRuntime.queryInterface(XStorable.class, _xDocumentModel);
+		XStorage xDocumentStorage;
+		
 		// decide if new or already saved
 		XModifiable xMod = (XModifiable) UnoRuntime.queryInterface(XModifiable.class, _xDocumentModel);
 		if ((xMod != null && xMod.isModified()) || (xStore != null && !xStore.hasLocation())) {
@@ -1354,12 +1372,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			return false;
 		}
 
-		//check if the document is readonly: to sign we need to have the full control on it:
-		if (xStore == null /* || xStore.isReadonly() */ ){
+		//check if the document is readonly: to sign it MUST be readonly!
+		if (xStore == null  || !xStore.isReadonly()  ){
 			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
-			aMex.executeDialogLocal(m_sErroreIsReadOnly);
+			aMex.executeDialogLocal(m_sErroreIsNotReadOnly);
 			return false;
 		}
+		
 		//check the main document types interfaces
 		XTextDocument xText = (XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, _xDocumentModel);
 		if (xText != null) {
@@ -1383,10 +1402,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		//		Utilities.showInterfaces(xDocStorage, _xDocumentModel);
 		XPropertySet xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xDocStorage);
 		//		Utilities.showProperties(xDocStorage, xPropSet);
-		m_xDocumentStorage = xDocStorage.getDocumentStorage();
+		xDocumentStorage = xDocStorage.getDocumentStorage();
 
 		//		Utilities.showInterfaces(xDocStorage, m_xDocumentStorage);
-		xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, m_xDocumentStorage);
+		xPropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xDocumentStorage);
 		//		Utilities.showProperties(m_xDocumentStorage, xPropSet);
 
 		if (xPropSet != null) { // grab the version
@@ -1421,7 +1440,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_aLogger.log("Version does not exists! May be this is not a ODF package?");
 
 		//verify if there is a Basic substorage holding the basic script
-		String[] aElements = m_xDocumentStorage.getElementNames();
+		String[] aElements = xDocumentStorage.getElementNames();
 		String sBasicElement = "Basic";
 		for (int i = 0; i < aElements.length; i++) {
 //DEBUG			m_aLogger.log(aElements[i]);

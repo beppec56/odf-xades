@@ -1278,12 +1278,21 @@ stesso.</value>
 		<!--
 		    This message should be moved to the specific custom implementation
 		-->
-		<node oor:name="id_docum_is_readonly" oor:op="replace">
+		<node oor:name="id_docum_is_not_readonly" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">Il documento è in sola lettura.
+				<value xml:lang="it">Per verificare le firme o per essere firmato,
+Il documento deve essere impostato in
+sola lettura !
 
-Per poter firmare, dovete aprire il documento in
-modo lettura/scrittura.</value>
+Potete impostare il modo di sola lettura dalla barra
+degli strumenti, oppure potete aprire il documento
+in sola lettura direttamente dal dialogo di
+apertura file.
+
+IMPORTANTE:
+i documenti impostati in sola lettura tramite
+comandi di sistema operativo, non possono
+essere verificati, nè firmati.</value>
 			</prop>
 		</node>
 		<!--

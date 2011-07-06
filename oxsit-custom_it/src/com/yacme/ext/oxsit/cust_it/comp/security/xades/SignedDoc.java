@@ -413,12 +413,12 @@ public class SignedDoc {
     	throws SignedDocException
     {
     	try {
-    		_aLogger.log(xmlSignatureHeader());
+    		_aLogger.debug(xmlSignatureHeader());
     		for(int i = 0; i < countSignatures(); i++) {
     			Signature sig = getSignature(i);
-    			_aLogger.log(sig.toString());
+    			_aLogger.debug(sig.toString());
     		}
-    		_aLogger.log(xmlSignatureTrailer());
+    		_aLogger.debug(xmlSignatureTrailer());
     	} catch(Exception ex) {
     		SignedDocException.handleException(ex, SignedDocException.ERR_WRITE_FILE);
     	}

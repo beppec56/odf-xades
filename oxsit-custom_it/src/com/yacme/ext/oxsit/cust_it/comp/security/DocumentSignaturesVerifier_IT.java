@@ -445,7 +445,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		return ret;
 	}
 
-	/* (non-Javadoc)
+	/* this method should be called when there is need to load signatures from document into internal variables
+	 * (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#loadAndGetSignatures(com.sun.star.frame.XFrame, com.sun.star.frame.XModel)
 	 */
 	@Override
@@ -457,7 +458,12 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//remove the signature states currently in the list.
 			cleanUpSignatures();
 			//load the signatures from the provided document references	
+			Object xStdoc;
 			XStorage xDocumentStorage;
+			
+//			boolean openWithURL = true; //this needs to be set to false, when windows testing is finished
+			
+//		if(openWithURL) {
 
 			//now, using the only method available, open the storage
 			URL aURL = new URL(_xDocumentModel.getURL());
@@ -473,11 +479,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 
 			String aPath = Helpers.fromURLtoSystemPath(_xDocumentModel.getURL());
 
-			m_aLogger.debug(" aPath: "+aPath);
-			
-			boolean openWithURL = true;
-			
-		if(openWithURL) {
+			m_aLogger.debug(" aPath: "+aPath); // this is the host path
 			
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
@@ -492,16 +494,16 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			aArguments[1] = ElementModes.READWRITE;
 //			aArguments[1] = ElementModes.READ;
 			//get the document storage object 
-			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+			xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
 
 			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
-		}
-		else {
-			//from the storage object (or better named, the service) obtain the interface we need
-				XStorageBasedDocument xDocStorage =
-				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
-				xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
-		}
+//		}
+//		else {
+//			//from the storage object (or better named, the service) obtain the interface we need
+//				XStorageBasedDocument xDocStorage =
+//				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
+//				xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+//		}
 			//prepare a zip file from URL
 			File aZipFile;
 			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
@@ -562,7 +564,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 					}
 					else
 						m_aLogger.warning(__FUNCTION__+" cannot open the signatures file into the document file");
-				
 				}
 				else
 					m_aLogger.warning(__FUNCTION__+" cannot open the signatures file entry into the document file");
@@ -572,14 +573,10 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			else
 				m_aLogger.warning(__FUNCTION__+" cannot open the document file");
 				//simply load certificates
-				
 				//and return them
 			ret = getSignatureStates();
-				
-			((XComponent)UnoRuntime.queryInterface(XComponent.class, xDocumentStorage)).dispose();
-
-//				xDocumentStorage.dispose();
-				
+			//get rid of the document storage: frees it and in the case of Windows the file is released as well
+			((XComponent)UnoRuntime.queryInterface(XComponent.class, xStdoc)).dispose();				
 		} catch (URISyntaxException e) {
 			m_aLogger.severe(e);
 		} catch (java.io.IOException e) {
@@ -667,6 +664,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
 			
 			//from the storage object (or better named, the service) obtain the interface we need
+			//the document opened as such is read only
+			
 			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
 			//prepare a zip file from URL
@@ -690,7 +689,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 
 					    // add BouncyCastle provider if not done yet
 						Security.addProvider((Provider)Class.forName(ConfigManager.instance().getProperty("DIGIDOC_SECURITY_PROVIDER")).newInstance());
-						
+
 						Signature sig = null;
 //						cleanUpSignatures(); //free the current certificate list
 						boolean foundTheSignatureID = false;
@@ -749,7 +748,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 										if(aCert != null) {
 			//add the certificate to the internal list of certificates
 			// the signature just checked is updated in the list
-	
+
 	//										addCertificate(aSignState,aCert);
 											//in case of all signatures verified, what need to be done about certificates ?
 										}
@@ -774,6 +773,9 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			}
 			else
 				m_aLogger.warning(__FUNCTION__+" cannot open the document file");
+			//get rid of the document storage: frees it and in the case of Windows the file is released as well
+//NOT HERE ! the storage is a copy of the main storage !	((XComponent)UnoRuntime.queryInterface(XComponent.class, xDocumentStorage)).dispose();				
+
 		} catch (MalformedURLException e) {
 			m_aLogger.severe(e);
 		} catch (ZipException e) {
