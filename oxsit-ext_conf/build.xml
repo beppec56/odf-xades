@@ -49,8 +49,8 @@ build-extension
 	<!-- sleep milliseconds="2000" / -->
 
 	<!-- properties used when building/deploying the extension -->
-	<!-- version used for updating the extension, displayed on OOo interface -->
-	<property name="version" value="0.0.16" />
+	<!-- version used for updating the extension, displayed on OOo interface and printed on the log files -->
+	<property name="version" value="0.0.20" />
 	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
