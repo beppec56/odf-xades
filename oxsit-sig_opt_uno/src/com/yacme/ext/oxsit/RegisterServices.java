@@ -49,27 +49,27 @@ public class RegisterServices {
 	
 		if ( sImplementationName.equals( ManageGeneralOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageGeneralOptions.class, ManageGeneralOptions.m_sServiceNames );
-//DEBUG			System.out.println("__getComponentFactory: "+ManageGeneralOptions.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+ManageGeneralOptions.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( ManageLoggingOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageLoggingOptions.class, ManageLoggingOptions.m_sServiceNames );
-//DEBUG			System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
+//DEBUG		System.out.println("__getComponentFactory: "+ManageLoggingOptions.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( ManageSSCDOptions.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( ManageSSCDOptions.class, ManageSSCDOptions.m_sServiceNames );
-//DEBUG			System.out.println("__getComponentFactory: "+ManageSSCDOptions.m_sImplementationName);
+//DEBUG	System.out.println("__getComponentFactory: "+ManageSSCDOptions.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( DocumentSignatures.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( DocumentSignatures.class, DocumentSignatures.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
+//DEBUG	System.out.println("__getComponentFactory: "+DocumentSignatures.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( CertificateExtension.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( CertificateExtension.class, CertificateExtension.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
+//DEBUG	System.out.println("__getComponentFactory: "+CertificateExtension.m_sImplementationName);
 		}
 		else if ( sImplementationName.equals( X509Certificate.m_sImplementationName ) ) {
 			xFactory = Factory.createComponentFactory( X509Certificate.class, X509Certificate.m_sServiceNames );
-//DEBUG		System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
+//DEBUG	System.out.println("__getComponentFactory: "+X509Certificate.m_sImplementationName);
 		}
 		return xFactory;
 	}
@@ -84,13 +84,16 @@ public class RegisterServices {
 	 * registry key accessible.
 	 */
 	public synchronized static boolean __writeRegistryServiceInfo( XRegistryKey xRegistryKey ) {
-//		System.out.println("__writeRegistryServiceInfo: "+ManageOptions.m_sImplementationName+" "+ManageOptions.m_sServiceNames[0] );
 		boolean retGeneral = 
 			Factory.writeRegistryServiceInfo( ManageGeneralOptions.m_sImplementationName, ManageGeneralOptions.m_sServiceNames, xRegistryKey );
+
+//		System.out.println("__writeRegistryServiceInfo: "+ManageGeneralOptions.m_sImplementationName);
 
 		boolean retLogging = 
 			Factory.writeRegistryServiceInfo( ManageLoggingOptions.m_sImplementationName, ManageLoggingOptions.m_sServiceNames, xRegistryKey );
 
+//		System.out.println("__writeRegistryServiceInfo: "+ManageLoggingOptions.m_sImplementationName);
+		
 		boolean retSSCDOpts = 
 			Factory.writeRegistryServiceInfo( ManageSSCDOptions.m_sImplementationName, ManageSSCDOptions.m_sServiceNames, xRegistryKey );
 
@@ -121,7 +124,7 @@ public class RegisterServices {
 		if (!retX509Certif)
 			System.out.println("__writeRegistryServiceInfo: "+X509Certificate.m_sImplementationName + "failed");		
 
-		return (retGeneral && retLogging && retDocumSignatures &&
-					retX509Certif && retSSCDOpts && retCertifExt );
+		return (retGeneral && retLogging && retSSCDOpts && retDocumSignatures &&
+				retCertifExt && retX509Certif );
 	}
 }

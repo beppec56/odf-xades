@@ -6,7 +6,9 @@ package com.yacme.ext.oxsit.cust_it.comp.security;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.Provider;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
@@ -23,6 +25,7 @@ import java.util.zip.ZipFile;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
+import com.sun.star.document.XStorageBasedDocument;
 import com.sun.star.embed.ElementModes;
 import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
@@ -454,7 +457,28 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//remove the signature states currently in the list.
 			cleanUpSignatures();
 			//load the signatures from the provided document references	
-			XStorage xDocumentStorage;		
+			XStorage xDocumentStorage;
+
+			//now, using the only method available, open the storage
+			URL aURL = new URL(_xDocumentModel.getURL());
+			
+			URI aURI = aURL.toURI();
+
+			m_aLogger.debug(_xDocumentModel.getURL());
+			m_aLogger.debug(" aURL: "+aURL.toString());
+			m_aLogger.debug(" aURL.getFile() "+aURL.getFile());
+			m_aLogger.debug(" aURI.getPath() "+aURI.getPath());
+			m_aLogger.debug(" aURL.getHost() "+aURL.getHost());
+			m_aLogger.debug(" aURI: "+aURL.toURI().toString());
+
+			String aPath = Helpers.fromURLtoSystemPath(_xDocumentModel.getURL());
+
+			m_aLogger.debug(" aPath: "+aPath);
+			
+			boolean openWithURL = true;
+			
+		if(openWithURL) {
+			
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
 			//But first we need a StorageFactory object
@@ -462,15 +486,22 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//then obtain the needed interface
 			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
 					xFact);
-			//now, using the only method available, open the storage
+
 			Object[] aArguments = new Object[2];
-			aArguments[0] = _xDocumentModel.getURL();
+			aArguments[0] = aPath;//aURL.toString();//xDocumentModel.getURL();
 			aArguments[1] = ElementModes.READWRITE;
+//			aArguments[1] = ElementModes.READ;
 			//get the document storage object 
 			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
-			//from the storage object (or better named, the service) obtain the interface we need
+
 			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
-			
+		}
+		else {
+			//from the storage object (or better named, the service) obtain the interface we need
+				XStorageBasedDocument xDocStorage =
+				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
+				xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+		}
 			//prepare a zip file from URL
 			File aZipFile;
 			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
@@ -543,7 +574,12 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				//simply load certificates
 				
 				//and return them
-				ret = getSignatureStates();
+			ret = getSignatureStates();
+				
+			((XComponent)UnoRuntime.queryInterface(XComponent.class, xDocumentStorage)).dispose();
+
+//				xDocumentStorage.dispose();
+				
 		} catch (URISyntaxException e) {
 			m_aLogger.severe(e);
 		} catch (java.io.IOException e) {
@@ -616,19 +652,22 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
 			//But first we need a StorageFactory object
-			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
-			//then obtain the needed interface
-			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
-					xFact);
-			//now, using the only method available, open the storage
-			Object[] aArguments = new Object[2];
-			aArguments[0] = _xDocumentModel.getURL();
-			aArguments[1] = ElementModes.READWRITE;
-			//get the document storage object 
-			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+//			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
+//			//then obtain the needed interface
+//			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
+//					xFact);
+//			//now, using the only method available, open the storage
+//			Object[] aArguments = new Object[2];
+//			aArguments[0] = _xDocumentModel.getURL();
+//			aArguments[1] = ElementModes.READWRITE;
+//			//get the document storage object 
+//			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
 
+			XStorageBasedDocument xDocStorage =
+				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
+			
 			//from the storage object (or better named, the service) obtain the interface we need
-			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
 			//prepare a zip file from URL
 			File aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));

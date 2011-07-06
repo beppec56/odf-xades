@@ -185,13 +185,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 									aSignState = aState;
 								}
 								else {
-									//sign id doesn't exist, add it:
+									//else use this and add to the local storage
 									xDocumentSignatures.addSignatureState(aSignState);
+									m_aLogger.debug(__FUNCTION__+"signature state added");
 								}
 							}
-							else
-							//else use this and add to the local storage
-								m_aLogger.debug(__FUNCTION__+"signature state added");
 							addASignatureState(aSignState);
 						}
 					} //else there are no signatures !

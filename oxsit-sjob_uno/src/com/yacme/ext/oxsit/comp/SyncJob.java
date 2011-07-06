@@ -513,7 +513,7 @@ public class SyncJob extends ComponentBase
 				
 				dg.verifyDocumentSignature(xStorage,null);
 				//instead call the signature verifier
-				//FIXME call the signature verifier
+				//FIXME call the signature checker, to detect if a signature is present or not
 			}
 			else
 				m_aLogger.severe("executeOnLoad","Missing XOX_SingletonDataAccess interface"); 

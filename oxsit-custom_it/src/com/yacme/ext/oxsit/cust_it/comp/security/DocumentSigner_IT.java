@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -351,6 +352,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		try {
 
+		boolean openWithURL = true;
+			
+		if(openWithURL) {
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
 			//But first we need a StorageFactory object
@@ -359,8 +363,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
 					xFact);
 			//now, using the only method available, open the storage
+			URL aURL = new URL(xDocumentModel.getURL());
+
 			Object[] aArguments = new Object[2];
-			aArguments[0] = xDocumentModel.getURL();
+			aArguments[0] = aURL.toString();//xDocumentModel.getURL();
+
+			m_aLogger.debug(xDocumentModel.getURL()+" aURL: "+aURL.toString());
+
 			aArguments[1] = ElementModes.READWRITE;
 			//get the document storage object 
 			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
@@ -371,6 +380,17 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//from the storage object (or better named, the service) obtain the interface we need
 			m_xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
+			//from the storage object (or better named, the service) obtain the interface we need
+		}
+		else {
+				//open with storage from doc model
+			XStorageBasedDocument xDocStorage =
+				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, xDocumentModel );
+				
+				//from the storage object (or better named, the service) obtain the interface we need
+			m_xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);				
+		}
+			
 			// create a new SignedDoc 
 			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, m_xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
 
@@ -510,7 +530,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									try {
 										XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
 										//write to it (just a test now)
-										String aString = "a simple test...";
 
 										byte[] theSignatureBytes = sig.toXML();
 
@@ -1336,7 +1355,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		}
 
 		//check if the document is readonly: to sign we need to have the full control on it:
-		if (xStore == null || xStore.isReadonly()) {
+		if (xStore == null /* || xStore.isReadonly() */ ){
 			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);
 			aMex.executeDialogLocal(m_sErroreIsReadOnly);
 			return false;

@@ -732,7 +732,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	}
 
 	//test function, remove when ready!
-	protected void addOneSignature() {
+	private void addOneSignature() {
 		//create a fake certificate description
 		SignatureTreeElement aCert = new SignatureTreeElement(m_xContext, m_xMCF);
 		aCert.initialize();
