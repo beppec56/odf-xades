@@ -411,6 +411,15 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		}
 	}
 
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getSignatureState(java.lang.String)
+	 */
+	@Override
+	public XOX_SignatureState getSignatureState(String _sSignatureID) {
+		return m_hSignatures.get(_sSignatureID);
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#getSignaturesState()
 	 */
@@ -733,15 +742,13 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 										if (errs.size() == 0) {
 											m_aLogger.debug("Verification OK!");
 											aSignState.setState(SignatureState.OK);
-											if(xDocumentSignatures != null)
-												xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED);
+											Helpers.updateAggregateSignaturesState(xDocumentSignatures, GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED);
 										}
 										else {
 											aSignState.setState(SignatureState.ERR_VERIFY);
 											for (int j = 0; j < errs.size(); j++)
 												m_aLogger.severe(errs.get(j));
-											if(xDocumentSignatures != null)
-												xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN);											
+											Helpers.updateAggregateSignaturesState(xDocumentSignatures, GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN);
 										}
 										// add the certificate of this signature to the certificate list and
 										X509Certificate aCert = sig.getKeyInfo().getSignersCertificate();
@@ -907,5 +914,4 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		
 		return 0;
 	}
-
 }

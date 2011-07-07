@@ -167,7 +167,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 	@Override
 	public void addButtonPressed() {
 		//add the certificate to ?? check the spec
-		m_aLogger.info("firma document con un certificato");
+		m_aLogger.debug("firma document con un certificato");
 		XMutableTreeNode xAnode = m_aTheCurrentlySelectedTreeNode;
 		Object aObj = xAnode.getDataValue();
 		if(aObj instanceof CertificateTreeElement) {
@@ -175,10 +175,11 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			CertificateTreeElement ct = (CertificateTreeElement)aObj;
 			if(ct.getNodeType() == TreeNodeType.CERTIFICATE) {
 				//FIXME add a check on the state and alert the user
+				//meaning a check of the certificate type
 				
 				//instantiate the signer
 				try {
-					//FIXME get the object name from the parameters
+					//FIXME get the object name from General Parameters
 					Object oDocumSigner = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
 					XOX_DocumentSigner xSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, oDocumSigner);
 					if(xSigner != null) {
@@ -213,7 +214,7 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 		//FIXME: need to filter out the certificates already used to sign the current document
 
 		int nNumberofSSCD = 0;
-		m_aLogger.info("Seleziona dispositivo");
+		m_aLogger.debug("Seleziona dispositivo");
 //		addOneCertificate();
 		//instantiate the SSCDs service
 		if(m_axoxAvailableSSCDs != null) {

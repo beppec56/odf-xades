@@ -58,8 +58,16 @@
 	   */
 	  sequence<com::yacme::ext::oxsit::security::XOX_SignatureState> loadAndGetSignatures([in] com::sun::star::frame::XFrame xFrame,
 											      [in] com::sun::star::frame::XModel xTheDocumentModel )
+
 	    raises( ::com::sun::star::lang::IllegalArgumentException,
 		    ::com::sun::star::uno::Exception );
+
+	  /** return the signature state of the signature whose id is given as parameter
+	      Must be called after loadAndGetSignatures has been called<br>
+	   * @param sSignatureID the id of the signature to be checked
+           * @return the requested signature state or null if it doesn't exist
+	   */
+	  com::yacme::ext::oxsit::security::XOX_SignatureState getSignatureState([in] string sSignatureID ) ;
 
 	/** Used to check if the signed document is untampered and if the signature itself is correct.
 	    Should be called AFTER loadAndGetSignatures has been called !<br>

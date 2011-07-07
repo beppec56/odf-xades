@@ -70,13 +70,23 @@ public class GlobConstant {
 	public static final String	m_sUNO_MACRO_SIGNATURE_URL_COMPLETE			= ".uno:MacroSignature";
 
 	// these come from sfx2/inc/sfx2/signaturestate.hxx
+	/** signatures are present in this document, (SEE SPEC !)
+	 * 
+	 */
 	public static final int		m_nSIGNATURESTATE_UNKNOWN					= -1;
 	public static final int		m_nSIGNATURESTATE_NOSIGNATURES				= 0;
+
+	/** all the signatures in this document checked so far are correct
+	 * 
+	 */
 	public static final int		m_nSIGNATURESTATE_SIGNATURES_OK				= 1;
 	/**
 	 *  signature is OK, but certificate could not be validated
 	 */
 	public static final int		m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED	= 2;	
+	/**
+	 *  signature wrong 
+	 */
 	public static final int		m_nSIGNATURESTATE_SIGNATURES_BROKEN			= 3;
 	/** State was SIGNATURES_OK, but doc is modified now
 	 * NOTE: this doesn't seem to be implemented in OOo as of 2.4. The

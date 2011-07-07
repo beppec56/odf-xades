@@ -76,6 +76,54 @@ public class Helpers {
 	protected Helpers() {
 	}
 
+	/**
+	 * @param xDocumentSignatures
+	 * @param _nNewSignatureState
+	 */
+	//FIXME: better use a XOX_SignatureState ? So we will update the state of the aggragate signature state accordingly
+	public static void updateAggregateSignaturesState(XOX_DocumentSignaturesState xDocumentSignatures, int _nNewSignatureState) {
+		if(xDocumentSignatures != null) {
+			int currentState = xDocumentSignatures.getAggregatedDocumentSignatureStates();
+			int newState =  GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN;
+			
+			switch(_nNewSignatureState) {
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK: //only if both cert and sign are check ok
+				switch(currentState) {
+				case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED:
+				case GlobConstant.m_nSIGNATURESTATE_UNKNOWN:
+				case GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES:
+				case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK:
+					newState = GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK; 
+					break;
+				default:
+					newState = currentState; 
+					break;					
+				}
+				break;
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN:
+				newState = GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN; 
+				break;
+			case GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES:
+				newState = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
+				break;
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_INVALID:
+				//switch?
+				newState = GlobConstant.m_nSIGNATURESTATE_SIGNATURES_INVALID; 
+				break;
+			case GlobConstant.m_nSIGNATURESTATE_UNKNOWN:
+				newState = GlobConstant.m_nSIGNATURESTATE_UNKNOWN;
+				break;
+			case GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED:
+				newState = GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED;
+				break;
+			default:
+				newState = currentState; 
+				break;
+			}
+			xDocumentSignatures.setAggregatedDocumentSignatureStates(newState);
+		}
+	}
+
 	public static String date2string(Date _aDate) {
 		final String m_dateFormatXAdES = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         SimpleDateFormat f = new SimpleDateFormat(m_dateFormatXAdES);

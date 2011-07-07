@@ -428,7 +428,7 @@ public class SyncJob extends ComponentBase
 					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 					if(m_aDocSign != null) {
 						//determine the storage, it may be different, set it to the document
-						m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+						Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
 						m_aLogger.severe("execute","Missing XOX_DocumentSignaturesState interface");						
@@ -444,12 +444,12 @@ public class SyncJob extends ComponentBase
 		if (m_axFrame != null) {
 			String aUrl = m_axModel.getURL();
 			if (aUrl.length() > 0) {
-				m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+				m_aLogger.debug(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
 				if(m_axoxSingletonDataAccess != null) {
 					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 					if(m_aDocSign != null) {
 						//determine the storage, it may be different, set it to the document
-						m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+						Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 					}
 					else
 						m_aLogger.severe("execute, OnSaveAsDone","Missing XOX_DocumentSignaturesState interface");						
@@ -504,9 +504,10 @@ public class SyncJob extends ComponentBase
 			if(m_axoxSingletonDataAccess != null) {
 				m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 				m_aDocSign.setDocumentStorage(xStorage);
-				m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+				Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+//FIXME: check if signatures are present, or not: not preset = no_SIGNATURES, present = STATE UNKNOWN
 //verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
-				m_aDocSign.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+				Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
 
 //just for test, analyze the document package structure
 				DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xServiceManager,m_xComponentContext);

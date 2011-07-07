@@ -132,7 +132,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 
 		center();
 		//load the document signature states (always when dialog starts)
-		readAllSignatures();
+		readAllSignatures(false);
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 		
 	}
 
-	private void readAllSignatures() {
+	private void readAllSignatures(boolean _bVerifyTheSignatures) {
 		final String __FUNCTION__ = "readAllSignatures: ";
 		try {
 			Object aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
@@ -178,6 +178,38 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							//add the certificate to the dialog tree
 							XOX_SignatureState aSignState = aSigStates[idx]; 
 							if(xDocumentSignatures != null) {
+								if(_bVerifyTheSignatures) {
+									//do a verification of this signature, the just verified signature is then immediately returned.
+									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), aSignState);
+									//now verify the certificate attached
+									XOX_X509Certificate xACert = null;
+									if(aSignState != null)
+										xACert = aSignState.getSignersCerficate(); 
+									if(xACert != null) {
+										try {
+											xACert.verifyCertificate(m_xParentFrame);
+										} catch (Throwable e) {
+											m_aLogger.severe(__FUNCTION__,e);
+										}
+									}
+									//Update with the new updated state, if nothing went wrong
+									XOX_SignatureState aNewSignState =  m_axoxDocumentVerifier.getSignatureState(aSignState.getSignatureUUID());
+									if(aNewSignState != null) {
+										aSignState = aNewSignState;
+										//now update the aggregate state, using the certificate as well
+										
+									}
+
+//now update the state in the global, if existent there
+//FIXME, verify this when multiple signature are activated, e.g. the signature not yet verified are verified automatically by this !
+									XOX_SignatureState aState = xDocumentSignatures.getSignatureState(aSignState.getSignatureUUID());
+									if(aState != null && aNewSignState != null) {
+										//state exists, update it
+										xDocumentSignatures.addSignatureState(aNewSignState);
+									}
+								}
+								//FIXME add the gloab signature state here, see in signature verification
+								//fall back to standard with no check
 								XOX_SignatureState aState = xDocumentSignatures.getSignatureState(aSignState.getSignatureUUID());
 								if(aState != null) {
 									//if the state was already loaded for this document, then use the former
@@ -232,8 +264,9 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			
 			//cleanup the signature tree
 			removeAllTreeNodes();
-			//add the new ones
-			readAllSignatures();
+			//add the new one1s
+			readAllSignatures(true); //force a verification
+			
 			
 		} catch (Throwable e1) {
 			m_aLogger.severe("actionPerformed", "", e1);
@@ -255,7 +288,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	@Override
 	public void reportButtonPressed() {
 		//prints a report of the selected CERTIFICATE / signature
-		m_aLogger.debug("reportButtonPressed "+"FAKE IMPLEMENTATION!");
+//		m_aLogger.debug("reportButtonPressed "+"FAKE IMPLEMENTATION!");
+		super.reportButtonPressed();
 	}
 
 	/* (non-Javadoc)
@@ -290,6 +324,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 								m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
 								if(m_axoxDocumentVerifier != null) {
 									XOX_SignatureState xTheState = aSignature.get_xSignatureState();
+									//verify the signature, updates the aggregated state accordingly
 									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), aSignature.get_xSignatureState());
 									//get the signature state (all signatures), the signature just checked is updated
 									//and update this GUI element accordingly
@@ -322,8 +357,13 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 													xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xContext);
 													m_aLogger.debug(" singleton service data "+Helpers.getHashHex(xSingletonDataAccess) );
 													xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(getDocumentModel()), this);
-													if(xDocumentSignatures != null)
-														xDocumentSignatures.setAggregatedDocumentSignatureStates(GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK);													
+													if(xDocumentSignatures != null) {
+														//grab the current aggregated state and update accordingly
+														//please note that the signatures already updated it
+														//first read the state from both the signature and the certificate, set the new value
+														//set to signature ok
+														Helpers.updateAggregateSignaturesState(xDocumentSignatures,GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK);
+													}
 												}
 												catch (ClassCastException e) {
 													e.printStackTrace();
@@ -332,10 +372,6 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 												} catch (NoSuchMethodException e) {
 													m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
 												}
-
-												
-												
-												
 											}
 										} catch (Throwable e) {
 											m_aLogger.severe(__FUNCTION__,e);
@@ -388,7 +424,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					m_aLogger.warning(__FUNCTION__+"(2) Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
 		}
-	}	
+	}
+
 	/**
 	 * 
 	 * @param oTreeNodeObject this is the TreeElement present in the tree element data field
