@@ -179,7 +179,7 @@ Oppure rilevati errori nel suo funzionamento.</value>
 		<node oor:name="id_toolbar_sign_ok" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">XAdES (IT) Digital Signature: The document signature is OK.</value>
-				<value xml:lang="it">Firma XAdES (IT): la firma del documento è valida</value>
+				<value xml:lang="it">Firma XAdES (IT): la firma del documento e Il certificato sono validi.</value>
 			</prop>
 		</node>
 		<!--
@@ -188,6 +188,7 @@ Oppure rilevati errori nel suo funzionamento.</value>
 		<node oor:name="id_toolbar_sign_no_cert" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">XAdES (IT) Digital Signature: The document signature is OK, but the certificates could not be validated.</value>
+				<value xml:lang="it">Firma XAdES (IT): la firma del documento è valida, ma I certificati non sono ancora stati validati.</value>
 			</prop>
 		</node>
 		<!--
@@ -211,7 +212,8 @@ Oppure rilevati errori nel suo funzionamento.</value>
 		-->
 		<node oor:name="id_toolbar_doc_unknown" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">The document signature status is unknown. The document is loading and signature is being checked.</value>
+				<value xml:lang="en">The document signature status is unknown. The signature should be checked.</value>
+				<value xml:lang="it">Lo stato della firma e del certificato non è conosciuto: sono da validare.</value>
 			</prop>
 		</node>
 		<!--
