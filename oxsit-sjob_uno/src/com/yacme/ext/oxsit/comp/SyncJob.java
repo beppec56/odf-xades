@@ -25,6 +25,8 @@ package com.yacme.ext.oxsit.comp;
 import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion;
 
 import com.sun.star.beans.NamedValue;
@@ -286,7 +288,7 @@ public class SyncJob extends ComponentBase
 			 * 
 			 */
 			if (sEventName != null) {
-				m_aLogger.log("execute", "event received: " + sEventName );
+				m_aLogger.debug("execute", "event received: " + sEventName );
 				if (sEventName.equalsIgnoreCase( "OnStartApp" ) ) {
 					executeOnStartApp();
 				} else if (sEventName.equalsIgnoreCase( "OnViewCreated" )) {
@@ -410,10 +412,10 @@ public class SyncJob extends ComponentBase
 			if(m_axoxSingletonDataAccess != null)
 				m_axoxSingletonDataAccess.removeDocumentSignatures(Helpers.getHashHex(m_axModel));
 			else
-				m_aLogger.log("OnUnload: m_axoxSingletonDataAccess is null");
+				m_aLogger.debug("OnUnload: m_axoxSingletonDataAccess is null");
 		}
 		else
-			m_aLogger.log("OnUnload: m_axModel is null");		
+			m_aLogger.debug("OnUnload: m_axModel is null");		
 	}
 
 	protected void executeOnSaveDone() {
@@ -461,6 +463,7 @@ public class SyncJob extends ComponentBase
 	}
 
 	protected void executeOnLoad() throws IOException, Exception {
+		final String __FUNCTION__ = "executeOnLoad: ";
 		/**
 		 * this event is fired up when the document loading is finished
 		 * 
@@ -470,7 +473,7 @@ public class SyncJob extends ComponentBase
 		 */
 
 		if (m_axFrame != null) {
-			m_aLogger.info("execute", "document loaded URL: " + m_axModel.getURL() );
+			m_aLogger.debug("execute", "document loaded URL: " + m_axModel.getURL() );
 
 //grab the XStorage interface of this document
 /*
@@ -500,21 +503,41 @@ public class SyncJob extends ComponentBase
 			// toolbar dispatcher.
 			// if the dispatcher is dead, then no longer needs them,
 			// then the data will be cleared at the next app start
-			m_aLogger.log("executeOnLoad"," model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));						
+			m_aLogger.debug("executeOnLoad"," model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));						
 			if(m_axoxSingletonDataAccess != null) {
 				m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
-				m_aDocSign.setDocumentStorage(xStorage);
-				Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
-//FIXME: check if signatures are present, or not: not preset = no_SIGNATURES, present = STATE UNKNOWN
-//verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
-				Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
-
-//just for test, analyze the document package structure
-				DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xServiceManager,m_xComponentContext);
-				
-				dg.verifyDocumentSignature(xStorage,null);
-				//instead call the signature verifier
-				//FIXME call the signature checker, to detect if a signature is present or not
+				if(m_aDocSign != null) {
+					m_aDocSign.setDocumentStorage(xStorage);
+					Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES);
+//try to load see if the file has signatures
+					Object aDocVerService = m_xServiceManager.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xComponentContext);
+					if(aDocVerService != null) {				
+						XOX_DocumentSignaturesVerifier m_axoxDocumentVerifier =
+							(XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+						if(m_axoxDocumentVerifier != null) {
+//try to load the signatures and set the local data appropriately							
+							XOX_SignatureState[] aSigStates = 
+								m_axoxDocumentVerifier.loadAndGetSignatures(m_axFrame,m_axModel);
+							if(aSigStates != null) {
+								//signatures present, set status
+								Helpers.updateAggregateSignaturesState(m_aDocSign, GlobConstant.m_nSIGNATURESTATE_UNKNOWN);
+								//FIXME: if signatures are present, or not: not preset = no_SIGNATURES, present = STATE UNKNOWN
+								//verify signatures, if the case (check if this is true, or if we need to start a thread and wai for it's completion
+								for(int idx = 0; idx < aSigStates.length; idx++) {
+									//load them internally
+									//else use this and add to the local storage
+									m_aDocSign.addSignatureState(aSigStates[idx]);
+									m_aLogger.debug(__FUNCTION__+"signature state added");									
+								}
+							}
+//							else status alread set to m_nSIGNATURESTATE_NOSIGNATURES
+					        // now clean up the verifier
+					        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+						}
+					}
+				}
+				else
+					m_aLogger.severe(__FUNCTION__, "cannot create the document data!" );
 			}
 			else
 				m_aLogger.severe("executeOnLoad","Missing XOX_SingletonDataAccess interface"); 

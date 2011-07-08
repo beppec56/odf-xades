@@ -22,28 +22,24 @@
 
 package com.yacme.ext.oxsit.signature.dispatchers;
 
-import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
-
 import com.sun.star.awt.MessageBoxButtons;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
-import com.sun.star.frame.XStorable;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.ucb.ServiceNotFoundException;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
-import com.sun.star.util.XModifiable;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.dispatchers.threads.IDispatchImplementer;
 import com.yacme.ext.oxsit.dispatchers.threads.ImplDispatchAsynch;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogQuery;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 
 public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDispatch, IDispatchImplementer {
 
@@ -92,8 +88,7 @@ public class ImplInterceptSaveDispatch extends ImplDispatchAsynch implements XDi
 					try {
 						 XOX_DocumentSignaturesState xoxDocSigns = Helpers.getDocumentSignatures(m_xCC,m_xModel);						 
 						 int sigState = xoxDocSigns.getAggregatedDocumentSignatureStates();
-						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES &&
-								 sigState != GlobConstant.m_nSIGNATURESTATE_UNKNOWN) {
+						 if(sigState != GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES) {
 							DialogQuery aDlg = new DialogQuery(m_xFrame, m_axMCF, m_xCC);		
 							short ret = aDlg.executeDialog(m_sTitle, m_sMessage,
 									MessageBoxButtons.BUTTONS_YES_NO, //message box type

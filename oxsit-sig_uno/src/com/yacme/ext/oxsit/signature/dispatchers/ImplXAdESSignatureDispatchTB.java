@@ -424,7 +424,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 		synchronized (Listeners) {				
 			// get the collection of m_aListeners
 			Collection<LinkingStatusListeners> cListenters = Listeners.values();
-			m_aLogger.log("newState: "+newState+" m_nState: "+m_nState);
+			m_aLogger.debug("newState: "+newState+" m_nState: "+m_nState);
 /*			if(newState == m_nState)
 				return;*/
 			m_nState = newState;
@@ -440,7 +440,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					try {
 						aLink.m_aMaster.statusChanged( prepareImageFeatureState( m_imagesUrl ) );
 						aLink.m_aMaster.statusChanged( prepareTooltipFeatureState( m_NewTooltimp ) );
-						 m_aLogger.info("changeSignatureStatus: send listener:" + Helpers.getHashHex(aLink.m_aMaster)+
+						 m_aLogger.debug("changeSignatureStatus: send listener:" + Helpers.getHashHex(aLink.m_aMaster)+
 								 " state: "+m_nState);
 					}
 					catch (RuntimeException ex) {
@@ -449,7 +449,7 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				}
 			}
 			else
-				m_aLogger.log("changeSignatureStatus","there are no status listeners");
+				m_aLogger.debug("changeSignatureStatus","there are no status listeners");
 		}
 	}
 
