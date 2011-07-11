@@ -725,7 +725,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 									aSignState = xSignState;
 
 									if(aSignState == null)
-										m_aLogger.severe(__FUNCTION__, "CANNOT INSTANTIaATE A: "+ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT+" SERVICE !");
+										m_aLogger.severe(__FUNCTION__, "CANNOT INSTANTIATE A: "+ConstantCustomIT.m_sSIGNATURE_STATE_SERVICE_IT+" SERVICE !");
 									else {
 
 										aSignState.setSignatureUUID(sig.getId());
@@ -742,12 +742,14 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 										if (errs.size() == 0) {
 											m_aLogger.debug("Verification OK!");
 											aSignState.setState(SignatureState.OK);
+//FIXME: the update of the aggregate state should be done by whatever code calls this method...											
 											Helpers.updateAggregateSignaturesState(xDocumentSignatures, GlobConstant.m_nSIGNATURESTATE_SIGNATURES_NOTVALIDATED);
 										}
 										else {
 											aSignState.setState(SignatureState.ERR_VERIFY);
 											for (int j = 0; j < errs.size(); j++)
 												m_aLogger.severe(errs.get(j));
+//FIXME: the update of the aggregate state should be done by whatever code calls this method...
 											Helpers.updateAggregateSignaturesState(xDocumentSignatures, GlobConstant.m_nSIGNATURESTATE_SIGNATURES_BROKEN);
 										}
 										// add the certificate of this signature to the certificate list and

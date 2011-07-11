@@ -131,7 +131,7 @@ public class Helpers {
         String dateStr = f.format(_aDate);
         return dateStr;
 	}
-	
+
 	public static String getIssuerName(X509Certificate _Cert) {
 		//convert to bouncycaste
 		String sRet = "";

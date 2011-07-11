@@ -179,15 +179,17 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							XOX_SignatureState aSignState = aSigStates[idx]; 
 							if(xDocumentSignatures != null) {
 								if(_bVerifyTheSignatures) {
-									//do a verification of this signature, the just verified signature is then immediately returned.
+//do a verification of this signature, the just verified signature is then immediately returned.
 									m_axoxDocumentVerifier.verifyDocumentSignatures(m_xParentFrame,getDocumentModel(), aSignState);
-									//now verify the certificate attached
+//FIXME: the update of the aggregate state should be done here, needs to re-think the logic											
 									XOX_X509Certificate xACert = null;
 									if(aSignState != null)
-										xACert = aSignState.getSignersCerficate(); 
+										xACert = aSignState.getSignersCerficate();
 									if(xACert != null) {
 										try {
 											xACert.verifyCertificate(m_xParentFrame);
+//FIXME: to be removed later and rewritten elsewhere
+											Helpers.updateAggregateSignaturesState(xDocumentSignatures, GlobConstant.m_nSIGNATURESTATE_SIGNATURES_OK);											
 										} catch (Throwable e) {
 											m_aLogger.severe(__FUNCTION__,e);
 										}
@@ -197,7 +199,9 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 									if(aNewSignState != null) {
 										aSignState = aNewSignState;
 										//now update the aggregate state, using the certificate as well
-										
+//FIXME: to be written here and removed in m_axoxDocumentVerifier.verifyDocumentSignatures since this is a code structure matter
+										// not jurisdiction, need to be written as priv method in this class.
+
 									}
 
 //now update the state in the global, if existent there
@@ -208,8 +212,8 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 										xDocumentSignatures.addSignatureState(aNewSignState);
 									}
 								}
-								//FIXME add the gloab signature state here, see in signature verification
-								//fall back to standard with no check
+								
+								//always reloaded from internal variables
 								XOX_SignatureState aState = xDocumentSignatures.getSignatureState(aSignState.getSignatureUUID());
 								if(aState != null) {
 									//if the state was already loaded for this document, then use the former
