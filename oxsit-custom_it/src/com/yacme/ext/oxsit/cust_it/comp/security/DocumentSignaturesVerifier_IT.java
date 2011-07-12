@@ -500,8 +500,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 
 			Object[] aArguments = new Object[2];
 			aArguments[0] = aPath;//aURL.toString();//xDocumentModel.getURL();
-			aArguments[1] = ElementModes.READWRITE;
-//			aArguments[1] = ElementModes.READ;
+//			aArguments[1] = ElementModes.READWRITE;
+			aArguments[1] = ElementModes.READ;
 			//get the document storage object 
 			xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
 
