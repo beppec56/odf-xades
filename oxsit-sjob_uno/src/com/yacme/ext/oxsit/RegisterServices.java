@@ -1,4 +1,4 @@
-/* ***** BEGIN LICENSE BLOCK ********************************************
+/****** BEGIN LICENSE BLOCK ********************************************
  * Version: EUPL 1.1/GPL 3.0
  * 
  * The contents of this file are subject to the EUPL, Version 1.1 or 
@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/ConstantCustomIT.java.
+ * The Original Code is /oxsit-sjob_uno/src/com/yacme/ext/oxsit/RegisterServices.java.
  *
  * The Initial Developer of the Original Code is
  * Giuseppe Castagno giuseppe.castagno@acca-esse.it
