@@ -1472,32 +1472,4 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return bOut.toByteArray();
 
 	}
-
-	//ROB: verification sample code
-	private void verifySample(String fileToVerify) {
-		DigiDocFactory digFac;
-		try {
-			digFac = ConfigManager.instance().getSignedDocFactory();
-
-			ODFSignedDoc sdoc = (ODFSignedDoc) digFac.readSignedDoc(fileToVerify);
-			// System.out.println("GOT: " + sdoc.toXML());
-
-			// verify signature
-			Signature sig = null;
-			for (int i = 0; i < sdoc.countSignatures(); i++) {
-				sig = sdoc.getSignature(i);
-				System.out.println("Signature: " + sig.getId() + " - " + sig.getKeyInfo().getSubjectLastName() + ","
-						+ sig.getKeyInfo().getSubjectFirstName() + "," + sig.getKeyInfo().getSubjectPersonalCode());
-				ArrayList errs = sig.verify(sdoc, true, false);
-				if (errs.size() == 0)
-					System.out.println("Verification OK!");
-				for (int j = 0; j < errs.size(); j++)
-					System.out.println((SignedDocException) errs.get(i));
-				System.out.println();
-			}
-		} catch (SignedDocException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
