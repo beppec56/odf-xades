@@ -47,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -56,6 +57,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
@@ -108,6 +111,7 @@ import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
+import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SAXSignedDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
@@ -304,7 +308,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 	}
 
-	private void generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc) throws CertificateException, Exception, SignedDocException {
+	private void generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc)
+			throws CertificateException, Exception, SignedDocException {
 		//start 'real signing
 		XOX_X509Certificate aCert = _aCertArray[0];
 		X509Certificate certChild =  Helpers.getCertificate(aCert);
@@ -712,61 +717,50 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 //				//from the storage object (or better named, the service) obtain the interface we need
 //			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);				
 //		}
+		
+			//chek if we have a signature already in place
+			//to do so, we quickly check the document storage using standard Zip function, looking for the signature file
+			File aZipFile;
+			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
+			ZipFile aTheDocuZip = new ZipFile(aZipFile);
 			
-			// create a new SignedDoc 
-			sdoc = new ODFSignedDoc(m_xMCF, m_xCC, xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
-
-			//now read the data from the document and prepare to sign
-			//			byte[] manifestBytes = 
-			sdoc.addODFData();
-
-			//start 'real signing
-			generateNewSignature(m_xFrame, xDocumentStorage, _aCertArray, sdoc);
+			if(aTheDocuZip != null) {
+				//look for the right file element
+				ZipEntry aSignaturesFileEntry = aTheDocuZip.getEntry(ConstantCustomIT.m_sSignatureStorageName+"/"+GlobConstant.m_sXADES_SIGNATURE_STREAM_NAME);
+				if(aSignaturesFileEntry != null) {
+					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
+					//a file with the signatures already present seems in place, parse it
+					SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
+					sdoc = (ODFSignedDoc) aFactory.readSignedDoc(fTheSignaturesFile);
+				}
+				else {
+				//no signature present, so create a new SignedDoc 
+					sdoc = new ODFSignedDoc(m_xMCF, m_xCC, xDocumentStorage, ODFSignedDoc.FORMAT_ODF_XADES, ODFSignedDoc.VERSION_1_3);
+	
+				// and then read the data from the document and prepare to sign
+					sdoc.addODFData();
+				}
+			//do the 'real' signing stuff
+				generateNewSignature(m_xFrame, xDocumentStorage, _aCertArray, sdoc);
+			}
+			//drop out the else if something was seriously wrong and this should NEVER happen
+			//FIXME: how to alert the user ?
 
 			//get rid of the document storage: frees it and in the case of Windows the file is released as well
 			//PLEASE NOTE: the following line of code has meaning ONLY
 			//if the xDocumentStorage was created independently from the main document !
 			//grab the needed XComponent interface
 			((XComponent)UnoRuntime.queryInterface(XComponent.class, xStdoc)).dispose();			
+
 		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			m_aLogger.log("Exception: " + e.getMessage());
-			e.printStackTrace(System.err);
+			m_aLogger.log(e, true);
 		} catch (SignedDocException ex) {
-			m_aLogger.log("Exception: " + ex.getMessage());
-			System.err.println(ex);
-			ex.printStackTrace(System.err);
+			m_aLogger.log(ex, true);
 		} catch (com.sun.star.io.IOException e) {
 			m_aLogger.log(e, true);
 		} catch (Throwable ex) {
-			m_aLogger.log("Exception: " + ex.getMessage());
-			System.err.println(ex);
-			ex.printStackTrace(System.err);
+			m_aLogger.log(ex, true);
 		}
-
-		/*
-		 * form a digest for any of the document substorage (files) the document has according to the decided standard
-		 */
-
-		//instantiate a subdescriptor of the document
-		//		ODFSignedDoc theDoc = new ODFSignedDoc(m_xMCF, m_xCC);
-		//		
-		//		try {
-		//			m_xDocumentStorage = xDocStorage.getDocumentStorage();
-		////continue the signing			
-		//
-		////build the document description
-		//			theDoc.verifyDocumentSignature(m_xDocumentStorage, null);
-		//			
-		//			
-		//			
-		//			
-		//			
-		//		} catch (com.sun.star.io.IOException e) {
-		//			m_aLogger.log(e, true);
-		//		} catch (Exception e) {
-		//			m_aLogger.log(e, true);
-		//		}
 		return false;
 	}
 
