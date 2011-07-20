@@ -304,6 +304,315 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 	}
 
+	private void generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc) throws CertificateException, Exception, SignedDocException {
+		//start 'real signing
+		XOX_X509Certificate aCert = _aCertArray[0];
+		X509Certificate certChild =  Helpers.getCertificate(aCert);
+		m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+
+		// get the device this was seen on
+		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
+
+		m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
+
+		m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
+		PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
+				// device
+				// description
+				xSSCD.getDescription(), // from device description
+				xSSCD.getTokenSerialNumber(), // from token
+				xSSCD.getTokenMaximumPINLenght()); // from token
+
+		// try to get a pin from the user
+		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+		int BiasX = 100;
+		int BiasY = 30;
+		aDialog1.initialize(BiasX, BiasY);
+		aDialog1.executeDialog();
+		char[] myPin = aDialog1.getPin();
+		String pin = aDialog1.getThePin();
+
+		if (myPin != null && myPin.length > 0) {
+			// user confirmed, check opening the session
+			byte[] encDigestBytes = null;
+
+			// add a Signature
+			Date d1 = new Date();
+			// add a Signature
+			m_aLogger.log("Prepare ODF signature");
+			Signature sig = sdoc.prepareSignature(certChild, null, null);
+			byte[] sidigest = sig.calculateSignedInfoDigest();
+			Date d2 = new Date();
+			m_aLogger.log("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]");
+			byte[] sigval = null;
+			//JDigiDoc
+			//byte[] sigval = sigFac.sign(sidigest, 0, pin);
+			// user confirmed, check opening the session
+			SecurityManager sm = System.getSecurityManager();
+			if (sm != null) {
+				m_aLogger.info("SecurityManager: " + sm);
+			} else {
+				m_aLogger.info("no SecurityManager.");
+			}
+			try {
+				m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
+				if (m_sHelperCerts == null)
+					m_aHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
+				if (isTokenPresent(xSSCD.getTokenLabel(), // from device description
+						xSSCD.getTokenManufacturerID(), // from device description
+						xSSCD.getTokenSerialNumber())) {
+					//first get all supported mechanism (needed for logging, debug/tests
+					m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
+					m_aHelperPkcs11.setMechanism(PKCS11Constants.CKM_RSA_PKCS);
+					//it.infocamere.freesigner.gui.DigestSignTask.DigestSigner.encryptDigestAndGetCertificate(certHandle, helper);
+
+					m_aHelperPkcs11.openSession(myPin);
+					//				m_aHelperPkcs11.openSession();
+					try {
+						//now here start the true signature code, we sign the SHA1 sums we goto from
+						//digesting process.
+						long privateKeyHandle = m_aHelperPkcs11.findSignatureKeyFromID(aCert.getCertificateAttributes()
+								.getID());
+						//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
+						m_aLogger.log("privateKeyHandle: " + privateKeyHandle);
+						if (privateKeyHandle > 0) {
+
+							//ROB: commented out
+							//////////// from JDigiDoc
+							//SHA1 prefix ???
+							/** SHA1 algorithm prefix */
+							//final byte[] sha1AlgPrefix = { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a,
+							//		0x05, 0x00, 0x04, 0x14 };
+
+							//byte[] ddata = new byte[sha1AlgPrefix.length + sidigest.length];
+							//System.arraycopy(sha1AlgPrefix, 0, ddata, 0, sha1AlgPrefix.length);
+							//System.arraycopy(sidigest, 0, ddata, sha1AlgPrefix.length, sidigest.length);
+
+							////////// end from JDigiDoc
+							//ROB: end commented out
+
+							//ROB: use encapsulateInDigestInfo instead
+							byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
+
+							sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
+							m_aLogger.log("Finalize signature");
+							sig.setSignatureValue(sigval);
+
+							////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
+							byte[] theSignatureXML = sig.toXML();
+
+							String sUserHome = System.getProperty("user.home");
+
+							File aFile = new File(sUserHome + "/" + ConstantCustomIT.m_sSignatureFileName);
+
+							aFile.createNewFile();
+							FileOutputStream os = new FileOutputStream(aFile);
+
+							sdoc.writeSignaturesToStream(os);
+
+							os.close();
+
+							/// logging, only debug
+							sdoc.writeSignaturesToXLogger(m_aLogger);
+
+							////// end of debug only code
+							//after this, add the file the signature just set.
+
+							//and write it back to the storage
+
+							//so, open the substorage META-INF from the main storage (e.g. the document)
+							try {
+								XStorage xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
+
+								//try to remove the previous signature
+								//FIXME would be better to import the existent signatures and add the new one
+								try {
+									xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
+								} catch (NoSuchElementException e1) {
+									m_aLogger.log("signAsFile", "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
+											+ " does not exist");
+								}
+								//create the file xadessignature.xml
+								try {
+									XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
+									//write to it (just a test now)
+
+									byte[] theSignatureBytes = sig.toXML();
+
+									XOutputStream xOutStream = xTheSignature.getOutputStream();
+
+									sdoc.writeSignaturesToXStream(xOutStream);
+
+									//							            xOutStream.writeBytes( theSignatureBytes );
+									xOutStream.flush();
+									xOutStream.closeOutput();
+
+									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
+											XTransactedObject.class, xMetaInfStorage);
+									if (xTransObj != null) {
+										m_aLogger.log("XTransactedObject exists. ===================");
+										xTransObj.commit();
+									}
+
+									XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class,
+											xTheSignature);
+									if (xStreamComp == null)
+										throw new com.sun.star.uno.RuntimeException();
+									xStreamComp.dispose();
+
+									//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
+									//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
+									//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
+
+									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,
+											xDocumentStorage);
+									if (xTransObj != null) {
+										m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
+										xTransObj.commit();
+									}
+
+									//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
+									//							            if(xCommPer != null ) {
+									//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
+									//											xCommPer.storeOwn();
+									//							            }
+
+								} catch (InvalidStorageException e1) {
+									m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (IllegalArgumentException e1) {
+									m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (WrongPasswordException e1) {
+									m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (StorageWrappedTargetException e1) {
+									m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (com.sun.star.io.IOException e1) {
+									m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								}
+
+								//save the document
+
+								xMetaInfStorage.dispose();
+							} catch (Exception e1) {
+								m_aLogger.severe("signAsFile", "\"" +  ConstantCustomIT.m_sSignatureStorageName + "\"" + " cannot open", e1);
+							}
+						}
+						//at list one certificate was signed
+						//					bRetValue = true;
+						//					bRetry = false;
+					} catch (Throwable e) {
+						//any exception thrown during signing process comes here
+						//close the pending session
+						m_aLogger.log("Throwable thrown! Closing session.");
+						m_aHelperPkcs11.closeSession();
+						throw (e);
+					}
+					m_aHelperPkcs11.closeSession();
+				} else {
+					//0x000000E0 = CKR_TOKEN_NOT_PRESENT
+					//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
+					throw (new PKCS11Exception(0x000000E0));
+				}
+			} catch (TokenException e) {
+				// session can not be opened
+				//FIXME: change behavior if exception is: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT
+				/*
+				 * 
+				S 17:56:00.390 752D7D02 com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT  >TokenException 
+				iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT                      
+				iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.C_Login(Native Method) 
+				com.yacme.ext.oxsit.pkcs11.PKCS11Driver.login(PKCS11Driver.java:728) 
+				com.yacme.ext.oxsit.pkcs11.PKCS11Driver.openSession(PKCS11Driver.java:753) 
+				com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signAsFile(DocumentSigner_IT.java:431) 
+				com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signDocument(DocumentSigner_IT.java:288) 
+				com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.addButtonPressed(DialogCertTreeSSCDs.java:187) 
+				com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
+				com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
+				com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
+				$Proxy61.execute(Unknown Source) 
+				com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
+				com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.executeDialog(DialogCertTreeSSCDs.java:146) 
+				com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.addButtonPressed(DialogSignatureTreeDocument.java:164) 
+				com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
+				com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
+				com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
+				$Proxy61.execute(Unknown Source) 
+				com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
+				com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.executeDialog(DialogSignatureTreeDocument.java:135) 
+				com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.signatureDialog(ImplXAdESSignatureDispatchTB.java:359) 
+				com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.impl_dispatch(ImplXAdESSignatureDispatchTB.java:293) 
+				com.yacme.ext.oxsit.dispatchers.threads.OnewayDispatchExecutor.run(OnewayDispatchExecutor.java:63)
+				 *
+				 */
+				m_aLogger.warning("", ">TokenException", e);
+				//FIXME ??				throw(e);
+			} catch (Throwable e) {
+				// session can not be opened
+				m_aLogger.severe(e);
+			}
+
+			//            // get confirmation
+			//            //ROB: Confirmation required by Estonian Law
+			//            //System.out.println("Get confirmation");
+			//            //sig.getConfirmation();
+			//            //System.out.println("Confirmation OK!");
+			//            
+			//            //System.out.println("Signature: " + sig);
+			//             
+			//            // write it in a file
+			//            System.out.println("Writing in file: " + xmloutputfile);
+			//            sdoc.writeToFile(new File(xmloutputfile));
+			//            
+			//            //ROB: Generazione ODF di uscita
+			//            // Generacion del ODF de salida
+			//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			//            ZipOutputStream zos = new ZipOutputStream(baos);
+			//
+			//            // Copiar el contenido existente al ODF de salida
+			//            for (String fileName : odf.getFileList())
+			//            {
+			//                ZipEntry zeOut = new ZipEntry(fileName);
+			//
+			//                if (!fileName.equals("META-INF/xadessignatures.xml")
+			//                        && !fileName.equals("META-INF/manifest.xml"))
+			//                {
+			//                    zos.putNextEntry(zeOut);
+			//                    zos.write(odf.getEntry(fileName));
+			//                }
+			//            }
+			//
+			//            // Añadimos el documento de firmas al ODF de salida
+			//            ZipEntry zeDocumentSignatures = new ZipEntry("META-INF/xadessignatures.xml");
+			//            zos.putNextEntry(zeDocumentSignatures);
+			//            ByteArrayOutputStream baosXML = new ByteArrayOutputStream();
+			//            sdoc.writeToStream(baosXML);
+			//            zos.write(baosXML.toByteArray());
+			//            zos.closeEntry();
+			//
+			//            // Añadimos el manifest.xml al ODF de salida
+			//            ZipEntry zeManifest = new ZipEntry("META-INF/manifest.xml");
+			//            zos.putNextEntry(zeManifest);
+			//            zos.write(manifestBytes);
+			//            zos.closeEntry();
+			//
+			//            zos.close();
+			//            
+			//            new FileOutputStream(odfoutputfile).write(baos.toByteArray());
+			//            
+			//			d2 = new Date();
+			//			System.out.println("Composing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]" );
+			//			
+			//			//System.out.println("Done!");
+			//             
+			//            
+			//
+		}
+	}
+
 	/**
 	 * The procedure should be the following:
 	 * 
@@ -411,311 +720,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//			byte[] manifestBytes = 
 			sdoc.addODFData();
 
-			XOX_X509Certificate aCert = _aCertArray[0];
-			X509Certificate certChild =  Helpers.getCertificate(aCert);
-			m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+			//start 'real signing
+			generateNewSignature(m_xFrame, xDocumentStorage, _aCertArray, sdoc);
 
-			// get the device this was seen on
-			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
-
-			m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
-
-			m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
-			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
-					// device
-					// description
-					xSSCD.getDescription(), // from device description
-					xSSCD.getTokenSerialNumber(), // from token
-					xSSCD.getTokenMaximumPINLenght()); // from token
-
-			// try to get a pin from the user
-			DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
-			int BiasX = 100;
-			int BiasY = 30;
-			aDialog1.initialize(BiasX, BiasY);
-			aDialog1.executeDialog();
-			char[] myPin = aDialog1.getPin();
-			String pin = aDialog1.getThePin();
-
-			if (myPin != null && myPin.length > 0) {
-				// user confirmed, check opening the session
-				byte[] encDigestBytes = null;
-
-				// add a Signature
-				d1 = new Date();
-				// add a Signature
-				m_aLogger.log("Prepare ODF signature");
-				Signature sig = sdoc.prepareSignature(certChild, null, null);
-				byte[] sidigest = sig.calculateSignedInfoDigest();
-				d2 = new Date();
-				m_aLogger.log("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]");
-				byte[] sigval = null;
-				//JDigiDoc
-				//byte[] sigval = sigFac.sign(sidigest, 0, pin);
-				// user confirmed, check opening the session
-				SecurityManager sm = System.getSecurityManager();
-				if (sm != null) {
-					m_aLogger.info("SecurityManager: " + sm);
-				} else {
-					m_aLogger.info("no SecurityManager.");
-				}
-				try {
-					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-					if (m_sHelperCerts == null)
-						m_aHelperPkcs11 = new PKCS11Driver(m_aLogger, m_sPkcs11WrapperLocal, m_sPkcs11CryptoLib);
-					if (isTokenPresent(xSSCD.getTokenLabel(), // from device description
-							xSSCD.getTokenManufacturerID(), // from device description
-							xSSCD.getTokenSerialNumber())) {
-						//first get all supported mechanism (needed for logging, debug/tests
-						m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
-						m_aHelperPkcs11.setMechanism(PKCS11Constants.CKM_RSA_PKCS);
-						//it.infocamere.freesigner.gui.DigestSignTask.DigestSigner.encryptDigestAndGetCertificate(certHandle, helper);
-
-						m_aHelperPkcs11.openSession(myPin);
-						//				m_aHelperPkcs11.openSession();
-						try {
-							//now here start the true signature code, we sign the SHA1 sums we goto from
-							//digesting process.
-							long privateKeyHandle = m_aHelperPkcs11.findSignatureKeyFromID(aCert.getCertificateAttributes()
-									.getID());
-							//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
-							m_aLogger.log("privateKeyHandle: " + privateKeyHandle);
-							if (privateKeyHandle > 0) {
-
-								//ROB: commented out
-								//////////// from JDigiDoc
-								//SHA1 prefix ???
-								/** SHA1 algorithm prefix */
-								//final byte[] sha1AlgPrefix = { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a,
-								//		0x05, 0x00, 0x04, 0x14 };
-
-								//byte[] ddata = new byte[sha1AlgPrefix.length + sidigest.length];
-								//System.arraycopy(sha1AlgPrefix, 0, ddata, 0, sha1AlgPrefix.length);
-								//System.arraycopy(sidigest, 0, ddata, sha1AlgPrefix.length, sidigest.length);
-
-								////////// end from JDigiDoc
-								//ROB: end commented out
-
-								//ROB: use encapsulateInDigestInfo instead
-								byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
-
-								sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
-								m_aLogger.log("Finalize signature");
-								sig.setSignatureValue(sigval);
-
-								////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
-								byte[] theSignatureXML = sig.toXML();
-
-								String sUserHome = System.getProperty("user.home");
-
-								File aFile = new File(sUserHome + "/" + ConstantCustomIT.m_sSignatureFileName);
-
-								aFile.createNewFile();
-								FileOutputStream os = new FileOutputStream(aFile);
-
-								sdoc.writeSignaturesToStream(os);
-
-								os.close();
-
-								/// logging, only debug
-								sdoc.writeSignaturesToXLogger(m_aLogger);
-
-								////// end of debug only code
-								//after this, add the file the signature just set.
-
-								//and write it back to the storage
-
-								//so, open the substorage META-INF from the main storage (e.g. the document)
-								try {
-									XStorage xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
-
-									//try to remove the previous signature
-									//FIXME would be better to import the existent signatures and add the new one
-									try {
-										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
-									} catch (NoSuchElementException e1) {
-										m_aLogger.log("signAsFile", "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
-												+ " does not exist");
-									}
-									//create the file xadessignature.xml
-									try {
-										XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
-										//write to it (just a test now)
-
-										byte[] theSignatureBytes = sig.toXML();
-
-										XOutputStream xOutStream = xTheSignature.getOutputStream();
-
-										sdoc.writeSignaturesToXStream(xOutStream);
-
-										//							            xOutStream.writeBytes( theSignatureBytes );
-										xOutStream.flush();
-										xOutStream.closeOutput();
-
-										XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
-												XTransactedObject.class, xMetaInfStorage);
-										if (xTransObj != null) {
-											m_aLogger.log("XTransactedObject exists. ===================");
-											xTransObj.commit();
-										}
-
-										XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class,
-												xTheSignature);
-										if (xStreamComp == null)
-											throw new com.sun.star.uno.RuntimeException();
-										xStreamComp.dispose();
-
-										//							            Utilities.showInterfaces(xDocStorage, xDocStorage);
-										//							            Utilities.showInterfaces(m_xDocumentStorage, m_xDocumentStorage);
-										//							            Utilities.showInterfaces(xMetaInfStorage, xMetaInfStorage);
-
-										xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,
-												xDocumentStorage);
-										if (xTransObj != null) {
-											m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
-											xTransObj.commit();
-										}
-
-										//							            XCommonEmbedPersist xCommPer = UnoRuntime.queryInterface( XCommonEmbedPersist.class, m_xDocumentStorage );
-										//							            if(xCommPer != null ) {
-										//											m_aLogger.log("XCommonEmbedPersist exists. ===================");
-										//											xCommPer.storeOwn();
-										//							            }
-
-									} catch (InvalidStorageException e1) {
-										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
-												+ "\"" + " error", e1);
-									} catch (IllegalArgumentException e1) {
-										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
-												+ "\"" + " error", e1);
-									} catch (WrongPasswordException e1) {
-										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
-												+ "\"" + " error", e1);
-									} catch (StorageWrappedTargetException e1) {
-										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
-												+ "\"" + " error", e1);
-									} catch (com.sun.star.io.IOException e1) {
-										m_aLogger.severe("signAsFile", "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
-												+ "\"" + " error", e1);
-									}
-
-									//save the document
-
-									xMetaInfStorage.dispose();
-								} catch (Exception e1) {
-									m_aLogger.severe("signAsFile", "\"" +  ConstantCustomIT.m_sSignatureStorageName + "\"" + " cannot open", e1);
-								}
-							}
-							//at list one certificate was signed
-							//					bRetValue = true;
-							//					bRetry = false;
-						} catch (Throwable e) {
-							//any exception thrown during signing process comes here
-							//close the pending session
-							m_aLogger.log("Throwable thrown! Closing session.");
-							m_aHelperPkcs11.closeSession();
-							throw (e);
-						}
-						m_aHelperPkcs11.closeSession();
-					} else {
-						//0x000000E0 = CKR_TOKEN_NOT_PRESENT
-						//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
-						throw (new PKCS11Exception(0x000000E0));
-					}
-				} catch (TokenException e) {
-					// session can not be opened
-					//FIXME: change behavior if exception is: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT
-					/*
-					 * 
-					S 17:56:00.390 752D7D02 com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT  >TokenException 
-					iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT                      
-					iaik.pkcs.pkcs11.wrapper.PKCS11Implementation.C_Login(Native Method) 
-					com.yacme.ext.oxsit.pkcs11.PKCS11Driver.login(PKCS11Driver.java:728) 
-					com.yacme.ext.oxsit.pkcs11.PKCS11Driver.openSession(PKCS11Driver.java:753) 
-					com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signAsFile(DocumentSigner_IT.java:431) 
-					com.yacme.ext.oxsit.cust_it.comp.security.DocumentSigner_IT.signDocument(DocumentSigner_IT.java:288) 
-					com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.addButtonPressed(DialogCertTreeSSCDs.java:187) 
-					com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
-					com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
-					com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
-					$Proxy61.execute(Unknown Source) 
-					com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
-					com.yacme.ext.oxsit.ooo.ui.DialogCertTreeSSCDs.executeDialog(DialogCertTreeSSCDs.java:146) 
-					com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.addButtonPressed(DialogSignatureTreeDocument.java:164) 
-					com.yacme.ext.oxsit.ooo.ui.DialogCertTreeBase.actionPerformed(DialogCertTreeBase.java:915) 
-					com.sun.star.bridges.jni_uno.JNI_proxy.dispatch_call(Native Method) 
-					com.sun.star.bridges.jni_uno.JNI_proxy.invoke(JNI_proxy.java:175) 
-					$Proxy61.execute(Unknown Source) 
-					com.yacme.ext.oxsit.ooo.ui.BasicDialog.executeDialog(BasicDialog.java:641) 
-					com.yacme.ext.oxsit.ooo.ui.DialogSignatureTreeDocument.executeDialog(DialogSignatureTreeDocument.java:135) 
-					com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.signatureDialog(ImplXAdESSignatureDispatchTB.java:359) 
-					com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB.impl_dispatch(ImplXAdESSignatureDispatchTB.java:293) 
-					com.yacme.ext.oxsit.dispatchers.threads.OnewayDispatchExecutor.run(OnewayDispatchExecutor.java:63)
-					 *
-					 */
-					m_aLogger.warning("", ">TokenException", e);
-					//FIXME ??				throw(e);
-				} catch (Throwable e) {
-					// session can not be opened
-					m_aLogger.severe(e);
-				}
-
-				//            // get confirmation
-				//            //ROB: Confirmation required by Estonian Law
-				//            //System.out.println("Get confirmation");
-				//            //sig.getConfirmation();
-				//            //System.out.println("Confirmation OK!");
-				//            
-				//            //System.out.println("Signature: " + sig);
-				//             
-				//            // write it in a file
-				//            System.out.println("Writing in file: " + xmloutputfile);
-				//            sdoc.writeToFile(new File(xmloutputfile));
-				//            
-				//            //ROB: Generazione ODF di uscita
-				//            // Generacion del ODF de salida
-				//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				//            ZipOutputStream zos = new ZipOutputStream(baos);
-				//
-				//            // Copiar el contenido existente al ODF de salida
-				//            for (String fileName : odf.getFileList())
-				//            {
-				//                ZipEntry zeOut = new ZipEntry(fileName);
-				//
-				//                if (!fileName.equals("META-INF/xadessignatures.xml")
-				//                        && !fileName.equals("META-INF/manifest.xml"))
-				//                {
-				//                    zos.putNextEntry(zeOut);
-				//                    zos.write(odf.getEntry(fileName));
-				//                }
-				//            }
-				//
-				//            // Añadimos el documento de firmas al ODF de salida
-				//            ZipEntry zeDocumentSignatures = new ZipEntry("META-INF/xadessignatures.xml");
-				//            zos.putNextEntry(zeDocumentSignatures);
-				//            ByteArrayOutputStream baosXML = new ByteArrayOutputStream();
-				//            sdoc.writeToStream(baosXML);
-				//            zos.write(baosXML.toByteArray());
-				//            zos.closeEntry();
-				//
-				//            // Añadimos el manifest.xml al ODF de salida
-				//            ZipEntry zeManifest = new ZipEntry("META-INF/manifest.xml");
-				//            zos.putNextEntry(zeManifest);
-				//            zos.write(manifestBytes);
-				//            zos.closeEntry();
-				//
-				//            zos.close();
-				//            
-				//            new FileOutputStream(odfoutputfile).write(baos.toByteArray());
-				//            
-				//			d2 = new Date();
-				//			System.out.println("Composing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]" );
-				//			
-				//			//System.out.println("Done!");
-				//             
-				//            
-				//
-			}
 			//get rid of the document storage: frees it and in the case of Windows the file is released as well
 			//PLEASE NOTE: the following line of code has meaning ONLY
 			//if the xDocumentStorage was created independently from the main document !
