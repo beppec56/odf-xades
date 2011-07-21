@@ -51,6 +51,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -123,6 +125,8 @@ import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogQueryPIN;
 import com.yacme.ext.oxsit.ooo.ui.MessageError;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSignatureToken;
+import com.yacme.ext.oxsit.ooo.ui.MessageNoTokens;
+import com.yacme.ext.oxsit.ooo.ui.MessageASimilarCertExists;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
 import com.yacme.ext.oxsit.security.PKCS11TokenAttributes;
 import com.yacme.ext.oxsit.security.ReadCerts;
@@ -314,7 +318,60 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		XOX_X509Certificate aCert = _aCertArray[0];
 		X509Certificate certChild =  Helpers.getCertificate(aCert);
 		m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+//now check if an identical certificate is already present in some signature
+		if(sdoc.countSignatures() != 0) {
+			try {
+				//form the sha1 sum of the new certificate
+				MessageDigest digSigNew = MessageDigest.getInstance("SHA-256");
+				byte[] certHashNew = digSigNew.digest(certChild.getEncoded());
+				
+				Signature sig = null;
+				for (int i = 0; i < sdoc.countSignatures(); i++) {
+					sig = sdoc.getSignature(i);
+					X509Certificate aSigCert = sig.getKeyInfo().getSignersCertificate();
+					
+					MessageDigest digSig = MessageDigest.getInstance("SHA-256");
+					byte[] certHashSig = digSig.digest(aSigCert.getEncoded());
+					
+					if(digSigNew.isEqual(certHashNew, certHashSig)) {
+						//ask the user if the signature should be substituted
+						MessageASimilarCertExists	aMex = new MessageASimilarCertExists(xFrame,m_xMCF,m_xCC);
+						//read the signature date
+						String aSignDate = Helpers.date2string(sig.getSignedProperties().getSigningTime());
+						//retuned:
+						// YES = 2
+						// NO = 3
+						// Cancel = 0
+			            short aret = aMex.executeDialogLocal(aSignDate);
 
+//			            m_aLogger.info("returned: "+aret);
+			            if(aret == 0) {
+			            	//cancel, abort the signing process, all is left as is
+			            	return;
+			            }
+			            else if (aret == 2) {
+			            	//yes, if yes, remove the one we are on and continue to search
+			            	sdoc.removeSignature(i);
+			            	i = -1; //so will began 0
+			            	continue;
+			            }
+			            else if (aret == 3) {
+							//if no, this signature will remain, a new will be added
+			            	continue;
+			            }
+			            else {
+			            	return;
+			            }
+					}
+				}
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
 		// get the device this was seen on
 		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
 
@@ -402,20 +459,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 							m_aLogger.log("Finalize signature");
 							sig.setSignatureValue(sigval);
-
-							////////// BeppeC The following chunk of code is here for debug purposes, in the future it might be moved elsewhere 								
-							byte[] theSignatureXML = sig.toXML();
-
-							String sUserHome = System.getProperty("user.home");
-
-							File aFile = new File(sUserHome + "/" + ConstantCustomIT.m_sSignatureFileName);
-
-							aFile.createNewFile();
-							FileOutputStream os = new FileOutputStream(aFile);
-
-							sdoc.writeSignaturesToStream(os);
-
-							os.close();
 
 							/// logging, only debug
 							sdoc.writeSignaturesToXLogger(m_aLogger);

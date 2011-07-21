@@ -527,7 +527,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 				//read in the signature
 					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
 					if(fTheSignaturesFile != null) {
-						
 //DEBUG						m_aLogger.debug("=============>>> bytes: "+fTheSignaturesFile.available());
 						// create a new SignedDoc 
 //						DigiDocFactory digFac = ConfigManager.instance().getSignedDocFactory();

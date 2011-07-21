@@ -1310,6 +1310,31 @@ le macro.</value>
 			</prop>
 		</node>
 		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_err_double_cert_signature" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Messaggio certificato uguale</value>
+			</prop>
+		</node>
+		<!--
+		    This message should be moved to the specific custom implementation
+		-->
+		<node oor:name="id_same_cert_exists" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">È presente una firma con lo stesso certificato.
+
+Apposta in data %1$s.
+
+Volete soprascrivere la firma con lo stesso
+certificato ?
+
+Sì = sovrascrive
+No = genera nuova firma
+Annulla = esce dalla procedura di firma.</value>
+			</prop>
+		</node>
+		<!--
 		    Main license of the extension
 		-->
 		<node oor:name="id_main_license" oor:op="replace">
