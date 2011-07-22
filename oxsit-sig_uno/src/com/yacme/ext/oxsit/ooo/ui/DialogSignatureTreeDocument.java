@@ -424,6 +424,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							m_aLogger.warning(__FUNCTION__+"(1) Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());						
 					}
 				}
+				else if(m_aTreeRootNode.equals(m_aTheCurrentlySelectedTreeNode)) {
+						//check all the signatures
+						removeAllTreeNodes();
+						readAllSignatures(true);
+					}
 				else
 					m_aLogger.warning(__FUNCTION__+"(2) Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}
@@ -439,24 +444,28 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	public void checkButtonsEnable(Object oTreeNodeObject) {
 		XComponent xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
+		boolean bEnableRemoveButton = false;
+		boolean bEnableVerifyButton = false;
 		if(xTheCurrentComp != null) {
+			
 //get node type and enable/disable	the pushbutton
 			TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
-			boolean bEnableButton = false;
 			if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.SIGNATURE) {
-				bEnableButton = true;
+				bEnableRemoveButton = true;				
+				bEnableVerifyButton = true;
 			}
-//			enableSingleButton(m_sVerifyBtn,bEnableButton);
-			enableSingleButton(m_sRemoveBtn,bEnableButton);
+			else if(aCurrentNode.getNodeType() == com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType.CERTIFICATE) {
+				bEnableVerifyButton = true;
+			}
+//			enableSingleButton(m_sVerifyBtn,bEnableVerifyButton);
+//			enableSingleButton(m_sRemoveBtn,bEnableRemoveButton);
 			aCurrentNode.EnableDisplay(true);
 		}
-		else {
-//			enableSingleButton(m_sVerifyBtn,false);
-			enableSingleButton(m_sRemoveBtn,false);
+		else if (m_aTheCurrentlySelectedTreeNode.equals(m_aTreeRootNode)) {
+			bEnableVerifyButton = true;
 		}
-
-		//FIXME FOR TEST ONLY !
-		enableSingleButton(m_sVerifyBtn,true);
+		enableSingleButton(m_sVerifyBtn,bEnableVerifyButton);
+		enableSingleButton(m_sRemoveBtn,bEnableRemoveButton);
 	}
 
 	private void enableSingleButton(String sButtonName, boolean bEnable) {

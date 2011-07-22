@@ -77,7 +77,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 	private	Object 					m_oTreeDataModel;
 	private XMutableTreeDataModel	m_xTreeDataModel;
-	private XMutableTreeNode 		m_aTreeRootNode;
+	protected XMutableTreeNode 		m_aTreeRootNode;
 	private Object 					m_oTreeControlModel;	
 	private XTreeControl 			m_xTreeControl = null;
 	protected XMutableTreeNode 		m_aTheCurrentlySelectedTreeNode = null;
@@ -1034,7 +1034,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		if(xaENode != null) {
 			checkButtonsEnable(xaENode.getDataValue());
 		}
-	}	
+	}
 
 	/**
 	 * 
