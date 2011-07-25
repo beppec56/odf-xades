@@ -1139,11 +1139,20 @@ Impronta del Presidente CNIPA, ottenuta utilizzando l'algoritmo ISO/IEC 10118-3:
 		</node>
 		<node oor:name="id_mex_pin_token" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">Inserite il PIN per il seguente dispositivo (SSCD)
-Costruttore: %1$s
-Modello: %2$s
-Numero di serie: %3$s
-Massima lunghezza PIN: %4$d caratteri.</value>
+				<value xml:lang="it">La firma avrà la data:
+
+%1$s
+
+Se non desiderate firmate, premete 'Annulla'
+
+Per confermare la firma, inserite il PIN per il
+seguente dispositivo (SSCD)
+Costruttore: %2$s
+Modello: %3$s
+Numero di serie: %4$s
+Massima lunghezza PIN: %5$d caratteri.
+E premete 'Ok' per firmare.
+</value>
 			</prop>
 		</node>
 		<node oor:name="id_mex_max_pin_len" oor:op="replace">
