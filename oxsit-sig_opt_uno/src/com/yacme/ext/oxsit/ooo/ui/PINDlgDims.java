@@ -34,7 +34,7 @@ public class PINDlgDims {
 								(ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2)+
 								ControlDims.RSC_SP_CTRL_DESC_X+
 								ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT+40;
-	private static int nDs_Heigh = 90;
+	private static int nDs_Heigh = 140;
 
 	public static int DLGS_WIDTH() {
 		return nDs_Width;

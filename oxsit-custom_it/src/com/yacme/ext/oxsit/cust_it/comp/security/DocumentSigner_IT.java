@@ -369,9 +369,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				e.printStackTrace();
 			}
 		}
-		
-		
-		
+
 		// get the device this was seen on
 		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
 
@@ -385,8 +383,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				xSSCD.getTokenSerialNumber(), // from token
 				xSSCD.getTokenMaximumPINLenght()); // from token
 
+		Date ndSigningDate = new Date();
+		String sSigningDate = Helpers.date2string(ndSigningDate);
 		// try to get a pin from the user
-		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka, sSigningDate);
 		int BiasX = 100;
 		int BiasY = 30;
 		aDialog1.initialize(BiasX, BiasY);
@@ -459,6 +459,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 							m_aLogger.log("Finalize signature");
 							sig.setSignatureValue(sigval);
+							sig.getSignedProperties().setSigningTime(ndSigningDate);
 
 							/// logging, only debug
 							sdoc.writeSignaturesToXLogger(m_aLogger);
@@ -890,7 +891,11 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								 * - user confirm, then proceed
 								 */
 								// try to get a pin from the user
-								DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka);
+								
+								Date ndSigningDate = new Date();
+								String sSigningDate = Helpers.date2string(ndSigningDate);
+
+								DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka,sSigningDate);
 								int BiasX = 100;
 								int BiasY = 30;
 								aDialog1.initialize(BiasX, BiasY);
@@ -1065,236 +1070,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return false;
 	}
 
-	private boolean dummyCodeParking(XStorage xStorage, XFrame xFrame, XOX_X509Certificate[] _aCertArray) {
-		// TODO Auto-generated method stub
-		// for the time being only the first certificate is used
-		XOX_X509Certificate aCert = _aCertArray[0];
-
-		m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
-
-		// get the device this was seen on
-		XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
-
-		// to see if all is all right, examine the document structure
-		/*
-		 * The procedure should be the following:
-		 * 
-		 * form a digest for any of the document substorage (files) the document has
-		 * according to the decided standard 
-		 * 
-		 * when the digests are done, iterate through the certificate list to be used to sign:
-		 * for every certificate
-		 *     check to see if the token where the certificate is contained is 'on-line'
-		 *     the check is performed using data that where retrieve when looking
-		 *     for available certificates
-		 *       if not, alert the user:
-		 *         - user 'next' go to next certificate
-		 *     	   - user 'cancel' abort the sign process
-		 *     	   - user 'retry' check again the token  
-		 * 		token is ready, ask the user for a PIN code to access the private key
-		 * 		the dialog shows token ids (description, model, serial number):
-		 * 		the dialog expect the right number of characters for PIN, that should come
-		 * 		from the token data, even though the right number of characters depends on 
-		 * 		the token supplier (e.g. the one that initialized it).
-		 * 			- user abort, go to next certificate 
-		 * 			- user confirm, then proceed
-		 * 
-		 * 		open a login session to the token using the provided PIN
-		 * 		if something goes wrong, alert the user:
-		 * 			- user retry, goto the PIN input step
-		 * 			- user abort, go to the next certificate
-		 * 		all is ok, retrieve the private key id using the certificate data that came
-		 * 		from the available certificate search,
-		 * 		for every hash computed:
-		 * 			sign the hash, get the signed has and attach it to the document substorage URL
-		 * 
-		 * 		goto next certificate
-		 * 
-		 */
-
-		String cryptolibrary = xSSCD.getCryptoLibraryUsed();
-
-		m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + cryptolibrary);
-		// just for test, analyze the document package structure
-		DigitalSignatureHelper dg = new DigitalSignatureHelper(m_xMCF, m_xCC);
-
-		dg.verifyDocumentSignature(xStorage, null);
-
-		PKCS11TokenAttributes aTk = new PKCS11TokenAttributes(xSSCD.getManufacturer(), //from device description
-				xSSCD.getDescription(), // from device description
-				xSSCD.getTokenSerialNumber(), //from token
-				xSSCD.getTokenMaximumPINLenght()); //from token
-		// try to get a pin from the user
-		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTk);
-		// set the device description, can be used to display information on the
-		// device the PIN is asked for
-
-		try {
-			// PosX e PosY devono essere ricavati dalla finestra genetrice (in
-			// questo caso la frame)
-			// get the parente window data
-			// com.sun.star.awt.XWindow xCompWindow =
-			// m_xFrame.getComponentWindow();
-			// com.sun.star.awt.Rectangle xWinPosSize =
-			// xCompWindow.getPosSize();
-			int BiasX = 100;
-			int BiasY = 30;
-			// System.out.println("Width: "+xWinPosSize.Width+
-			// " height: "+xWinPosSize.Height);
-			// XWindow xWindow = m_xFrame.getContainerWindow();
-			// XWindowPeer xPeer = xWindow.
-			aDialog1.initialize(BiasX, BiasY);
-			// center the dialog
-			aDialog1.executeDialog();
-			char[] myPin = aDialog1.getPin();
-			if (myPin != null && myPin.length > 0) {
-				m_aLogger.log("sign!");
-				// convert certificate in Java format
-
-				X509Certificate signatureCert = Helpers.getCertificate(aCert);
-
-				PKCS11Driver helper;
-				try {
-					SecurityManager sm = System.getSecurityManager();
-					if (sm != null) {
-						m_aLogger.info("SecurityManager: " + sm);
-					} else {
-						m_aLogger.info("no SecurityManager.");
-					}
-					String Pkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
-					helper = new PKCS11Driver(m_aLogger, Pkcs11WrapperLocal, cryptolibrary);
-
-					// these are 160 corresponding to a SHA1 hash (or digest)
-					byte[] baSha1 = { 0x63, (byte) 0xAA, 0x4D, (byte) 0xD0, (byte) 0xF3, (byte) 0x8F, 0x62, (byte) 0xDC,
-							(byte) 0xF7, (byte) 0x6F, (byte) 0xF2, (byte) 0x09, (byte) 0xA7, 0x5B, 0x01, 0x4E, 0x78, (byte) 0xF2,
-							(byte) 0xF1, 0x31 };
-					// try to sign something simple
-					/*
-					 * String sTest = "Y6pN0POPYtz3b/IJp1sBTnjy8TE="
-					 */
-
-					long[] nTokens = null;
-					try {
-						nTokens = helper.getTokenList();
-						nTokens = helper.getTokens();
-					} catch (PKCS11Exception ex3) {
-						m_aLogger.severe("detectTokens, PKCS11Exception " + cryptolibrary, ex3);
-					}
-
-					if (nTokens != null) {
-						// search in the available m_nTokens the one with the
-						// certificate
-						// selected
-						for (int i = 0; i < nTokens.length; i++) {
-							m_aLogger.log("token: " + nTokens[i]);
-						}
-						// helper.getModuleInfo(); info on pkcs#11 library
-
-						helper.getMechanismInfo();
-						// open session on this token
-						helper.setTokenHandle(nTokens[0]);
-						try {
-							// helper.openSession(myPin);
-							helper.openSession();
-
-							// find private key and certificate in first token
-							// only
-							try {
-								CK_TOKEN_INFO tokenInfo = helper.getTokenInfo(nTokens[0]);
-
-								m_aLogger.log(tokenInfo.toString());
-
-								// from the certificate get the mechanism needed
-								// (the subject signature algor)
-								// this will be the mechanism used to sign ??
-
-								// from the certificate get the certificate
-								// handle
-								try {
-									long certHandle = helper.findCertificate(signatureCert);
-
-									// then the certificate handle get the
-									// corresponding
-									// private key handle
-									// long sigKeyHandle =
-									// helper.findSignatureKeyFromCertificateHandle(certHandle);
-									// get key label as well
-								} catch (PKCS11Exception e) {
-									m_aLogger.severe(e);
-								} catch (CertificateEncodingException e) {
-									m_aLogger.severe(e);
-								} catch (IOException e) {
-									m_aLogger.severe(e);
-								}
-							} catch (Throwable e) {
-								m_aLogger.severe(e);
-							}
-							// helper.logout();
-							helper.closeSession();
-						} catch (TokenException ex) {
-							m_aLogger.log("Messaggio helper.openSession(): " + ex.getMessage());
-							if (ex.toString().startsWith("iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_PIN_INCORRECT")
-									|| ex.toString().startsWith("CKR_PIN_INCORRECT")) {
-								// errorPresent = true;
-								m_aLogger.log("PIN sbagliato.");
-								// current = ERROR;
-
-							}
-
-							else if (ex.getMessage().startsWith("CKR_PIN_LOCKED")) {
-								// errorPresent = true;
-								m_aLogger.log("PIN bloccato.");
-							} else if (ex.getMessage().startsWith("CKR_PIN_LEN_RANGE")) {
-								// errorPresent = true;
-								m_aLogger.log("PIN sbagliato: Lunghezza sbagliata.");
-							} else if (ex.getMessage().startsWith("CKR_TOKEN_NOT_RECOGNIZED")) {
-								// errorPresent = true;
-								m_aLogger.log("CKR_TOKEN_NOT_RECOGNIZED.");
-							} else if (ex.getMessage().startsWith("CKR_FUNCTION_FAILED")) {
-								// errorPresent = true;
-								m_aLogger.log("CKR_FUNCTION_FAILED.");
-							}
-
-							else if (ex.getMessage().startsWith("CKR_ARGUMENTS_BAD")) {
-								// errorPresent = true;
-								m_aLogger.log("CKR_ARGUMENTS_BAD.");
-							} else {
-								// inserisci tutte le TokenException!!!
-								// errorPresent = true;
-								// errorMsg =
-								// "PKCS11Exception:\n"+ex.getMessage()+".";
-							}
-						}
-
-					}
-					helper.libFinalize();
-				} catch (IOException e) {
-					m_aLogger.severe(e);
-				} catch (TokenException e) {
-					m_aLogger.severe(e);
-				} catch (NullPointerException e) {
-					m_aLogger.severe(e);
-				} catch (URISyntaxException e) {
-					m_aLogger.severe(e);
-				} catch (Throwable e) {
-					m_aLogger.severe(e);
-				}
-
-				return true;
-			}
-		} catch (com.sun.star.uno.RuntimeException e) {
-			m_aLogger.severe(e);
-		} catch (BasicErrorException e) {
-			m_aLogger.severe(e);
-		} catch (Exception e) {
-			m_aLogger.severe(e);
-		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
-	}
-
 	/** Verify the text document only
 	 * 
 	 * @param _xFrame
@@ -1386,12 +1161,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			return false;
 		}
 
-		//text sections? 
+		//text sections ok if embedded 
 
 		//then the embedded object, should be all embedded, and if embedded
 		//only the right type is allowed
 
-		//the the forms, for now no forms are allowed in the text document.
+		//then the forms, for now no forms are allowed in the text document.
 
 		return true;
 	}

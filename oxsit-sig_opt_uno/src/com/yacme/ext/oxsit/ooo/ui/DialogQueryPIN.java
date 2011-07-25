@@ -70,7 +70,7 @@ public class DialogQueryPIN extends BasicDialog {
 	private String	m_sMaxPINLenFormat = "id_mex_max_pin_len";
 
 	public DialogQueryPIN(XFrame _xFrame, XComponentContext context,
-			XMultiComponentFactory _xmcf, PKCS11TokenAttributes _Token) {
+			XMultiComponentFactory _xmcf, PKCS11TokenAttributes _Token, String _signingDate) {
 		super( _xFrame, context, _xmcf );
 		MessageConfigurationAccess m_aRegAcc = null;
 		m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
@@ -91,7 +91,8 @@ public class DialogQueryPIN extends BasicDialog {
 		if(_Token == null)
 			_Token = new PKCS11TokenAttributes();
 		m_nMaxPinLen = (int)_Token.getMaxPinLen();
-		m_sTokenDescriptioMessage = String.format(m_sTokenDescriptionFormat, 
+		m_sTokenDescriptioMessage = String.format(m_sTokenDescriptionFormat,
+				_signingDate,
 				_Token.getLabel(),
 				_Token.getModel(),
 				_Token.getSerialNumber(),
