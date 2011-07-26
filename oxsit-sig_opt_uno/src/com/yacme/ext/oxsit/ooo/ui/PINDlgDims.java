@@ -34,7 +34,7 @@ public class PINDlgDims {
 								(ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2)+
 								ControlDims.RSC_SP_CTRL_DESC_X+
 								ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT+40;
-	private static int nDs_Heigh = 140;
+	private static int nDs_Heigh = 170;
 
 	public static int DLGS_WIDTH() {
 		return nDs_Width;
@@ -47,5 +47,12 @@ public class PINDlgDims {
 	public static int ED_WIDTH () {
 		return ControlDims.RSC_CD_PUSHBUTTON_WIDTH*2;
 //		return DLGS_WIDTH()-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT-ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
+	}
+
+	public static int ED_HIGHT() {
+		return nDs_Heigh - ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM- //top
+				ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM- //bottom
+				ControlDims.RSC_CD_PUSHBUTTON_HEIGHT-ControlDims.RSC_SP_CTRL_X-
+				ControlDims.RSC_CD_EDIT_FIELD_HEIGHT-ControlDims.RSC_SP_CTRL_X;
 	}
 }

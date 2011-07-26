@@ -383,8 +383,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				xSSCD.getTokenSerialNumber(), // from token
 				xSSCD.getTokenMaximumPINLenght()); // from token
 
-		Date ndSigningDate = new Date();
-		String sSigningDate = Helpers.date2string(ndSigningDate);
+		Date dSigningDate = new Date();
+		String sSigningDate = Helpers.date2string(dSigningDate);
 		// try to get a pin from the user
 		DialogQueryPIN aDialog1 = new DialogQueryPIN(xFrame, m_xCC, m_xMCF, aTka, sSigningDate);
 		int BiasX = 100;
@@ -402,7 +402,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			Date d1 = new Date();
 			// add a Signature
 			m_aLogger.log("Prepare ODF signature");
-			Signature sig = sdoc.prepareSignature(certChild, null, null);
+			Signature sig = sdoc.prepareSignature(certChild, null, null, dSigningDate);
 			byte[] sidigest = sig.calculateSignedInfoDigest();
 			Date d2 = new Date();
 			m_aLogger.log("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]");
@@ -459,7 +459,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
 							m_aLogger.log("Finalize signature");
 							sig.setSignatureValue(sigval);
-							sig.getSignedProperties().setSigningTime(ndSigningDate);
 
 							/// logging, only debug
 							sdoc.writeSignaturesToXLogger(m_aLogger);

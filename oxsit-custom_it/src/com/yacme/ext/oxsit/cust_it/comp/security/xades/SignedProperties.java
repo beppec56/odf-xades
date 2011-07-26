@@ -75,8 +75,8 @@ public class SignedProperties implements Serializable {
      * @param serial signers cert serial number
      * @throws SignedDocException for validation errors
      */
-    public SignedProperties(Signature sig, String id, String target, Date signingTime, 
-            String certId, String certDigAlg, byte[] digest, BigInteger serial) 
+    public SignedProperties(Signature sig, String id, String target,  
+            String certId, String certDigAlg, byte[] digest, BigInteger serial,Date signingTime) 
         throws SignedDocException
     {
         m_sig = sig;
@@ -102,7 +102,43 @@ public class SignedProperties implements Serializable {
      * @throws SignedDocException for validation errors
      */
     public SignedProperties(Signature sig, X509Certificate cert,
-        String[] claimedRoles, SignatureProductionPlace adr) 
+        String[] claimedRoles, SignatureProductionPlace adr, Date _signingDate) 
+        throws SignedDocException
+    {
+		m_sig = sig;
+
+		setId(sig.getId() + "-SignedProperties");
+		setTarget("#" + sig.getId());
+		setSigningTime(_signingDate);
+		setCertId(sig.getId() + "-CERTINFO");
+		// ROB
+		setCertDigestAlgorithm(SignedDoc.SHA256_DIGEST_ALGORITHM);
+		try {
+			setCertDigestValue(SignedDoc.digest(cert.getEncoded()));
+		} catch (Exception ex) {
+			SignedDocException.handleException(ex,
+					SignedDocException.ERR_CALCULATE_DIGEST);
+		}
+		setCertSerial(cert.getSerialNumber());
+		if ((claimedRoles != null) && (claimedRoles.length > 0)) {
+			for (int i = 0; i < claimedRoles.length; i++)
+				addClaimedRole(claimedRoles[i]);
+		}
+		if (adr != null)
+			setSignatureProductionPlace(adr);
+		m_origDigest = null;
+    }
+    
+    /** 
+     * Creates new SignedProperties with default
+     * values taken from signers certificate and signature
+     * @param sig Signature reference
+     * @param cert signers certificate
+     * @param claimedRoles signers claimed roles
+     * @param adr signers address
+     * @throws SignedDocException for validation errors
+     */
+    public SignedProperties(Signature sig, X509Certificate cert, String[] claimedRoles, SignatureProductionPlace adr) 
         throws SignedDocException
     {
 		m_sig = sig;
@@ -127,9 +163,9 @@ public class SignedProperties implements Serializable {
 		if (adr != null)
 			setSignatureProductionPlace(adr);
 		m_origDigest = null;
+    	
+    	
     }
-    
-
 
     
     

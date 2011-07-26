@@ -179,10 +179,10 @@ public class DialogQueryPIN extends BasicDialog {
 		insertFixedText(this, 
 				ControlDims.RSC_SP_DLG_INNERBORDER_BOTTOM,
 				ControlDims.RSC_SP_DLG_INNERBORDER_LEFT,
-				80,
+				PINDlgDims.ED_HIGHT(),
 				PINDlgDims.DLGS_WIDTH()-ControlDims.RSC_SP_DLG_INNERBORDER_LEFT-ControlDims.RSC_SP_DLG_INNERBORDER_RIGHT,
 				0, m_sTokenDescriptioMessage,"fixmex");
-		
+
 		xDialog = (XDialog) UnoRuntime.queryInterface( XDialog.class,
 				super.m_xDialogControl );
 		createWindowPeer();

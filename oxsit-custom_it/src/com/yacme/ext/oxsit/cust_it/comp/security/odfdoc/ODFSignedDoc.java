@@ -5,6 +5,7 @@ package com.yacme.ext.oxsit.cust_it.comp.security.odfdoc;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -529,7 +530,13 @@ public class ODFSignedDoc extends SignedDoc {
 		return manifestBytes;
 	}
 
+	@Override
 	public Signature prepareSignature(X509Certificate cert, String[] claimedRoles, SignatureProductionPlace adr)
+	throws SignedDocException {
+		return prepareSignature(cert, claimedRoles, adr, new Date());
+	}
+
+	public Signature prepareSignature(X509Certificate cert, String[] claimedRoles, SignatureProductionPlace adr, Date _signingTime)
 			throws SignedDocException {
 		
 		Signature sig = new Signature(this);
@@ -567,8 +574,8 @@ public class ODFSignedDoc extends SignedDoc {
 		m_aLogger.log("CertID added");
 		
 		// create signed properties
-		SignedProperties sp = new SignedProperties(sig, cert, claimedRoles, adr);
-		
+		SignedProperties sp = new SignedProperties(sig, cert, claimedRoles, adr, _signingTime);
+
 		m_aLogger.log("SignedProperties created");
 		
 		//ROB: trailing "_SignedProperties triggers "Type" Attribute inclusion in Reference
