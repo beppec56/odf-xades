@@ -30,14 +30,19 @@ import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
+import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.PushButtonType;
 import com.sun.star.awt.XActionListener;
 import com.sun.star.awt.XControl;
+import com.sun.star.awt.XControlModel;
 import com.sun.star.awt.XItemListener;
+import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XTreeExpansionListener;
+import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.NoSuchMethodException;
@@ -264,14 +269,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			} catch (BasicErrorException e) {
 				m_aLogger.severe("actionPerformed", "", e);
 			}
-//reload the signatures
-			
-			//cleanup the signature tree
+			//reload the signatures:
+			//1) cleanup the signature tree
 			removeAllTreeNodes();
-			//add the new one1s
-			readAllSignatures(true); //force a verification
-			
-			
+			//2) add the new ones and force a verification
+			readAllSignatures(true);
 		} catch (Throwable e1) {
 			m_aLogger.severe("actionPerformed", "", e1);
 		}
@@ -282,26 +284,52 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void removeButtonPressed() {
-		//not implemented here
-		//fake implementation!
-	}
+		final String __FUNCTION__ = "removeButtonPressed: ";
+		//determine the type of element we are on, we can remove only signatures
+		m_aLogger.debug(__FUNCTION__);
+		if(m_aTheCurrentlySelectedTreeNode != null) {
+			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
+			if(oTreeNodeObject != null) {
+				if(oTreeNodeObject instanceof SignatureTreeElement) {
+					SignatureTreeElement aCurrentSignature = (SignatureTreeElement)oTreeNodeObject;
+					XOX_SignatureState  aSignature = aCurrentSignature.get_xSignatureState();
+					m_aLogger.debug(__FUNCTION__+"UUID "+aSignature.getSignatureUUID());
+// instantiate the signature verifier
+					Object aDocVerService;
+					try {
+						aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
+						if(aDocVerService != null) {
+							m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+							if(m_axoxDocumentVerifier != null) {
+								if(m_axoxDocumentVerifier.removeDocumentSignature(m_xParentFrame,getDocumentModel(), aSignature.getSignatureUUID())) {
+									//signature removed update internal singleton data
+									//update the GUI elements
+									//reload the signatures:
+									//1) cleanup the signature tree
+									removeAllTreeNodes();
+									//2) add the new ones and force a verification
+									readAllSignatures(true);
+								}
+								else
+									m_aLogger.warning(__FUNCTION__+"the requested signature doesn't exist in document !");
+							}
+							else
+								m_aLogger.warning(__FUNCTION__+"XOX_DocumentSignaturesVerifier interface NOT available");
+					        // now clean up the verifier
+					        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+						}
+						else
+							m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
 
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#reportButtonPressed()
-	 */
-	@Override
-	public void reportButtonPressed() {
-		//prints a report of the selected CERTIFICATE / signature
-//		m_aLogger.debug("reportButtonPressed "+"FAKE IMPLEMENTATION!");
-		super.reportButtonPressed();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#selectButtonPressed()
-	 */
-	@Override
-	public void selectButtonPressed() {
-		//select the certificate on tree for signature
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else
+					m_aLogger.warning("No signature in tree control node data: "+oTreeNodeObject.getClass().getName());
+			}
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -309,9 +337,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void verifyButtonPressed() {
-//for the moment, use this to load the document at hand , verify it and display the certificates of every signature found.
 		//first identify the type of selected element
-//		XComponent xTheCurrentComp = (XComponent)UnoRuntime.queryInterface( XComponent.class, oTreeNodeObject );
 		final String __FUNCTION__ = "verifyButtonPressed: ";
 
 		if(m_aTheCurrentlySelectedTreeNode != null) {

@@ -878,8 +878,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void addButtonPressed() {
-		// TODO Auto-generated method stub
-		m_aLogger.log("addButtonPressed");		
+		final String __FUNCTION__ = "addButtonPressed: ";
+		m_aLogger.log(__FUNCTION__+"please implement in subclass !");
 	}
 
 	/* (non-Javadoc)
@@ -887,8 +887,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void removeButtonPressed() {
-		// TODO Auto-generated method stub
-		m_aLogger.log("removeButtonPressed");
+		final String __FUNCTION__ = "removeButtonPressed: ";
+		m_aLogger.log(__FUNCTION__+"please implement in subclass !");
 	}
 
 	/* (non-Javadoc)
@@ -930,8 +930,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void selectButtonPressed() {
-		m_aLogger.log("selectButtonPressed");
-		//very crl status of the selected element
+		final String __FUNCTION__ = "selectButtonPressed: ";
+		m_aLogger.debug(__FUNCTION__+"please implement in subclass !");
 	}
 
 	/* (non-Javadoc)
@@ -939,8 +939,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void verifyButtonPressed() {
-		// TODO Auto-generated method stub
-		m_aLogger.log("verifyButtonPressed");
+		final String __FUNCTION__ = "verifyButtonPressed: ";
+		m_aLogger.debug(__FUNCTION__+"please implement in subclass !");
 	}
 
 	/* (non-Javadoc)
@@ -948,7 +948,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void actionPerformed(ActionEvent rEvent) {
-		// TODO Auto-generated method stub
 		try {
 			// get the control that has fired the event,
 			XControl xControl = (XControl) UnoRuntime.queryInterface(XControl.class,
@@ -960,17 +959,17 @@ public class DialogCertTreeBase extends BasicDialog implements
 			// just in case the listener has been added to several controls,
 			// we make sure we refer to the right one
 			if (sName.equals(m_sAddBtn)) {
-				m_aLogger.log("actionPerformed","action: "+sName);
+				m_aLogger.debug("actionPerformed","action: "+sName);
 				addButtonPressed();
 			} else if (sName.equals(m_sSelectBtn)) {
 				selectButtonPressed();
 			} else if (sName.equals(m_sReportBtn)) {
 				reportButtonPressed();
 			} else if (sName.equals(m_sVerifyBtn)) {
-				m_aLogger.log("actionPerformed","action: "+sName);
+				m_aLogger.debug("actionPerformed","action: "+sName);
 				verifyButtonPressed();
 			} else if (sName.equals(m_sRemoveBtn)) {
-				m_aLogger.log("actionPerformed","action: "+sName);
+				m_aLogger.debug("actionPerformed","action: "+sName);
 				removeButtonPressed();
 			}
 			else {
