@@ -207,19 +207,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 		super.removeEventListener(arg0);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, int, java.lang.Object[])
-	 */
-	@Override
-	public boolean removeDocumentSignature(XFrame _xFrame, 
-					XModel _xDocumentModel, String _sSignatureUUID)
-			throws IllegalArgumentException, Exception {
-		final String __FUNCTION__ ="removeDocumentSignature: ";
-
-		m_aLogger.info(__FUNCTION__+"UUID: "+_sSignatureUUID);
-		return false;
-	}
-
 	/**
 	 * @param xThePackage the storage element to examine
 	 * @param _List the list to be filled, or updated

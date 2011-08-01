@@ -82,18 +82,6 @@
 					[in] com::yacme::ext::oxsit::security::XOX_SignatureState xSignatureState )
 	    raises( ::com::sun::star::lang::IllegalArgumentException,
 		    ::com::sun::star::uno::Exception );
-
-	/** Used to remove the selected signature or all the signatures.<br>
-		@param xFrame the frame to be used as anchor for dialogs
-		@param xTheDocument the model of the document to be verified
-		@param sSignatureUUID The UUID of the signature to be removed. If null all the signatures will be removed.
-		@return true if the document can be signed, false otherwise.
-		*/
-	  boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
-					  [in] com::sun::star::frame::XModel xTheDocumentModel,
-					  [in] string sSignatureUUID )
-	    raises( ::com::sun::star::lang::IllegalArgumentException,
-		    ::com::sun::star::uno::Exception );
 	} ;
 
   }; }; }; }; };

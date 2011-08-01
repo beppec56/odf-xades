@@ -286,6 +286,21 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	}
 
 	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, int, java.lang.Object[])
+	 */
+	@Override
+	public boolean removeDocumentSignature(XFrame _xFrame, 
+					XModel _xDocumentModel, String _sSignatureUUID)
+			throws IllegalArgumentException, Exception {
+		final String __FUNCTION__ ="removeDocumentSignature: ";
+
+		m_aLogger.info(__FUNCTION__+"UUID: "+_sSignatureUUID);
+		
+		
+		return true;
+	}
+	
+	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSigner#signDocument(com.sun.star.document.XStorageBasedDocument, com.yacme.ext.oxsit.security.cert.XOX_X509Certificate[])
 	 * 
 	 * gets called from dialog when a document should be signed with independednt certificate signature

@@ -295,13 +295,14 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 					XOX_SignatureState  aSignature = aCurrentSignature.get_xSignatureState();
 					m_aLogger.debug(__FUNCTION__+"UUID "+aSignature.getSignatureUUID());
 // instantiate the signature verifier
-					Object aDocVerService;
+					Object aDocSignerService;
 					try {
-						aDocVerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT, m_xContext);
-						if(aDocVerService != null) {
-							m_axoxDocumentVerifier = (XOX_DocumentSignaturesVerifier)UnoRuntime.queryInterface(XOX_DocumentSignaturesVerifier.class, aDocVerService);
+						aDocSignerService = m_xMCF.createInstanceWithContext(GlobConstant.m_sDOCUMENT_SIGNER_SERVICE_IT, m_xContext);
+						if(aDocSignerService != null) {
+							XOX_DocumentSigner aDocumentSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, aDocSignerService);
+							
 							if(m_axoxDocumentVerifier != null) {
-								if(m_axoxDocumentVerifier.removeDocumentSignature(m_xParentFrame,getDocumentModel(), aSignature.getSignatureUUID())) {
+								if(aDocumentSigner.removeDocumentSignature(m_xParentFrame,getDocumentModel(), aSignature.getSignatureUUID())) {
 									//signature removed update internal singleton data
 									//update the GUI elements
 									//reload the signatures:
@@ -316,7 +317,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							else
 								m_aLogger.warning(__FUNCTION__+"XOX_DocumentSignaturesVerifier interface NOT available");
 					        // now clean up the verifier
-					        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
+					        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocSignerService)).dispose();
 						}
 						else
 							m_aLogger.warning(__FUNCTION__+GlobConstant.m_sDOCUMENT_VERIFIER_SERVICE_IT+" Service NOT available");
