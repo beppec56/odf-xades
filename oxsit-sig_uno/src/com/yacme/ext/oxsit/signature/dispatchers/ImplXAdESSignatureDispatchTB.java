@@ -22,6 +22,7 @@
 
 package com.yacme.ext.oxsit.signature.dispatchers;
 
+import com.yacme.ext.oxsit.Utilities;
 import com.yacme.ext.oxsit.XOX_SingletonDataAccess;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
@@ -257,8 +258,21 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				 * returned value: 1 2 0 = Cancel
 				 */
 				grabModel();
-//first check if the document can be signed				
+//first check if the document can be signed
 				if(m_xModel != null) {
+					//save the read-only status of the document
+					
+					XStorable xStore = (XStorable) UnoRuntime.queryInterface(XStorable.class, getDocumentModel());
+//FIXME: add the set to the readonly state
+//					Utilities.showInterfaces(this, getDocumentModel());
+					
+					boolean bReadonlyState = xStore.isReadonly();
+					
+					if(xStore != null && !bReadonlyState) {
+
+						
+					}
+
 					Object oDocumSigner;
 					try {
 						//the object name is resident in configuration, should be loaded from there,
@@ -286,54 +300,26 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 				else
 					return;
 
-/*				try {
-*/
-					short ret;
-					ret = signatureDialog();
-					/**
-					 * the next lines of code are not needed in the end. These
-					 * are here only to test extension behavior.
-					 */
-					m_aLogger.debug("impl_dispatch: \tthe url of the document under signature is: "
+				short ret;
+				ret = signatureDialog();
+				/**
+				 * the next lines of code are not needed in the end. These
+				 * are here only to test extension behavior.
+				 */
+				m_aLogger.debug("impl_dispatch: \tthe url of the document under signature is: "
 									+ m_xModel.getURL());
 
-//					int localstate = GlobConstant.m_nSIGNATURESTATE_NOSIGNATURES;
-//					if (ret != 0) {
-//						localstate = m_xDocumentSignatures
-//								.getDocumentSignatureState();
-////FIXME: this needs to be addressed, set the status according to the signature						localstate = localstate + 1;
-//						localstate = (localstate > 4) ? 0 : localstate;
-//					}
-//
-//					// now change the frame location
-////the state should be changed by the dialog procedures above, or left unchanged					m_xDocumentSignatures.setDocumentSignatureState(localstate);
-					// println( "m_nState is: " +
-					// ImplCNIPASignatureDispatch.m_nState );
-					/**
-					 * while returning we will do as follow Ok was hit: grab the
-					 * added signature certificate(s) and sign the document
-					 * (this may be something quite log, may be we need to add
-					 * some user feedback using the status bar, same as it's
-					 * done while loading the document)
-					 * 
-					 * report the signature status in the registry and (quickly)
-					 * back to the dispatcher
-					 * 
-					 * the signature of the certificates eventually removed are
-					 * deleted Current signature are left in place (e.g.
-					 * depending on certificates that are left untouched by the
-					 * dialog)
-					 * 
-					 * Cancel was hit: the added signature certificate(s) are
-					 * discarded and the document is not signed. Current
-					 * signature are left in place
-					 * 
-					 */
-/*				} catch (IOException e) {
-					m_aLogger.severe(e);
-				} catch (Exception e) {
-					m_aLogger.severe(e);
-				}*/
+				/**
+				 * while returning we will do as follow Ok was hit: grab the
+				 * added signature certificate(s) and sign the document
+				 * (this may be something quite log, may be we need to add
+				 * some user feedback using the status bar, same as it's
+				 * done while loading the document)
+				 * 
+				 * report the signature status in the registry and (quickly)
+				 * back to the dispatcher
+				 * 
+				 */
 			} catch (RuntimeException e) {
 				m_aLogger.severe("impl_dispatch", "", e);
 			}

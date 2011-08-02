@@ -296,6 +296,172 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		m_aLogger.info(__FUNCTION__+"UUID: "+_sSignatureUUID);
 		
+		ODFSignedDoc sdoc = null;
+
+		ConfigManager.init("jar://ODFDocSigning.cfg");
+
+		try {
+			XStorage xDocumentStorage;
+
+			String aPath = Helpers.fromURLtoSystemPath(_xDocumentModel.getURL());
+
+			m_aLogger.debug(" aPath: "+aPath); // this is the host path
+		
+			//1) look for a signature file in the document
+			//get URL, open the storage from url
+			//we need to get the XStorage separately, from the document URL
+			//But first we need a StorageFactory object
+			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
+			//then obtain the needed interface
+			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
+					xFact);
+	
+			Object[] aArguments = new Object[2];
+			aArguments[0] = aPath;//aURL.toString();//xDocumentModel.getURL();
+			aArguments[1] = ElementModes.READWRITE;	//if readonly: ElementModes.READ
+			//get the document storage object
+			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
+
+			//from the storage object (or better named, the service) obtain the interface we need
+			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
+			//chek if we have a signature already in place
+			//to do so, we quickly check the document storage using standard Zip function, looking for the signature file
+			File aZipFile;
+			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
+			ZipFile aTheDocuZip = new ZipFile(aZipFile);
+			
+			if(aTheDocuZip != null) {
+				//look for the right file element
+				ZipEntry aSignaturesFileEntry = aTheDocuZip.getEntry(ConstantCustomIT.m_sSignatureStorageName+"/"+GlobConstant.m_sXADES_SIGNATURE_STREAM_NAME);
+				if(aSignaturesFileEntry != null) {
+					//2) if exists prepare a signed doc element accordingly
+					InputStream	fTheSignaturesFile = aTheDocuZip.getInputStream(aSignaturesFileEntry);
+					//a file with the signatures already present seems in place, parse it
+					SAXSignedDocFactory aFactory = new SAXSignedDocFactory(m_xMCF, m_xCC, xDocumentStorage);
+					sdoc = (ODFSignedDoc) aFactory.readSignedDoc(fTheSignaturesFile);
+					
+					//3) try to remove the signature selected,
+					Signature sig = null;
+					boolean foundTheSignatureID = false;
+					for (int i = 0; i < sdoc.countSignatures(); i++) {
+						sig = sdoc.getSignature(i);
+						if(sig.getId().equalsIgnoreCase(_sSignatureUUID)) {
+							//found the signature
+							//remove it
+							sdoc.removeSignature(i);
+							foundTheSignatureID = true;
+							break;
+						}
+					}
+					if(foundTheSignatureID) {
+						//for the time being simply put a signature file without signatures in it
+						//so, open the substorage META-INF from the main storage (e.g. the document)
+						try {
+							XStorage xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
+							if(sdoc.countSignatures() > 0) {
+								//create the new file xadessignature.xml
+								try {
+//									//remove the entry in the file
+//									try {
+//										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
+//									} catch (NoSuchElementException e1) {
+//										m_aLogger.debug(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
+//												+ " does not exist");
+//									}
+									
+									XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
+									XOutputStream xOutStream = xTheSignature.getOutputStream();
+									//write signature file to the archive
+									sdoc.writeSignaturesToXStream(xOutStream);
+									xOutStream.flush();
+									xOutStream.closeOutput();
+
+									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
+											XTransactedObject.class, xMetaInfStorage);
+									if (xTransObj != null) {
+										m_aLogger.log(__FUNCTION__+"XTransactedObject exists. Committing...");
+										xTransObj.commit();
+									}
+	
+									XComponent xStreamComp = (XComponent) UnoRuntime.queryInterface(XComponent.class,
+											xTheSignature);
+									if (xStreamComp == null)
+										throw new com.sun.star.uno.RuntimeException();
+									xStreamComp.dispose();
+									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,xDocumentStorage);
+									if (xTransObj != null) {
+										m_aLogger.log(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing...");
+										xTransObj.commit();
+									}
+								} catch (InvalidStorageException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (IllegalArgumentException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (WrongPasswordException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (StorageWrappedTargetException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (com.sun.star.io.IOException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								}
+							}
+							else {
+								try {
+//									//remove the xadessignatures.xml entry in the document file
+//									try {
+//										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
+//									} catch (NoSuchElementException e1) {
+//										m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureFileName + "\"" + " does not exist",e1);
+//									}
+									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
+									if (xTransObj != null) {
+										m_aLogger.log(__FUNCTION__+"XTransactedObject exists. Committing...");
+										xTransObj.commit();
+									}
+									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,xDocumentStorage);
+									if (xTransObj != null) {
+										m_aLogger.log(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing... ");
+										xTransObj.commit();
+									}
+								} catch (InvalidStorageException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (StorageWrappedTargetException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								} catch (com.sun.star.io.IOException e1) {
+									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
+											+ "\"" + " error", e1);
+								}
+							}
+							xMetaInfStorage.dispose();
+						} catch (Exception e1) {
+							m_aLogger.severe("signAsFile", "\"" +  ConstantCustomIT.m_sSignatureStorageName + "\"" + " cannot open", e1);
+						}
+					}
+				}
+			}
+
+			//get rid of the document storage: frees it and in the case of Windows the file is released as well
+			//PLEASE NOTE: the following line of code has meaning ONLY
+			//if the xDocumentStorage was created independently from the main document !
+			//grab the needed XComponent interface
+			((XComponent)UnoRuntime.queryInterface(XComponent.class, xStdoc)).dispose();			
+				
+//		} catch (CertificateException e) {
+//			m_aLogger.log(e, true);
+//		} catch (SignedDocException ex) {
+//			m_aLogger.log(ex, true);
+		} catch (com.sun.star.io.IOException e) {
+			m_aLogger.log(e, true);
+		} catch (Throwable ex) {
+			m_aLogger.log(ex, true);
+		}
 		
 		return true;
 	}
@@ -557,8 +723,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 											+ "\"" + " error", e1);
 								}
 
-								//save the document
-
 								xMetaInfStorage.dispose();
 							} catch (Exception e1) {
 								m_aLogger.severe("signAsFile", "\"" +  ConstantCustomIT.m_sSignatureStorageName + "\"" + " cannot open", e1);
@@ -716,8 +880,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * @return
 	 */
 	private boolean signAsFile(XFrame xFrame, XModel _xDocumentModel, XOX_X509Certificate[] _aCertArray) {
-		Date d1, d2;
-
 		ODFSignedDoc sdoc = null;
 
 		ConfigManager.init("jar://ODFDocSigning.cfg");
@@ -728,16 +890,16 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 //		boolean openWithURL = true;
 //		if(openWithURL) {
 			//now, using the only method available, open the storage
-			URL aURL = new URL(_xDocumentModel.getURL());
-			
-			URI aURI = aURL.toURI();
-
-			m_aLogger.debug(_xDocumentModel.getURL());
-			m_aLogger.debug(" aURL: "+aURL.toString());
-			m_aLogger.debug(" aURL.getFile() "+aURL.getFile());
-			m_aLogger.debug(" aURI.getPath() "+aURI.getPath());
-			m_aLogger.debug(" aURL.getHost() "+aURL.getHost());
-			m_aLogger.debug(" aURI: "+aURL.toURI().toString());
+//			URL aURL = new URL(_xDocumentModel.getURL());
+//			
+//			URI aURI = aURL.toURI();
+//
+//			m_aLogger.debug(_xDocumentModel.getURL());
+//			m_aLogger.debug(" aURL: "+aURL.toString());
+//			m_aLogger.debug(" aURL.getFile() "+aURL.getFile());
+//			m_aLogger.debug(" aURI.getPath() "+aURI.getPath());
+//			m_aLogger.debug(" aURL.getHost() "+aURL.getHost());
+//			m_aLogger.debug(" aURI: "+aURL.toURI().toString());
 
 			String aPath = Helpers.fromURLtoSystemPath(_xDocumentModel.getURL());
 
@@ -763,25 +925,15 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class, xDocumentModel);
 
 			//from the storage object (or better named, the service) obtain the interface we need
+			//will be needed to read the document the same way as OOo does
 			xDocumentStorage = (XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
-			//from the storage object (or better named, the service) obtain the interface we need
-//		}
-//		else {
-//				//open with storage from doc model
-//			XStorageBasedDocument xDocStorage =
-//				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
-//				
-//				//from the storage object (or better named, the service) obtain the interface we need
-//			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);				
-//		}
-		
 			//chek if we have a signature already in place
 			//to do so, we quickly check the document storage using standard Zip function, looking for the signature file
 			File aZipFile;
 			aZipFile = new File(Helpers.fromURLtoSystemPath(_xDocumentModel.getURL()));
 			ZipFile aTheDocuZip = new ZipFile(aZipFile);
-			
+
 			if(aTheDocuZip != null) {
 				//look for the right file element
 				ZipEntry aSignaturesFileEntry = aTheDocuZip.getEntry(ConstantCustomIT.m_sSignatureStorageName+"/"+GlobConstant.m_sXADES_SIGNATURE_STREAM_NAME);

@@ -645,24 +645,11 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			XStorage xDocumentStorage;		
 			//get URL, open the storage from url
 			//we need to get the XStorage separately, from the document URL
-			//But first we need a StorageFactory object
-//			Object xFact = m_xMCF.createInstanceWithContext("com.sun.star.embed.StorageFactory", m_xCC);
-//			//then obtain the needed interface
-//			XSingleServiceFactory xStorageFact = (XSingleServiceFactory) UnoRuntime.queryInterface(XSingleServiceFactory.class,
-//					xFact);
-//			//now, using the only method available, open the storage
-//			Object[] aArguments = new Object[2];
-//			aArguments[0] = _xDocumentModel.getURL();
-//			aArguments[1] = ElementModes.READWRITE;
-//			//get the document storage object 
-//			Object xStdoc = xStorageFact.createInstanceWithArguments(aArguments);
-
 			XStorageBasedDocument xDocStorage =
 				(XStorageBasedDocument)UnoRuntime.queryInterface( XStorageBasedDocument.class, _xDocumentModel );
 			
 			//from the storage object (or better named, the service) obtain the interface we need
 			//the document opened as such is read only
-			
 			xDocumentStorage = xDocStorage.getDocumentStorage(); //(XStorage) UnoRuntime.queryInterface(XStorage.class, xStdoc);
 
 			//prepare a zip file from URL
