@@ -78,7 +78,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_aLogger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -89,7 +89,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService", _sService);
+		m_aLogger.debug("supportsService", _sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals(m_sServiceNames[i]))
 				return true;

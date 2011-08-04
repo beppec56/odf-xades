@@ -1,30 +1,42 @@
-/*************************************************************************
+/* ***** BEGIN LICENSE BLOCK ********************************************
+ * Version: EUPL 1.1/GPL 3.0
  * 
- *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
- *  
- *  The Contents of this file are made available subject to
- *  the terms of European Union Public License (EUPL) version 1.1
- *  as published by the European Community.
+ * The contents of this file are subject to the EUPL, Version 1.1 or 
+ * - as soon they will be approved by the European Commission - 
+ * subsequent versions of the EUPL (the "Licence");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the EUPL.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  EUPL for more details.
+ * The Original Code is /oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/DocumentSigner_IT.java.
  *
- *  You should have received a copy of the EUPL along with this
- *  program.  If not, see:
- *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ * The Initial Developer of the Original Code is
+ * Giuseppe Castagno giuseppe.castagno@acca-esse.it
+ * 
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011
+ * the Initial Developer. All Rights Reserved.
  *
- ************************************************************************/
+ * Contributor(s):
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 3 or later (the "GPL")
+ * in which case the provisions of the GPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of the GPL, and not to allow others to
+ * use your version of this file under the terms of the EUPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the EUPL, or the GPL.
+ *
+ * ***** END LICENSE BLOCK ******************************************** */
 
 package com.yacme.ext.oxsit.comp.security;
-
-import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
-import com.yacme.ext.oxsit.security.XOX_SignatureState;
-import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,6 +57,8 @@ import com.sun.star.util.XChangesNotifier;
 import com.yacme.ext.oxsit.Helpers;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 
 /**
  * This is a specification, it may change!
@@ -106,8 +120,8 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 		//call all the listeners, start a new thread for this
 		(new Thread(new Runnable() {
 			public void run() {
-				m_aLogger.log("inter thread created");
 				while(m_bThreadNotifyChangesCanRun) {
+					m_aLogger.info("inter thread started");
 					synchronized (m_aMtx_setDocumentSignatureState) {
 						try {
 							m_aMtx_setDocumentSignatureState.wait();
@@ -115,7 +129,7 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 						catch (InterruptedException e) {
 						}
 						if(m_bThreadNotifyChangesCanRun) {
-							m_aLogger.log("inter thread started");
+							m_aLogger.info("inter thread started");
 							Collection<XChangesListener> aColl = m_aListeners.values();
 							if(!aColl.isEmpty()) {
 								Iterator<XChangesListener> aIter = aColl.iterator();
@@ -125,11 +139,11 @@ public class DocumentSignatures extends ComponentBase //help class, implements X
 									aThisOne.changesOccurred(null);
 								}
 							}
-							m_aLogger.log("inter thread wraps, there were ", ((aColl.isEmpty()) ? "no" : aColl.size())+" listener");
+							m_aLogger.info("inter thread wraps, there were ", ((aColl.isEmpty()) ? "no" : aColl.size())+" listener");
 						}
 					}
 				}
-				m_aLogger.log("inter thread removed");
+				m_aLogger.info("inter thread removed");
 			}
 		}
 		)).start();

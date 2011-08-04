@@ -160,6 +160,7 @@ public class X509CertRL {
 		getConfiguration();
 		//
 		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 		if(frame != null) {
 			m_aLoggerDialog = new DynamicLoggerDialog(this,_xcc);
 			m_aLoggerDialog.enableLogging();
@@ -199,7 +200,7 @@ public class X509CertRL {
 		}
 
 		if(m_bDisableOCSPControl) {
-			m_aLogger.log("OCSP control disabled, will try CRL");
+			m_aLogger.info("OCSP control disabled, will try CRL");
 			//simply return,
             setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED);
     		setCertificateState(CertificateState.NOT_YET_VERIFIED);
@@ -596,7 +597,7 @@ public class X509CertRL {
 				X509CRL crl = null;
 				//storage exists or was created, form the CRL file name of the CRL from the distribution point
 				String aFileName = aCRLCachePath+filesep+getIssuerMD5Hash(userCert)+".crl";
-				m_aLogger.log("crl storage: "+aFileName);
+				m_aLogger.debug("crl storage: "+aFileName);
 				//now save the CRL, if there is one, remove it first
 
 				try {
@@ -903,7 +904,7 @@ public class X509CertRL {
 
             			//storage exists or was created, form the CRL file name of the CRL from the distribution point
             			String aFileName = aCRLCachePath+filesep+getIssuerMD5Hash(userCert)+".crl";
-            			m_aLogger.log("crl storage: "+aFileName);
+            			m_aLogger.debug("crl storage: "+aFileName);
             			//now save the CRL, if there is one, remove it first
                         FileOutputStream fos = new FileOutputStream(aFileName);
                         fos.write(crl.getEncoded());
@@ -1177,7 +1178,7 @@ public class X509CertRL {
 
 	private void trace(String s) {
         if (debug) {
-            m_aLogger.log(s);
+            m_aLogger.debug(s);
         }
     }
 

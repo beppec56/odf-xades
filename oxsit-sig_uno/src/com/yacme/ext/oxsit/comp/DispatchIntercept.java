@@ -1,53 +1,64 @@
-/*************************************************************************
+/* ***** BEGIN LICENSE BLOCK ********************************************
+ * Version: EUPL 1.1/GPL 3.0
  * 
- *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
- *  
- *  The Contents of this file are made available subject to
- *  the terms of European Union Public License (EUPL) version 1.1
- *  as published by the European Community.
+ * The contents of this file are subject to the EUPL, Version 1.1 or 
+ * - as soon they will be approved by the European Commission - 
+ * subsequent versions of the EUPL (the "Licence");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the EUPL.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  EUPL for more details.
+ * The Original Code is oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/AvailableSSCDs_IT.java.
  *
- *  You should have received a copy of the EUPL along with this
- *  program.  If not, see:
- *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ * The Initial Developer of the Original Code is
+ * Giuseppe Castagno giuseppe.castagno@acca-esse.it
+ * 
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011
+ * the Initial Developer. All Rights Reserved.
  *
- ************************************************************************/
+ * Contributor(s):
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 3 or later (the "GPL")
+ * in which case the provisions of the GPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of the GPL, and not to allow others to
+ * use your version of this file under the terms of the EUPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the EUPL, or the GPL.
+ *
+ * ***** END LICENSE BLOCK ******************************************** */
+
 
 package com.yacme.ext.oxsit.comp;
-
-import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.frame.XDispatch;
 import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XDispatchProviderInterceptor;
-import com.sun.star.frame.XDispatchResultListener;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XFrameActionListener;
 import com.sun.star.frame.XInterceptorInfo;
-import com.sun.star.frame.XNotifyingDispatch;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
-import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.task.XStatusIndicator;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
+import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 import com.yacme.ext.oxsit.dispatchers.IDispatchBaseObject;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
-import com.yacme.ext.oxsit.signature.dispatchers.ImplInterceptSaveAsDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
@@ -120,7 +131,7 @@ public class DispatchIntercept extends ComponentBase
 			GlobConstant.m_sSIGN_PROTOCOL_BASE_URL+GlobConstant.m_sSIGN_DIALOG_PATH_TB
 			};
 
-	protected	DynamicLogger						m_logger;
+	protected	DynamicLogger						m_aLogger;
 	/**
 	 * ctor Initialize the new interceptor. Given frame reference can be used to
 	 * register this interceptor on it automatically later.
@@ -140,10 +151,9 @@ public class DispatchIntercept extends ComponentBase
 		m_bDead = false;
 		m_bIsInterceptorRegistered = false;
 		m_bIsFrameActionRegistered = false;
-		m_logger = new DynamicLogger(this, xContext);
-//DEBUG
-		m_logger.enableLogging();
-		m_logger.ctor();
+		m_aLogger = new DynamicLogger(this, xContext);
+		m_aLogger.enableLogging();
+		m_aLogger.ctor();
 	}
 
 	/* (non-Javadoc)
@@ -159,8 +169,7 @@ public class DispatchIntercept extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		// TODO Auto-generated method stub
-		m_logger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -235,7 +244,7 @@ public class DispatchIntercept extends ComponentBase
 	 */
 	public String[] getInterceptedURLs() {
 		// printlnName("com.sun.star.frame.XInterceptorInfo#getInterceptedURLs");
-		m_logger.entering("getInterceptedURLs");
+		m_aLogger.entering("getInterceptedURLs");
 		return m_InterceptedURLs;
 	}
 
@@ -343,7 +352,7 @@ public class DispatchIntercept extends ComponentBase
 	@Override
 	public void dispatch(URL _aURL, PropertyValue[] _lArguments) {
 		//check the URL, then run the real dispatcher
-		m_logger.log("main dispatch", _aURL.Complete);
+		m_aLogger.debug("main dispatch", _aURL.Complete);
 		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.dispatch(_aURL, _lArguments);				
@@ -368,7 +377,7 @@ public class DispatchIntercept extends ComponentBase
 	@Override
 	public void addStatusListener(XStatusListener _aListener, URL _aURL) {
 		//check the URL then run the real method
-		m_logger.log("main addStatusListener", _aURL.Complete);
+		m_aLogger.debug("main addStatusListener", _aURL.Complete);
 		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.addStatusListener(_aListener, _aURL);				
@@ -393,7 +402,7 @@ public class DispatchIntercept extends ComponentBase
 	@Override
 	public void removeStatusListener(XStatusListener _aListener, URL _aURL) {
 		//check the URL then run the real method
-		m_logger.log("main removeStatusListener", _aURL.Complete);
+		m_aLogger.debug("main removeStatusListener", _aURL.Complete);
 		if (_aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
 				if (m_ImplIntSaveDispatch != null)
 					m_ImplIntSaveDispatch.removeStatusListener(_aListener, _aURL);				
@@ -445,7 +454,7 @@ public class DispatchIntercept extends ComponentBase
 	@Override
 	public boolean startListening(XFrame _xFrame) {
 		// TODO Auto-generated method stub
-		m_logger.entering("startListening");
+		m_aLogger.entering("startListening");
 		m_xFrame = _xFrame;
 		synchronized (m_aMutex) {
 			if (m_xFrame == null)
@@ -510,7 +519,7 @@ public class DispatchIntercept extends ComponentBase
 					aLog = aLog +  ", remove interceptor";
 				}
 			}
-			m_logger.info( aLog );
+			m_aLogger.debug( aLog );
 		} else
 			// give some status indication
 			switch (aEvent.Action.getValue()) {
@@ -533,16 +542,16 @@ public class DispatchIntercept extends ComponentBase
 
 				break;
 			case com.sun.star.frame.FrameAction.COMPONENT_ATTACHED_value:
-				m_logger.info( "frameAction COMPONENT_ATTACHED_value" );
+				m_aLogger.debug( "frameAction COMPONENT_ATTACHED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.COMPONENT_REATTACHED_value:
-				m_logger.info( "frameAction COMPONENT_REATTACHED_value" );
+				m_aLogger.debug( "frameAction COMPONENT_REATTACHED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_ACTIVATED_value:
-				m_logger.info( "frameAction FRAME_ACTIVATED_value" );
+				m_aLogger.debug( "frameAction FRAME_ACTIVATED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_DEACTIVATING_value:
-				m_logger.info( "frameAction FRAME_DEACTIVATING_value" );
+				m_aLogger.debug( "frameAction FRAME_DEACTIVATING_value" );
 				// ///////////// not good...
 				// //check if we are frame action m_aListeners, if yes unregister,
 				// surround with mutex
@@ -568,18 +577,18 @@ public class DispatchIntercept extends ComponentBase
 				// }
 				break;
 			case com.sun.star.frame.FrameAction.CONTEXT_CHANGED_value:
-				m_logger.info( "frameAction CONTEXT_CHANGED_value" );
+				m_aLogger.debug( "frameAction CONTEXT_CHANGED_value" );
 				// need to reregister??? It seems that this becomes and endless
 				// loop...
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_UI_ACTIVATED_value:
-				m_logger.info( "frameAction FRAME_UI_ACTIVATED_value" );
+				m_aLogger.debug( "frameAction FRAME_UI_ACTIVATED_value" );
 				break;
 			case com.sun.star.frame.FrameAction.FRAME_UI_DEACTIVATING_value:
-				m_logger.info( "frameAction FRAME_UI_DEACTIVATING_value" );
+				m_aLogger.debug( "frameAction FRAME_UI_DEACTIVATING_value" );
 				break;
 			default:
-				m_logger.info( "frameAction other value" );
+				m_aLogger.debug( "frameAction other value" );
 			}
 	}
 
@@ -589,7 +598,7 @@ public class DispatchIntercept extends ComponentBase
 	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 	 */
 	public void disposing(EventObject arg0) {
-		m_logger.entering("disposing");
+		m_aLogger.entering("disposing");
 		synchronized (m_aMutex) {
 			if (m_bDead)
 				return;

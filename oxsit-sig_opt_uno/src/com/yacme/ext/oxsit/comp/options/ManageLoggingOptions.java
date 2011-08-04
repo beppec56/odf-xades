@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import sun.awt.GlobalCursorManager;
-
-
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.ItemEvent;
 import com.sun.star.awt.XControl;

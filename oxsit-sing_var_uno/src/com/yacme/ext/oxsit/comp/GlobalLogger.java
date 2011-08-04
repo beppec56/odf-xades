@@ -1,30 +1,43 @@
-/*************************************************************************
+/* ***** BEGIN LICENSE BLOCK ********************************************
+ * Version: EUPL 1.1/GPL 3.0
  * 
- *  Copyright 2009 by Giuseppe Castagno beppec56@openoffice.org
- *  
- *  The Contents of this file are made available subject to
- *  the terms of European Union Public License (EUPL) version 1.1
- *  as published by the European Community.
+ * The contents of this file are subject to the EUPL, Version 1.1 or 
+ * - as soon they will be approved by the European Commission - 
+ * subsequent versions of the EUPL (the "Licence");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the EUPL.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  EUPL for more details.
+ * The Original Code is /oxsit-custom_it/src/com/yacme/ext/oxsit/cust_it/comp/security/DocumentSigner_IT.java.
  *
- *  You should have received a copy of the EUPL along with this
- *  program.  If not, see:
- *  https://www.osor.eu/eupl, http://ec.europa.eu/idabc/eupl.
+ * The Initial Developer of the Original Code is
+ * Giuseppe Castagno giuseppe.castagno@acca-esse.it
+ * 
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011
+ * the Initial Developer. All Rights Reserved.
  *
- ************************************************************************/
+ * Contributor(s):
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 3 or later (the "GPL")
+ * in which case the provisions of the GPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of the GPL, and not to allow others to
+ * use your version of this file under the terms of the EUPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the EUPL, or the GPL.
+ *
+ * ***** END LICENSE BLOCK ******************************************** */
 
 package com.yacme.ext.oxsit.comp;
 
-import com.yacme.ext.oxsit.logging.XOX_Logger;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -35,6 +48,7 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.logging.LocalLogFormatter;
+import com.yacme.ext.oxsit.logging.XOX_Logger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.singleton.LoggerParametersAccess;
 
@@ -64,7 +78,7 @@ public class GlobalLogger extends ComponentBase
 	protected static LocalLogFormatter 	m_aLogFileFormatter;
 
 	//logger configuration
-	protected int m_nLogLevel; // not yet used... TODO
+	protected int m_nLogLevel;
 
 	protected static String		m_sName;
 	protected static boolean	m_bEnableInfoLevel = true;
@@ -236,6 +250,13 @@ public class GlobalLogger extends ComponentBase
 					default:
 						m_aLogger.logp(Level.FINE, arg1, arg2, arg3);
 						break;
+					case GlobConstant.m_nLOG_CONFIG:
+						m_aLogger.logp(Level.CONFIG, arg1, arg2, arg3);						
+						break;
+					case GlobConstant.m_nLOG_ALWAYS:
+						if(m_bEnableInfoLevel)
+							m_aLogger.logp(Level.FINER, arg1, arg2, arg3);						
+						break;
 					case GlobConstant.m_nLOG_LEVEL_INFO:
 						if(m_bEnableInfoLevel)
 							m_aLogger.logp(Level.INFO, arg1, arg2, arg3);						
@@ -313,7 +334,6 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void localConfigurationChanged() {
-		// TODO Auto-generated method stub
 	}
 
 	/* (non-Javadoc)
@@ -396,7 +416,6 @@ public class GlobalLogger extends ComponentBase
 	 */
 	@Override
 	public void stopLogging() {
-		// TODO Auto-generated method stub
 		synchronized(m_bLogConfigChanged) {
 			setEnableLogging(false);
 		}

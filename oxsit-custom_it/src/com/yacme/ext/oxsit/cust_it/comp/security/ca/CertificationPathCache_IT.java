@@ -260,7 +260,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame _aFrame, Object arg0)
 			throws IllegalArgumentException, Exception {
-		m_aLogger.log("verifyCertificationPath");
+		m_aLogger.debug("verifyCertificationPath");
 //check for certificate
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
 		if(m_xQc == null)
@@ -522,8 +522,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	@Override
 	public CertificateState verifyCertificateRevocationState(XFrame _aFrame,
 			Object arg1) throws IllegalArgumentException, Exception {
-		// TODO Auto-generated method stub
-		m_aLogger.log("verifyCertificateRevocationState");
+		m_aLogger.debug("verifyCertificateRevocationState");
     	m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
     	m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
 		
@@ -583,7 +582,6 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		if(_newState.getValue() > m_aCertificateState.getValue())
 			m_aCertificateState = _newState;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.cert.XOX_CertificationPathProcedure#getCertificationAutorities()
@@ -646,7 +644,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 							XComponent xCo = aTreeMap.put(
 									xQualCert.getSubjectDisplayName()+xQualCert.getSubjectName(),com);
 							if (xCo != null) {
-								m_aLogger.log("duplicated CA: "+xQualCert.getSubjectDisplayName()+" - "+xQualCert.getSubjectName());
+								m_aLogger.debug("duplicated CA: "+xQualCert.getSubjectDisplayName()+" - "+xQualCert.getSubjectName());
 							}
 						}
 					} catch (CertificateEncodingException e) {

@@ -146,7 +146,7 @@ public class SSCDevice_IT extends ComponentBase
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_aLogger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -159,7 +159,7 @@ public class SSCDevice_IT extends ComponentBase
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService", _sService);
+		m_aLogger.debug("supportsService", _sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals(m_sServiceNames[i]))
 				return true;

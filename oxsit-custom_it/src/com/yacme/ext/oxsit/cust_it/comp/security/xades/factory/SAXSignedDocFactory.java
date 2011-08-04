@@ -115,7 +115,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 		m_xMCF = _xMCF;
 		m_aLogger = new DynamicLogger(this, _context);
 		m_aLogger.enableLogging();
-		m_aLogger.info("ctor", "");
+		m_aLogger.ctor();
 		m_xDocumentStorage = _XDocumentStorage;
 	}
 
@@ -356,7 +356,7 @@ public class SAXSignedDocFactory extends DefaultHandler implements DigiDocFactor
 								+ " CN: " + cn);
 						if (ConvertUtils.isKnownOCSPCert(cn)) {
 							//if(m_logger.isInfoEnabled())
-							m_aLogger.info("Cert: " + cn + " is OCSP responders cert");
+							m_aLogger.debug("Cert: " + cn + " is OCSP responders cert");
 							cid.setType(CertID.CERTID_TYPE_RESPONDER);
 							cval.setType(CertValue.CERTVAL_TYPE_RESPONDER);
 						}

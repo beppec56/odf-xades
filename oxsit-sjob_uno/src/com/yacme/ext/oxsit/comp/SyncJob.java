@@ -1,4 +1,4 @@
-/****** BEGIN LICENSE BLOCK ********************************************
+/* ***** BEGIN LICENSE BLOCK ********************************************
  * Version: EUPL 1.1/GPL 3.0
  * 
  * The contents of this file are subject to the EUPL, Version 1.1 or 
@@ -34,7 +34,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the EUPL, or the GPL.
  *
- * ***** END LICENSE BLOCK ******************************************** */
+ ****** END LICENSE BLOCK *********************************************/
 
 package com.yacme.ext.oxsit.comp;
 
@@ -265,7 +265,7 @@ public class SyncJob extends ComponentBase
 		// Analyze the environment info. This sub list is the only guaranteed
 		// one!
 		if (lEnvironment == null)
-			m_aLogger.log( "lEnvironment is empty" );
+			m_aLogger.debug( "lEnvironment is empty" );
 		else {
 			java.lang.String sEnvType = null;
 			java.lang.String sEventName = null;
@@ -319,7 +319,7 @@ public class SyncJob extends ComponentBase
 					executeOnCloseApp();
 			}
 			else
-				m_aLogger.log("execute", "called with no event ???");
+				m_aLogger.warning("execute", "called with no event ???");
 		}
 		return null;
 	}
@@ -435,10 +435,10 @@ public class SyncJob extends ComponentBase
 		// only clear the status of the corresponding frame
 		//save done, update status of the model
 		if (m_axFrame != null) {
-			m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+			m_aLogger.debug(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
 			String aUrl = m_axModel.getURL();
 			if (aUrl.length() > 0) {
-				m_aLogger.info(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
+				m_aLogger.debug(" model hash: "+Helpers.getHashHex(m_axModel) + " frame hash: " + Helpers.getHashHex(m_axFrame));
 				if(m_axoxSingletonDataAccess != null) {
 					m_aDocSign  = m_axoxSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(m_axModel), null);
 					if(m_aDocSign != null) {
@@ -634,8 +634,7 @@ public class SyncJob extends ComponentBase
 					XMultiServiceFactory.class, m_xServiceManager
 							.createInstanceWithContext( sProviderService, m_xComponentContext ) );
 		} catch (Exception e) {
-			e.printStackTrace();
-			m_aLogger.info( "error !" );
+			m_aLogger.severe(e);
 		}
 		return aConfProvider;
 	}
@@ -682,7 +681,6 @@ public class SyncJob extends ComponentBase
 	 * @see com.sun.star.util.XCloseable#close(boolean)
 	 */
 	public void close(boolean arg0) throws CloseVetoException {
-		// TODO Auto-generated method stub
 		m_aLogger.entering( "close called" );
 	}
 
@@ -692,7 +690,6 @@ public class SyncJob extends ComponentBase
 	 * @see com.sun.star.util.XCloseBroadcaster#addCloseListener(com.sun.star.util.XCloseListener)
 	 */
 	public void addCloseListener(XCloseListener arg0) {
-		// TODO Auto-generated method stub
 		m_aLogger.entering( "addCloseListener called" );
 	}
 
@@ -702,7 +699,6 @@ public class SyncJob extends ComponentBase
 	 * @see com.sun.star.util.XCloseBroadcaster#removeCloseListener(com.sun.star.util.XCloseListener)
 	 */
 	public void removeCloseListener(XCloseListener arg0) {
-		// TODO Auto-generated method stub
 		m_aLogger.entering( "removeCloseListener called" );
 	}
 

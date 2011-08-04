@@ -126,7 +126,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_aLogger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -137,7 +137,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService",_sService);
+		m_aLogger.debug("supportsService",_sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -226,7 +226,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 					return m_axoxChildProc.getCertificationAuthorityState();
 				}
 				else
-					m_aLogger.info("CANNOT execute child");
+					m_aLogger.debug("CANNOT execute child");
 		} catch (ClassCastException e) {
 			m_aLogger.severe(e);
 		} catch (Throwable e) {
@@ -244,7 +244,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			try {
 				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
-				m_aLogger.info("Cache found!");
+				m_aLogger.debug("Cache found!");
 				m_axoxChildProc = 
 					(XOX_CertificationPathProcedure)
 					UnoRuntime.queryInterface(
@@ -252,7 +252,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				return true;
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
-				m_aLogger.info("Cache NOT found!");
+				m_aLogger.debug("Cache NOT found!");
 				//create the object
 				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
@@ -287,7 +287,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 	@Override
 	public CertificationAuthorityState verifyCertificationPath(XFrame _xFrame, Object arg0)
 			throws IllegalArgumentException, Exception {
-		m_aLogger.log("verifyCertificationPath");
+		m_aLogger.debug("verifyCertificationPath");
 		//see if our singleton has the object
 		// grab the certificate and save it
 		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, arg0);
@@ -301,14 +301,14 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 			try {
 				XComponent xComp = xSingletonDataAccess.getUNOComponent(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT);					
 				//yes, grab it and set our component internally
-				m_aLogger.info("Cache found!");
+				m_aLogger.debug("Cache found!");
 				m_axoxChildProc = 
 					(XOX_CertificationPathProcedure)
 					UnoRuntime.queryInterface(
 							XOX_CertificationPathProcedure.class, xComp);
 			} catch (NoSuchElementException ex ) {
 				//no, instantiate it and add to the singleton 
-				m_aLogger.info("Cache NOT found!");
+				m_aLogger.debug("Cache NOT found!");
 				//create the object
 				Object oCertPath = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sCERTIFICATION_PATH_CACHE_SERVICE_IT, m_xCC);
 				//add it the singleton
@@ -336,7 +336,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 				 return m_aLastCAState;
 			}
 			else
-				m_aLogger.info("CANNOT execute child");
+				m_aLogger.debug("CANNOT execute child");
 			//instantiate the cache, init it and add it
 		} catch (ClassCastException ex) {
 			m_aLogger.severe(ex);
@@ -361,7 +361,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 					return m_axoxChildProc.getCertificationAuthoritiesNumber();
 				}
 				else
-					m_aLogger.info("CANNOT execute child");
+					m_aLogger.debug("CANNOT execute child");
 		} catch (ClassCastException e) {
 			m_aLogger.severe(e);
 		} catch (Throwable e) {
@@ -382,7 +382,7 @@ public class CertificationPath_IT extends ComponentBase //help class, implements
 					return m_axoxChildProc.getCertificationAuthorities(_aFrame);
 				}
 				else
-					m_aLogger.info("CANNOT execute child");
+					m_aLogger.warning("CANNOT execute child");
 		} catch (ClassCastException e) {
 			m_aLogger.severe(e);
 		} catch (Throwable e) {

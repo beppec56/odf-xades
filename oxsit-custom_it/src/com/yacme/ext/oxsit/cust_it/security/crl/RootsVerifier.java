@@ -135,10 +135,8 @@ public class RootsVerifier {
 							System.getProperty("file.separator")+
 							ConstantCustomIT.m_sCA_LIST_SIGNED_FILE;
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
 				m_aLogger.severe(e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				m_aLogger.severe(e);
 			}
     }
@@ -156,7 +154,6 @@ public class RootsVerifier {
         } catch (FileNotFoundException ex) {
             m_aLogger.severe("getFingerprint","Errore nella lettura del file delle RootCA: ",ex);
         } catch (CMSException e) {
-            // TODO Auto-generated catch block
         	m_aLogger.severe("getFingerprint","Errore nel CMS delle RootCA: ",e);
         }
 

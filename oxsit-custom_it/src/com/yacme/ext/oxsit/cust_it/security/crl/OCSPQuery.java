@@ -134,8 +134,7 @@ public class OCSPQuery {
 	}
 
     static {
-        Security
-                .addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
     }
 
 	/**

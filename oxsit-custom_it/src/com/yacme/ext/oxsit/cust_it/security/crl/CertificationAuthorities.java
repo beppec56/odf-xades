@@ -448,7 +448,7 @@ public class CertificationAuthorities {
 
     private void trace(String s) {
         if (debug) {
-            m_aLogger.log(s);
+            m_aLogger.debug(s);
         }
     }
 

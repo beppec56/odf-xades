@@ -45,18 +45,13 @@ import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -96,7 +91,6 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.packages.WrongPasswordException;
-import com.sun.star.script.BasicErrorException;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextGraphicObjectsSupplier;
@@ -112,7 +106,6 @@ import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.comp.security.odfdoc.ODFSignedDoc;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.Signature;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
-import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.DigiDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.factory.SAXSignedDocFactory;
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.utils.ConfigManager;
 import com.yacme.ext.oxsit.custom_it.LogJarVersion;
@@ -120,14 +113,12 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
-import com.yacme.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogQueryPIN;
+import com.yacme.ext.oxsit.ooo.ui.MessageASimilarCertExists;
 import com.yacme.ext.oxsit.ooo.ui.MessageAskForSignatureRemoval;
 import com.yacme.ext.oxsit.ooo.ui.MessageError;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSignatureToken;
-import com.yacme.ext.oxsit.ooo.ui.MessageNoTokens;
-import com.yacme.ext.oxsit.ooo.ui.MessageASimilarCertExists;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
 import com.yacme.ext.oxsit.security.PKCS11TokenAttributes;
 import com.yacme.ext.oxsit.security.ReadCerts;
@@ -232,7 +223,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 */
 	@Override
 	public String[] getSupportedServiceNames() {
-		m_aLogger.info("getSupportedServiceNames");
+		m_aLogger.debug("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -243,7 +234,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info("supportsService", _sService);
+		m_aLogger.debug("supportsService", _sService);
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals(m_sServiceNames[i]))
 				return true;
@@ -259,7 +250,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 */
 	@Override
 	public void initialize(Object[] _oObj) throws Exception {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("initialize");
 	}
 
@@ -297,7 +287,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		final String __FUNCTION__ ="removeDocumentSignature: ";
 		boolean bSignatureRemoved = false;
 
-		m_aLogger.info(__FUNCTION__+"UUID: "+_aSignState.getSignatureUUID());
+		m_aLogger.debug(__FUNCTION__+"UUID: "+_aSignState.getSignatureUUID());
 		
 		ODFSignedDoc sdoc = null;
 
@@ -363,7 +353,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							// YES = 2
 							// NO = 3
 							short aret = aMex.executeDialogLocal(aSigner, aSignDate);
-							m_aLogger.log(__FUNCTION__+"returned: "+aret);
+							m_aLogger.debug(__FUNCTION__+"returned: "+aret);
 							//remove it
 							sdoc.removeSignature(i);
 							if(aret == 2) {
@@ -391,7 +381,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
 											XTransactedObject.class, xMetaInfStorage);
 									if (xTransObj != null) {
-										m_aLogger.log(__FUNCTION__+"XTransactedObject exists. Committing...");
+										m_aLogger.debug(__FUNCTION__+"XTransactedObject exists. Committing...");
 										xTransObj.commit();
 									}
 	
@@ -402,7 +392,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									xStreamComp.dispose();
 									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,xDocumentStorage);
 									if (xTransObj != null) {
-										m_aLogger.log(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing...");
+										m_aLogger.debug(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing...");
 										xTransObj.commit();
 									}
 								} catch (InvalidStorageException e1) {
@@ -426,12 +416,12 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								try {
 									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
 									if (xTransObj != null) {
-										m_aLogger.log(__FUNCTION__+"XTransactedObject exists. Committing...");
+										m_aLogger.debug(__FUNCTION__+"XTransactedObject exists. Committing...");
 										xTransObj.commit();
 									}
 									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,xDocumentStorage);
 									if (xTransObj != null) {
-										m_aLogger.log(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing... ");
+										m_aLogger.debug(__FUNCTION__+"XTransactedObject(m_xDocumentStorage) exists. Committing... ");
 										xTransObj.commit();
 									}
 								} catch (InvalidStorageException e1) {
@@ -483,10 +473,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		//init some localized error text
 
 		m_xFrame = xFrame;
-		m_aLogger.log(this.getClass().getName() + "\n\t\tthe url of the document under signature is: " + xDocumentModel.getURL());
+		m_aLogger.debug(this.getClass().getName() + "\n\t\tthe url of the document under signature is: " + xDocumentModel.getURL());
 		LogJarVersion custom_itStart = new LogJarVersion(m_aLogger);
 
-		m_aLogger.log(custom_itStart.getVersion());
+		m_aLogger.debug(custom_itStart.getVersion());
 
 		//		//get the document storage,
 		//		XStorageBasedDocument xDocStorage = (XStorageBasedDocument) UnoRuntime.queryInterface(XStorageBasedDocument.class,
@@ -504,7 +494,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		//start 'real signing
 		XOX_X509Certificate aCert = _aCertArray[0];
 		X509Certificate certChild =  Helpers.getCertificate(aCert);
-		m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+		m_aLogger.debug("cert label: " + aCert.getCertificateAttributes().getLabel());
 //now check if an identical certificate is already present in some signature
 		if(sdoc.countSignatures() != 0) {
 			try {
@@ -531,7 +521,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						// Cancel = 0
 			            short aret = aMex.executeDialogLocal(aSignDate);
 
-//			            m_aLogger.info("returned: "+aret);
+//			            m_aLogger.debug("returned: "+aret);
 			            if(aret == 0) {
 			            	//cancel, abort the signing process, all is left as is
 			            	return;
@@ -562,7 +552,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 		m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
 
-		m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
+		m_aLogger.debug("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
 		PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
 				// device
 				// description
@@ -588,20 +578,20 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			// add a Signature
 			Date d1 = new Date();
 			// add a Signature
-			m_aLogger.log("Prepare ODF signature");
+			m_aLogger.debug("Prepare ODF signature");
 			Signature sig = sdoc.prepareSignature(certChild, null, null, dSigningDate);
 			byte[] sidigest = sig.calculateSignedInfoDigest();
 			Date d2 = new Date();
-			m_aLogger.log("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]");
+			m_aLogger.debug("Preparing complete, time: " + ((d2.getTime() - d1.getTime()) / 1000) + " [sek]");
 			byte[] sigval = null;
 			//JDigiDoc
 			//byte[] sigval = sigFac.sign(sidigest, 0, pin);
 			// user confirmed, check opening the session
 			SecurityManager sm = System.getSecurityManager();
 			if (sm != null) {
-				m_aLogger.info("SecurityManager: " + sm);
+				m_aLogger.debug("SecurityManager: " + sm);
 			} else {
-				m_aLogger.info("no SecurityManager.");
+				m_aLogger.debug("no SecurityManager.");
 			}
 			try {
 				m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
@@ -622,7 +612,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						long privateKeyHandle = m_aHelperPkcs11.findSignatureKeyFromID(aCert.getCertificateAttributes()
 								.getID());
 						//                    .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
-						m_aLogger.log("privateKeyHandle: " + privateKeyHandle);
+						m_aLogger.debug("privateKeyHandle: " + privateKeyHandle);
 						if (privateKeyHandle > 0) {
 
 							//ROB: commented out
@@ -643,7 +633,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							byte[] ddata = encapsulateInDigestInfo(DIGEST_SHA256, sidigest);
 
 							sigval = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, ddata);
-							m_aLogger.log("Finalize signature");
+							m_aLogger.debug("Finalize signature");
 							sig.setSignatureValue(sigval);
 
 							/// logging, only debug
@@ -663,7 +653,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								try {
 									xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
 								} catch (NoSuchElementException e1) {
-									m_aLogger.log("signAsFile", "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
+									m_aLogger.debug("signAsFile", "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
 											+ " does not exist");
 								}
 								//create the file xadessignature.xml
@@ -684,7 +674,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(
 											XTransactedObject.class, xMetaInfStorage);
 									if (xTransObj != null) {
-										m_aLogger.log("XTransactedObject exists. ===================");
+										m_aLogger.debug("XTransactedObject exists. ===================");
 										xTransObj.commit();
 									}
 
@@ -701,7 +691,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class,
 											xDocumentStorage);
 									if (xTransObj != null) {
-										m_aLogger.log("XTransactedObject(m_xDocumentStorage) exists. ===================");
+										m_aLogger.debug("XTransactedObject(m_xDocumentStorage) exists. ===================");
 										xTransObj.commit();
 									}
 
@@ -739,7 +729,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					} catch (Throwable e) {
 						//any exception thrown during signing process comes here
 						//close the pending session
-						m_aLogger.log("Throwable thrown! Closing session.");
+						m_aLogger.debug("Throwable thrown! Closing session.");
 						m_aHelperPkcs11.closeSession();
 						throw (e);
 					}
@@ -1016,14 +1006,14 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 
 			XOX_X509Certificate aCert = _aCertArray[certIDX];
 
-			m_aLogger.log("cert label: " + aCert.getCertificateAttributes().getLabel());
+			m_aLogger.debug("cert label: " + aCert.getCertificateAttributes().getLabel());
 
 			// get the device this was seen on
 			XOX_SSCDevice xSSCD = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, aCert.getSSCDevice());
 
 			m_sPkcs11CryptoLib = xSSCD.getCryptoLibraryUsed();
 
-			m_aLogger.log("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
+			m_aLogger.debug("signDocument with: " + xSSCD.getDescription() + " cryptolib: " + m_sPkcs11CryptoLib);
 			PKCS11TokenAttributes aTka = new PKCS11TokenAttributes(xSSCD.getManufacturer(), // from
 					// device
 					// description
@@ -1034,9 +1024,9 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			try {
 				SecurityManager sm = System.getSecurityManager();
 				if (sm != null) {
-					m_aLogger.info("SecurityManager: " + sm);
+					m_aLogger.debug("SecurityManager: " + sm);
 				} else {
-					m_aLogger.info("no SecurityManager.");
+					m_aLogger.debug("no SecurityManager.");
 				}
 				{
 					m_sPkcs11WrapperLocal = Helpers.getPKCS11WrapperNativeLibraryPath(m_xCC);
@@ -1075,7 +1065,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								if (myPin != null && myPin.length > 0) {
 									// user confirmed, check opening the session
 									byte[] encDigestBytes = null;
-									m_aLogger.log("sign!");
+									m_aLogger.debug("sign!");
 									try {
 										//first get all supported mechanism (needed for logging, debug/tests
 										m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
@@ -1091,7 +1081,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 											long privateKeyHandle = m_aHelperPkcs11.findSignatureKeyFromID(aCert
 													.getCertificateAttributes().getID());
 											//			                                .findSignatureKeyFromCertificateHandle(m_aHelperPkcs11.getTokenHandle());
-											m_aLogger.log("privateKeyHandle: " + privateKeyHandle);
+											m_aLogger.debug("privateKeyHandle: " + privateKeyHandle);
 											if (privateKeyHandle > 0) {
 												encDigestBytes = m_aHelperPkcs11.signDataSinglePart(privateKeyHandle, baSha1);
 											}
@@ -1101,7 +1091,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 										} catch (Throwable e) {
 											//any exception thrown during signing process comes here
 											//close the pending session
-											m_aLogger.log("Throwable thrown! Closing session.");
+											m_aLogger.debug("Throwable thrown! Closing session.");
 											m_aHelperPkcs11.closeSession();
 											throw (e);
 										}
@@ -1253,7 +1243,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		/////////////// for debug only
 		for (int i = 0; i < aPVal.length; i++) {
 			PropertyValue aVal = aPVal[i];
-			m_aLogger.log(Utilities.showPropertyValue(aVal));
+			m_aLogger.debug(Utilities.showPropertyValue(aVal));
 		}
 		///////////////////////////
 		if (aPVal == null || aPVal.length == 0) {
@@ -1287,7 +1277,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			aMex.executeDialogLocal(new String(String.format(m_sErrorNoDocumentType, "Writer")));
 			return false;
 		}
-		m_aLogger.log("document type ok !");
+		m_aLogger.debug("document type ok !");
 
 		//verify if the document has externally linked objects:
 		//It cannot have any
@@ -1409,17 +1399,17 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				m_aLogger.warning("makeTheElementList", "Version missing", e);
 			}
 			if (sVersion.length() > 0) {
-				m_aLogger.log("Version is: " + sVersion); // this should be 1.2 or more
+				m_aLogger.debug("Version is: " + sVersion); // this should be 1.2 or more
 				if (sVersion.equalsIgnoreCase("1.2"))
 					m_nTypeOfDocumentToBeSigned = IS_ODF12;
 			} else {
-				m_aLogger.log("Version is 1.0 or 1.1");
+				m_aLogger.debug("Version is 1.0 or 1.1");
 				m_nTypeOfDocumentToBeSigned = IS_ODF10_OR_11;
 			}
 			String sMediaType = "";
 			try {
 				sMediaType = (String) xPropSet.getPropertyValue("MediaType");
-				m_aLogger.log("main storage media type: " + sMediaType);
+				m_aLogger.debug("main storage media type: " + sMediaType);
 			} catch (UnknownPropertyException e) {
 				m_aLogger.warning("makeTheElementList", "Mediatype missing", e);
 				//no problem if not existent
@@ -1427,7 +1417,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				m_aLogger.warning("makeTheElementList", "Mediatype missing", e);
 			}
 		} else
-			m_aLogger.log("Version does not exists! May be this is not a ODF package?");
+			m_aLogger.debug("Version does not exists! May be this is not a ODF package?");
 
 		//verify if there is a Basic substorage holding the basic script
 		String[] aElements = xDocumentStorage.getElementNames();
