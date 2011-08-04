@@ -36,6 +36,14 @@
 	 */
   interface XOX_SignatureState
   {
+    /** The name of the person/entity who signed
+     */
+    [attribute] string Signer;
+
+    /** The name of the entity who issued the certificate
+     */
+    [attribute] string CertificateIssuer;
+
     /** The date of the signature
      */
     [attribute] string SigningTime;
@@ -60,4 +68,3 @@
   }; }; }; }; };
  
 #endif
-

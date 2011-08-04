@@ -43,6 +43,8 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	private SignatureState	m_eState;
 	private XOX_X509Certificate m_aCert;
 	private String m_sSignintTime;
+	private String m_sSignerName;
+	private String m_sCertificateIssuer;
 
 	/**
 	 * 
@@ -57,8 +59,11 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 		m_aLogger.enableLogging();
 		m_aLogger.ctor();
 		m_eState = SignatureState.NOT_YET_VERIFIED;
+		m_sSignintTime = "??";
+		m_sSignerName = "??";
+		m_sCertificateIssuer = "";
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.sun.star.lang.XServiceInfo#getImplementationName()
 	 */
@@ -202,5 +207,37 @@ implements XServiceInfo, XComponent, XInitialization, XOX_SignatureState {
 	@Override
 	public void setSigningTime(String _signTime) {
 		m_sSignintTime = _signTime;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#getSigner()
+	 */
+	@Override
+	public String getSigner() {
+		return m_sSignerName;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#setSigner(java.lang.String)
+	 */
+	@Override
+	public void setSigner(String _signerName) {
+		m_sSignerName = _signerName;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#getCertificateIssuer()
+	 */
+	@Override
+	public String getCertificateIssuer() {
+		return m_sCertificateIssuer;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.XOX_SignatureState#setCertificateIssuer(java.lang.String)
+	 */
+	@Override
+	public void setCertificateIssuer(String _CertificatIssuer) {
+		m_sCertificateIssuer = _CertificatIssuer;
 	}
 }

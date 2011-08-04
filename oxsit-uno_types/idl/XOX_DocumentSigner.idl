@@ -31,6 +31,7 @@
 #include <com/sun/star/embed/XStorage.idl> 
 #include <com/sun/star/frame/XFrame.idl>
 #include <com/sun/star/frame/XModel.idl>
+#include "XOX_SignatureState.idl"
 #include "CertificateState.idl"
 #include "CertificateStateConditions.idl"
 #include "XOX_X509Certificate.idl"
@@ -49,7 +50,7 @@
 		*/
 	       boolean removeDocumentSignature([in] com::sun::star::frame::XFrame xFrame,
 					       [in] com::sun::star::frame::XModel xTheDocumentModel,
-					       [in] string sSignatureUUID )
+					       [in] com::yacme::ext::oxsit::security::XOX_SignatureState sSignatureState )
 		                     raises( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::Exception );
 
 		/** Call this method to sign the document.<br>
