@@ -1343,6 +1343,25 @@ No = genera nuova firma
 Annulla = esce dalla procedura di firma.</value>
 			</prop>
 		</node>
+		<node oor:name="id_message_signature_removal" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Consenso rimozione firma</value>
+			</prop>
+		</node>
+		<node oor:name="id_the_signature_exists" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Desiderate rimuovere la firma apposta da:
+
+%1$s
+
+in data:
+
+%2$s ?
+
+Premete 'Sì' per rimuovere.
+Premete 'No' per annullare l'operazione.</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

@@ -72,6 +72,7 @@ import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
+import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
 /** Verify a document signatures and the document
  * @author beppe
@@ -391,6 +392,18 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			//(will be handly if we sign with the corresponding private key)
 			xQualCert.setSSCDevice(null);
 			_xSignState.setSignersCerficate(xQualCert);
+			
+			//grab the signer name and set it
+			XOX_X509CertificateDisplay aCertDisplay = 
+				(XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class,xQualCert);
+			
+			if(aCertDisplay != null) {
+				//set the certificate owner
+				_xSignState.setSigner( aCertDisplay.getSubjectDisplayName());	
+				//grab the CA
+				//can be useful
+				_xSignState.setCertificateIssuer(aCertDisplay.getIssuerDisplayName());
+			}
 		} catch (Exception e) {
 			m_aLogger.severe(e);
 		} catch (CertificateEncodingException e) {

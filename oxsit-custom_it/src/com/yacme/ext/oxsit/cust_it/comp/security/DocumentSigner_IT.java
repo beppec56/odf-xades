@@ -123,6 +123,7 @@ import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.ooo.pack.DigitalSignatureHelper;
 import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogQueryPIN;
+import com.yacme.ext.oxsit.ooo.ui.MessageAskForSignatureRemoval;
 import com.yacme.ext.oxsit.ooo.ui.MessageError;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSignatureToken;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoTokens;
@@ -132,6 +133,7 @@ import com.yacme.ext.oxsit.security.PKCS11TokenAttributes;
 import com.yacme.ext.oxsit.security.ReadCerts;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 
@@ -286,15 +288,16 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	}
 
 	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, int, java.lang.Object[])
+	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSigner#removeDocumentSignature(com.sun.star.frame.XFrame, com.sun.star.frame.XModel, com.yacme.ext.oxsit.security.XOX_SignatureState)
 	 */
 	@Override
 	public boolean removeDocumentSignature(XFrame _xFrame, 
-					XModel _xDocumentModel, String _sSignatureUUID)
+					XModel _xDocumentModel, XOX_SignatureState _aSignState)
 			throws IllegalArgumentException, Exception {
 		final String __FUNCTION__ ="removeDocumentSignature: ";
+		boolean bSignatureRemoved = false;
 
-		m_aLogger.info(__FUNCTION__+"UUID: "+_sSignatureUUID);
+		m_aLogger.info(__FUNCTION__+"UUID: "+_aSignState.getSignatureUUID());
 		
 		ODFSignedDoc sdoc = null;
 
@@ -342,18 +345,35 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					
 					//3) try to remove the signature selected,
 					Signature sig = null;
-					boolean foundTheSignatureID = false;
+					boolean bFoundTheSignatureID = false;
 					for (int i = 0; i < sdoc.countSignatures(); i++) {
 						sig = sdoc.getSignature(i);
-						if(sig.getId().equalsIgnoreCase(_sSignatureUUID)) {
+						if(sig.getId().equalsIgnoreCase(_aSignState.getSignatureUUID())) {
 							//found the signature
+							//ask confirmation to remove it
+							//remove only if given OK (YES)
+							//prepare some information for the signature data display.
+							MessageAskForSignatureRemoval	aMex = new MessageAskForSignatureRemoval(_xFrame,m_xMCF,m_xCC);
+							//read the signature date
+							String aSignDate = Helpers.date2string(sig.getSignedProperties().getSigningTime());
+							//grab the certificate
+							//create a new certificate UNO obj, to obtain the method to display the certificate signer
+							String aSigner = _aSignState.getSigner();
+							//retuned:
+							// YES = 2
+							// NO = 3
+							short aret = aMex.executeDialogLocal(aSigner, aSignDate);
+							m_aLogger.log(__FUNCTION__+"returned: "+aret);
 							//remove it
 							sdoc.removeSignature(i);
-							foundTheSignatureID = true;
+							if(aret == 2) {
+								bFoundTheSignatureID = true;
+								bSignatureRemoved = true;
+							}
 							break;
 						}
 					}
-					if(foundTheSignatureID) {
+					if(bFoundTheSignatureID) {
 						//for the time being simply put a signature file without signatures in it
 						//so, open the substorage META-INF from the main storage (e.g. the document)
 						try {
@@ -361,14 +381,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							if(sdoc.countSignatures() > 0) {
 								//create the new file xadessignature.xml
 								try {
-//									//remove the entry in the file
-//									try {
-//										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
-//									} catch (NoSuchElementException e1) {
-//										m_aLogger.debug(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureFileName + "\""
-//												+ " does not exist");
-//									}
-									
 									XStream xTheSignature = xMetaInfStorage.openStreamElement(ConstantCustomIT.m_sSignatureFileName, ElementModes.WRITE);
 									XOutputStream xOutStream = xTheSignature.getOutputStream();
 									//write signature file to the archive
@@ -412,12 +424,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							}
 							else {
 								try {
-//									//remove the xadessignatures.xml entry in the document file
-//									try {
-//										xMetaInfStorage.removeElement(ConstantCustomIT.m_sSignatureFileName);
-//									} catch (NoSuchElementException e1) {
-//										m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureFileName + "\"" + " does not exist",e1);
-//									}
 									XTransactedObject xTransObj = (XTransactedObject) UnoRuntime.queryInterface(XTransactedObject.class, xMetaInfStorage);
 									if (xTransObj != null) {
 										m_aLogger.log(__FUNCTION__+"XTransactedObject exists. Committing...");
@@ -463,7 +469,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			m_aLogger.log(ex, true);
 		}
 		
-		return true;
+		return bSignatureRemoved;
 	}
 	
 	/* (non-Javadoc)
@@ -610,7 +616,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					//it.infocamere.freesigner.gui.DigestSignTask.DigestSigner.encryptDigestAndGetCertificate(certHandle, helper);
 
 					m_aHelperPkcs11.openSession(myPin);
-					//				m_aHelperPkcs11.openSession();
 					try {
 						//now here start the true signature code, we sign the SHA1 sums we goto from
 						//digesting process.

@@ -762,8 +762,10 @@ public class DialogCertTreeBase extends BasicDialog implements
 		return xaCNode;
 	}
 
-	//add a single signature
-	public void addASignatureState(XOX_SignatureState _aSign) {
+	/** add a signature to the GUI elements
+	 * @param _aSign
+	 */
+	protected void addASignatureState(XOX_SignatureState _aSign) {
 		//create the node
 		SignatureTreeElement aSignat = new SignatureTreeElement(m_xContext, m_xMCF);
 		aSignat.initialize();

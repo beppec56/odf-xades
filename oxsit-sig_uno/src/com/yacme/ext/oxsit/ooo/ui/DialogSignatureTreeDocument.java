@@ -302,7 +302,7 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 							XOX_DocumentSigner aDocumentSigner = (XOX_DocumentSigner)UnoRuntime.queryInterface(XOX_DocumentSigner.class, aDocSignerService);
 							
 							if(m_axoxDocumentVerifier != null) {
-								if(aDocumentSigner.removeDocumentSignature(m_xParentFrame,getDocumentModel(), aSignature.getSignatureUUID())) {
+								if(aDocumentSigner.removeDocumentSignature(m_xParentFrame,getDocumentModel(), aSignature)) {
 									//signature removed update internal singleton data
 									//update the GUI elements
 									//reload the signatures:
