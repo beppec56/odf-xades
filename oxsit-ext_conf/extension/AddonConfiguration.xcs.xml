@@ -198,14 +198,14 @@
 					<author>beppec56</author>
 					<desc>true to enable the Level.FINER in logging, used for debugging log</desc>
 				</info>
-				<value>true</value>
+				<value>false</value>
 			</prop>
 			<prop oor:name="EnableConsoleOutput" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
 					<desc>True to enable the Console output</desc>
 				</info>
-				<value>true</value>
+				<value>false</value>
 			</prop>
 			<prop oor:name="EnableFileOutput" oor:type="xs:boolean">
 				<info>
@@ -238,7 +238,7 @@
 						</info>
 					</maxInclusive>				
 				</constraints>
-				<value>3</value>
+				<value>5</value>
 			</prop>
 			<prop oor:name="MaxFileSize" oor:type="xs:int">
 				<info>
@@ -246,18 +246,18 @@
 					<desc>The log file maximum size in bytes, minimum is 1.000 max is 100.000</desc>
 				</info>
 				<constraints>
-					<minInclusive oor:value="1000">
+					<minInclusive oor:value="10000">
 		 				<info>
 							<desc>Specifies the minimum allowed value.</desc>
 						</info>
 					</minInclusive>
-					<maxInclusive oor:value="100000">
+					<maxInclusive oor:value="5000000">
 		 				<info>
 							<desc>Specifies the maximum value allowed.</desc>
 						</info>
 					</maxInclusive>				
 				</constraints>
-				<value>50000</value>
+				<value>500000</value>
 			</prop>
 			<!-- end of logging properties -->
 			<!-- start of SSCD properties -->
