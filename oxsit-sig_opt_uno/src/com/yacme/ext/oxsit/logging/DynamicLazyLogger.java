@@ -44,6 +44,13 @@ public class DynamicLazyLogger implements IDynamicLogger {
 	public void ctor() {
 	}
 
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.logging.IDynamicLogger#config(java.lang.String)
+	 */
+	@Override
+	public void config(String message) {
+	}
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.logging.IDynamicLogger#ctor(java.lang.String)
 	 */
