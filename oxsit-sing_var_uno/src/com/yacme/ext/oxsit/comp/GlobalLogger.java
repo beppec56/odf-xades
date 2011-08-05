@@ -117,7 +117,7 @@ public class GlobalLogger extends ComponentBase
 		configureLogger();
 
 		if(m_bCanLogMyself)
-			m_aLogger.fine("ctor"); //this correspond to the application DEBUG level
+			m_aLogger.config("ctor"); //this correspond to the application DEBUG level
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +134,7 @@ public class GlobalLogger extends ComponentBase
 	@Override
 	public String[] getSupportedServiceNames() {
 		if(m_bCanLogMyself)
-			m_aLogger.info("getSupportedServiceNames");
+			m_aLogger.fine("getSupportedServiceNames");
 		return m_sServiceNames;
 	}
 
@@ -342,7 +342,7 @@ public class GlobalLogger extends ComponentBase
 	@Override
 	public void optionsConfigurationChanged() {
 		synchronized (m_bLogConfigChanged) {
-			m_aLogger.info("setLevel (change config) called");
+			m_aLogger.config("setLevel (change config) called");
 			Level aLev = m_aLogger.getLevel();
 			// protected area to change base elements of configuration			
 			getLoggingConfiguration();

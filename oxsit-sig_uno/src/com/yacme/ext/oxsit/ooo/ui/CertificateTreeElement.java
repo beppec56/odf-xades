@@ -108,7 +108,6 @@ public class CertificateTreeElement extends BaseCertificateTreeElement {
 	//usually called when elemented gets selected
 	public void updateForDisplay() {
 		updateCertificateStates();
-		System.out.println("updateForDisplay");
 	}
 
 	/** specific initialization for certificate

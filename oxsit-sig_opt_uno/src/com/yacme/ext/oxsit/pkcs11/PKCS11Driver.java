@@ -103,9 +103,9 @@ public class PKCS11Driver {
 		// log = out;
 		cryptokiLibrary = cryptokiLib;
 
-		m_aLogger.info("Initializing PKCS11Driver...");
+		m_aLogger.debug("Initializing PKCS11Driver...");
 
-		m_aLogger.info("Trying to connect to PKCS#11 module: '"
+		m_aLogger.config("Trying to connect to PKCS#11 module: '"
 				+ cryptokiLibrary + "' ...");
 		//this strange way of calling
 		//depends from the value returned
@@ -114,7 +114,7 @@ public class PKCS11Driver {
 		else
 			pkcs11Module = PKCS11Connector.connectToPKCS11Module(cryptokiLibrary);							
 
-		m_aLogger.info("connected");
+		m_aLogger.debug("connected");
 
 		initializeLibrary();
 	}
@@ -132,7 +132,7 @@ public class PKCS11Driver {
     public byte[] getDEREncodedCertificate(long certHandle) throws
             PKCS11Exception {
 
-        m_aLogger.log("reading certificate bytes");
+        m_aLogger.debug("reading certificate bytes");
 
         byte[] certBytes = null;
         CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
@@ -152,7 +152,7 @@ public class PKCS11Driver {
      */
     public byte[] getCertificateID(long certHandle) throws PKCS11Exception {
 
-    	m_aLogger.log("reading certificate ID (CKA_ID)");
+    	m_aLogger.debug("reading certificate ID (CKA_ID)");
 
 		byte[] certID = null;
 		CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
@@ -167,7 +167,7 @@ public class PKCS11Driver {
 
     public char[] getCertificateLabel(long certHandle) throws PKCS11Exception {
 
-    	m_aLogger.log("reading certificate Label (CKA_LABEL)");
+    	m_aLogger.debug("reading certificate Label (CKA_LABEL)");
 
 		char[] certLabel = null;
 		CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
@@ -193,7 +193,7 @@ public class PKCS11Driver {
 
         long certKeyHandle = -1L;
 
-        m_aLogger.info("finding all certificates on token ...");
+        m_aLogger.debug("finding all certificates on token ...");
 
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
 
@@ -211,9 +211,9 @@ public class PKCS11Driver {
         pkcs11Module.C_FindObjectsFinal(getSession());
 
         if (availableCertificates == null) {
-            m_aLogger.info("null returned - no certificate key found");
+            m_aLogger.debug("null returned - no certificate key found");
         } else {
-            m_aLogger.info("found " + availableCertificates.length
+            m_aLogger.debug("found " + availableCertificates.length
                         + " certificates");
 
         }
@@ -239,7 +239,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.info("find certificate.");
+        m_aLogger.debug("find certificate.");
 		ByteArrayInputStream as = new ByteArrayInputStream(_aCertificate.getEncoded()); 
 		ASN1InputStream aderin = new ASN1InputStream(as);
 		DERObject ado;
@@ -305,9 +305,9 @@ public class PKCS11Driver {
                 100);
         //maximum of 100 at once
         if (availableCertificates == null || availableCertificates.length == 0) {
-        	m_aLogger.info("null returned - no certificate found");
+        	m_aLogger.log("null returned - no certificate found");
         } else {
-        	m_aLogger.info("found " + availableCertificates.length
+        	m_aLogger.debug("found " + availableCertificates.length
                         + " certificates with matching attributes.");
             for (int i = 0; i < availableCertificates.length; i++) {
                 if (i == 0) { // the first we find, we take as our certificate
@@ -331,24 +331,24 @@ public class PKCS11Driver {
                         if(attributeTemplateListR[0].pValue != null) {
 	                        certificateSN = (byte[]) attributeTemplateListR[0].pValue;
 	                        if(certificateSN != null) {
-	                        	m_aLogger.log("CKA_SERIAL_NUMBER "+Helpers.printHexBytes(certificateSN));
+	                        	m_aLogger.debug("CKA_SERIAL_NUMBER "+Helpers.printHexBytes(certificateSN));
 	                        }
                         }
                         if(attributeTemplateListR[1].pValue != null) {
                         	
                         	attributeTemplateListR[1].pValue.toString();
                         	String aLabel = new String((char[]) attributeTemplateListR[1].pValue);
-	                        	m_aLogger.log("CKA_LABEL '"+aLabel+"'");
+	                        	m_aLogger.debug("CKA_LABEL '"+aLabel+"'");
                         }
                         if(attributeTemplateListR[2].pValue != null) {
 	                        certificateSN = (byte[]) attributeTemplateListR[2].pValue;
 	                        if(certificateSN != null) {
-	                        	m_aLogger.log("CKA_ID "+Helpers.printHexBytes(certificateSN));
+	                        	m_aLogger.debug("CKA_ID "+Helpers.printHexBytes(certificateSN));
 	                        }
                         }
                     }
                 }
-                m_aLogger.info("certificate " + i);
+                m_aLogger.debug("certificate " + i);
             }
         }
         pkcs11Module.C_FindObjectsFinal(getSession());
@@ -375,7 +375,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.info("find certificate from id.");
+        m_aLogger.debug("find certificate from id.");
 
         // now get the certificate with the same ID as the signature key
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
@@ -393,9 +393,9 @@ public class PKCS11Driver {
                 100);
         //maximum of 100 at once
         if (availableCertificates == null) {
-        	m_aLogger.info("null returned - no certificate found");
+        	m_aLogger.debug("null returned - no certificate found");
         } else {
-        	m_aLogger.info("found " + availableCertificates.length
+        	m_aLogger.debug("found " + availableCertificates.length
                         + " certificates with matching ID");
             for (int i = 0; i < availableCertificates.length; i++) {
                 if (i == 0) { // the first we find, we take as our certificate
@@ -405,7 +405,7 @@ public class PKCS11Driver {
                     
                     
                 }
-                m_aLogger.info("certificate " + i);
+                m_aLogger.debug("certificate " + i);
             }
         }
         pkcs11Module.C_FindObjectsFinal(getSession());
@@ -428,7 +428,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("find certificate from label.");
+        m_aLogger.debug("find certificate from label.");
 
         // now get the certificate with the same ID as the signature key
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
@@ -448,14 +448,14 @@ public class PKCS11Driver {
         if (availableCertificates == null) {
         	m_aLogger.log("null returned - no certificate found");
         } else {
-        	m_aLogger.log("found " + availableCertificates.length
+        	m_aLogger.debug("found " + availableCertificates.length
                         + " certificates with matching ID");
             for (int i = 0; i < availableCertificates.length; i++) {
                 if (i == 0) { // the first we find, we take as our certificate
                     certificateHandle = availableCertificates[i];
                     System.out.print("for verification we use ");
                 }
-                m_aLogger.log("certificate " + i);
+                m_aLogger.debug("certificate " + i);
             }
         }
         pkcs11Module.C_FindObjectsFinal(getSession());
@@ -483,7 +483,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("\nFind certificate from signature key handle: "
+        m_aLogger.debug("\nFind certificate from signature key handle: "
                     + signatureKeyHandle);
 
         // first get the ID of the signature key
@@ -495,7 +495,7 @@ public class PKCS11Driver {
                                          attributeTemplateList);
 
         byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
-        m_aLogger.log("ID of signature key: "
+        m_aLogger.debug("ID of signature key: "
                     + Functions.toHexString(keyAndCertificateID));
 
         return findCertificateFromID(keyAndCertificateID);
@@ -523,7 +523,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("Find signature key from certificate with handle: "
+        m_aLogger.debug("Find signature key from certificate with handle: "
                     + certHandle);
 
         // first get the ID of the signature key
@@ -536,7 +536,7 @@ public class PKCS11Driver {
 
         byte[] keyAndCertificateID = (byte[]) attributeTemplateList[0].pValue;
 
-        m_aLogger.log("ID of cert: "
+        m_aLogger.debug("ID of cert: "
                          + Functions.toHexString(keyAndCertificateID));
 
         return findSignatureKeyFromID(keyAndCertificateID);
@@ -556,7 +556,7 @@ public class PKCS11Driver {
         long signatureKeyHandle = findSignatureKeyFromLabel(label);
 
         if (signatureKeyHandle > 0) {
-            m_aLogger.log("\nStarting digest encryption...");
+            m_aLogger.debug("\nStarting digest encryption...");
             encryptedDigest = signDataSinglePart(signatureKeyHandle, digest);
         } else {
             //         we have not found a suitable key, we cannot contiue
@@ -584,7 +584,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("finding signature key with label: '" + label + "'");
+        m_aLogger.debug("finding signature key with label: '" + label + "'");
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
         //CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[1];
 
@@ -604,14 +604,14 @@ public class PKCS11Driver {
         //maximum of 100 at once
 
         if (availableSignatureKeys == null) {
-        	m_aLogger.log("null returned - no signature key found");
+        	m_aLogger.debug("null returned - no signature key found");
         } else {
-        	m_aLogger.log("found " + availableSignatureKeys.length
+        	m_aLogger.debug("found " + availableSignatureKeys.length
                         + " signature keys, picking first.");
             for (int i = 0; i < availableSignatureKeys.length; i++) {
                 if (i == 0) { // the first we find, we take as our signature key
                     signatureKeyHandle = availableSignatureKeys[i];
-                    m_aLogger.log(
+                    m_aLogger.debug(
                                     "for signing we use signature key with handle: "
                                     + signatureKeyHandle);
                 }
@@ -641,7 +641,7 @@ public class PKCS11Driver {
             return -1L;
         }
 
-        m_aLogger.log("finding signature key from id.");
+        m_aLogger.debug("finding signature key from id.");
         CK_ATTRIBUTE[] attributeTemplateList = new CK_ATTRIBUTE[2];
 
         attributeTemplateList[0] = new CK_ATTRIBUTE();
@@ -660,15 +660,15 @@ public class PKCS11Driver {
         //maximum of 100 at once
 
         if (availableSignatureKeys == null) {
-            m_aLogger.log(
+            m_aLogger.debug(
                             "null returned - no signature key found with matching ID");
         } else {
-            m_aLogger.log("found " + availableSignatureKeys.length
+            m_aLogger.debug("found " + availableSignatureKeys.length
                         + " signature keys, picking first.");
             for (int i = 0; i < availableSignatureKeys.length; i++) {
                 if (i == 0) { // the first we find, we take as our signature key
                     signatureKeyHandle = availableSignatureKeys[i];
-                    m_aLogger.log("returning signature key with handle: "
+                    m_aLogger.debug("returning signature key with handle: "
                                 + signatureKeyHandle);
                 }
 
@@ -689,7 +689,7 @@ public class PKCS11Driver {
         if (getSession() == -1L) {
             return;
         }
-        m_aLogger.info("Closing session ...");
+        m_aLogger.debug("Closing session ...");
         pkcs11Module.C_CloseSession(getSession());
         setSession( -1L);
 
@@ -702,13 +702,13 @@ public class PKCS11Driver {
      * @throws Throwable
      */
     public void libFinalize() throws Throwable {
-        m_aLogger.info("finalizing PKCS11 module...");
+        m_aLogger.debug("finalizing PKCS11 module...");
         if(getSession() != -1L) {
         	closeSession();
         }
        // getPkcs11().finalize();
         pkcs11Module.C_Finalize(null);
-        m_aLogger.info("finalized.");
+        m_aLogger.debug("finalized.");
     }
 
     /**
@@ -726,7 +726,7 @@ public class PKCS11Driver {
         // log in as the normal user...
 
         pkcs11Module.C_Login(getSession(), PKCS11Constants.CKU_USER, pwd);
-        m_aLogger.log("User logged into session.");
+        m_aLogger.debug("User logged into session.");
     }
 
     /**
@@ -740,7 +740,7 @@ public class PKCS11Driver {
         }
         // log in as the normal user...
         pkcs11Module.C_Logout(getSession());
-        m_aLogger.info("User logged out.");
+        m_aLogger.debug("User logged out.");
     }
     
     /**
@@ -783,7 +783,7 @@ public class PKCS11Driver {
                     PKCS11Constants.CKF_SERIAL_SESSION, null, null);
 
             setSession(sessionHandle);
-            m_aLogger.info("Session opened.");
+            m_aLogger.debug("Session opened.");
 
         } else {
             m_aLogger.info("No token found!");
@@ -809,7 +809,7 @@ public class PKCS11Driver {
      */
 
     public long[] getTokenList() {
-        m_aLogger.info("\ngetting token list");
+        m_aLogger.debug("\ngetting token list");
         long[] tokenIDs = null;
         //get only slots with a token present
         try {
@@ -818,16 +818,16 @@ public class PKCS11Driver {
             m_aLogger.severe(ex);
         }
         CK_TOKEN_INFO tokenInfo;
-        m_aLogger.info(tokenIDs.length + " m_nTokens found.");
+        m_aLogger.debug(tokenIDs.length + " m_nTokens found.");
         for (int i = 0; i < tokenIDs.length; i++) {
-            m_aLogger.info(i + ") Info for token with handle: " + tokenIDs[i]);
+            m_aLogger.debug(i + ") Info for token with handle: " + tokenIDs[i]);
             tokenInfo = null;
             try {
                 tokenInfo = pkcs11Module.C_GetTokenInfo(tokenIDs[i]);
             } catch (PKCS11Exception ex1) {
                 m_aLogger.severe(ex1);
             }
-            m_aLogger.info(tokenInfo.toString());
+            m_aLogger.debug(tokenInfo.toString());
         }
 
         return tokenIDs;
@@ -854,16 +854,16 @@ public class PKCS11Driver {
             return null;
         }
 
-        m_aLogger.log("Start single part sign operation...");
-        m_aLogger.log("\tData length: " + data.length+", signatureMechanism: "+ this.signatureMechanism.mechanism);
+        m_aLogger.debug("Start single part sign operation...");
+        m_aLogger.debug("\tData length: " + data.length+", signatureMechanism: "+ this.signatureMechanism.mechanism);
 
         pkcs11Module.C_SignInit(getSession(), this.signatureMechanism,
                                 signatureKeyHandle);
 
         if ((data.length > 0) && (data.length <= 128)) {
-        	m_aLogger.log("Signing ...");
+        	m_aLogger.debug("Signing ...");
             signature = pkcs11Module.C_Sign(getSession(), data);
-            m_aLogger.log("FINISHED.");
+            m_aLogger.debug("FINISHED.");
         } else {
         	m_aLogger.log("Error in data length!");
         }
@@ -914,7 +914,7 @@ public class PKCS11Driver {
         //get only slots with a token present
         tokenIDs = pkcs11Module.C_GetSlotList(true);
 
-        //m_aLogger.info(tokenIDs.length + " m_nTokens found.");
+        //m_aLogger.debug(tokenIDs.length + " m_nTokens found.");
 
         return tokenIDs;
     }
@@ -925,9 +925,9 @@ public class PKCS11Driver {
      * @throws PKCS11Exception
      */
     private void initializeLibrary() throws PKCS11Exception {
-        m_aLogger.info("Initializing module ... ");
+        m_aLogger.debug("Initializing module ... ");
         pkcs11Module.C_Initialize(null);
-        m_aLogger.info("initialized.");
+        m_aLogger.debug("initialized.");
     }
 	
     /**
@@ -936,9 +936,9 @@ public class PKCS11Driver {
      * @throws PKCS11Exception
      */
     public void getModuleInfo() throws PKCS11Exception {
-        m_aLogger.info("getting PKCS#11 module info");
+        m_aLogger.config("getting PKCS#11 module info");
         CK_INFO moduleInfo = pkcs11Module.C_GetInfo();
-        m_aLogger.info(moduleInfo.toString());
+        m_aLogger.config(moduleInfo.toString());
     }
 
 
@@ -963,19 +963,19 @@ public class PKCS11Driver {
     public void getMechanismInfo() throws PKCS11Exception {
         CK_MECHANISM_INFO mechanismInfo;
 
-        m_aLogger.info("\ngetting mechanism list...");
+        m_aLogger.debug("\ngetting mechanism list...");
         long[] slotIDs = getTokenList();
         for (int i = 0; i < slotIDs.length; i++) {
-            m_aLogger.info("getting mechanism list for slot " + slotIDs[i]);
+            m_aLogger.debug("getting mechanism list for slot " + slotIDs[i]);
             long[] mechanismIDs = pkcs11Module.C_GetMechanismList(slotIDs[i]);
             for (int j = 0; j < mechanismIDs.length; j++) {
-                m_aLogger.info("mechanism info for mechanism id "
+                m_aLogger.debug("mechanism info for mechanism id "
                             + mechanismIDs[j] + "->"
                             + Functions.mechanismCodeToString(mechanismIDs[j])
                             + ": ");
                 mechanismInfo = pkcs11Module.C_GetMechanismInfo(slotIDs[i],
                         mechanismIDs[j]);
-                m_aLogger.info(mechanismInfo.toString());
+                m_aLogger.debug(mechanismInfo.toString());
             }
         }
 
@@ -987,14 +987,14 @@ public class PKCS11Driver {
 	public void getMechanismInfo(long tokenHandle2) throws PKCS11Exception {
 		CK_MECHANISM_INFO mechanismInfo;
 
-		m_aLogger.info("Getting mechanism list...");
-		m_aLogger.info("getting mechanism list for token " + tokenHandle2);
+		m_aLogger.debug("Getting mechanism list...");
+		m_aLogger.debug("getting mechanism list for token " + tokenHandle2);
 		long[] mechanismIDs = pkcs11Module.C_GetMechanismList(tokenHandle2);
 		for (int j = 0; j < mechanismIDs.length; j++) {
-			m_aLogger.info("mechanism info for mechanism id " + mechanismIDs[j] + "->"
+			m_aLogger.debug("mechanism info for mechanism id " + mechanismIDs[j] + "->"
 					+ Functions.mechanismCodeToString(mechanismIDs[j]) + ": ");
 			mechanismInfo = pkcs11Module.C_GetMechanismInfo(tokenHandle2, mechanismIDs[j]);
-			m_aLogger.info(mechanismInfo.toString());
+			m_aLogger.debug(mechanismInfo.toString());
 		}
 	}	
 

@@ -528,14 +528,14 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 						LinkingStatusListeners MyListener = new LinkingStatusListeners(
 								aListener, aURL, m_aDocumentURL );
 						Listeners.put( aListener, MyListener );
-						m_aLogger.log("addStatusListener, added:",Helpers.getHashHex(aListener)+" "+aURL.Complete);
+						m_aLogger.debug("addStatusListener, added:",Helpers.getHashHex(aListener)+" "+aURL.Complete);
 						// grab the document status
 						grabModel();//update model
 						aListener.statusChanged( prepareImageFeatureState( getImageURL() ) );
 						aListener.statusChanged( prepareTooltipFeatureState( getNewTooltip() ) );
 					}
 					else
-						m_aLogger.log("addStatusListener, already present:",Helpers.getHashHex(aListener)+" "+aURL.Complete);										
+						m_aLogger.debug("addStatusListener, already present:",Helpers.getHashHex(aListener)+" "+aURL.Complete);										
 				}
 			}
 			)).start();
@@ -574,10 +574,10 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 					try {
 						if(Listeners.containsKey( aListener)) {
 							Listeners.remove( aListener );
-							m_aLogger.log("removed a listener");
+							m_aLogger.debug("removed a listener");
 						}
 						else
-							m_aLogger.log("listener does not exists");						
+							m_aLogger.debug("listener does not exists");						
 					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}			

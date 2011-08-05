@@ -226,12 +226,12 @@ public class X509CertRL {
 
 			aQuery.addCertificate(userCert);
 			
-			m_aLogger.log("OCSP request sent for "+userCert.getSubjectDN().toString());
+			m_aLogger.debug("OCSP request sent for "+userCert.getSubjectDN().toString());
 			aQuery.execute();
 
 			int status = aQuery.certStatus(userCert);
 			
-			m_aLogger.log("OSCP query status returned: "+status+ " "+OCSPQuery.reasonText(status));
+			m_aLogger.debug("OSCP query status returned: "+status+ " "+OCSPQuery.reasonText(status));
 
             setCertificateStateConditions(CertificateStateConditions.REVOCATION_CONTROLLED_OK);
 			switch (status) {
@@ -285,7 +285,7 @@ public class X509CertRL {
         	return;
 		} catch (NullPointerException e) {
 //        	m_aLogger.severe(e);
-			m_aLogger.log("OCSP info not found in certificate or error in trying, trying CRL...");
+			m_aLogger.log("OCSP info not found in certificate or error in trying, falling back to CRL...");
         	//got here if no OCSP or an error was found, try with CRL
         	isNotRevokedCRL(_aStatus, userCert, date);
         	return;
@@ -547,7 +547,7 @@ public class X509CertRL {
         	} catch (GeneralSecurityException e) {
             	//if not present, do not download, simply set the right error and exits
         		setCertificateStateConditions(CertificateStateConditions.CRL_CANNOT_BE_ACCESSED);
-        		m_aLogger.log("CA not found");
+        		m_aLogger.info("CA not found");
         		return false;
         	}
         	trace("(01) Inizio download CRL...");

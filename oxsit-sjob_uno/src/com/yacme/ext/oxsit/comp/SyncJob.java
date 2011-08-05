@@ -354,12 +354,12 @@ public class SyncJob extends ComponentBase
 		"user.home",
 		"user.dir" };
 		
-		m_aLogger.log("====================== START of System Property Values ======================");
+		m_aLogger.config("====================== START of System Property Values ======================");
 		for(int i = 0; i < propList.length; i++) {
 			String aPropValue = System.getProperty(propList[i]);
-			m_aLogger.log(propList[i]+": "+aPropValue);
+			m_aLogger.config(propList[i]+": "+aPropValue);
 		}
-		m_aLogger.log("====================== END of System Property Values ======================");
+		m_aLogger.config("====================== END of System Property Values ======================");
 	}
 
 	protected void executeOnStartApp() {
@@ -368,39 +368,39 @@ public class SyncJob extends ComponentBase
 		com.yacme.ext.oxsit.uno_types.LogJarVersion uno_TypeStart =
 			new com.yacme.ext.oxsit.uno_types.LogJarVersion();
 		
-		m_aLogger.log(uno_TypeStart.getVersion());
+		m_aLogger.config(uno_TypeStart.getVersion());
 		
 		com.yacme.ext.oxsit.sjob_uno.LogJarVersion sjob_unoStart = 
 			new com.yacme.ext.oxsit.sjob_uno.LogJarVersion(m_aLogger);
 
-		m_aLogger.log(sjob_unoStart.getVersion());
+		m_aLogger.config(sjob_unoStart.getVersion());
 		
 		com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion sig_opt_unoStart = 
 			new com.yacme.ext.oxsit.sig_opt_uno.LogJarVersion(m_aLogger);
 		
-		m_aLogger.log(sig_opt_unoStart.getVersion());
+		m_aLogger.config(sig_opt_unoStart.getVersion());
 		
 		com.yacme.ext.oxsit.sing_var_uno.LogJarVersion sing_var_unoStart =
 			new com.yacme.ext.oxsit.sing_var_uno.LogJarVersion(m_aLogger);
 		
-		m_aLogger.log(sing_var_unoStart.getVersion());
+		m_aLogger.config(sing_var_unoStart.getVersion());
 		
 		com.yacme.ext.oxsit.sig_uno.LogJarVersion sig_unoStart = 
 			new com.yacme.ext.oxsit.sig_uno.LogJarVersion(m_aLogger);
 		
-		m_aLogger.log(sig_unoStart.getVersion());
+		m_aLogger.config(sig_unoStart.getVersion());
 		
 		//log the java system properties
 		logSystemProperties();
 
 		//we'll need to initialize the security stuff, done once on init.
 		
-/*		m_aLogger.log("os.name: \""+System.getProperty("os.name")+"\"");
-		m_aLogger.log("os.arch: \""+System.getProperty("os.arch")+"\"");
-		m_aLogger.log("os.version: \""+System.getProperty("os.version")+"\"");
+/*		m_aLogger.config("os.name: \""+System.getProperty("os.name")+"\"");
+		m_aLogger.config("os.arch: \""+System.getProperty("os.arch")+"\"");
+		m_aLogger.config("os.version: \""+System.getProperty("os.version")+"\"");
 
-		m_aLogger.log("java.class.path: \""+System.getProperty("java.class.path")+"\"");
-		m_aLogger.log("java.library.path: \""+
+		m_aLogger.config("java.class.path: \""+System.getProperty("java.class.path")+"\"");
+		m_aLogger.config("java.library.path: \""+
 				System.getProperty("java.library.path")+"\"");*/
 		
 		//try to change the java.library.path
@@ -408,7 +408,7 @@ public class SyncJob extends ComponentBase
 			String libPath = System.getProperty("java.library.path");
 			//form the current extension path
 			String m_sExtensionSystemPath = Helpers.getExtensionInstallationSystemPath(m_xComponentContext);
-			m_aLogger.log("extension installed in: " + m_sExtensionSystemPath);
+			m_aLogger.config("extension installed in: " + m_sExtensionSystemPath);
 			libPath = libPath+System.getProperty("path.separator")+m_sExtensionSystemPath;
 			System.setProperty("java.library.path", libPath);
 

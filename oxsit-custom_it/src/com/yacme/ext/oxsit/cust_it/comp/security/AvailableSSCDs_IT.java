@@ -146,7 +146,8 @@ public class AvailableSSCDs_IT extends ComponentBase
 		try {
 			m_sExtensionSystemPath = Helpers
 					.getExtensionInstallationSystemPath(_ctx);
-			m_aLogger.ctor("extension installed in: " + m_sExtensionSystemPath);
+			m_aLogger.ctor();
+			m_aLogger.config("extension installed in: " + m_sExtensionSystemPath);
 		} catch (URISyntaxException e) {
 			m_aLogger.severe("ctor", "", e);
 		} catch (IOException e) {

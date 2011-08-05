@@ -32,16 +32,12 @@ package com.yacme.ext.oxsit.security;
 import iaik.pkcs.pkcs11.TokenException;
 import iaik.pkcs.pkcs11.wrapper.CK_TOKEN_INFO;
 import iaik.pkcs.pkcs11.wrapper.PKCS11Exception;
-//import it.trento.comune.j4sign.pkcs11.PKCS11Signer;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
 
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -52,7 +48,6 @@ import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.logging.DynamicLoggerDialog;
 import com.yacme.ext.oxsit.logging.IDynamicLogger;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSSCDLib;
-import com.yacme.ext.oxsit.ooo.ui.MessageNoTokens;
 import com.yacme.ext.oxsit.pcsc.CardInReaderInfo;
 import com.yacme.ext.oxsit.pkcs11.CertificatePKCS11Attributes;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
@@ -119,14 +114,14 @@ public class ReadCerts {
         this.m_cIr = cIr;
 
         helper = null;
-        m_aLogger.info("Helper Class Loader: "
+        m_aLogger.debug("Helper Class Loader: "
                 + PKCS11Driver.class.getClassLoader());
         try {
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
-            	m_aLogger.info("SecurityManager: " + sm);
+            	m_aLogger.debug("SecurityManager: " + sm);
             } else {
-            	m_aLogger.info("no SecurityManager.");
+            	m_aLogger.debug("no SecurityManager.");
             }
             // setStatus(SIGN_INIT_SESSION, "Accesso alla
             // carta...\n"+SIGN_INIT_SESSION+" "+
@@ -182,7 +177,7 @@ public class ReadCerts {
 			m_nTokens = helper.getTokens();
 			certs = new Hashtable<Integer,Collection<CertificatePKCS11Attributes>>();
 			
-			m_aLogger.info(m_nTokens.length + " token rilevati con la lib "
+			m_aLogger.debug(m_nTokens.length + " token rilevati con la lib "
 					+ cryptokiLib);
 			// confronto tra la stringa reader di pcsc e quelle rilevate con la
 			// libreria da helper,
@@ -197,17 +192,17 @@ public class ReadCerts {
 				// "?");
 
 //FIXME, set the current reader name to the slot name
-				m_aLogger.info("Slot description:"+ readerFromPKCS11);				
+				m_aLogger.debug("Slot description:"+ readerFromPKCS11);				
 					//FIXME the exceptions here need reworking
 					helper.setTokenHandle(m_nTokens[i]);
 					try {
-						m_aLogger.info(i+") Opening session on token with handle "+m_nTokens[i]);
+						m_aLogger.debug(i+") Opening session on token with handle "+m_nTokens[i]);
 						helper.openSession();
 						long[] certHandles = helper.findCertificates();
-						m_aLogger.info("\tExtracting certificates...");
+						m_aLogger.debug("\tExtracting certificates...");
 						Collection certsOnToken = getCertsFromHandles(certHandles);
 						certs.put(new Integer(i), certsOnToken);
-						m_aLogger.info(i+") Closing session on token with handle "+m_nTokens[i]);
+						m_aLogger.debug(i+") Closing session on token with handle "+m_nTokens[i]);
 						helper.closeSession();
 						
 					} catch (CertificateException ex2) {
@@ -278,23 +273,23 @@ public class ReadCerts {
         java.security.cert.X509Certificate javaCert = null;
         CertificateFactory cf = null;
 
-        m_aLogger.info("getCertsFromHandles running ...");
+        m_aLogger.debug("getCertsFromHandles running ...");
         try {
             cf = java.security.cert.CertificateFactory.getInstance("X.509");
         } catch (CertificateException ex) {
-        	m_aLogger.info("getCertsFromHandles CertificateException:"+ex);
+        	m_aLogger.debug("getCertsFromHandles CertificateException:"+ex);
         }
         java.io.ByteArrayInputStream bais = null;
         if (certHandles != null) {
         	Hashtable<Integer, CertificatePKCS11Attributes> certsOnToken = new Hashtable<Integer, CertificatePKCS11Attributes>();
             for (int i = 0; (i < certHandles.length); i++) {
 
-            	m_aLogger.info("Generating certificate " + i + ") with handle: "
+            	m_aLogger.debug("Generating certificate " + i + ") with handle: "
                         + certHandles [i]);
 
                 try {
                     certBytes = helper.getDEREncodedCertificate(certHandles[i]);
-                    m_aLogger.info("Got " + certBytes.length +" bytes.");
+                    m_aLogger.debug("Got " + certBytes.length +" bytes.");
                 	oCertificate = new CertificatePKCS11Attributes();
                 	oCertificate.setCertificateValueDEREncoded(certBytes);
                     bais = new java.io.ByteArrayInputStream(certBytes);
@@ -303,14 +298,14 @@ public class ReadCerts {
                                 .generateCertificate(bais);
                         oCertificate.setCertificateValue(javaCert);
                     } catch (CertificateException ex1) {
-                    	m_aLogger.info("Certificate Exception ex1:" + ex1);
+                    	m_aLogger.debug("Certificate Exception ex1:" + ex1);
                     }
                     //now get the additional certificate attribute from PKCS11 interface
                     oCertificate.setCertificateID(helper.getCertificateID(certHandles[i]));
                     oCertificate.setCertificateLabel(new String(helper.getCertificateLabel(certHandles[i])));
-                    m_aLogger.info(javaCert.getSubjectDN().toString());
+                    m_aLogger.debug(javaCert.getSubjectDN().toString());
                 } catch (PKCS11Exception ex2) {
-                	m_aLogger.info("Certificate Exception ex2:" + ex2);
+                	m_aLogger.log("Certificate Exception ex2:" + ex2);
                 }
                 if(oCertificate != null)
                 	certsOnToken.put(new Integer(i), oCertificate);
@@ -354,9 +349,9 @@ public class ReadCerts {
     	if(helper != null)
 	        try {
 	            helper.libFinalize();
-	            m_aLogger.info("Lib finalized.");
+	            m_aLogger.debug("Lib finalized.");
 	        } catch (Throwable e1) {
-	        	m_aLogger.info("Error finalizing criptoki: " + e1);
+	        	m_aLogger.log("Error finalizing criptoki: " + e1);
 	        }
         helper = null;
     }
