@@ -251,7 +251,7 @@
 							<desc>Specifies the minimum allowed value.</desc>
 						</info>
 					</minInclusive>
-					<maxInclusive oor:value="5000000">
+					<maxInclusive oor:value="100000000">
 		 				<info>
 							<desc>Specifies the maximum value allowed.</desc>
 						</info>

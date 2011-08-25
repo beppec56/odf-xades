@@ -118,7 +118,7 @@ public class ManageLoggingOptions extends ManageOptions  implements XItemListene
 		ArrayOfControls[iter++] = aControl;
 //the file elements, counts and size
 		aControl = 
-			new	SingleControlDescription("LogFileSize", ControlTypeCode.EDIT_TEXT_INT, -1, "MaxFileSize", 100000, 1000, true );
+			new	SingleControlDescription("LogFileSize", ControlTypeCode.EDIT_TEXT_INT, -1, "MaxFileSize", 100000000, 1000, true );
 //set the actionPerformed, for enable/disable
 		//....
 		m_nLogFileSizeTF = iter;
