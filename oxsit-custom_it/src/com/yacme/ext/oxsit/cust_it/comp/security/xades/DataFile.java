@@ -856,8 +856,9 @@ public class DataFile implements Serializable
 	 * Helper method to canonicalize a piece of xml
 	 * @param xml data to be canonicalized
 	 * @return canonicalized xml
+	 * @throws Exception 
 	 */
-	protected byte[] canonicalizeXml(byte[] data) {
+	protected byte[] canonicalizeXml(byte[] data) throws Exception {
 		try {				 
 			CanonicalizationFactory canFac = ConfigManager.
 				instance().getCanonicalizationFactory();
@@ -865,9 +866,10 @@ public class DataFile implements Serializable
 					SignedDoc.CANONICALIZATION_METHOD_20010315);
 			return tmp;
 	   } catch(Exception ex) {
-		   System.out.println("Canonicalizing exception: " + ex);
+		   throw ex;
+//		   System.out.println("Canonicalizing exception: " + ex);
 	   }
-	   return null;
+//	   return null;
 	}
 	
 	/**
