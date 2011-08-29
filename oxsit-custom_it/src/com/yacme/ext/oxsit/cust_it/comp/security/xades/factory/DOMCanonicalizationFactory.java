@@ -3,7 +3,13 @@
  */
 package com.yacme.ext.oxsit.cust_it.comp.security.xades.factory;
 
+import java.io.ByteArrayInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.xml.security.c14n.Canonicalizer;
+import org.w3c.dom.Document;
 
 import com.yacme.ext.oxsit.cust_it.comp.security.xades.SignedDocException;
 
@@ -58,9 +64,31 @@ public class DOMCanonicalizationFactory implements CanonicalizationFactory
         byte[] result = null;
         try {
         	org.apache.xml.security.Init.init();
-            Canonicalizer c14n = Canonicalizer.
-                getInstance("http://www.w3.org/TR/2001/REC-xml-c14n-20010315"); 
-            result = c14n.canonicalize(data);            
+       	
+        	DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+        	dfactory.setNamespaceAware(true);
+        	
+        	//Avoid xml validation.
+        	dfactory.setValidating(false);
+        	dfactory.setFeature("http://xml.org/sax/features/validation", false);
+        	dfactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        	dfactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        	
+        	DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
+        	// this is to throw away all validation warnings
+        	documentBuilder.setErrorHandler(new org.apache.xml.security.utils.IgnoreAllErrorHandler());
+        	
+        	//System.out.println("Before dom parsing");
+        	Document doc = documentBuilder.parse(new ByteArrayInputStream(data));
+        	//System.out.println("After dom parsing");
+        	
+            Canonicalizer c14n = Canonicalizer.getInstance(uri);
+            
+            //System.out.println("Before dom c14n");
+            result = c14n.canonicalizeSubtree(doc);
+            //result = c14n.canonicalize(data);
+            //System.out.println("After dom c14n");
+
         } catch(Exception ex) {
             SignedDocException.handleException(ex, SignedDocException.ERR_CAN_ERROR);
         }

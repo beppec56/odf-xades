@@ -237,6 +237,7 @@ public class ConfigManager {
             if(m_canFac == null) {
                 m_canFac = (CanonicalizationFactory)Class.
                     forName(getProperty("CANONICALIZATION_FACTORY_IMPL")).newInstance();
+                //System.out.println("Config c14n: "+getProperty("CANONICALIZATION_FACTORY_IMPL"));
                 m_canFac.init();
             }
         } catch(SignedDocException ex) {

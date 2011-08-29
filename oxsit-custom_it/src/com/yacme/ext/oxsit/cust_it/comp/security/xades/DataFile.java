@@ -862,8 +862,10 @@ public class DataFile implements Serializable
 		try {				 
 			CanonicalizationFactory canFac = ConfigManager.
 				instance().getCanonicalizationFactory();
+			
 			byte[] tmp = canFac.canonicalize(data, 
 					SignedDoc.CANONICALIZATION_METHOD_20010315);
+			
 			return tmp;
 	   } catch(Exception ex) {
 		   throw ex;

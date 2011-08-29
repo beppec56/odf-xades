@@ -195,6 +195,7 @@ public class ODFDataDescription extends DataFile implements Serializable {
 				setDigestType(DIGEST_TYPE_SHA256);
 				
 				MessageDigest sha = MessageDigest.getInstance("SHA-256");
+				
 				sha.update(canonicalizeXml(inputStreamToByteArray(is)));
 				setDigest(sha.digest());
 			}
