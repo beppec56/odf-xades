@@ -45,6 +45,7 @@
 package com.yacme.ext.oxsit.cust_it.security.crl;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;

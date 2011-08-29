@@ -47,6 +47,7 @@ package com.yacme.ext.oxsit.cust_it.security.crl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -149,7 +150,7 @@ public class CertificationAuthorities {
      * @throws IOException
      *             any error during ZIP file reading
      */
-    public CertificationAuthorities(XStatusIndicator _xStatus, XComponentContext _cc, InputStream is, boolean debug)
+    public CertificationAuthorities(XStatusIndicator _xStatus, XComponentContext _cc, InputStream listIs, InputStream rootIs, boolean debug)
             throws GeneralSecurityException, IOException {
         this(_xStatus,_cc);
         this.setDebug(debug);
@@ -158,15 +159,30 @@ public class CertificationAuthorities {
         ZipInputStream zis = null;
         ByteArrayOutputStream bais = null;
         try {
-            zis = new ZipInputStream(is);
-//            trace("Lettura ZIP stream");
+        	trace("Lettura DigitPA root stream");
+            bais = new ByteArrayOutputStream(4096);
+            int read;
+            while ((read = rootIs.read(bcer, 0, bcer.length)) > -1) {
+                bais.write(bcer, 0, read);
+            }
+            bais.flush();
+            try {
+                addCertificateAuthority(bais.toByteArray());
+            } catch (GeneralSecurityException ge) {
+                trace("Certificato root DigitPA non valido: " + ze.getName()
+                        + " - "+ge.getMessage());
+            }
+            bais.close();
+            
+            
+            trace("Lettura ZIP stream");
+            zis = new ZipInputStream(listIs);
             while ((ze = zis.getNextEntry()) != null) {
                 // lettura singola entry dello zip
                 trace("Lettura ZIP entry " + ze.getName());
 
                 if (!ze.isDirectory()) {
                     bais = new ByteArrayOutputStream(4096);
-                    int read;
                     while ((read = zis.read(bcer, 0, bcer.length)) > -1) {
                         bais.write(bcer, 0, read);
                     }
@@ -180,6 +196,10 @@ public class CertificationAuthorities {
                     bais.close();
                 }
             }
+            
+           
+            
+            
         } catch (IOException ie) {
         	//FIXME may be we can continue on loading the other CAs ?
             trace("Fallita lettura dello ZIP: " + ie.getMessage());
@@ -218,9 +238,9 @@ public class CertificationAuthorities {
      * @throws CMSException 
      * 
      */
-    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc,URL url) throws GeneralSecurityException,
+    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc, URL listUrl, URL rootURL) throws GeneralSecurityException,
             IOException, CMSException {
-        this(statusIndicator, _cc,url, false);
+        this(statusIndicator, _cc, listUrl, rootURL, false);
     }
 
     /**
@@ -240,12 +260,12 @@ public class CertificationAuthorities {
      * @throws IOException
      *             any error during ZIP file reading
      */
-    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc, URL _CmsFileURL, boolean debug)
+    public CertificationAuthorities(XStatusIndicator statusIndicator, XComponentContext _cc, URL _CmsFileURL, URL _RootFileURL, boolean debug)
             throws GeneralSecurityException, IOException, CMSException {
         // da testare!!
         // this(new ZipInputStream(url.openStream()), debug);
 
-        this(statusIndicator, _cc,getCmsInputStream(_CmsFileURL), debug);
+        this(statusIndicator, _cc, getCmsInputStream(_CmsFileURL), _RootFileURL.openStream(), debug);
     }
 
     //ROB duplicato del metodo in VerifyTask, da fattorizzare
@@ -268,6 +288,7 @@ public class CertificationAuthorities {
         }
         return bais;
     }
+    
 
     /**
      * Add the specified CA certificate to CA list: certificate can be coded
@@ -403,7 +424,7 @@ public class CertificationAuthorities {
         if (authorities.containsKey(caName)) {
             return (X509Certificate) authorities.get(caName);
         } else {
-            String errMsg = "CA non presente nella root: " + caName;
+            String errMsg = "CA non presente nelle root: " + caName;
             trace(errMsg);
             throw new GeneralSecurityException(errMsg);
         }

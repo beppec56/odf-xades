@@ -31,6 +31,7 @@ import com.sun.star.ucb.XContent;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.Helpers;
+import com.yacme.ext.oxsit.cust_it.ConstantCustomIT;
 import com.yacme.ext.oxsit.cust_it.security.crl.CertificationAuthorities;
 import com.yacme.ext.oxsit.cust_it.test.ooo.OOoServerInfo;
 
@@ -99,14 +100,20 @@ public class TestCertificateAuthoritiesOOo {
                 	//prepare the file URL
                 	String position = Helpers.getExtensionInstallationPath(xCC);
                 	
-                	URL aURL = new URL(
+                	URL listURL = new URL(
                 			position+System.getProperty("file.separator") + 
 							"ca-list-signed-p7m-it"+ //fixed path, the directory containing the current root zip file
 							System.getProperty("file.separator")+
 							"LISTACER_20090303.zip.p7m"
                 			);
-                
-                	CertificationAuthorities aCert = new CertificationAuthorities(null,xCC,aURL,true);
+                	
+                	URL rootURL= new URL(
+                			position+System.getProperty("file.separator") 
+    						+ System.getProperty("file.separator") 
+    						+ "ca-root-digitpa-it" 
+    						+ System.getProperty("file.separator") + ConstantCustomIT.m_sCA_CNIPA_ROOT);
+                	
+                	CertificationAuthorities aCert = new CertificationAuthorities(null, xCC, listURL, rootURL, true);
             }
         }
         catch(Exception e) {

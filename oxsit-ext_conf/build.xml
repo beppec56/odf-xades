@@ -438,6 +438,8 @@ build-extension
 		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20110110.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20110110.zip.p7m" />
 		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20110422.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20110422.zip.p7m" / -->
 		<copy file="${extension_dir}/ca-list-signed-p7m-it/LISTACER_20110526.zip.p7m" tofile="${extension_dest_dir}/ca-list-signed-p7m-it/LISTACER_20110526.zip.p7m" />
+		<!-- copy digitpa root cert. (Ancestor of list signing certs) -->
+		<copy file="${extension_dir}/ca-root-digitpa-it/DigitPA.cer" tofile="${extension_dest_dir}/ca-root-digitpa-it/DigitPA.cer" />
 
 		<!--- end of subtask -->
 	</target>
