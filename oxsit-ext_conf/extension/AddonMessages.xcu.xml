@@ -1362,6 +1362,21 @@ Premete 'Sì' per rimuovere.
 Premete 'No' per annullare l'operazione.</value>
 			</prop>
 		</node>
+		<node oor:name="id_embedded_objs_present_odt" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Ci sono  oggetti incorporati: 
+
+ %1$s oggetti Draw,
+ %2$s oggetti Impress,
+ %3$s oggetti Calc,
+ %4$s oggetti Math,
+ %5$s oggetti Collegati esternamente.
+
+Gli oggetti incorporati non sono ammessi!
+
+Non potete firmare questo documento.</value>
+			</prop>
+		</node>
 		<!--
 		    Main license of the extension
 		-->

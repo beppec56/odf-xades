@@ -71,6 +71,7 @@ import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.document.XStorageBasedDocument;
+import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.embed.ElementModes;
 import com.sun.star.embed.InvalidStorageException;
 import com.sun.star.embed.StorageWrappedTargetException;
@@ -91,8 +92,11 @@ import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lib.uno.helper.ComponentBase;
 import com.sun.star.packages.WrongPasswordException;
+import com.sun.star.presentation.XPresentationSupplier;
+import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextEmbeddedObjectsSupplier;
 import com.sun.star.text.XTextGraphicObjectsSupplier;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
@@ -117,6 +121,7 @@ import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.DialogQueryPIN;
 import com.yacme.ext.oxsit.ooo.ui.MessageASimilarCertExists;
 import com.yacme.ext.oxsit.ooo.ui.MessageAskForSignatureRemoval;
+import com.yacme.ext.oxsit.ooo.ui.MessageEmbededObjsPresentInTextDocument;
 import com.yacme.ext.oxsit.ooo.ui.MessageError;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSignatureToken;
 import com.yacme.ext.oxsit.pkcs11.PKCS11Driver;
@@ -1238,13 +1243,18 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 * @return
 	 */
 	private boolean verifyTextDocumentBeforeSigning(XFrame _xFrame, XModel _xDocumentModel) {
+		final String __FUNCTION__ = "verifyTextDocumentBeforeSigning: ";
 		//check the filtername
+		
 		PropertyValue[] aPVal = _xDocumentModel.getArgs();
 		/////////////// for debug only
 		for (int i = 0; i < aPVal.length; i++) {
 			PropertyValue aVal = aPVal[i];
-			m_aLogger.debug(Utilities.showPropertyValue(aVal));
+			m_aLogger.debug(__FUNCTION__+Utilities.showPropertyValue(aVal));
 		}
+
+//DEBUG		Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
+
 		///////////////////////////
 		if (aPVal == null || aPVal.length == 0) {
 			m_aLogger.warning("verifyDocumentBeforeSigning", "no opened document task properties, cannot sign");
@@ -1322,10 +1332,146 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			return false;
 		}
 
-		//text sections ok if embedded 
 
-		//then the embedded object, should be all embedded, and if embedded
+		//then the embedded object and/or linked object, should be all embedded, and if embedded
 		//only the right type is allowed
+
+		//no embedded objects Calc, Writer, Math or Draw
+		//at this time
+		XTextEmbeddedObjectsSupplier xTxEmb = (XTextEmbeddedObjectsSupplier) UnoRuntime.queryInterface(
+				XTextEmbeddedObjectsSupplier.class, _xDocumentModel);
+		if (xTxEmb != null) {
+			XNameAccess xNames = xTxEmb.getEmbeddedObjects();
+			if (xNames != null) {
+				//one or more embedded object is present
+				//not allowed at this time !
+				//but we count the object present and their kind:
+				int	nDrawObject = 0;
+				int	nCalcObject = 0;
+				int nImpressObject = 0;
+				int	nMathObject = 0;
+				int nLinkedObject = 0;
+
+//this part if for the time being commented out.
+				//in a successive release the embedded objects can be inserted, provided they don't have any macro and can then be
+				//signed
+
+				String[] sAllNames = xNames.getElementNames();
+				for (int i = 0; i < sAllNames.length; i++) {
+					Object aObj;
+					try {
+						aObj = xNames.getByName(sAllNames[i]);
+						//AnyConverter.getType(aObj).getTypeName();
+
+						XTextContent xTc = (XTextContent) AnyConverter.toObject(XTextContent.class, aObj);
+						XPropertySet xPset = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, xTc);
+						XPropertySetInfo xPsi = xPset.getPropertySetInfo();
+						
+//DEBUG	m_aLogger.debug(__FUNCTION__+Utilities.showPropertiesString(this, xPset));
+						xPsi.getProperties();
+//display name for debug purposes only
+						
+/////////// DEBUG						
+//						if(xPsi.hasPropertyByName("LinkDisplayName")) {
+//							String sTheName = AnyConverter.toString(xPset.getPropertyValue("LinkDisplayName"));
+//							System.out.println(__FUNCTION__+"object name: "+sTheName);
+//							m_aLogger.debug(__FUNCTION__+"object name: "+sTheName);
+//						}
+//						m_aLogger.debug(__FUNCTION__+Utilities.showPropertiesString(this, xPset));
+//						
+/////////// END DEBUG						
+
+						//check if this object is linked somehow
+						if (xPsi.hasPropertyByName("GraphicURL")) {
+							//Linked embedded object are not allowed
+//disabled, gives false results							nLinkedObject++;
+//							continue;
+						}
+						
+						if (xPsi.hasPropertyByName("Model")) {
+							//got the right property, check if Model match
+							XModel	xAmodel = (XModel) AnyConverter.toObject(XModel.class, xPset.getPropertyValue("Model"));
+
+							//check for Writer non done, since in a TextDocument you can't embed another writer document.
+							//it can can be linked though, so see above for links
+							
+							//check for Calc
+							// com.sun.star.sheet.XSpreadsheetDocument
+							XSpreadsheetDocument xaSheet = (XSpreadsheetDocument)UnoRuntime.queryInterface(XSpreadsheetDocument.class, xAmodel);
+							if(xaSheet != null) {
+								//this is a Calc object
+								nCalcObject++;
+								continue;
+							}
+							//check for Draw
+							//com.sun.star.drawing.XDrawPagesSupplier
+							XDrawPagesSupplier xaDraw = (XDrawPagesSupplier)UnoRuntime.queryInterface(XDrawPagesSupplier.class, xAmodel);
+							if(xaDraw != null) {
+								//if we have
+								//com.sun.star.presentation.XPresentationSupplier
+								//is Impress
+								XPresentationSupplier xaPresentation = (XPresentationSupplier)UnoRuntime.queryInterface(XPresentationSupplier.class, xAmodel);
+								if(xaPresentation != null) {
+									nImpressObject++;
+									continue;
+								}
+								else {
+									nDrawObject++;
+									continue;
+								}
+							}
+
+							//is something else -> Math ?
+							nMathObject++;
+
+/////////////DEBUG
+//							Utilities.showInterfaces(this, xAmodel);
+///////// END DEBUG
+						}
+					} catch (NoSuchElementException e1) {
+						m_aLogger.severe(__FUNCTION__+"while looking for GraphicURL and Model property: ", e1);
+					} catch (WrappedTargetException e1) {
+						m_aLogger.severe(__FUNCTION__+"while looking for GraphicURL and Model property: ", e1);
+					} catch (Throwable e1) {
+						m_aLogger.severe(__FUNCTION__+"while looking for GraphicURL and Model property: ", e1);
+					}
+				}
+				
+				m_aLogger.debug(__FUNCTION__, "found: "+
+							nDrawObject+" draw objs, "+
+							nCalcObject+" calc objs, "+
+							nMathObject+" math objs, "+
+							nImpressObject+" impress obj, "+
+							nLinkedObject+" linked objs.");
+				
+				if( nDrawObject != 0 ||
+						nCalcObject != 0 ||
+						nMathObject != 0 ||
+						nImpressObject != 0 ||
+						nLinkedObject != 0 ) {
+
+					//there is one or more object not allowed
+					MessageEmbededObjsPresentInTextDocument aMex = new MessageEmbededObjsPresentInTextDocument(_xFrame, m_xMCF, m_xCC);
+
+					//mex: Ci sono  oggetti incorporati:
+					//     %d oggetti Draw
+					//     %d oggetti Impress
+					//     %d oggetti Calc
+					//     %d oggetti Math
+					//     %d oggetti Collegati esternamente
+					//     Gli oggetti incorporati non sono ammessi!
+					//	   Non potete firmare questo documento.
+					// nome messaggio id_MexEmbedObjsInText (o simile)
+					aMex.executeDialogLocal(nDrawObject, nImpressObject, nCalcObject, nMathObject, nLinkedObject);
+					return false;
+				}
+			}
+		} else {
+			m_aLogger.severe("", "Not found a needed service!");
+			return false;
+		}
+		
+		
 
 		//then the forms, for now no forms are allowed in the text document.
 
@@ -1433,7 +1579,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				return false;
 			}
 		}
-
 		return true;
 	}
 

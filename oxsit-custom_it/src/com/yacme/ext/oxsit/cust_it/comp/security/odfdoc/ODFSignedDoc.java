@@ -411,13 +411,13 @@ public class ODFSignedDoc extends SignedDoc {
 					m_aLogger.log("Type: " + aElm.m_sMediaType + " name: " + aElm.m_stheName + " size: " + aElm.m_nSize);
 					if(!aElm.m_stheName.equalsIgnoreCase(ConstantCustomIT.m_sSignatureFileName)) {
 						if ((aElm.m_sMediaType.equalsIgnoreCase("text/xml") || aElm.m_stheName.endsWith(".xml")) && aElm.m_nSize != 0) {//FIXME: verify what to do in size == 0
-							m_aLogger.log(" Adding an XML file");
+							m_aLogger.debug(" Adding an XML file: "+aElm.m_stheName);
 							//is an xml file
 							ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream, aElm.m_stheName, aElm.m_sMediaType,
 									aElm.m_stheName, ODFDataDescription.CONTENT_ODF_PKG_XML_ENTRY, this);
 							addDataFile(df);
 						} else if (aElm.m_sMediaType.length() == 0 && aElm.m_nSize != 0) {//FIXME: verify what to do in size == 0
-							m_aLogger.log(" Adding a binary file");
+							m_aLogger.debug(" Adding a binary file: "+aElm.m_stheName);
 							ODFDataDescription df = new ODFDataDescription(aElm.m_xInputStream, aElm.m_stheName, aElm.m_sMediaType,
 									aElm.m_stheName, ODFDataDescription.CONTENT_ODF_PKG_BINARY_ENTRY, this);
 							addDataFile(df);

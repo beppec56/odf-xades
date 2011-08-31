@@ -241,7 +241,7 @@ public class Utilities {
 		System.out.println(theMessage);
 	}
 	
-	private static String showPropertiesString(Object caller, XPropertySet xPropSet) {
+	public static String showPropertiesString(Object caller, XPropertySet xPropSet) {
 		String theMessage = "";		
 		if(caller != null)
 			theMessage = theMessage + "\n" + caller.getClass().toString();
