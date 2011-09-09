@@ -211,7 +211,26 @@ public class GlobalLogger extends ComponentBase
 				System.out.println("file logging NOT enabled ");
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("file logging NOT enabled: problem with formatter or file access ");
+				System.out.println("File logging NOT enabled: problem with formatter or file access.");
+				System.out.println("Trying fallback to user home directory..");
+//FIXME: add a fall back to %HOME directory
+				try {
+
+					sFileName = "%h/"+GlobConstant.m_sEXTENSION_IDENTIFIER+".log";
+					m_aLogFileHandl = new FileHandler( sFileName,m_nMaxFileSize,m_nFileRotationCount);
+					m_aLogFileHandl.setLevel(Level.FINEST);
+					m_aLogFileFormatter = new LocalLogFormatter();
+					m_aLogFileHandl.setFormatter(m_aLogFileFormatter);
+					m_aLogger.addHandler(m_aLogFileHandl);
+					System.out.println("Fallback to user home directory succeeded.");					
+				} catch (SecurityException e1) {
+					e1.printStackTrace();
+					System.out.println("file logging NOT enabled ");
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					System.out.println("File logging NOT enabled: problem with formatter or file access.");
+					System.out.println("Fallback to user home directory failed as well !");
+				}				
 			}
 		}
 /*FIXME DEBUG		else System.out.println("file logging NOT enabled ");*/
