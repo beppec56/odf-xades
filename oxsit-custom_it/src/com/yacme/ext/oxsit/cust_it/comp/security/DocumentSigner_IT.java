@@ -1512,7 +1512,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 				return false;
 			}
 		} else {
-			Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
+//			Utilities.showInterfaces(_xDocumentModel, _xDocumentModel);
 			m_aLogger.warning("verifyDocumentBeforeSigning", "Only native Open Document Format for Writer can be signed.");
 			//present a dialog explaining the reason why this can 't be signed
 			MessageError aMex = new MessageError(_xFrame, m_xMCF, m_xCC);

@@ -660,6 +660,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			XComponent aDocComp = aCompLd.loadComponentFromURL("private:factory/swriter", "_blank", 0, loadProps); 
 			XTextDocument aTextDocument = (com.sun.star.text.XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, aDocComp);
 			addCertificateReport(aTextDocument, _xComp);
+			//insert a Header
+			prepareAHeader(aTextDocument, "Certificate Report");			
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
 		}
@@ -1090,8 +1092,6 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
 			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
 			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-			//insert a Header
-			prepareAHeader(_aTextDocument, "Certificate Report");
 			//exit, leave the document opened and unsaved, that's up to the user
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
