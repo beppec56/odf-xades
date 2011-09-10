@@ -652,7 +652,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			PropertyValue[] loadProps = new PropertyValue[2];
 			loadProps[0] = new PropertyValue();
 			loadProps[0].Name = "DocumentTitle";
-			loadProps[0].Value = new String("Certificate report"); 
+			loadProps[0].Value = new String("Stato del certificato"); 
 			loadProps[1] = new PropertyValue();
 			loadProps[1].Name = "Author";
 			loadProps[1].Value = new String("OXSIT signature extension"); 
@@ -661,7 +661,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			XTextDocument aTextDocument = (com.sun.star.text.XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, aDocComp);
 			addCertificateReport(aTextDocument, _xComp);
 			//insert a Header
-			prepareAHeader(aTextDocument, "Certificate Report");			
+			prepareAHeader(aTextDocument, "Stato del certificato");			
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
 		}
@@ -935,14 +935,14 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 			//General certificate section H1
 			//insert a title, Heading level 1
-			insertAHeading(_aTextDocument,xViewCursor, "Certificate Report","Heading 1");
+			insertAHeading(_aTextDocument,xViewCursor, "Stato del certificato","Heading 1");
 			xViewCursor.collapseToEnd();
 			xViewCursor.setString(xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT)+
 			"\r");
 			xViewCursor.collapseToEnd();
 
 			//core certificate element H2
-			insertAHeading(_aTextDocument,xViewCursor, "Certificate Core Elements","Heading 2");
+			insertAHeading(_aTextDocument,xViewCursor, "Elementi principali del certificato","Heading 2");
 
 			//compute all the extensions + 11 other elements
 

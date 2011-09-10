@@ -52,6 +52,7 @@ import com.sun.star.style.XStyleFamiliesSupplier;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextField;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextTable;
 import com.sun.star.text.XTextViewCursor;
@@ -932,7 +933,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}		
 	}
 
-	
 	/** This method sets the text colour of the cell refered to by sCellName to white and inserts
     the string sText in it
 	 */
@@ -983,7 +983,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 		catch (Exception e) {
 			e.printStackTrace();
 		} 
-		
 	}
 
 	/**
@@ -991,9 +990,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 * @param string
 	 */
 	private void insertAHeading(XTextDocument textDocument, XTextViewCursor xViewCursor, String string, String style) {
-		// TODO Auto-generated method stub
-		
-		// TODO Auto-generated method stub
 		//from view cursor get properties
 		try {
 			XText xDocumentText = xViewCursor.getText();
@@ -1009,7 +1005,8 @@ public class DialogCertTreeBase extends BasicDialog implements
 		     xViewCursor.setString(string+"\r");
 		     xViewCursor.collapseToEnd();
 /*		     xViewCursor.setString("\r");
-		     xViewCursor.collapseToEnd();*/
+		     xViewCursor.collapseToEnd();
+*/
 		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );
 
 		     /*		     
@@ -1018,17 +1015,19 @@ public class DialogCertTreeBase extends BasicDialog implements
 		    	 Property[] pr = xf.getProperties();
 		    	 for(int i = 0; i < pr.length;i++)
 		    		 trace(""+pr[i].Name);
-//			     Utilities.showProperties(xViewCursor, xCursorPropertySet);		    	 
-		     }*/
+			     Utilities.showProperties(xViewCursor, xCursorPropertySet);		    	 
+		     }
+*/
 /*		     xCursorPropertySet = (XPropertySet)UnoRuntime.queryInterface(
 			         XPropertySet.class, xModelCursor);	     
-//		     Utilities.showProperties(xModelCursor, xCursorPropertySet);
+		     Utilities.showProperties(xModelCursor, xCursorPropertySet);
 		     sParSt = (String) xCursorPropertySet.getPropertyValue("ParaStyleName");
 		     xCursorPropertySet.setPropertyValue("ParaStyleName", new String("Heading 1") );
 		     xModelCursor.setString(string+"\r");
 		     xModelCursor.collapseToEnd();
 		     xModelCursor.setString("\r");
-		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );*/
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );
+*/
 		     
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
@@ -1037,114 +1036,93 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 	/** This method shows how to create and insert a text table, as well as insert text and formulae
 	   into the cells of the table
-		 * @param xTxCurs 
-		 */
-		protected XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int row, int col)
+	 * @param xTxCurs 
+	 */
+	private XTextTable insertTable(XTextDocument xDoc, XTextCursor xTxCurs, int row, int col)
+	{
+		try 
 		{
-			try 
-			{
-				XMultiServiceFactory xMSF = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, xDoc);
+			XMultiServiceFactory xMSF = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, xDoc);
 
-				//       Object desktop = xMCF.createInstanceWithContext("com.sun.star.frame.Desktop", xCC);
-				// get the remote service manager
-				// query its XDesktop interface, we need the current component
-				//       XDesktop xDesktop = (XDesktop)UnoRuntime.queryInterface(XDesktop.class, desktop);
+			//       Object desktop = xMCF.createInstanceWithContext("com.sun.star.frame.Desktop", xCC);
+			// get the remote service manager
+			// query its XDesktop interface, we need the current component
+			//       XDesktop xDesktop = (XDesktop)UnoRuntime.queryInterface(XDesktop.class, desktop);
 
-				//       XComponent xWriterComponent = xDesktop.getCurrentComponent();
+			//       XComponent xWriterComponent = xDesktop.getCurrentComponent();
 
-				//       XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, xDoc);
+			//       XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, xDoc);
 
-				//       XController xController = xModel.getCurrentController();
-				// the controller gives us the TextViewCursor
-				//       XTextViewCursorSupplier xViewCursorSupplier =
-				//       (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, xController);
-				//       XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
-				//get the main text document
-				XText mxDocText = xDoc.getText();      
+			//       XController xController = xModel.getCurrentController();
+			// the controller gives us the TextViewCursor
+			//       XTextViewCursorSupplier xViewCursorSupplier =
+			//       (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, xController);
+			//       XTextViewCursor xViewCursor = xViewCursorSupplier.getViewCursor();
+			//get the main text document
+			XText mxDocText = xDoc.getText();      
 
-				// Create a new table from the document's factory
-				XTextTable xTable = (XTextTable) UnoRuntime.queryInterface( 
-						XTextTable.class, 
-						xMSF.createInstance(
-								"com.sun.star.text.TextTable" ) );
+			// Create a new table from the document's factory
+			XTextTable xTable = (XTextTable) UnoRuntime.queryInterface( 
+					XTextTable.class, 
+					xMSF.createInstance("com.sun.star.text.TextTable" ) );
 
-				// Specify that we want the table to have 4 rows and 4 columns
-				xTable.initialize( row	, col );
+			// Specify that we want the table to have 4 rows and 4 columns
+			xTable.initialize( row	, col );
 
-				XTextRange xPos = xTxCurs.getStart();//xViewCursor.getStart();		       
-				mxDocText.insertTextContent( xPos, xTable, false);
+			XTextRange xPos = xTxCurs.getStart();//xViewCursor.getStart();		       
+			mxDocText.insertTextContent( xPos, xTable, false);
 
-				// Insert the table into the document
-				// Get an XIndexAccess of the table rows
+			// Insert the table into the document
+			// Get an XIndexAccess of the table rows
 
-				// Access the property set of the first row (properties listed in service description:
-				// com.sun.star.text.TextTableRow)
-				//       XPropertySet xRow = (XPropertySet) UnoRuntime.queryInterface( 
-				//           XPropertySet.class, xRows.getByIndex ( 0 ) );
-				// If BackTransparant is false, then the background color is visible
-				//       xRow.setPropertyValue( "BackTransparent", new Boolean(false));
-				// Specify the color of the background to be dark blue
-				//       xRow.setPropertyValue( "BackColor", new Integer(6710932));
+			// Access the property set of the first row (properties listed in service description:
+			// com.sun.star.text.TextTableRow)
+			//       XPropertySet xRow = (XPropertySet) UnoRuntime.queryInterface( 
+			//           XPropertySet.class, xRows.getByIndex ( 0 ) );
+			// If BackTransparant is false, then the background color is visible
+			//       xRow.setPropertyValue( "BackTransparent", new Boolean(false));
+			// Specify the color of the background to be dark blue
+			//       xRow.setPropertyValue( "BackColor", new Integer(6710932));
 
-				// Access the property set of the whole table
-				       XPropertySet xTableProps = (XPropertySet)UnoRuntime.queryInterface( 
-				           XPropertySet.class, xTable );
+			// Access the property set of the whole table
+			XPropertySet xTableProps = (XPropertySet)UnoRuntime.queryInterface( 
+					XPropertySet.class, xTable );
 
-//				       Utilities.showProperties(xTable, xTableProps);
-				 //set table
-				// We want visible background colors
-				       xTableProps.setPropertyValue( "RepeatHeadline", new Boolean(true));
-				       xTableProps.setPropertyValue( "HeaderRowCount", new Integer(1));
-				       xTableProps.setPropertyValue( "HoriOrient", new Short(com.sun.star.text.HoriOrientation.LEFT));
-				       xTableProps.setPropertyValue( "RelativeWidth", new Short((short)100));
-	//WRONG !			       xTableProps.setPropertyValue( "IsWidthRelative", new Boolean(true));
+			//				       Utilities.showProperties(xTable, xTableProps);
+			//set table
+			// We want visible background colors
+			xTableProps.setPropertyValue( "RepeatHeadline", new Boolean(true));
+			xTableProps.setPropertyValue( "HeaderRowCount", new Integer(1));
+			xTableProps.setPropertyValue( "HoriOrient", new Short(com.sun.star.text.HoriOrientation.LEFT));
+			xTableProps.setPropertyValue( "RelativeWidth", new Short((short)100));
+			//WRONG !			       xTableProps.setPropertyValue( "IsWidthRelative", new Boolean(true));
 
-//				       Utilities.showProperties(xTable, xTableProps);
-				// Set the background colour to light blue
-				//       xTableProps.setPropertyValue( "BackColor", new Integer(13421823));
+			//				       Utilities.showProperties(xTable, xTableProps);
+			// Set the background colour to light blue (test !)
+			//       xTableProps.setPropertyValue( "BackColor", new Integer(13421823));
 
-				// set the text (and text colour) of all the cells in the first row of the table
-				//insert some titles
-				insertIntoCell( "A1", "Element", xTable );
-				insertIntoCell( "B1", "Value", xTable );
-				insertIntoCell( "C1", "Notes", xTable );
-
-				/*       // Insert random numbers into the first this three cells of each
-	       // remaining row
-	       xTable.getCellByName( "A2" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "B2" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "C2" ).setValue( getRandomDouble() );
-
-	       xTable.getCellByName( "A3" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "B3" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "C3" ).setValue( getRandomDouble() );
-
-	       xTable.getCellByName( "A4" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "B4" ).setValue( getRandomDouble() );
-	       xTable.getCellByName( "C4" ).setValue( getRandomDouble() );*/
-
-				// Set the last cell in each row to be a formula that calculates
-				// the sum of the first three cells
-				/*        xTable.getCellByName( "D2" ).setFormula( "sum <A2:C2>" );
-	       xTable.getCellByName( "D3" ).setFormula( "sum <A3:C3>" );
-	       xTable.getCellByName( "D4" ).setFormula( "sum <A4:C4>" );*/
-				return xTable;
-			} 
-			catch (Exception e) 
-			{
-				e.printStackTrace ( System.out );
-			}
-			return null;
+			// set the text (and text colour) of all the cells in the first row of the table
+			//insert some titles
+			insertIntoCell( "A1", "Elemento", xTable );
+			insertIntoCell( "B1", "Valore", xTable );
+			insertIntoCell( "C1", "Commenti", xTable );
+			return xTable;
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace ( System.out );
 		}
+		return null;
+	}
 
 	/** generate a single signature report, the document should be passed as parameter
 	 * @param aTextDocument
 	 * @param _aSign
 	 */
 	private void generateSignatureReport(XTextDocument _aTextDocument, XOX_SignatureState _aSign) {
-
 		try {
 			trimStandardPageStyle(_aTextDocument);
+			_aSign.getSigner();
 //			XOX_X509CertificateDisplay xCeDisp = (XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, m_xQc);
 
 			// get the XModel interface from the component
@@ -1164,162 +1142,64 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 			//General certificate section H1
 			//insert a title, Heading level 1
-			insertAHeading(_aTextDocument,xViewCursor, "Signature Report","Heading 1");
+			insertAHeading(_aTextDocument,xViewCursor, "Stato della firma","Heading 1");
 			xViewCursor.collapseToEnd();
 /*			xViewCursor.setString(xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT)+
 			"\r");
 */			xViewCursor.collapseToEnd();
 
 			//core certificate element H2
-			insertAHeading(_aTextDocument,xViewCursor, "Signature Elements","Heading 2");
+//			insertAHeading(_aTextDocument,xViewCursor, "Signature Elements","Heading 2");
 
 			//compute all the extensions + 11 other elements
 
 			//table with element, 3 columns: name, value, notes
-			XTextTable xTable = insertTable(_aTextDocument, xViewCursor, 13, 3);			
+			XTextTable xTable = insertTable(_aTextDocument, xViewCursor, 6, 3);			
 			xViewCursor.gotoEnd(false);
 
 			int nRow = 2;
-			insertIntoCell("A"+nRow, "1", xTable);
-			nRow++;
-			CertificateElementID iCertEl = CertificateElementID.VERSION;
-			insertIntoCell("A"+nRow, "2", xTable);
-			insertIntoCell("B"+nRow, "3", xTable);
-			insertIntoCell("C"+nRow, "4", xTable);
+			insertIntoCell("A"+nRow, "Validità:", xTable);
+			insertIntoCell("B"+nRow, "b", xTable);
+			insertIntoCell("C"+nRow, "c", xTable);
 			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
 
 			nRow++;
-			iCertEl = CertificateElementID.SERIAL_NUMBER;
-			insertIntoCell("A"+nRow, "5", xTable);
+			insertIntoCell("A"+nRow, "Stato del documento:", xTable);
 			insertIntoCell("B"+nRow, "6", xTable);
 			insertIntoCell("C"+nRow, "7", xTable);
-			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
 			nRow++;
-			iCertEl = CertificateElementID.ISSUER;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getIssuerName(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.NOT_BEFORE;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getNotValidBefore(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.NOT_AFTER;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getNotValidAfter(), xTable);			
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.SUBJECT;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getSubjectName(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.SUBJECT_ALGORITHM;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getSubjectPublicKeyAlgorithm(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.SUBJECT_PUBLIC_KEY;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getSubjectPublicKeyValue(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.THUMBPRINT_SIGNATURE_ALGORITHM;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getSignatureAlgorithm(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.CERTIFICATE_SHA1_THUMBPRINT;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getSHA1Thumbprint(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-//			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-//			nRow++;
-//			iCertEl = CertificateElementID.CERTIFICATE_MD5_THUMBPRINT;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("B"+nRow, xCeDisp.getMD5Thumbprint(), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-			//certificate critical extensions H2
+			insertIntoCell("A"+nRow, "Stato della verifica:", xTable);
+			insertIntoCell("B"+nRow, "aaaa", xTable);
+			insertIntoCell("C"+nRow, "zzzzzz", xTable);
+			nRow++;
+			insertIntoCell("A"+nRow, "Data e ora della firma:", xTable);
+			insertIntoCell("B"+nRow, _aSign.getSigningTime(), xTable);
+			insertIntoCell("C"+nRow, "Data e ora della firma impostate dal firmatario", xTable);
 
 			xViewCursor.gotoEnd(false);
+			
+			insertAHeading(_aTextDocument,xViewCursor, "Riepilogo dati del firmatario","Heading 2");
+			xViewCursor.collapseToEnd();
+			xViewCursor.setString("Informazioni dettagliate sul certificato sono fornite di seguito a questo breve rapporto."+"\r\r");
+			xViewCursor.collapseToEnd();
 
 			nRow = 2;
-			int nRows = 2;
-			String[] sCritExt =  {"crit id vari", "crit id altri id" }; //xCeDisp.getCriticalCertificateExtensionOIDs();
-			if(sCritExt != null) {
-				nRows += sCritExt.length;
-
-				iCertEl = CertificateElementID.CRITICAL_EXTENSION;
-				//Not certificate critical extensions H2
-				insertAHeading(_aTextDocument,xViewCursor, "titolo liv 2","Heading 2");
-
-				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
-				xViewCursor.gotoEnd(false);
-				nRow = 2;
-//				insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//				insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-				//				insertIntoCell("D"+nRow, ""+nRow, xTable);
-
-				//then there are extension marked critical
-				//add the main node
-				//the root node for extensions should see for the aggregate state of all
-				//the critical extensions
-				for(int i=0; i<sCritExt.length;i++) {
-					nRow++;
-					insertIntoCell("A"+nRow, sCritExt[i]+ " cell A", xTable);
-					insertIntoCell("B"+nRow, sCritExt[i]+ " cell B", xTable);
-					insertIntoCell("C"+nRow, sCritExt[i]+ " cell C", xTable);
-				}
-			}
-
-			nRows = 2;
-			String[] sExt = {"id vari", "altri id" }; //xCeDisp.getNotCriticalCertificateExtensionOIDs();
-			if(sExt != null) {
-				nRows += sExt.length;
-
-				//Not certificate critical extensions H2
-				nRow = 2;
-				iCertEl = CertificateElementID.NOT_CRITICAL_EXTENSION;
-				insertAHeading(_aTextDocument,xViewCursor, "titolo 2","Heading 2");
-
-				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
-				xViewCursor.gotoEnd(false);
-
-//				insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//				insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-				//					insertIntoCell("D"+nRow, ""+nRow, xTable);
-
-				//then there are extension marked critical
-				//add the main node
-				//the root node for extensions should see for the aggregate state of all
-				//the critical extensions
-				for(int i=0; i<sExt.length;i++) {
-					nRow++;
-//					insertIntoCell("A"+nRow, xCeDisp.getCertificateExtensionLocalizedName(sExt[i]), xTable);
-//					insertIntoCell("B"+nRow, xCeDisp.getCertificateExtensionValueString(sExt[i]), xTable);
-//					insertIntoCell("C"+nRow, xCeDisp.getCertificateExtensionCommentString(sExt[i]), xTable);
-					//						insertIntoCell("D"+nRow, ""+nRow, xTable);
-				}
-			}
-			//add the certification path
-
-			iCertEl = CertificateElementID.CERTIFICATION_PATH;
-//			insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading 2");
-			xTable = insertTable(_aTextDocument, xViewCursor, 2, 3);
+			xTable = insertTable(_aTextDocument, xViewCursor, 4, 3);
 			xViewCursor.gotoEnd(false);
-			nRow = 2;
-//			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-//			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
+
+			insertIntoCell("A"+nRow, "Firmatario:", xTable);
+			insertIntoCell("B"+nRow, _aSign.getSigner(), xTable);
+			insertIntoCell("C"+nRow, "", xTable);
+			nRow++;
+			insertIntoCell("A"+nRow, "Validità del certificato:", xTable);
+			insertIntoCell("B"+nRow, "", xTable);
+			insertIntoCell("C"+nRow, "", xTable);
+			nRow++;
+			insertIntoCell("A"+nRow, "Stato di revoca del certificato:", xTable);
+			insertIntoCell("B"+nRow, "", xTable);
+			insertIntoCell("C"+nRow, "", xTable);
+		
+			xViewCursor.gotoEnd(false);
 
 			try {
 				//obtain the Display interface
@@ -1361,14 +1241,27 @@ public class DialogCertTreeBase extends BasicDialog implements
 		XPropertySet PropSet = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, StdStyle);
 
 		// changing/getting some properties
-		XText HeaderText = null;
+		XText aText = null;
 
 		try {
 			PropSet.setPropertyValue("HeaderIsOn", new Boolean(true));
 			PropSet.setPropertyValue("FooterIsOn", new Boolean(true));
-			HeaderText = (XText) UnoRuntime.queryInterface(XText.class, PropSet.getPropertyValue("HeaderText"));
-			XTextCursor xTextCursor = (XTextCursor) _xaDoc.getText().createTextCursor();
-			HeaderText.setString(_TheHeader);
+			aText = (XText) UnoRuntime.queryInterface(XText.class, PropSet.getPropertyValue("HeaderText"));
+			aText.setString(_TheHeader);
+//FIXME add the page numbering: page <pagen> of <total_pages> , the current implementation set the numbering type  wrong.
+// need to set property?
+// for the time being a user dedicated format should be used
+//			aText = (XText) UnoRuntime.queryInterface(XText.class, PropSet.getPropertyValue("FooterText"));
+//			aText.setString("Pagina ");
+//			XTextCursor xTextCursor = (XTextCursor) aText.createTextCursor();
+//			XMultiServiceFactory xMSF = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, _xaDoc);
+//
+//			XTextField xPageNumberFld = (XTextField) UnoRuntime.queryInterface(XTextField.class, xMSF.createInstance("com.sun.star.text.textfield.PageNumber"));
+//	          // Insert it at the end of the footer
+//			aText.insertTextContent ( aText.getEnd(), xPageNumberFld, false );
+//			aText.insertString ( aText.getEnd(), " di pagine ", false );
+//			xPageNumberFld = (XTextField) UnoRuntime.queryInterface(XTextField.class, xMSF.createInstance("com.sun.star.text.textfield.PageCount"));
+//			aText.insertTextContent ( aText.getEnd(), xPageNumberFld, false );
 		}
 		catch (Exception e) {
 			m_aLogger.severe(e);
@@ -1393,7 +1286,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			PropertyValue[] loadProps = new PropertyValue[2];
 			loadProps[0] = new PropertyValue();
 			loadProps[0].Name = "DocumentTitle";
-			loadProps[0].Value = new String("Single Signature Report"); 
+			loadProps[0].Value = new String("Stato della firma"); 
 			loadProps[1] = new PropertyValue();
 			loadProps[1].Name = "Author";
 			loadProps[1].Value = new String("OXSIT signature extension"); 
@@ -1403,7 +1296,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//generate the signature report in the document
 			generateSignatureReport(aTextDocument, _aSign);			
 			//insert a Header
-			prepareAHeader(aTextDocument, "Signature Report");
+			prepareAHeader(aTextDocument, "Stato della firma");
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
 		}
