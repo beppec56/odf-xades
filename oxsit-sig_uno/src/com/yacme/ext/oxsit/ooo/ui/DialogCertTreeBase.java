@@ -11,6 +11,7 @@ import com.yacme.ext.oxsit.security.cert.CertificateElementID;
 import com.yacme.ext.oxsit.security.cert.CertificateElementState;
 import com.yacme.ext.oxsit.security.cert.CertificateGraphicDisplayState;
 import com.yacme.ext.oxsit.security.cert.CertificateState;
+import com.yacme.ext.oxsit.security.cert.CertificateStateConditions;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
@@ -70,6 +71,7 @@ import com.yacme.ext.oxsit.ooo.registry.MessageConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.BasicDialog;
 import com.yacme.ext.oxsit.ooo.ui.ControlDims;
 import com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
+import com.yacme.ext.oxsit.options.OptionsParametersAccess;
 
 
 /**
@@ -230,7 +232,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 		}
 		m_aRegAcc.dispose();
 //istantiate the singleton data element
-		
 	}
 
 	public void initializeLocal(String _sName, String _sTitle, int posX, int posY) throws BasicErrorException {
@@ -1142,7 +1143,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 
 			//General certificate section H1
 			//insert a title, Heading level 1
-			insertAHeading(_aTextDocument,xViewCursor, "Stato della firma","Heading 1");
+			insertAHeading(_aTextDocument,xViewCursor, "Analisi della firma di '"+_aSign.getSigner()+"'","Heading 1");
 			xViewCursor.collapseToEnd();
 /*			xViewCursor.setString(xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT)+
 			"\r");
@@ -1156,35 +1157,192 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//table with element, 3 columns: name, value, notes
 			XTextTable xTable = insertTable(_aTextDocument, xViewCursor, 6, 3);			
 			xViewCursor.gotoEnd(false);
+			XOX_X509Certificate aCert = _aSign.getSignersCerficate();
+//obtain the display state
+			
+//point to the strings in l10n
+			MessageConfigurationAccess m_aRegAcc = null;
+			m_aRegAcc = new MessageConfigurationAccess(m_xContext, m_xMCF);
 
+			try {
+
+			String	sValidity= "";
+			
+			switch(_aSign.getState().getValue()) {
+			case SignatureState.OK_value:
+				 sValidity= m_aRegAcc.getStringFromRegistry("err_txt_sign_ok");
+				break;
+			default:
+			case SignatureState.NOT_YET_VERIFIED_value:
+				 sValidity= m_aRegAcc.getStringFromRegistry("err_txt_sign_to_ver");
+			break;
+			case SignatureState.NOT_VALID_value:
+				 sValidity= m_aRegAcc.getStringFromRegistry("err_txt_sign_not_val");
+			break;
+//FIXME: add the strings !
+			case SignatureState.ERR_DIGEST_COMPARE_value:
+				 sValidity= "err_txt_sign_err_dig_comp";
+			break;
+			case SignatureState.ERR_DATA_FILE_NOT_SIGNED_value:
+				 sValidity= "err_txt_sign_err_data_file_not_signed";
+			break;
+			case SignatureState.ERR_SIG_PROP_NOT_SIGNED_value:
+				 sValidity= "err_txt_sign_err_sig_prop_not_signed";
+			break;
+			case SignatureState.ERR_CERT_EXPIRED_value:
+				 sValidity= "err_txt_sign_err_sig_prop_cert_exp";
+			break;
+			case SignatureState.ERR_TIMESTAMP_VERIFY_value:
+				 sValidity= "err_txt_sign_err_sig_prop_time_stamp_verf";
+			break;
+			}
+			sValidity=sValidity.substring(1, sValidity.length());
+			
+			String	sDocuState= "";
+			switch(_aSign.getState().getValue()) {
+			case SignatureState.OK_value:
+				sDocuState = m_aRegAcc.getStringFromRegistry("err_txt_docum_ok");
+				break;
+			case SignatureState.ERR_DATA_FILE_NOT_SIGNED_value:
+			case SignatureState.ERR_DIGEST_COMPARE_value:				
+				sDocuState = m_aRegAcc.getStringFromRegistry("err_txt_docum_mod");
+				break;
+			default:
+				sDocuState = m_aRegAcc.getStringFromRegistry("err_txt_docum_to_ver");
+				break;
+			}
+			sDocuState=sDocuState.substring(1, sDocuState.length());
+			
+			String	sVerifyState= "";
+			OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(m_xContext);
+			boolean bOffLineOperation = xOptionsConfigAccess.getBoolean("OperationOffLine");
+			boolean bDisableOCSPControl = xOptionsConfigAccess.getBoolean("DisableOCSPControl");
+			boolean bDisableCRLControl = xOptionsConfigAccess.getBoolean("DisableCRLControl");
+			xOptionsConfigAccess.dispose();		
+			if(bOffLineOperation)
+				sVerifyState = m_aRegAcc.getStringFromRegistry("err_txt_verf_condt_no_inet");
+			else if(bDisableOCSPControl && bDisableCRLControl)
+				sVerifyState = m_aRegAcc.getStringFromRegistry("err_txt_docum_verf_condt_disb");
+			else
+				sVerifyState = m_aRegAcc.getStringFromRegistry("err_txt_docum_verf_condt_ok");
+			
+			sVerifyState=sVerifyState.substring(1, sVerifyState.length());
+			
+//FIXME these to be added ?
+//			"err_txt_docum_verf_condt_nosig",
+//			"err_txt_docum_verf_condt_nodocu",
+			
 			int nRow = 2;
 			insertIntoCell("A"+nRow, "Validità:", xTable);
-			insertIntoCell("B"+nRow, "b", xTable);
-			insertIntoCell("C"+nRow, "c", xTable);
+			_aSign.getState();
+			
+			insertIntoCell("B"+nRow, sValidity, xTable);
+			insertIntoCell("C"+nRow, "", xTable);
 			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
 
 			nRow++;
 			insertIntoCell("A"+nRow, "Stato del documento:", xTable);
-			insertIntoCell("B"+nRow, "6", xTable);
-			insertIntoCell("C"+nRow, "7", xTable);
+			insertIntoCell("B"+nRow, sDocuState, xTable);
+			insertIntoCell("C"+nRow, "", xTable);
 			nRow++;
 			insertIntoCell("A"+nRow, "Stato della verifica:", xTable);
-			insertIntoCell("B"+nRow, "aaaa", xTable);
-			insertIntoCell("C"+nRow, "zzzzzz", xTable);
+			insertIntoCell("B"+nRow, sVerifyState, xTable);
+			insertIntoCell("C"+nRow, "", xTable);
 			nRow++;
 			insertIntoCell("A"+nRow, "Data e ora della firma:", xTable);
 			insertIntoCell("B"+nRow, _aSign.getSigningTime(), xTable);
 			insertIntoCell("C"+nRow, "Data e ora della firma impostate dal firmatario", xTable);
 
 			xViewCursor.gotoEnd(false);
-			
+
+//////////////////////////////////////
 			insertAHeading(_aTextDocument,xViewCursor, "Riepilogo dati del firmatario","Heading 2");
 			xViewCursor.collapseToEnd();
 			xViewCursor.setString("Informazioni dettagliate sul certificato sono fornite di seguito a questo breve rapporto."+"\r\r");
 			xViewCursor.collapseToEnd();
 
+			String sCertVal = "";			
+			switch(aCert.getCertificateState()) {
+			default:
+			case CertificateState.NOT_VERIFIABLE_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_nover");
+				break;
+			case CertificateState.NOT_YET_VERIFIED_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_noyver");
+				break;
+			case CertificateState.OK_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_ok");
+				break;
+			case CertificateState.EXPIRED_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_exp");
+				break;
+			case CertificateState.REVOKED_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_rev");
+				break;
+			case CertificateState.SUSPENDED_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_suspen");
+				break;
+			case CertificateState.NOT_ACTIVE_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_noact");
+				break;
+			case CertificateState.NOT_COMPLIANT_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_noconf");
+				break;
+			case CertificateState.ERROR_IN_EXTENSION_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_ko_extension");
+				break;
+			case CertificateState.MISSING_EXTENSION_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_miss_ext");
+				break;
+			case CertificateState.CA_CERTIFICATE_SIGNATURE_INVALID_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_ca_sign_invalid");
+				break;
+			case CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_ko_core");
+				break;
+			case CertificateState.MALFORMED_CERTIFICATE_value:
+				sCertVal=m_aRegAcc.getStringFromRegistry("err_txt_cert_no_read");
+				break;
+			}
+			//strip out the control char
+			sCertVal=sCertVal.substring(1, sCertVal.length());
+
+			String sCertRevState = "";
+			switch(aCert.getCertificateStateConditions()) {
+			default:
+			case CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("revocation_not_yet_controlled");
+				break;
+				//the following element will print an empty line
+			case CertificateStateConditions.REVOCATION_CONTROL_NOT_NEEDED_value:
+				sCertRevState="r  ";
+			case CertificateStateConditions.REVOCATION_CONTROLLED_OK_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("revocation_controlled_ok");
+				break;
+			case CertificateStateConditions.REVOCATION_CONTROL_NOT_ENABLED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("revocation_control_not_enabled");
+				break;
+			case CertificateStateConditions.CRL_CANNOT_BE_ACCESSED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("crl_cannot_be_accessed");
+				break;
+			case CertificateStateConditions.CRL_CANNOT_BE_VERIFIED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("crl_cannot_be_verified");
+				break;
+			case CertificateStateConditions.OCSP_CANNOT_BE_ACCESSED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("ocsp_cannot_be_accessed");
+				break;
+			case CertificateStateConditions.INET_ACCESS_NOT_ENABLED_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("inet_access_not_enabled");
+				break;
+			case CertificateStateConditions.INET_ACCESS_ERROR_value:
+				sCertRevState=m_aRegAcc.getStringFromRegistry("inet_access_error");
+				break;
+			}
+//strip out the control char
+			sCertRevState=sCertRevState.substring(1, sCertRevState.length());
+
 			nRow = 2;
-			xTable = insertTable(_aTextDocument, xViewCursor, 4, 3);
+			xTable = insertTable(_aTextDocument, xViewCursor, 5, 3);
 			xViewCursor.gotoEnd(false);
 
 			insertIntoCell("A"+nRow, "Firmatario:", xTable);
@@ -1192,18 +1350,26 @@ public class DialogCertTreeBase extends BasicDialog implements
 			insertIntoCell("C"+nRow, "", xTable);
 			nRow++;
 			insertIntoCell("A"+nRow, "Validità del certificato:", xTable);
-			insertIntoCell("B"+nRow, "", xTable);
+			insertIntoCell("B"+nRow, sCertVal, xTable);
 			insertIntoCell("C"+nRow, "", xTable);
 			nRow++;
 			insertIntoCell("A"+nRow, "Stato di revoca del certificato:", xTable);
-			insertIntoCell("B"+nRow, "", xTable);
+
+			insertIntoCell("B"+nRow, sCertRevState, xTable);
 			insertIntoCell("C"+nRow, "", xTable);
-		
+			nRow++;
+			insertIntoCell("A"+nRow, "Certificato rilasciato da:", xTable);
+			insertIntoCell("B"+nRow, _aSign.getCertificateIssuer(), xTable);
+			insertIntoCell("C"+nRow, "", xTable);
+
 			xViewCursor.gotoEnd(false);
 
+			} catch (com.sun.star.uno.Exception e) {
+				m_aLogger.severe("fillLocalizedString", e);
+			}
+			m_aRegAcc.dispose();
 			try {
 				//obtain the Display interface
-				XOX_X509Certificate aCert = _aSign.getSignersCerficate();
 				XOX_X509CertificateDisplay aDisplay = aCert.getCertificateDisplayObj();
 				XComponent aCeComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, aCert);
 				if(aDisplay != null)
@@ -1437,7 +1603,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 */
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 //		m_aLoggerDialog.entering("keyReleased, on subclass! "+arg0.KeyCode);
 		
 		//if arg0.KeyCode = 773 (key F6), set focus to certificate tree element
@@ -1461,20 +1626,4 @@ public class DialogCertTreeBase extends BasicDialog implements
 	public XModel getDocumentModel() {
 		return m_xDocumentModel;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
-	 */
-/*	@Override
-	public void focusGained(FocusEvent arg0) {
-//		m_aLoggerDialog.entering("focusGained, on subclass!");
-	}*/
-
-	/* (non-Javadoc)
-	 * @see com.sun.star.awt.XFocusListener#focusGained(com.sun.star.awt.FocusEvent)
-	 */
-/*	@Override
-	public void focusLost(FocusEvent arg0) {
-//		m_aLoggerDialog.entering("focusLost, on subclass!");
-	}*/
 }
