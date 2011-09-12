@@ -42,13 +42,16 @@ import com.sun.star.awt.XKeyListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.awt.XWindowPeer;
 import com.sun.star.awt.tree.XTreeExpansionListener;
+import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.BasicErrorException;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
@@ -169,11 +172,11 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 						xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(getDocumentModel()), this);			
 					}
 					catch (ClassCastException e) {
-						e.printStackTrace();
+						m_aLogger.severe(__FUNCTION__," internal class error!",e);
 					} catch (ServiceNotFoundException e) {
-						m_aLogger.severe("ctor",GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+						m_aLogger.severe(__FUNCTION__,GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
 					} catch (NoSuchMethodException e) {
-						m_aLogger.severe("ctor","XOX_SingletonDataAccess missing!",e);
+						m_aLogger.severe(__FUNCTION__,"XOX_SingletonDataAccess missing!",e);
 					}
 					
 					XOX_SignatureState[] aSigStates = 
@@ -278,6 +281,86 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 			m_aLogger.severe("actionPerformed", "", e1);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#reportButtonPressed()
+	 */
+	@Override
+	public void reportButtonPressed() {
+		final String __FUNCTION__ = "reportButtonPressed: ";
+		//check for global functions
+		//get this document resident data (a singleton)
+//check the element type
+		if(m_aTheCurrentlySelectedTreeNode != null) {
+			Object oTreeNodeObject  = m_aTheCurrentlySelectedTreeNode.getDataValue();
+			if(oTreeNodeObject != null) {
+				if(m_aTreeRootNode.equals(m_aTheCurrentlySelectedTreeNode)) {
+					XOX_SingletonDataAccess	  xSingletonDataAccess = null;
+					XOX_DocumentSignaturesState xDocumentSignatures = null;
+					try {
+						xSingletonDataAccess = Helpers.getSingletonDataAccess(m_xContext);
+						m_aLogger.debug(" singleton service data "+Helpers.getHashHex(xSingletonDataAccess) );
+						xDocumentSignatures = xSingletonDataAccess.initDocumentAndListener(Helpers.getHashHex(getDocumentModel()), this);			
+					}
+					catch (ClassCastException e) {
+						m_aLogger.severe(__FUNCTION__," internal class error!",e);
+					} catch (ServiceNotFoundException e) {
+						m_aLogger.severe(__FUNCTION__,GlobConstant.m_sSINGLETON_SERVICE_INSTANCE+" missing!",e);
+					} catch (NoSuchMethodException e) {
+						m_aLogger.severe(__FUNCTION__,"XOX_SingletonDataAccess missing!",e);
+					}
+		
+//generate a report of all the signatures present in this document
+					XOX_SignatureState allStates[] = xDocumentSignatures.getDocumentSignatureStates();
+					
+					if(allStates != null) {
+						try {
+							//prepare an empty writer document						
+							Object oDesktop = m_xMCF.createInstanceWithContext("com.sun.star.frame.Desktop", m_xContext);
+							//insert a title, H1
+							XComponentLoader aCompLd = (XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, oDesktop);
+	
+							// define load properties according to com.sun.star.document.MediaDescriptor
+	
+							/* or simply create an empty array of com.sun.star.beans.PropertyValue structs:
+							    PropertyValue[] loadProps = new PropertyValue[0]
+							 */
+	
+							// the boolean property Hidden tells the office to open a file in hidden mode
+							PropertyValue[] loadProps = new PropertyValue[2];
+							loadProps[0] = new PropertyValue();
+							loadProps[0].Name = "DocumentTitle";
+							loadProps[0].Value = new String("Stato di tutte le firme"); 
+							loadProps[1] = new PropertyValue();
+							loadProps[1].Name = "Author";
+							loadProps[1].Value = new String("OXSIT signature extension");
+							// load
+							XComponent aDocComp = aCompLd.loadComponentFromURL("private:factory/swriter", "_blank", 0, loadProps); 
+							XTextDocument aTextDocument = (com.sun.star.text.XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, aDocComp);
+							//generate the signature report in the document
+							for(int i = 0; i < allStates.length; i++) {
+								generateSignatureReport(aTextDocument, allStates[i]);								
+							}
+							//insert a Header
+							prepareAHeader(aTextDocument, "Stato di tutte le firme");
+						} catch (Throwable e) {
+							m_aLogger.severe(e);
+						}
+					}
+				}
+				else if (oTreeNodeObject instanceof SignatureTreeElement) {
+					//this is a single signature, a document can have more then one present.
+					//generate a report of a single signature
+					// the report for the certificate can be generated with a separate command (see above)
+					SignatureTreeElement aSignat =(SignatureTreeElement)oTreeNodeObject; 
+					XOX_SignatureState aSign = aSignat.get_xSignatureState();
+					generateSignatureReportInWriterDoc(aSign);
+				}
+				else //a different type, may be the super class manages it... 
+					super.reportButtonPressed();
+			}
+		}
+	}	
 
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.ooo.ui.IDialogCertTreeBase#removeButtonPressed()
@@ -512,7 +595,5 @@ public class DialogSignatureTreeDocument extends DialogCertTreeBase
 	 */
 	@Override
 	public void changesOccurred(ChangesEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 }

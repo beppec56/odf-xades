@@ -43,6 +43,7 @@ import com.sun.star.frame.XController;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.NoSuchMethodException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -58,6 +59,7 @@ import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextTable;
 import com.sun.star.text.XTextViewCursor;
 import com.sun.star.text.XTextViewCursorSupplier;
+import com.sun.star.ucb.ServiceNotFoundException;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.Type;
@@ -910,24 +912,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 						}
 					}
 				}
-				else if (oTreeNodeObject instanceof SignatureTreeElement) {
-					//this is a single signature, a document can have more then one present.
-					//generate a report of a single signature
-					// the report for the certificate can be generated with a separate command (see above)
-					SignatureTreeElement aSignat =(SignatureTreeElement)oTreeNodeObject; 
-					XOX_SignatureState aSign = aSignat.get_xSignatureState();
-					generateSignatureReportInWriterDoc(aSign);
-				}
-				else if(m_aTreeRootNode.equals(m_aTheCurrentlySelectedTreeNode)) {
-					System.out.println("This is the root element");
-//generate a report of all the signatures present in this document
-					
-					//retrieve the signatures from the internal global variable
-
-					//report all of them
-					
-					
-				}
 				else
 					m_aLogger.warning("Wrong class type in tree control node data: "+oTreeNodeObject.getClass().getName());
 			}			
@@ -941,20 +925,6 @@ public class DialogCertTreeBase extends BasicDialog implements
 		// Access the XText interface of the cell referred to by sCellName
 		XText xCellText = (XText) UnoRuntime.queryInterface(
 				XText.class, xTable.getCellByName(sCellName));
-
-		// create a text cursor from the cells XText interface
-/*		XTextCursor xCellCursor = xCellText.createTextCursor();
-
-		// Get the property set of the cell's TextCursor
-		XPropertySet xCellCursorProps = (XPropertySet)UnoRuntime.queryInterface(
-				XPropertySet.class, xCellCursor);
-
-		    try {
-        // Set the color of the text to white
-        xCellCursorProps.setPropertyValue("CharColor", new Integer(16777215));
-    } catch (Exception e) {
-        e.printStackTrace(System.out);
-    }*/
 
 		// Set the text in the cell to sText
 		xCellText.setString(sText);
@@ -1005,31 +975,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		     xCursorPropertySet.setPropertyValue("ParaStyleName", new String(style) );
 		     xViewCursor.setString(string+"\r");
 		     xViewCursor.collapseToEnd();
-/*		     xViewCursor.setString("\r");
-		     xViewCursor.collapseToEnd();
-*/
-		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );
-
-		     /*		     
-		     if(xCursorPropertySet != null) {
-		    	 XPropertySetInfo xf = xCursorPropertySet.getPropertySetInfo();
-		    	 Property[] pr = xf.getProperties();
-		    	 for(int i = 0; i < pr.length;i++)
-		    		 trace(""+pr[i].Name);
-			     Utilities.showProperties(xViewCursor, xCursorPropertySet);		    	 
-		     }
-*/
-/*		     xCursorPropertySet = (XPropertySet)UnoRuntime.queryInterface(
-			         XPropertySet.class, xModelCursor);	     
-		     Utilities.showProperties(xModelCursor, xCursorPropertySet);
-		     sParSt = (String) xCursorPropertySet.getPropertyValue("ParaStyleName");
-		     xCursorPropertySet.setPropertyValue("ParaStyleName", new String("Heading 1") );
-		     xModelCursor.setString(string+"\r");
-		     xModelCursor.collapseToEnd();
-		     xModelCursor.setString("\r");
-		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );
-*/
-		     
+		     xCursorPropertySet.setPropertyValue("ParaStyleName", sParSt );		     
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
 		}		
@@ -1120,7 +1066,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 	 * @param aTextDocument
 	 * @param _aSign
 	 */
-	private void generateSignatureReport(XTextDocument _aTextDocument, XOX_SignatureState _aSign) {
+	protected void generateSignatureReport(XTextDocument _aTextDocument, XOX_SignatureState _aSign) {
 		try {
 			trimStandardPageStyle(_aTextDocument);
 			_aSign.getSigner();
@@ -1145,14 +1091,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			//insert a title, Heading level 1
 			insertAHeading(_aTextDocument,xViewCursor, "Analisi della firma di '"+_aSign.getSigner()+"'","Heading 1");
 			xViewCursor.collapseToEnd();
-/*			xViewCursor.setString(xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT)+
-			"\r");
-*/			xViewCursor.collapseToEnd();
-
-			//core certificate element H2
-//			insertAHeading(_aTextDocument,xViewCursor, "Signature Elements","Heading 2");
-
-			//compute all the extensions + 11 other elements
+			xViewCursor.collapseToEnd();
 
 			//table with element, 3 columns: name, value, notes
 			XTextTable xTable = insertTable(_aTextDocument, xViewCursor, 6, 3);			
@@ -1389,7 +1328,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		
 	}
 
-	private void prepareAHeader(XTextDocument _xaDoc, String _TheHeader) {
+	protected void prepareAHeader(XTextDocument _xaDoc, String _TheHeader) {
 		XText xText = (com.sun.star.text.XText) _xaDoc.getText();
 
 		XStyleFamiliesSupplier StyleFam = (XStyleFamiliesSupplier) UnoRuntime.queryInterface(XStyleFamiliesSupplier.class, _xaDoc);
@@ -1434,7 +1373,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 		} 
 	}
 	
-	private void generateSignatureReportInWriterDoc(XOX_SignatureState _aSign) {
+	protected void generateSignatureReportInWriterDoc(XOX_SignatureState _aSign) {
 		//create an empty writer document
 		try {
 			//create a writer empty document
