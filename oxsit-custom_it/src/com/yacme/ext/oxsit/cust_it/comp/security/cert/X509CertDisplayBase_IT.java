@@ -1091,6 +1091,8 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			nRow = 2;
 			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
 			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
+			//get the issuer certificate and print it
+			
 			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
 			//exit, leave the document opened and unsaved, that's up to the user
 		} catch (Throwable e) {
