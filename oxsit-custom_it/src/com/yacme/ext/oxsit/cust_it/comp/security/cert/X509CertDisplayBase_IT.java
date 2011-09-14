@@ -904,19 +904,11 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport(com.sun.star.text.XTextDocument)
-	 */
-	@Override
-	public void addCertificateReport(XTextDocument _aTextDocument, XComponent _xComp)
-	throws IllegalArgumentException, Exception {
-		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComp);
-		if(m_xQc == null)
-			throw (new IllegalArgumentException("com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport wrong argument"));
-
+	private void addASingleCertificateReport(XTextDocument _aTextDocument, XOX_X509Certificate _xCertif, int topLevel) {
+		
 		try {
 			trimStandardPageStyle(_aTextDocument);
-			XOX_X509CertificateDisplay xCeDisp = (XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, m_xQc);
+			XOX_X509CertificateDisplay xCeDisp = (XOX_X509CertificateDisplay)UnoRuntime.queryInterface(XOX_X509CertificateDisplay.class, _xCertif);
 
 			// get the XModel interface from the component
 			XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, _aTextDocument);
@@ -935,14 +927,14 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 			//General certificate section H1
 			//insert a title, Heading level 1
-			insertAHeading(_aTextDocument,xViewCursor, "Stato del certificato","Heading 1");
+			insertAHeading(_aTextDocument,xViewCursor, "Stato del certificato","Heading "+topLevel);
 			xViewCursor.collapseToEnd();
 			xViewCursor.setString(xCeDisp.getCertificateElementCommentString(CertificateElementID.GENERAL_CERTIFICATE_ABSTRACT)+
 			"\r");
 			xViewCursor.collapseToEnd();
 
 			//core certificate element H2
-			insertAHeading(_aTextDocument,xViewCursor, "Elementi principali del certificato","Heading 2");
+			insertAHeading(_aTextDocument,xViewCursor, "Elementi principali del certificato","Heading "+topLevel+1);
 
 			//compute all the extensions + 11 other elements
 
@@ -1031,7 +1023,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 				iCertEl = CertificateElementID.CRITICAL_EXTENSION;
 				//Not certificate critical extensions H2
-				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading 2");
+				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+3));
 
 				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
 				xViewCursor.gotoEnd(false);
@@ -1061,7 +1053,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 				//Not certificate critical extensions H2
 				nRow = 2;
 				iCertEl = CertificateElementID.NOT_CRITICAL_EXTENSION;
-				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading 2");
+				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+3));
 
 				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
 				xViewCursor.gotoEnd(false);
@@ -1083,21 +1075,36 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 				}
 			}
 			//add the certification path
-
-			iCertEl = CertificateElementID.CERTIFICATION_PATH;
-			insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading 2");
-			xTable = insertTable(_aTextDocument, xViewCursor, 2, 3);
-			xViewCursor.gotoEnd(false);
-			nRow = 2;
-			insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
-			insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
-			//get the issuer certificate and print it
-			
-			//			insertIntoCell("D"+nRow, ""+nRow, xTable);
-			//exit, leave the document opened and unsaved, that's up to the user
+			XOX_X509Certificate xCPath = _xCertif.getCertificationPath();
+			if(xCPath != null) {
+				iCertEl = CertificateElementID.CERTIFICATION_PATH;
+				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+1));
+				xTable = insertTable(_aTextDocument, xViewCursor, 2, 3);
+				xViewCursor.gotoEnd(false);
+				nRow = 2;
+				insertIntoCell("A"+nRow, xCeDisp.getCertificateElementLocalizedName(iCertEl), xTable);
+				insertIntoCell("C"+nRow, xCeDisp.getCertificateElementCommentString(iCertEl), xTable);
+				//get the issuer certificate and print it
+				addASingleCertificateReport(_aTextDocument, xCPath,topLevel+1);
+				//exit, leave the document opened and unsaved, that's up to the user
+			}
 		} catch (Throwable e) {
 			m_aLogger.severe(e);
 		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport(com.sun.star.text.XTextDocument)
+	 */
+	@Override
+	public void addCertificateReport(XTextDocument _aTextDocument, XComponent _xComp)
+	throws IllegalArgumentException, Exception {
+		m_xQc = (XOX_X509Certificate)UnoRuntime.queryInterface(XOX_X509Certificate.class, _xComp);
+		if(m_xQc == null)
+			throw (new IllegalArgumentException("com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay#addCertificateReport wrong argument"));
+
+		addASingleCertificateReport(_aTextDocument,m_xQc,1);
 	}
 
 	/* (non-Javadoc)
