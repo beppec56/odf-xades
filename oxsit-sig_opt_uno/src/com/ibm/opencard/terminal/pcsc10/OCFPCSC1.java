@@ -60,7 +60,7 @@ public class OCFPCSC1 {
    */
 	
 	static {
-		System.out.println("Started...");
+		//DEBUG: System.out.println("Started...");
 	}
 	
   public OCFPCSC1() throws PcscException {
