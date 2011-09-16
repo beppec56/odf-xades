@@ -828,9 +828,6 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 	 * @param string
 	 */
 	private void insertAHeading(XTextDocument textDocument, XTextViewCursor xViewCursor, String string, String style) {
-		// TODO Auto-generated method stub
-		
-		// TODO Auto-generated method stub
 		//from view cursor get properties
 		try {
 			XText xDocumentText = xViewCursor.getText();
@@ -934,7 +931,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 			xViewCursor.collapseToEnd();
 
 			//core certificate element H2
-			insertAHeading(_aTextDocument,xViewCursor, "Elementi principali del certificato","Heading "+topLevel+1);
+			insertAHeading(_aTextDocument,xViewCursor, "Elementi principali del certificato","Heading "+(topLevel+1));
 
 			//compute all the extensions + 11 other elements
 
@@ -1023,7 +1020,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 
 				iCertEl = CertificateElementID.CRITICAL_EXTENSION;
 				//Not certificate critical extensions H2
-				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+3));
+				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+2));
 
 				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
 				xViewCursor.gotoEnd(false);
@@ -1053,7 +1050,7 @@ public abstract class X509CertDisplayBase_IT extends ComponentBase //help class,
 				//Not certificate critical extensions H2
 				nRow = 2;
 				iCertEl = CertificateElementID.NOT_CRITICAL_EXTENSION;
-				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+3));
+				insertAHeading(_aTextDocument,xViewCursor, xCeDisp.getCertificateElementLocalizedName(iCertEl),"Heading "+(topLevel+2));
 
 				xTable = insertTable(_aTextDocument, xViewCursor, nRows, 3);
 				xViewCursor.gotoEnd(false);
