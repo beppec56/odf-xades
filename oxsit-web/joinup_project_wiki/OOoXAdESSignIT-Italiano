@@ -1,0 +1,33 @@
+Questo file contiene la pagina wiki descrittiva in italiano:
+
+Title:
+
+OOoXAdESSignIT (Italiano)
+
+poi la pagina wiki, in plain text:
+
+<h2>
+	Una estensione di OpenOffice.org, per firmare digitalmente i documenti nativi OpenOffice.org secondo lo standard italiano. &Egrave; sofware libero <abbr title="Free/Libre and Open Source Software">(FLOSS)</abbr>.</h2>
+<p>OOoXAdESSignIT (familiarmente OXSIT) &egrave; un&#39;estensione di <a href="http://www.openoffice.org/it" target="_blank" title="Apre in nuova pagina">Apache OpenOffice</a>, cio&egrave; un modulo software aggiuntivo per la nota suite Open Source di automazione ufficio.</p>
+<p>Si propone di gestire la firma digitale (sottoscrizione, verifica, marcatura temporale) secondo la specifica XAdES (XML Advanced Electronic Signatures), consentendo di produrre documenti legalmente validi secondo la legge italiana.</p>
+<p>Apache OpenOffice contiene gi&agrave; una funzione di firma, che per&ograve; segue le pi&ugrave; generali specifiche <abbr>XMLSig</abbr>; XAdES &egrave; una particolare specializzazione di XMLSig pensata per l&#39;utilizzo nell&#39;ambito della sottoscrizione di documenti digitali XML secondo la normativa europea.</p>
+<p>L&#39;ente che emana le regole tecniche per l&#39;informatica nella PA (ma anche spesso per tutti gli altri settori) in Italia, il <a href="http://www.cnipa.gov.it/site/it-IT" target="_blank" title="Centro Nazionale per l'Informatica nella Pubblica Amministrazione (apre in nuova pagina)">CNIPA</a>, ha ammesso XAdES come formato legale di firma nel 2006, assieme a PKCS7 e PDF.</p>
+<p>La firma digitale appare anche nei draft di <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office" target="_blank" title="OASIS Open Document Format for Office Applications (OpenDocument) (apre in nuova pagina)">ODF 1.2</a>, e questo progetto prevede di mantenere un costante allineamento anche a questo riguardo.</p>
+<p>Dato che l&#39;utilizzo di token crittografici e certificati qualificati &egrave; necessario per realizzare firme elettroniche di elevata attendibilit&agrave;, un&#39;attenzione speciale &egrave; rivolta al supporto dei cosiddetti <abbr title="Secure Signature Creation Devices">SSCD</abbr>, dispositivi sicuri per la creazione della firma come le Smart Cards che si stanno diffondendo capillarmente in Europa.</p>
+<p>Inizialmente saranno gestiti i token PKCS11, preservando per&ograve; la generalit&agrave; di approccio necessaria ad integrare facilmente altre specifiche quale ad esempio PKCS15.</p>
+<p>Per la parte crittografica ci si avvarr&agrave; dell&#39;esperienza maturata in progetti come j4sign, opensignpdf e OpenSC.</p>
+<p>Si ritiene poi particolarmente importante fornire un&#39;interfaccia ad un tempo semplice e &quot;di garanzia&quot;, che permetta all&#39;utente di controllare strettamente e rigorosamente gli aspetti pi&ugrave; delicati dei processi di sottoscrizione e verifica.</p>
+<p>A questo scopo l&#39;interfaccia grafica utente (UI, User Interface) &egrave; integrata nell&#39;interfaccia funzionale standard di OpenOffice.org.</p>
+<p>Sono fornite in forma grafica le indicazioni su elementi o stati critici sia della procedura di firma che della procedura di verifica.</p>
+<p>Giuseppe Castagno (giuseppe dot castagno at acca-esse dot it)<br />
+	Roberto Resoli (roberto dot resoli at gmail dot com)</p>
+<h4>
+	Nelle mailing list potete utilizzare indifferentemente italiano o inglese.</h4>
+<h4>
+	Sono disponibili la lista in lingua italiana per la discussione della funzionalit&agrave; di firma digitale in Apache OpenOffice a questo indirizzo web: (fill me in!!)</h4>
+<h5>
+	<a href="http://localhost/en/index.html">English version</a></h5>
+<h5>
+	<a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Torna al progetto</a></h5>
+<h4>
+	Concesso in licenza a norma dell&#39;<a href="http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1" target="_blank" title="European Union Public License (apre in nuova pagina)">EUPL v.1.1</a>, oppure (a vostra scelta) <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank" title="General Public License (apre in nuova pagina)">GPLv3.</a>. Contenuto testuale delle pagine Wiki e documentazione scritta concessi in licenza in accordo a <a href="http://creativecommons.org/it" target="_blank" title="Apre in una nuova pagina">Creative Commons</a> <a href="http://creativecommons.org/licenses/by-sa/2.5/it/" target="_blank" title="Apre in nuova pagina">Attribuzione-Condividi allo stesso modo 2.5 Italia</a> (<a href="http://creativecommons.org/licenses/by-sa/2.5/it/legalcode" target="_blank" title="Apre in nuova pagina">licenza integrale</a>). &nbsp;</h4>
