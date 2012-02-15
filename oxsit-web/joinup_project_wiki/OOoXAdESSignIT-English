@@ -1,0 +1,30 @@
+This file contains the wiki English description page
+
+Title:
+
+OOoXAdESSignIT (English)
+
+wiki page follows, in plain text:
+
+<p><a href="../wiki/oooxadessignit-italiano">Italian version</a></p>
+<p>This page is a work in progress; in the meanwhile see <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Description</a>. )</p>
+<h2>
+	An OpenOffice.org extension to digitally sign OpenOffice.org native document according to Italian standard procedure. It&#39;s Free/Libre and Open Source Sofware.</h2>
+<p>OOoXAdESSignIT (friendly name: <abbr title="OooXadesSignIT">OXSIT</abbr>) is an <a href="http://www.openoffice.org/" target="_blank" title="Open a new page">OpenOffice.org</a> extension, that is, a pluggable software module for the popular office automation suite.</p>
+<p>The goal is to manage electronic signatures (signing, verifying, timestamping) according to the <abbr title="XML Advanced Electronic Signatures">XAdES</abbr> specification, making the user able to produce legally valid documents according to the Italian law.</p>
+<p>OpenOffice.org already provides a digital signature functionality, but following the more general XMLSig specification; XAdES is a particular specialization of XMLSig for human-readable digital document signature, complying with European Union rules.</p>
+<p><a href="http://www.digitpa.gov.it/" target="_blank" title="Apre in nuova pagina">DigitPA</a> (formerly <a href="http://www.cnipa.gov.it/site/it-IT" target="_blank" title="Centro Nazionale per l'Informatica nella Pubblica Amministrazione (apre in nuova pagina)">CNIPA</a>) is the source of technical regulations for the Information Technology in Italy (for the Public Administration primarily, but often also for all the other sectors). In 2006 the then CNIPA admitted XAdES among the legally valid digital signature formats, along with PKCS7 and PDF.</p>
+<p>Digital Signature appears also in the <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office" target="_blank" title="OASIS Open Document Format for Office Applications (OpenDocument) (open a new page)">ODF 1.2</a> drafts, which started to be implemented in OpenOffice.org from version 3.0, and this project will also maintain a close alignment in this regard.</p>
+<p>In order to obtain high grade electronic signatures, utilization of cryptographic tokens and qualified certificates is required. So a special attention is devoted to support the so-called <abbr title="Secure Signature Creation Devices">SSCD</abbr>, like SmartCards, who are currently spreading around in Europe.</p>
+<p>At start PKCS11 support will be the main goal, but preserving the generality of approach needed for easy integration of other specifications, like PKCS15.<br />
+	The project will leverage on the experiences emerged from other Open Source projects like j4sign, OpenSignPdf and OpenSC.</p>
+<p>A great effort will be also put in providing a proper user interface, simple to use but also granting to the user a strict control on the many delicate aspects of digital signature and verification.</p>
+<p>To achieve this, the graphic user interface (<abbr title="User Interface">UI</abbr>) is tightly coupled to the OpenOffice.org standard interface.<br />
+	Information of any critical element or critical state of both the signature verification procedure and the signature procedure is supplied in graphical form.</p>
+<p>Giuseppe Castagno (giuseppe dot castagno at acca-esse dot it)<br />
+	Roberto Resoli (roberto dot resoli at gmail dot com)</p>
+<h4>
+	Licensed under the <a href="https://joinup.ec.europa.eu/community/eupl/description" target="_blank" title="Open a new page">EUPL V.1.1</a>, or (at your option) <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank" title="Open a new page">GPLv3.</a><br />
+	Web page textual content and written documentation licenced under <a href="http://creativecommons.org/" target="_blank" title="Open a new page">Creative Commons</a> <a href="http://creativecommons.org/licenses/by-sa/2.5/" target="_blank" title="Open a new page">Attribution-ShareAlike 2.5 Generic</a> (<a href="http://creativecommons.org/licenses/by-sa/2.5/legalcode" target="_blank" title="Open a new page">the full license</a>).</h4>
+<p><a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Back to project</a></p>
+<p>&nbsp;</p>
