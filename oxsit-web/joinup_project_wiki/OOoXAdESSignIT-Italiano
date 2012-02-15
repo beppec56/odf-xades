@@ -6,9 +6,9 @@ OOoXAdESSignIT (Italiano)
 
 poi la pagina wiki, in plain text:
 
+<p><a href="../wiki/oooxadessignit-english">English version</a></p>
 <h2>
 	Una estensione di OpenOffice.org, per firmare digitalmente i documenti nativi OpenOffice.org secondo lo standard italiano. &Egrave; sofware libero <abbr title="Free/Libre and Open Source Software">(FLOSS)</abbr>.</h2>
-<p>( We are working on the English version of this document; in the meanwhile see <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Description</a>. )</p>
 <p>OOoXAdESSignIT (familiarmente <abbr title="OooXadesSignIT">OXSIT</abbr>) &egrave; un&#39;estensione di <a href="http://www.openoffice.org/it" target="_blank" title="Apre in nuova pagina">Apache OpenOffice</a>, cio&egrave; un modulo software aggiuntivo per la nota suite Open Source di automazione ufficio.</p>
 <p>Si propone di gestire la firma digitale (sottoscrizione, verifica, marcatura temporale) secondo la specifica <abbr title="XML Advanced Electronic Signatures">XAdES</abbr>, consentendo di produrre documenti legalmente validi secondo la legge italiana.</p>
 <p>Apache OpenOffice contiene gi&agrave; una funzione di firma, che per&ograve; segue le pi&ugrave; generali specifiche <abbr>XMLSig</abbr>; XAdES &egrave; una particolare specializzazione di XMLSig pensata per l&#39;utilizzo nell&#39;ambito della sottoscrizione di documenti digitali XML secondo la normativa europea.</p>
@@ -23,16 +23,17 @@ poi la pagina wiki, in plain text:
 <p>Giuseppe Castagno (giuseppe dot castagno at acca-esse dot it)<br />
 	Roberto Resoli (roberto dot resoli at gmail dot com)</p>
 <h5>
-	&Egrave; disponibile la seguente mailing list in lingua italiana o inglese per la discussione della funzionalit&agrave; di firma digitale in Apache OpenOffice a questo indirizzo web:</h5>
-<p><a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-devel" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-devel</a> in cui sono ben accette anche le richieste di aiuto sull&#39;uso dell&#39;estensione.</p>
-<h5>
-	Le seguenti due mailing list sono informative:</h5>
-<p><a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-announce" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-announce</a> in cui transitano gli annunci su nuove release o simili messaggi;<br />
-	<a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-commits" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-commits</a> invio automatico di ciascun &#39;commit&#39; in svn di progetto.</p>
-<h5>
-	Nelle mailing list potete utilizzare indifferentemente italiano o inglese.</h5>
-<p>&nbsp;</p>
+	Mailing List</h5>
+<p>&Egrave; disponibile <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it" target="_blank">questa mailing list (ooo-xadessig-it)</a> <strong>generica</strong> in lingua italiana o inglese per la discussione della funzionalit&agrave; di firma digitale in Apache OpenOffice.<br />
+	Mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-subscribe@joinup.ec.europa.eu">qui per ISCRIVERVI</a></strong>, oppure mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-unsubscribe@joinup.ec.europa.eu">qui per RIMUOVERE L&#39;ISCRIZIONE</a></strong>.</p>
+<p>&Egrave; disponibile la lista degli <strong>annunci</strong>: <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-announce" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-announce</a> in cui transitano gli annunci su nuove release o simili messaggi.<br />
+	Mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-announce-subscribe@joinup.ec.europa.eu">qui per ISCRIVERVI</a></strong>, oppure mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-announce-unsubscribe@joinup.ec.europa.eu">qui per RIMUOVERE L&#39;ISCRIZIONE</a></strong>.</p>
+<p>La lista per gli <strong>sviluppatori</strong> &egrave; invece <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-devel" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-devel</a> , sempre italiano o inglese.<br />
+	Mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-devel-subscribe@joinup.ec.europa.eu">qui per ISCRIVERVI</a></strong>, oppure mandate un messaggio vuoto per <strong><a href="mailto:ooo-xadessig-it-devel-unsubscribe@joinup.ec.europa.eu">qui per RIMUOVERE L&#39;ISCRIZIONE</a></strong>.</p>
+<p>Se desiderate seguire in dettaglio lo sviluppo la lista <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-commits" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-commits</a> gestisce l&#39;invio automatico di ciascun &#39;<strong>commit</strong>&#39; in svn di progetto.<br />
+	Mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-commits-subscribe@joinup.ec.europa.eu">qui per ISCRIVERVI</a></strong>, oppure mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-commits-unsubscribe@joinup.ec.europa.eu">qui per RIMUOVERE L&#39;ISCRIZIONE</a></strong>.</p>
+<p><strong>Nelle mailing list potete utilizzare indifferentemente italiano o inglese</strong>.</p>
 <h5>
 	<a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Torna al progetto</a></h5>
 <h4>
-	Concesso in licenza a norma dell&#39;<a href="http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1" target="_blank" title="European Union Public License (apre in nuova pagina)">EUPL v.1.1</a>, oppure (a vostra scelta) <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank" title="General Public License (apre in nuova pagina)">GPLv3</a>. Contenuto testuale delle pagine Wiki e documentazione scritta concessi in licenza in accordo a <a href="http://creativecommons.org/it" target="_blank" title="Apre in una nuova pagina">Creative Commons</a> <a href="http://creativecommons.org/licenses/by-sa/2.5/it/" target="_blank" title="Apre in nuova pagina">Attribuzione-Condividi allo stesso modo 2.5 Italia</a> (<a href="http://creativecommons.org/licenses/by-sa/2.5/it/legalcode" target="_blank" title="Apre in nuova pagina">licenza integrale</a>). &nbsp;</h4>
+	Concesso in licenza a norma dell&#39;<a href="https://joinup.ec.europa.eu/community/eupl/description" target="_blank" title="European Union Public License (apre in nuova pagina)">EUPL v.1.1</a>, oppure (a vostra scelta) <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank" title="General Public License (apre in nuova pagina)">GPLv3</a>. Contenuto testuale delle pagine Wiki e documentazione scritta concessi in licenza in accordo a <a href="http://creativecommons.org/it" target="_blank" title="Apre in una nuova pagina">Creative Commons</a> <a href="http://creativecommons.org/licenses/by-sa/2.5/it/" target="_blank" title="Apre in nuova pagina">Attribuzione-Condividi allo stesso modo 2.5 Italia</a> (<a href="http://creativecommons.org/licenses/by-sa/2.5/it/legalcode" target="_blank" title="Apre in nuova pagina">licenza integrale</a>). &nbsp;</h4>
