@@ -9,6 +9,9 @@ poi la pagina wiki, in plain text:
 <p><a href="../wiki/oooxadessignit-english">English version</a></p>
 <h2>
 	Una estensione di OpenOffice.org, per firmare digitalmente i documenti nativi OpenOffice.org secondo lo standard italiano. &Egrave; sofware libero <abbr title="Free/Libre and Open Source Software">(FLOSS)</abbr>.</h2>
+<p>(<a href="#scaricare">come scaricare</a>)</p>
+<h5>
+	Descrizione</h5>
 <p>OOoXAdESSignIT (familiarmente <abbr title="OooXadesSignIT">OXSIT</abbr>) &egrave; un&#39;estensione di <a href="http://www.openoffice.org/it" target="_blank" title="Apre in nuova pagina">Apache OpenOffice</a>, cio&egrave; un modulo software aggiuntivo per la nota suite Open Source di automazione ufficio.</p>
 <p>Si propone di gestire la firma digitale (sottoscrizione, verifica, marcatura temporale) secondo la specifica <abbr title="XML Advanced Electronic Signatures">XAdES</abbr>, consentendo di produrre documenti legalmente validi secondo la legge italiana.</p>
 <p>Apache OpenOffice contiene gi&agrave; una funzione di firma, che per&ograve; segue le pi&ugrave; generali specifiche <abbr>XMLSig</abbr>; XAdES &egrave; una particolare specializzazione di XMLSig pensata per l&#39;utilizzo nell&#39;ambito della sottoscrizione di documenti digitali XML secondo la normativa europea.</p>
@@ -33,6 +36,13 @@ poi la pagina wiki, in plain text:
 <p>Se desiderate seguire in dettaglio lo sviluppo la lista <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-commits" target="_blank" title="Apre in nuova pagina">ooo-xadessig-it-commits</a> gestisce l&#39;invio automatico di ciascun &#39;<strong>commit</strong>&#39; in svn di progetto.<br />
 	Mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-commits-subscribe@joinup.ec.europa.eu">qui per ISCRIVERVI</a></strong>, oppure mandate un messaggio vuoto <strong><a href="mailto:ooo-xadessig-it-commits-unsubscribe@joinup.ec.europa.eu">qui per RIMUOVERE L&#39;ISCRIZIONE</a></strong>.</p>
 <p><strong>Nelle mailing list potete utilizzare indifferentemente italiano o inglese</strong>.</p>
+<h5>
+	<a name="scaricare">Scaricare il software</a></h5>
+<p>Potete scaricare l&#39;ultima versione del software selezionando <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/release/all">in questa pagina</a> la versione desiderata.<br />
+	La versione corrente &egrave; la <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/release/100"><strong>1.0.0rc1</strong></a>.<br />
+	Potete scaricare il manuale corrispondente a questa versione <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/document/manual_it_100rc1pdf">con questo collegamento diretto</a>.<br />
+	Tutti i manuali sono disponibili <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/elibrary/all">in questa pagina</a>.<br />
+	&nbsp;</p>
 <h5>
 	<a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Torna al progetto</a></h5>
 <h4>
