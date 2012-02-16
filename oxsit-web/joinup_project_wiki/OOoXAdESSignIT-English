@@ -6,10 +6,13 @@ OOoXAdESSignIT (English)
 
 wiki page follows, in plain text:
 
-<p><a href="../wiki/oooxadessignit-italiano">Italian version</a></p>
+<p><a href="../wiki/oooxadessignit-italiano">Versione italiana</a></p>
 <p>This page is a work in progress; in the meanwhile see <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description">Description</a>. )</p>
 <h2>
 	An OpenOffice.org extension to digitally sign OpenOffice.org native document according to Italian standard procedure. It&#39;s Free/Libre and Open Source Sofware.</h2>
+<p>(<a href="##download">how to download</a>)</p>
+<h5>
+	Description</h5>
 <p>OOoXAdESSignIT (friendly name: <abbr title="OooXadesSignIT">OXSIT</abbr>) is an <a href="http://www.openoffice.org/" target="_blank" title="Open a new page">OpenOffice.org</a> extension, that is, a pluggable software module for the popular office automation suite.</p>
 <p>The goal is to manage electronic signatures (signing, verifying, timestamping) according to the <abbr title="XML Advanced Electronic Signatures">XAdES</abbr> specification, making the user able to produce legally valid documents according to the Italian law.</p>
 <p>OpenOffice.org already provides a digital signature functionality, but following the more general XMLSig specification; XAdES is a particular specialization of XMLSig for human-readable digital document signature, complying with European Union rules.</p>
@@ -23,6 +26,22 @@ wiki page follows, in plain text:
 	Information of any critical element or critical state of both the signature verification procedure and the signature procedure is supplied in graphical form.</p>
 <p>Giuseppe Castagno (giuseppe dot castagno at acca-esse dot it)<br />
 	Roberto Resoli (roberto dot resoli at gmail dot com)</p>
+<h5>
+	Mailing Lists</h5>
+<p>A general mailing list for the discussion of the digital signature feature in Apache OpenOffice <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it"> is available (ooo-xadessig-it)</a> language used can be Italian or English.<br />
+	Send an empty message here to <a href="mailto:ooo-xadessig-it-subscribe@joinup.ec.europa.eu">JOIN</a>, or send an empty message here to <a href="mailto:ooo-xadessig-it-unsubscribe@joinup.ec.europa.eu">REMOVE REGISTRATION</a>.</p>
+<p>An <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-announce">announce list is available (ooo-xadessig-it-announce)</a> for announcements about new releases, or similar announce messages.<br />
+	Send an empty message here to <a href="mailto:ooo-xadessig-it-announce-subscribe@joinup.ec.europa.eu">JOIN</a>, or send an empty message here to <a href="mailto:ooo-xadessig-it-announce-unsubscribe@joinup.ec.europa.eu">REMOVE REGISTRATION</a>.</p>
+<p>There is a <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-devel">developer list available (ooo-xadessig-it-devel)</a>, you may post messages in Italian or English language.<br />
+	Send an empty message here to <a href="mailto:ooo-xadessig-it-devel-subscribe@joinup.ec.europa.eu">JOIN</a>, or send an empty message here to <a href="mailto:ooo-xadessig-it-devel-unsubscribe@joinup.ec.europa.eu">REMOVE REGISTRATION</a>.</p>
+<p>You can subscribe to <a href="http://joinup.ec.europa.eu/mailman/listinfo/ooo-xadessig-it-commits">list ooo-xadessig-it-commits</a> If you want to follow in detail the development. Each &#39;commit&#39; in the project svn is sent there.<br />
+	Send an empty message here to <a href="mailto:ooo-xadessig-it-commits-subscribe@joinup.ec.europa.eu">JOIN</a>, or send an empty message here to <a href="mailto:ooo-xadessig-it-commits-unsubscribe@joinup.ec.europa.eu">REMOVE REGISTRATION</a>.</p>
+<h5>
+	<a name="#download">Download</a></h5>
+<p>You can download the latest version of the software <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/release/all">on this page</a> by selecting the desired version.<br />
+	The current version is <strong><a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/release/100">1.0.0rc1</a></strong>.<br />
+	You can download the manual that corresponds to this version with <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/document/manual_it_100rc1pdf">this direct link</a>.<br />
+	All manuals are available <a href="https://joinup.ec.europa.eu/software/ooo-xadessig-it/elibrary/all">on this page</a>.</p>
 <h4>
 	Licensed under the <a href="https://joinup.ec.europa.eu/community/eupl/description" target="_blank" title="Open a new page">EUPL V.1.1</a>, or (at your option) <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank" title="Open a new page">GPLv3.</a><br />
 	Web page textual content and written documentation licenced under <a href="http://creativecommons.org/" target="_blank" title="Open a new page">Creative Commons</a> <a href="http://creativecommons.org/licenses/by-sa/2.5/" target="_blank" title="Open a new page">Attribution-ShareAlike 2.5 Generic</a> (<a href="http://creativecommons.org/licenses/by-sa/2.5/legalcode" target="_blank" title="Open a new page">the full license</a>).</h4>
