@@ -56,9 +56,9 @@
 	  <name lang="en">XAdES (IT) Standard Digital Signature</name>
   </display-name>
   <publisher>
-	  <name xlink:href="http://forge.osor.eu/projects/ooo-xadessig-it"
+	  <name xlink:href="@WEBPATHPRJ@"
 		lang="it">Sito Internet del progetto</name>
-	  <name xlink:href="http://forge.osor.eu/projects/ooo-xadessig-it" 
+	  <name xlink:href="@WEBPATHPRJ@" 
 		lang="en">The project Internet site</name>
   </publisher>
   <!-- release notes not yet used by Extension manager -->

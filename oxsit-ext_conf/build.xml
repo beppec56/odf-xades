@@ -54,11 +54,15 @@ build-extension
 	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
+	<property name="java_version" value="OpenJDK 1.6.0_20" />
+
 	<property name="webidentbase" value="com.yacme.ext" />
 	<!-- local (intranet you may change them to suit you ) web properties -->
 	<property name="webhost" value="http://192.168.3.6" />
 	<property name="webpath" value="w2/acca-esse.it/dwnld/ooohs/extensions" />
+	<property name="webpath_prj" value="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description" />
 	<property name="copywebpath" value="/var/www/${webpath}" />
+	
 
 	<!-- minimum OOo version -->
 	<property name="ooominversion" value="3.0" />
@@ -285,6 +289,7 @@ build-extension
 				<include name="**/*.txt" />
 			</fileset>
 			<filterset>
+				<filter token="JAVA_VERS" value="${java_version}" />
 				<filter token="WEBIDENTBASE" value="${webidentbase}" />
 				<filter token="NAME" value="${ext_name}" />
 			</filterset >
@@ -461,6 +466,7 @@ build-extension
 				<filter token="OOOMINVER" value="${ooominversion}" />
 				<filter token="WEBHOST" value="${webhost}" />
 				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WEBPATHPRJ" value="${webpath_prj}" />
 				<filter token="WBME" value="${wbme}" />
 			</filterset >
 		</copy>
@@ -480,6 +486,7 @@ build-extension
 				<filter token="OOOMINVER" value="${ooominversion}" />
 				<filter token="WEBHOST" value="${webhost}" />
 				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WEBPATHPRJ" value="${webpath_prj}" />
 				<filter token="WBME" value="${wbme}" />
 			</filterset >
 		</copy>
@@ -500,6 +507,7 @@ build-extension
 				<filter token="OOOMINVER" value="${ooominversion}" />
 				<filter token="WEBHOST" value="${webhost}" />
 				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WEBPATHPRJ" value="${webpath_prj}" />
 				<filter token="WBME" value="${wbme}" />
 			</filterset >
 		</copy>
@@ -521,6 +529,7 @@ build-extension
 				<filter token="NAME" value="${ext_name}" />
 				<filter token="WEBHOST" value="${webhost}" />
 				<filter token="WEBPATH" value="${webpath}" />
+				<filter token="WEBPATHPRJ" value="${webpath_prj}" />
 				<filter token="WBME" value="${wbme}" />
 			</filterset >
 		</copy>
