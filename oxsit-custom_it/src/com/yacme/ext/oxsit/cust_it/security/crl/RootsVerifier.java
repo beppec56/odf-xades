@@ -62,6 +62,10 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -146,106 +150,124 @@ public class RootsVerifier {
     //
     private byte[] getFingerprint() {
 
-        byte[] fingerprint = null;
+    	byte[] fingerprint = null;
+    	String sDispDate = "";
 
-        CertStore certs = null;
-        CMSSignedData CNIPA_CMS = null;
-        try {
-            CNIPA_CMS = getCNIPA_CMS();
-        } catch (FileNotFoundException ex) {
-            m_aLogger.severe("getFingerprint","Errore nella lettura del file delle RootCA: ",ex);
-        } catch (CMSException e) {
-        	m_aLogger.severe("getFingerprint","Errore nel CMS delle RootCA: ",e);
-        }
+    	CertStore certs = null;
+    	CMSSignedData CNIPA_CMS = null;
+    	try {
+    		CNIPA_CMS = getCNIPA_CMS();
 
-        Provider p = new org.bouncycastle.jce.provider.BouncyCastleProvider();
-        if (Security.getProvider(p.getName()) == null)
-            Security.addProvider(p);
+    		Provider p = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+    		if (Security.getProvider(p.getName()) == null)
+    			Security.addProvider(p);
 
-        try {
-            certs = CNIPA_CMS.getCertificatesAndCRLs("Collection", "BC");
-        } catch (CMSException ex2) {
-        	m_aLogger.severe("getFingerprint","Errore nel CMS delle RootCA",ex2);
-        } catch (NoSuchProviderException ex2) {
-        	m_aLogger.severe("getFingerprint","Non esiste il provider del servizio",ex2);
-        } catch (NoSuchAlgorithmException ex2) {
-        	m_aLogger.severe("getFingerprint","Errore nell'algoritmo",ex2);
-        }
+    		try {
+    			certs = CNIPA_CMS.getCertificatesAndCRLs("Collection", "BC");
+    		} catch (CMSException ex2) {
+    			m_aLogger.severe("getFingerprint","Errore nel CMS delle RootCA",ex2);
+    		} catch (NoSuchProviderException ex2) {
+    			m_aLogger.severe("getFingerprint","Non esiste il provider del servizio",ex2);
+    		} catch (NoSuchAlgorithmException ex2) {
+    			m_aLogger.severe("getFingerprint","Errore nell'algoritmo",ex2);
+    		}
 
-        if (certs == null)
-        	m_aLogger.severe("getFingerprint","No certs for CNIPA signature!");
-        else {
-            SignerInformationStore signers = CNIPA_CMS.getSignerInfos();
-            Collection c = signers.getSigners();
-            if (c.size() != 1) {
-            	m_aLogger.severe("getFingerprint","There is not exactly one signer!");
-            } else {
+    		if (certs == null)
+    			m_aLogger.severe("getFingerprint","No certs for CNIPA signature!");
+    		else {
+    			SignerInformationStore signers = CNIPA_CMS.getSignerInfos();
+    			Collection<SignerInformation> c = signers.getSigners();
+    			if (c.size() != 1) {
+    				m_aLogger.severe("getFingerprint","There is not exactly one signer!");
+    			} else {
 
-                Iterator it = c.iterator();
+    				Iterator<SignerInformation> it = c.iterator();
 
-                if (it.hasNext()) {
-                    SignerInformation signer = (SignerInformation) it.next();
-                    Collection certCollection = null;
-                    try {
-                        certCollection = certs.getCertificates(signer.getSID());
+    				if (it.hasNext()) {
+    					SignerInformation signer = it.next();
+    					//grab date
+    					AttributeTable att = signer.getSignedAttributes();
+    					if (att.get(CMSAttributes.signingTime) == null) {
+    						//no date
+    						m_aLogger.info("getFingerprint()",  "A date is NOT present on CA root archive signature !");
+    					} else {
+    						Attribute atime = att.get(CMSAttributes.signingTime);
+    						//date present
+    						//@FIXME get date in a more clean way
+    						String sdate = atime.getAttrValues().toString();
+    						sDispDate = "20"+sdate.substring(1, 3)+"-"+
+    						sdate.substring(3, 5)+"-"+
+    						sdate.substring(5, 7)+" "+
+    						sdate.substring(7, 9)+":"+
+    						sdate.substring(9, 11)+":"+
+    						sdate.substring(11, 13)+" UTC";
+    						m_aLogger.debug("getFingerprint()",  "A date is present: "+sDispDate);
+    					}
 
-                        if (certCollection.size() == 1) {
-                        	m_aRootSignatureCert = (X509Certificate)certCollection
-                            .toArray()[0];
-                            fingerprint = getCertFingerprint(m_aRootSignatureCert);
-                        } else {
-                        	//FIXME print an error?
-                        	m_aLogger.severe("getFingerprint","There is not exactly one certificate for this signer!");
-                        }
-                    } catch (CertStoreException ex1) {
-                    	//FIXME print an error?
-                    	m_aLogger.severe("Errore nel CertStore",ex1);
-                    }
-                }
-            }
-        }
+    					Collection<?> certCollection = null;
+    					try {
+    						certCollection = certs.getCertificates(signer.getSID());
 
-        //grab the localized text to display
-        String _format = "id_root_verify_message";
-        String _title = "id_root_verify_message_title";
-        String _no_fp = "id_root_verify_message_ko";
-		MessageConfigurationAccess m_aRegAcc = null;
-		m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_xMCF);
+    						if (certCollection.size() == 1) {
+    							m_aRootSignatureCert = (X509Certificate)certCollection.toArray()[0];
+    							fingerprint = getCertFingerprint(m_aRootSignatureCert);
+    						} else {
+    							//print an error?
+    									m_aLogger.severe("getFingerprint","There is not exactly one certificate for this signer!");
+    						}
+    					} catch (CertStoreException ex1) {
+    						//print an error?
+    						m_aLogger.severe("Errore nel CertStore",ex1);
+    					}
+    				}
+    			}
+    		}
 
-		try {
-			_title = m_aRegAcc.getStringFromRegistry( _title );
-			_format = m_aRegAcc.getStringFromRegistry( _format );
-			_no_fp = m_aRegAcc.getStringFromRegistry( _no_fp );
-		} catch (Exception e) {
-			m_aLogger.severe(e);
-		}
-		m_aRegAcc.dispose();
+    		//grab the localized text to display
+    		String _format = "id_root_verify_message";
+    		String _title = "id_root_verify_message_title";
+    		String _no_fp = "id_root_verify_message_ko";
+    		MessageConfigurationAccess m_aRegAcc = null;
+    		m_aRegAcc = new MessageConfigurationAccess(m_xCC, m_xMCF);
 
-        String theFingerprint = ((fingerprint == null) ? _no_fp : formatAsGUString(fingerprint));
-        String _mex = String.format(_format, theFingerprint);
-        
-		DialogRootVerify aDialog1 = new DialogRootVerify( m_xFrame, m_xCC, m_xMCF,_mex );
-//		DialogRootVerify aDialog1 = new DialogRootVerify( null, m_xCC, m_xMCF,_mex );
-		//PosX e PosY devono essere ricavati dalla finestra genetrice (in questo caso la frame)
-		//get the parent window data
-		//the problem is that we get the pixel, but we need the logical pixel, so for now it doesn't work...
-		int BiasX = ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
-		int BiasY = ControlDims.RSC_SP_DLG_INNERBORDER_TOP;
-        short ret;
-		try {
-			aDialog1.initialize(BiasX,BiasY);
-			ret = aDialog1.executeDialog();
-	        // ret = 0: NO
-	        // ret = 1: Yes
-	        if (ret == 1) {
-	        	return fingerprint;
-	        }
-		} catch (BasicErrorException e) {
-			m_aLogger.severe(e);
-		} catch (Exception e) {
-			m_aLogger.severe(e);
-		}
-        return null;
+    		try {
+    			_title = m_aRegAcc.getStringFromRegistry( _title );
+    			_format = m_aRegAcc.getStringFromRegistry( _format );
+    			_no_fp = m_aRegAcc.getStringFromRegistry( _no_fp );
+    		} catch (Exception e) {
+    			m_aLogger.severe(e);
+    		}
+    		m_aRegAcc.dispose();
+
+    		String theFingerprint = ((fingerprint == null) ? _no_fp : formatAsGUString(fingerprint));
+    		String _mex = String.format(_format, sDispDate, theFingerprint);
+
+    		DialogRootVerify aDialog1 = new DialogRootVerify( m_xFrame, m_xCC, m_xMCF,_mex );
+    		//		DialogRootVerify aDialog1 = new DialogRootVerify( null, m_xCC, m_xMCF,_mex );
+    		//PosX and PosY should be obtained from the parent window (in this case the frame)
+    		//the problem is that we get the pixel, but we need the logical pixel, so for now it doesn't work...
+    		int BiasX = ControlDims.RSC_SP_DLG_INNERBORDER_LEFT;
+    		int BiasY = ControlDims.RSC_SP_DLG_INNERBORDER_TOP;
+    		short ret;
+    		try {
+    			aDialog1.initialize(BiasX,BiasY);
+    			ret = aDialog1.executeDialog();
+    			// ret = 0: NO
+    			// ret = 1: Yes
+    			if (ret == 1) {
+    				return fingerprint;
+    			}
+    		} catch (BasicErrorException e) {
+    			m_aLogger.severe(e);
+    		} catch (Exception e) {
+    			m_aLogger.severe(e);
+    		}
+    	} catch (FileNotFoundException ex) {
+    		m_aLogger.severe("getFingerprint","Errore nella lettura del file delle RootCA: ",ex);
+    	} catch (CMSException e) {
+    		m_aLogger.severe("getFingerprint","Errore nel CMS delle RootCA: ",e);
+    	}
+    	return null;
     }
 
     public String formatAsGUString(byte[] bytes) {

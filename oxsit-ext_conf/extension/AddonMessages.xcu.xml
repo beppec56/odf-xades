@@ -1103,14 +1103,16 @@ Confermate Salva  con nuovo nome?
 		</node>
 		<node oor:name="id_root_verify_message" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="it">Il codice seguente DEVE corrispondere con l'impronta (SHA1) del certificato del presidente del CNIPA, firmatario della lista ufficiale delle Autorita' di Certificazione accreditate.
+				<value xml:lang="it">Elenco CA firmato in data: %1$s
+
+Il codice seguente DEVE corrispondere con l'impronta (SHA1) del certificato del presidente del CNIPA, firmatario della lista ufficiale delle Autorita' di Certificazione accreditate.
 Il codice va confrontato con quello pubblicato in Gazzetta Ufficiale per avere l'assoluta certezza che la lista non sia stata manipolata.
 Al 16/06/2010 il documento contenente il codice e' l'avviso CNIPA 23 luglio 2009, pubblicato nella G.U. del 27 maggio 2010, n.122:
 http://gazzette.comune.jesi.an.it/2010/122/2.htm
 
 IL CODICE CORRISPONDE?
 
-%1$s
+%2$s
 
 Impronta del Presidente CNIPA, ottenuta utilizzando l'algoritmo ISO/IEC 10118-3: 1998 Dedicated Hash-Function 3, corrispondente alla funzione SHA-1.</value>
 			</prop>
