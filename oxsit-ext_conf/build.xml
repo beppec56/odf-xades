@@ -55,7 +55,9 @@ build-extension
 	<property name="spec_version" value="1.0.0" />
 
 	<property name="java_version" value="OpenJDK 1.6.0_20" />
-
+	<tstamp>
+	      <format property="buildtime" pattern="yyyy-MM-dd HH:mm:ss" offset="0" unit="hour"/>
+	</tstamp>
 	<property name="webidentbase" value="com.yacme.ext" />
 	<!-- local (intranet you may change them to suit you ) web properties -->
 	<property name="webhost" value="http://192.168.3.6" />
@@ -290,6 +292,7 @@ build-extension
 			</fileset>
 			<filterset>
 				<filter token="JAVA_VERS" value="${java_version}" />
+				<filter token="BUILD_TIME" value="${buildtime}" />				
 				<filter token="WEBIDENTBASE" value="${webidentbase}" />
 				<filter token="NAME" value="${ext_name}" />
 			</filterset >
