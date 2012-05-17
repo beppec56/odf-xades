@@ -50,6 +50,7 @@ import com.yacme.ext.oxsit.logging.IDynamicLogger;
 import com.yacme.ext.oxsit.ooo.registry.SSCDsConfigurationAccess;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSSCD;
 import com.yacme.ext.oxsit.ooo.ui.MessageNoSSCDReaders;
+import com.yacme.ext.oxsit.options.OptionsParametersAccess;
 
 /**
  * A java class for detecting SmartCard m_nTokens and readers via PCSC.
@@ -88,6 +89,8 @@ public class PCSCHelper {
     private		XMultiComponentFactory m_xMCF;
 
 	private XFrame m_xFrame;
+
+	private boolean m_bDoFeedBack;
     
     public PCSCHelper(XFrame _xFrame, XComponentContext _xContext, boolean loadLib, String _PcscWrapperLib, IDynamicLogger aLogger) {
     	m_xCC = _xContext;
@@ -102,6 +105,13 @@ public class PCSCHelper {
         			m_aLogger = (DynamicLoggerDialog)aLogger;
     	}
 
+    	m_bDoFeedBack = false;
+
+    	// grab the configuration information
+		OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(m_xCC);
+		m_bDoFeedBack = xOptionsConfigAccess.getBoolean("EnableDebugLogging");
+		xOptionsConfigAccess.dispose();
+    	
     	m_aLogger.enableLogging();
 
         try {
@@ -216,8 +226,10 @@ public class PCSCHelper {
                     cIr = new CardInReaderInfo(currReader, null);
                     cIr.setLib(null);
                     //give the user some feedback
-                    MessageNoSSCD	aMex = new MessageNoSSCD(m_xFrame,m_xMCF,m_xCC);
-                    aMex.executeDialogLocal(currReader);
+                    if(m_bDoFeedBack) {
+                        MessageNoSSCD	aMex = new MessageNoSSCD(m_xFrame,m_xMCF,m_xCC);
+                        aMex.executeDialogLocal(currReader);
+                    }
                 }
                 cardsAndReaders.add(cIr);
             }
@@ -275,7 +287,10 @@ public class PCSCHelper {
                 }
 
             } catch (PcscException e) {
-            	m_aLogger.severe("","Reader " + name + " is not responsive!",e);
+            	if(m_bDoFeedBack)
+            		m_aLogger.severe("","Reader " + name + " is not responsive!",e);
+            	else
+            		m_aLogger.warning("","Reader " + name + " is not responsive!",e);            		
             }
 
             cachedATR = rState[0].ATR;
