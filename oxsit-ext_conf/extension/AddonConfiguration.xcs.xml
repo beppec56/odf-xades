@@ -264,9 +264,10 @@
 			<prop oor:name="SSCDAutomaticDetection" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
-					<desc>True to enable the automatic detection of SSCDs available</desc>
+					<desc>True to enable the automatic detection of SSCDs available. Set to false because the
+						  method of the direct library seems more general, so it's easy for USB SSD devices.</desc>
 				</info>
-				<value>true</value>
+				<value>false</value>
 			</prop>
 			<prop oor:name="SSCDFilePath1" oor:type="xs:string">
 				<info>
