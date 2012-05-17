@@ -710,6 +710,58 @@
 				</node>
 			</node>
 		</node>
+		<node oor:name="3BDF18008131FE7D006B150C0180011101434E53103180E9" oor:op="replace">
+			<node oor:name="S1" oor:op="replace">
+				<prop oor:name="Description" oor:type="xs:string">
+					<value>InfoCamere - CNS CCIAA di Torino</value>
+				</prop>
+				<prop oor:name="Manufacturer" oor:type="xs:string">
+					<value>ArubaPec - Actalis</value>
+				</prop>
+				<prop oor:name="CardType" oor:type="xs:string">
+					<value>Athena</value>
+				</prop>
+				<!-- this node contains the operating system related properties -->
+				<node oor:name="OsData">
+					<node oor:name="OsLinux" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>libASEP11.so</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+					<node oor:name="OsWindows" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>asepkcs.dll</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+					<node oor:name="OsMac" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>gclib.dll</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+				</node>
+			</node>
+		</node>
 		<!--  -->
 	</node>
 	<node oor:name="SignatureOptionsParameters">
