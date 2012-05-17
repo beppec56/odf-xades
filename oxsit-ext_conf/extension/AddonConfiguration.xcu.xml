@@ -763,6 +763,59 @@
 			</node>
 		</node>
 		<!--  -->
+		<node oor:name="3BFF1800FF8131FE55006B02090303011101434E531131808C" oor:op="replace">
+			<node oor:name="S1" oor:op="replace">
+				<prop oor:name="Description" oor:type="xs:string">
+					<value>InfoCert - Dispositivo di firma digitale</value>
+				</prop>
+				<prop oor:name="Manufacturer" oor:type="xs:string">
+					<value>InfoCert</value>
+				</prop>
+				<prop oor:name="CardType" oor:type="xs:string">
+					<value>InfoCert</value>
+				</prop>
+				<!-- this node contains the operating system related properties -->
+				<node oor:name="OsData">
+					<node oor:name="OsLinux" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>libbit4ipki.so</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+					<node oor:name="OsWindows" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>bit4ipki.dll</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+					<node oor:name="OsMac" oor:op="replace">
+						<!-- the PKCS#11 library name, the path is detected by the extension -->
+						<prop oor:name="LibName" oor:type="xs:string">
+							<value>gclib.dll</value>
+						</prop>
+						<prop oor:name="LibNameAlt1" oor:type="xs:string">
+							<value></value>
+						</prop>
+						<prop oor:name="LibNameAlt2" oor:type="xs:string">
+							<value></value>
+						</prop>
+					</node>
+				</node>
+			</node>
+		</node>
+		<!--  -->
 	</node>
 	<node oor:name="SignatureOptionsParameters">
 		<!--
