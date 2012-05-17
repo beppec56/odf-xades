@@ -137,7 +137,18 @@ non contiene Smart Card (SSCD).</value>
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="it">Non ci sono lettori di Smart Card disponibili.
 Oppure, se collegati,
-Non contengono dispositivi SSCD leggibili.</value>
+Non contengono dispositivi SSCD leggibili.
+
+Possibili cause:
+1) libreria non rilevata o di tipo errato.
+Potete cambiare la libreria di accesso al dispositivo
+di firma da:
+Strumenti > Opzioni > Firma digitale XadES (IT) >
+Secure Signature Creation Device (SSCD)
+
+2) La libreria impostata non è quella corretta
+
+3) il dispositivo di firma non è ben inserito nel lettore o nella presa USB.</value>
 			</prop>
 		</node>
 		<node oor:name="id_no_sscd_lib" oor:op="replace">
@@ -147,7 +158,12 @@ Non contengono dispositivi SSCD leggibili.</value>
 %1$s
 
 Non è stata trovata.
-Oppure rilevati errori nel suo funzionamento.</value>
+Oppure rilevati errori nel suo funzionamento.
+
+Potete cambiare la libreria di accesso al dispositivo
+di firma da:
+Strumenti > Opzioni > Firma digitale XadES (IT) >
+Secure Signature Creation Device (SSCD)</value>
 			</prop>
 		</node>
 		<node oor:name="id_no_sscd_readers" oor:op="replace">
