@@ -493,6 +493,13 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		return signAsFile(xFrame, xDocumentModel, _aCertArray);
 
 	}
+	
+	private void finalizePKCS11() throws Throwable {
+		if( m_aHelperPkcs11 != null) {
+			m_aHelperPkcs11.libFinalize();
+			m_aHelperPkcs11 = null;
+		}		
+	}
 
 	private void generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc)
 			throws CertificateException, Exception, SignedDocException {
@@ -735,13 +742,16 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						//any exception thrown during signing process comes here
 						//close the pending session
 						m_aLogger.debug("Throwable thrown! Closing session.");
-						m_aHelperPkcs11.closeSession();
+						finalizePKCS11();
 						throw (e);
 					}
 					m_aHelperPkcs11.closeSession();
+					m_aLogger.debug("Closing session, all ok.");
+					finalizePKCS11();					
 				} else {
 					//0x000000E0 = CKR_TOKEN_NOT_PRESENT
 					//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
+					finalizePKCS11();
 					throw (new PKCS11Exception(0x000000E0));
 				}
 			} catch (TokenException e) {
@@ -1070,7 +1080,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 								if (myPin != null && myPin.length > 0) {
 									// user confirmed, check opening the session
 									byte[] encDigestBytes = null;
-									m_aLogger.debug("sign!");
+									m_aLogger.debug("actual signing process started.");
 									try {
 										//first get all supported mechanism (needed for logging, debug/tests
 										m_aHelperPkcs11.getMechanismInfo(m_aHelperPkcs11.getTokenHandle());
@@ -1098,13 +1108,15 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 											//close the pending session
 											m_aLogger.debug("Throwable thrown! Closing session.");
 											m_aHelperPkcs11.closeSession();
+											finalizePKCS11();
 											throw (e);
 										}
 										m_aHelperPkcs11.closeSession();
+										finalizePKCS11();
 
 									} catch (TokenException e) {
 										// session can not be opened
-										m_aLogger.warning("", ">TokenException", e);
+										m_aLogger.warning("", "TokenException", e);
 										throw (e);
 									} catch (Throwable e) {
 										// session can not be opened
@@ -1163,10 +1175,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 							bRetry = false;
 						}
 					}
-					if (m_aHelperPkcs11 != null) {
-						m_aHelperPkcs11.libFinalize();
-						m_aHelperPkcs11 = null;
-					}
+					finalizePKCS11();
 				}
 			} catch (IOException e) {
 				m_aLogger.severe(e);

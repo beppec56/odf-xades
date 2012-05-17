@@ -689,7 +689,7 @@ public class PKCS11Driver {
         if (getSession() == -1L) {
             return;
         }
-        m_aLogger.debug("Closing session ...");
+        m_aLogger.debug("PKCS11Driver.closeSession()","Closing session ...");
         pkcs11Module.C_CloseSession(getSession());
         setSession( -1L);
 
@@ -702,13 +702,13 @@ public class PKCS11Driver {
      * @throws Throwable
      */
     public void libFinalize() throws Throwable {
-        m_aLogger.debug("finalizing PKCS11 module...");
+        m_aLogger.debug("PKCS11Driver.libFinalize()","finalizing PKCS11 module...");
         if(getSession() != -1L) {
         	closeSession();
         }
        // getPkcs11().finalize();
         pkcs11Module.C_Finalize(null);
-        m_aLogger.debug("finalized.");
+        m_aLogger.debug("PKCS11Driver.libFinalize()","library finalized.");
     }
 
     /**
