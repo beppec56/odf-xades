@@ -4,4 +4,4 @@ XAdES modality, Italian standard.
 Licensed under the EUPL V.1.1.
 Copyright (c) 2009-2012 Giuseppe Castagno
 Copyright (c) 2009-2012 Roberto Resoli
-Built with @JAVA_VERS@ on @BUILD_TIME@
+Built with @JAVA_VERS@ on @BUILD_TIME@ Rev. @REVISION@
