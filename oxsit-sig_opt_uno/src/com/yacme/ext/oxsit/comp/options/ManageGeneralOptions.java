@@ -59,8 +59,9 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
     private int m_nClearCRLCacheButton = 0;
     private int m_nDisableCRLControlCB = 0;
     private int m_nForceCRLDownloadCB = 0;
+    private int m_nLibreOfficeSelectedCB = 0;
 
-    private static final int m_nNumberOfControls = 6;
+    private static final int m_nNumberOfControls = 7;
 
     /**
      * 
@@ -68,7 +69,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
      */
 	public ManageGeneralOptions(XComponentContext xCompContext) {
 		super(xCompContext, m_nNumberOfControls, "leaf_general");
-//		m_aLogger.enableLogging();// disabled in base class
+		m_aLogger.enableLogging();// disabled in base class
 		m_aLogger.ctor();
 		//prepare the list of controls on the page
 
@@ -100,6 +101,11 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
 		
+		aControl = 
+			new SingleControlDescription("LibreOfficeSelectedCB", ControlTypeCode.CHECK_BOX, -1, "LibreOfficeSelected", 0, 0, true);
+		m_nLibreOfficeSelectedCB = iter;
+		ArrayOfControls[iter++] = aControl;
+
 		aControl = 
 			new SingleControlDescription("AboutButton", ControlTypeCode.PUSH_BUTTON, -1, "", 0, 0, true);
 		m_nAboutButton = iter;
