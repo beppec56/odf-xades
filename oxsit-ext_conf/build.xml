@@ -50,7 +50,7 @@ build-extension
 
 	<!-- properties used when building/deploying the extension -->
 	<!-- version used for updating the extension, displayed on OOo interface and printed on the log files -->
-	<property name="version" value="1.0.0" />
+	<property name="version" value="1.0.0.2" />
 	<property name="longversion" value="${version}" />
 	<property name="spec_version" value="1.0.0" />
 
@@ -59,11 +59,12 @@ build-extension
 	      <format property="buildtime" pattern="yyyy-MM-dd HH:mm:ss" offset="0" unit="hour"/>
 	</tstamp>
 	<property name="webidentbase" value="com.yacme.ext" />
-	<!-- local (intranet you may change them to suit you ) web properties -->
-	<property name="webhost" value="http://192.168.3.6" />
+	<!-- BEGIN OF local (intranet you may change them to suit you ) web properties -->
+	<property name="webhost" value="http://192.168.1.40" />
 	<property name="webpath" value="w2/acca-esse.it/dwnld/ooohs/extensions" />
-	<property name="webpath_prj" value="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description" />
 	<property name="copywebpath" value="/var/www/${webpath}" />
+	<!-- END OF local (intranet you may change them to suit you ) web properties -->
+	<property name="webpath_prj" value="https://joinup.ec.europa.eu/software/ooo-xadessig-it/description" />
 	
 	<echo message="${project_name}: platform specific file is: build.${os.name}-${os.arch}.properties."/>
 	<available file="build.${os.name}-${os.arch}.properties" type="file" property="properties_file.available" value="false" />
@@ -414,8 +415,11 @@ build-extension
 		</copy>
 		<copy file="${extension_dir}/AddonMessages.xcu.xml" tofile="${extension_dest_dir}/AddonMessages.xcu">
 			<filterset>
-			<filter token="WEBIDENTBASE" value="${webidentbase}" />
-			<filter token="NAME" value="${ext_name}" />
+				<filter token="WEBIDENTBASE" value="${webidentbase}" />
+				<filter token="NAME" value="${ext_name}" />
+				<filter token="JAVA_VERS" value="${java_version}" />
+				<filter token="BUILD_TIME" value="${buildtime}" />				
+				<filter token="REVISION" value="${svn.trunk.revision.number}" />
 			</filterset >
 		</copy>
 		<copy file="${extension_dir}/Addons.xcu.xml" tofile="${extension_dest_dir}/Addons.xcu" />
