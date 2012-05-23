@@ -169,6 +169,13 @@
 				</constraints>
 				<value>0</value>
 			</prop>
+			<prop oor:name="LibreOfficeSelected" oor:type="xs:boolean">
+				<info>
+					<author>beppec56</author>
+					<desc>TSet to true if we are installed in LibreOffice</desc>
+				</info>
+				<value>false</value>
+			</prop>
 			<prop oor:name="TestBooleanValue" oor:type="xs:boolean">
 				<info>
 					<author>beppec56</author>
