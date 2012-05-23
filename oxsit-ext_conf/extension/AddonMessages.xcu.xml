@@ -107,15 +107,17 @@
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
 				<value xml:lang="en">XAdES (IT) Digital Signature extension
 (@WEBIDENTBASE@.@NAME@)
+Built with @JAVA_VERS@ on @BUILD_TIME@ Rev. @REVISION@.
 Licensed under EUPL version 1.1.
-Copyright 2009 Giuseppe Castagno
-Copyright 2009 Roberto Resoli
+Copyright 2009-2012 Giuseppe Castagno
+Copyright 2009-2012 Roberto Resoli
 </value>
 				<value xml:lang="it">Estensione per firma digitale modalità XAdES (IT).
 (@WEBIDENTBASE@.@NAME@)
+Compilato con @JAVA_VERS@ il @BUILD_TIME@ Rev. @REVISION@.
 Concesso in licenza a norma dell'EUPL versione 1.1.
-Copyright 2009 Giuseppe Castagno
-Copyright 2009 Roberto Resoli
+Copyright 2009-2012 Giuseppe Castagno
+Copyright 2009-2012 Roberto Resoli
 </value>
 			</prop>
 		</node>
