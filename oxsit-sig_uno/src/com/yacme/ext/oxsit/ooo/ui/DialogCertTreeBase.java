@@ -240,10 +240,21 @@ public class DialogCertTreeBase extends BasicDialog implements
 		m_aLogger.entering("initialize (DialogCertTreeBase)");
 		try {
 			super.initialize(_sName, _sTitle, CertifTreeDlgDims.dsHeigh(), CertifTreeDlgDims.dsWidth(), posX, posY);
+			XPropertySet xPSet;
 			//inserts the control elements needed to display properties
+
+			OptionsParametersAccess xOptionsConfigAccess = new OptionsParametersAccess(m_xContext);
+			boolean bLibreOfficeSelected = xOptionsConfigAccess.getBoolean("LibreOfficeSelected");
+			xOptionsConfigAccess.dispose();		
+
+			//insert the fixed text lines layed over the next edit field element
+			//these lines are inserted before the element below in LibO
+			if(bLibreOfficeSelected)
+				insertDisplayLinesOfText();
+
 			//multiline text control used as a light yellow background
 					//multiline text control for details
-			Object oEdit = insertEditFieldModel(this, /*this*/null,
+			Object oEdit = insertEditFieldModel(this, null,
 							CertifTreeDlgDims.dsTextFieldColumn(),
 							CertifTreeDlgDims.DS_ROW_0(),
 							CertifTreeDlgDims.DS_ROW_3()-CertifTreeDlgDims.DS_ROW_0(),
@@ -251,12 +262,14 @@ public class DialogCertTreeBase extends BasicDialog implements
 							-1,
 							"", m_sTextLinesBackground, true, true, false, false);
 			//now change its background color
-			XPropertySet xPSet = (XPropertySet) UnoRuntime
+			xPSet = (XPropertySet) UnoRuntime
 								.queryInterface( XPropertySet.class, oEdit );
 			xPSet.setPropertyValue(new String("BackgroundColor"), new Integer(ControlDims.DLG_CERT_TREE_BACKG_COLOR));
 
 			//insert the fixed text lines layed over the above mentioned element
-			insertDisplayLinesOfText();
+			//these lines are inserted after the element above in AOO
+			if(!bLibreOfficeSelected)
+				insertDisplayLinesOfText();
 
 			//multiline text control for details of tree node element under selection
 			m_xDisplElementModel = insertEditFieldModel(this, /*this*/null,
@@ -1500,6 +1513,7 @@ public class DialogCertTreeBase extends BasicDialog implements
 			if(oTreeNodeObject != null) {
 				if(oTreeNodeObject instanceof TreeElement) {
 					TreeElement aCurrentNode = (TreeElement)oTreeNodeObject;
+					m_aLogger.debug("selectionChanged","node disabled: "+aCurrentNode.toString());
 					aCurrentNode.EnableDisplay(false);
 				}
 				else
