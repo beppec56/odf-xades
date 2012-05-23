@@ -100,7 +100,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 		m_nClearCRLCacheButton = iter;
 		aControl.m_xAnActionListener = this;
 		ArrayOfControls[iter++] = aControl;
-		
+
 		aControl = 
 			new SingleControlDescription("LibreOfficeSelectedCB", ControlTypeCode.CHECK_BOX, -1, "LibreOfficeSelected", 0, 0, true);
 		m_nLibreOfficeSelectedCB = iter;
@@ -124,7 +124,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 	public boolean supportsService(String _sService) {
 		int len = m_sServiceNames.length;
 
-		m_aLogger.info( "supportsService" );
+//		m_aLogger.info( "supportsService" );
 		for (int i = 0; i < len; i++) {
 			if (_sService.equals( m_sServiceNames[i] ))
 				return true;
@@ -138,7 +138,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 		super.loadData(aWindow);
 //when return from load, we should have the container initialized, so activate the right state
 		//for the subordinate controls
-		
+
 		if(m_xContainer != null) {
 			//retrieve the file control checkbox
 			XControl xControl = m_xContainer.getControl(ArrayOfControls[m_nDisableCRLControlCB].m_sControlName);
@@ -151,7 +151,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 		else
 			m_aLogger.severe("enableTheFileControls", "there is no window!");
 	}
-	
+
 	public void actionPerformed(ActionEvent rEvent) {
 		m_aLogger.entering("actionPerformed");
 	// TODO Auto-generated method stub
@@ -168,7 +168,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
             	DialogAbout.showDialog(null, m_xComponentContext, m_xMultiComponentFactory);
             }
             else if (sName.equals(ArrayOfControls[m_nClearCRLCacheButton].m_sControlName)) {
-            	m_aLogger.info("clear the CRL cache");
+            	m_aLogger.debug("clear the CRL cache");
             	//
             	String sCRLCachePath = Helpers.getCRLCacheSystemPath(m_xComponentContext);
             	File aCacheDir = new File(sCRLCachePath);
@@ -192,7 +192,7 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
             	}
             }
             else {
-            	m_aLogger.info("Activated: "+sName);            	
+            	m_aLogger.debug("Activated: "+sName);            	
             }
         }catch (com.sun.star.uno.Exception ex){
             /* perform individual exception handling here.
@@ -234,12 +234,12 @@ public class ManageGeneralOptions extends ManageOptions  implements XItemListene
 //            	m_aLoggerDialog.info("check box of file changed state");
             	// retrieve the status of the control
                 int nState = AnyConverter.toInt(xPSet.getPropertyValue("State"));
-//FIXME DEBUg                m_aLoggerDialog.info("itemStateChanged","State is "+nState);
+//FIXME DEBUG                m_aLoggerDialog.info("itemStateChanged","State is "+nState);
             	// if the control is active, enables the relevant controls else disable them            	
                 enableTheCRLControls(( nState == 0 ) ? true : false); 
             }
             else {
-            	m_aLogger.info("Activated: "+sName);            	
+            	m_aLogger.debug("Activated: "+sName);            	
             }
         } catch (com.sun.star.uno.Exception ex){
             // perform individual exception handling here.

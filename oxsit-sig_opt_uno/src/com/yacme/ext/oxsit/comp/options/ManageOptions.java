@@ -138,7 +138,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		    throw new com.sun.star.lang.IllegalArgumentException(
 		      "The window is not supported by this handler", this, (short) -1);
 		 
-		m_aLogger.info("page is: "+sWindowName);
+		m_aLogger.debug("page is: "+sWindowName);
 		  //To acces the separate controls of the window we ne_theMethoded to obtain the
 		  //XControlContainer from window implementation
 		XControlContainer xContainer = (XControlContainer) UnoRuntime.queryInterface(
@@ -147,7 +147,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		    throw new com.sun.star.uno.Exception(
 		      "Could not get XControlContainer from window.", this);
 
-		  m_aLogger.log("saveData", "examine "+ArrayOfControls.length+" controls");
+		  m_aLogger.debug("saveData", "examine "+ArrayOfControls.length+" controls");
 			//from the current window, scan the contained controls, then for every control
 			//access the data and save them
 		  for (int i = 0; i < ArrayOfControls.length; i++) {
@@ -156,7 +156,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 		    XControl xControl = xContainer.getControl(ArrayOfControls[i].m_sControlName);
 
 		    if (xControl == null) {
-		    	m_aLogger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
+		    	m_aLogger.debug("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
 		      continue;
 		    }		 
 		    //From the control we get the model, which in turn supports the
@@ -169,7 +169,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    		throw new com.sun.star.uno.Exception(
 	    				"Could not get XPropertySet from control.", this);
 
-		    m_aLogger.log("saveData", "examine "+ArrayOfControls[i].m_sControlName+" control");
+		    m_aLogger.debug("saveData", "examine "+ArrayOfControls[i].m_sControlName+" control");
 		    //now we need to set the property according to the control type
 	    	switch(ArrayOfControls[i].m_eTheCode) {
 	    	case EDIT_TEXT_INT:
@@ -259,7 +259,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	  
 	  //iterate through the controls on this page and
 	  //for each grab the parameter and set the value
-	  m_aLogger.log("loadData", "examine "+ArrayOfControls.length+" controls");
+	  m_aLogger.debug("loadData", "examine "+ArrayOfControls.length+" controls");
 	  for (int i = 0; i < ArrayOfControls.length; i++) {
 	    //load the values from the registry
 		  
@@ -267,7 +267,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 	    XControl xControl = m_xContainer.getControl(ArrayOfControls[i].m_sControlName);
 
 	    if (xControl == null) {
-	    	m_aLogger.info("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
+	    	m_aLogger.debug("control: "+ArrayOfControls[i].m_sControlName+" not found in window page.");
 	      continue;
 	    }
 	    
@@ -285,7 +285,7 @@ public abstract class ManageOptions extends ComponentBase  implements
     		throw new com.sun.star.uno.Exception(
     				"Could not get XPropertySet from control.", this);
 
-	    m_aLogger.log("loadData", "examine "+ArrayOfControls[i].m_sControlName+" control");
+	    m_aLogger.debug("loadData", "examine "+ArrayOfControls[i].m_sControlName+" control");
 	    //now we need to set the property according to the control type
 //check if there is an action listener to associate with the control    	
 		//change the event function of the button, to see
@@ -395,7 +395,7 @@ public abstract class ManageOptions extends ComponentBase  implements
 					"Name - property of window is not a string.", this);
 		}
 
-		m_aLogger.log("getWindowName","the window name is "+sName);
+		m_aLogger.debug("getWindowName","the window name is "+sName);
 		if(sName.equals(m_sOptionPagename))
 			return sName;
 
@@ -413,7 +413,6 @@ public abstract class ManageOptions extends ComponentBase  implements
 	 * @see com.sun.star.lang.XEventListener#disposing(com.sun.star.lang.EventObject)
 	 */
 	public void disposing(EventObject arg0) {
-		// TODO Auto-generated method stub
 		m_aLogger.entering("disposing");				
 	}
 	
