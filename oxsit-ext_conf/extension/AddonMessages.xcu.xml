@@ -281,13 +281,13 @@ Roberto Resoli, developer
 		-->
 		<node oor:name="id_pb_add_cert" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Add...</value>
+				<value xml:lang="en">Add Sign...</value>
 				<value xml:lang="it">Aggiungi firma...</value>
 			</prop>
 		</node>
 		<node oor:name="id_pb_rem_cert" oor:op="replace">
 			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
-				<value xml:lang="en">Remove</value>
+				<value xml:lang="en">Remove Signat.</value>
 				<value xml:lang="it">Rimuove firma</value>
 			</prop>
 		</node>
@@ -1265,6 +1265,13 @@ sbloccare il PIN</value>
 In the worst case, it is possible that the function only
 partially succeeded, and that the computer and/or
 token is in an inconsistent state</value>
+			</prop>
+		</node>
+		<node oor:name="id_wrong_certificate_selected" oor:op="replace">
+			<prop oor:name="Text" oor:type="xs:string" oor:localized="true">
+				<value xml:lang="it">Con il certificato selezionato non potete firmare.
+
+Per la descrizione del motivo, potete guardare nel pannello destro del dialogo di firma che presenta i certificati.</value>
 			</prop>
 		</node>
 		<!--

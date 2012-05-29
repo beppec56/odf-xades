@@ -664,7 +664,8 @@ public class ImplXAdESSignatureDispatchTB extends ImplDispatchAsynch implements
 	 */
 	@Override
 	public void notifyEvent(com.sun.star.document.EventObject aEventObj) {
-		// DEBUG		m_aLoggerDialog.entering("notifyEvent: "+aEventObj.EventName);
+		// DEBUG		
+		m_aLogger.entering("notifyEvent: "+aEventObj.EventName);
 		if (/*aEventObj.EventName.equalsIgnoreCase( "OnSaveAsDone" ) ||*/
 				aEventObj.EventName.equalsIgnoreCase( "OnModifyChanged" )) {
 //set the modified status accordingly

@@ -322,7 +322,7 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	/**
 	 * closely resembles the function  DocumentSignatureHelper::CreateElementList
 	 * FIXME but need to be redesigned, because of concurrent access to streams/elements 
-	 * this list list only the main components, but not all the substore
+	 * this list lists only the main components, but not all the substore
 	 * We need instead to check for all the available Names and check them
 	 * 
 	 * @param _thePackage

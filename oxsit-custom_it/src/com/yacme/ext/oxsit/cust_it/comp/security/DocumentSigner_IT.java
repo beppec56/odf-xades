@@ -369,7 +369,6 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 						}
 					}
 					if(bFoundTheSignatureID) {
-						//for the time being simply put a signature file without signatures in it
 						//so, open the substorage META-INF from the main storage (e.g. the document)
 						try {
 							XStorage xMetaInfStorage = xDocumentStorage.openStorageElement(ConstantCustomIT.m_sSignatureStorageName,ElementModes.WRITE);
@@ -439,6 +438,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 									m_aLogger.severe(__FUNCTION__, "\"" + ConstantCustomIT.m_sSignatureStorageName +"/" + ConstantCustomIT.m_sSignatureFileName
 											+ "\"" + " error", e1);
 								}
+//FIXME update the status and remove signatures								
 							}
 							xMetaInfStorage.dispose();
 						} catch (Exception e1) {
@@ -470,7 +470,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	/* (non-Javadoc)
 	 * @see com.yacme.ext.oxsit.security.XOX_DocumentSigner#signDocument(com.sun.star.document.XStorageBasedDocument, com.yacme.ext.oxsit.security.cert.XOX_X509Certificate[])
 	 * 
-	 * gets called from dialog when a document should be signed with independednt certificate signature
+	 * gets called from dialog when a document should be signed with independent certificate signature
 	 */
 	@Override
 	public boolean signDocument(XFrame xFrame, XModel xDocumentModel, XOX_X509Certificate[] _aCertArray, Object[] _oObjects)

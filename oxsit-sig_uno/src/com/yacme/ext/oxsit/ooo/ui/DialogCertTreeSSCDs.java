@@ -43,6 +43,7 @@ import com.yacme.ext.oxsit.ooo.ui.TreeElement.TreeNodeType;
 import com.yacme.ext.oxsit.security.XOX_DocumentSigner;
 import com.yacme.ext.oxsit.security.XOX_SSCDManagement;
 import com.yacme.ext.oxsit.security.XOX_SSCDevice;
+import com.yacme.ext.oxsit.security.cert.CertificateState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 
 /**
@@ -174,8 +175,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 			//check if not CA
 			CertificateTreeElement ct = (CertificateTreeElement)aObj;
 			if(ct.getNodeType() == TreeNodeType.CERTIFICATE) {
-				//FIXME add a check on the state and alert the user
-				//meaning a check of the certificate type
 				
 				//instantiate the signer
 				try {
@@ -185,10 +184,21 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 					if(xSigner != null) {
 						XOX_X509Certificate[] aCert = new XOX_X509Certificate[1]; 						
 						aCert[0] = ct.getCertificate();
-
-						if(xSigner.signDocument(m_xParentFrame,getDocumentModel(), aCert, null))
-							endDialog();
-						//FIXME mark signature status dirty if signed?
+						//FIXME add a check on the state and alert the user
+						//meaning a check of the certificate type
+						int nState = ct.getCertificateState();
+						m_aLogger.debug("addButtonPressed", "certificate state = "+ nState);
+						if( nState == CertificateState.OK_value) {
+							if(xSigner.signDocument(m_xParentFrame,getDocumentModel(), aCert, null))
+								endDialog();
+							//FIXME mark signature status dirty if signed?
+						}
+						else {
+							m_aLogger.debug("addButtonPressed", "CANNOT SIGN ! Certificate state = "+ nState);
+							//display a message to the user about the failing certificate
+							MessageWrongCertificateSelected	aMex = new MessageWrongCertificateSelected(m_xParentFrame,m_xMCF,m_xContext);
+	                        aMex.executeDialogLocal();
+						}
 					}
 					else
 						throw (new NoSuchMethodException("Missing XOX_DocumentSigner interface !"));
@@ -197,8 +207,6 @@ public class DialogCertTreeSSCDs extends DialogCertTreeBase
 				}
 			}
 		}
-		endDialog();
-//		addOneSignature();		
 	}
 
 	/* (non-Javadoc)
