@@ -78,24 +78,19 @@ import com.yacme.ext.oxsit.security.XOX_SSCDevice;
 import com.yacme.ext.oxsit.security.cert.XOX_CertificatePKCS11Attributes;
 
 /**
- * This is a specification, it may change! This service implements a service to
- * access the SSCDs available on system. receives the doc information from the
- * task
- * 
- * This objects has properties, they are set by the calling UNO objects.
- * 
- * The service is initialized with URL and XStorage of the document under test
- * Information about the certificates, number of certificates, status of every
- * signature can be retrieved through properties
- * 
+ * This service implements a service to access the SSCDs available on system.<br>
+ * It implements the XOX_SSCDManagement interface as declared in oxsit-uno_types project.<br>
+ *
+ * @see com.sun.star.lang.XServiceInfo#getSupportedServiceNames()
  * @author beppec56
  * 
  */
 public class AvailableSSCDs_IT extends ComponentBase
 		// help class, implements XTypeProvider, XInterface, XWeak
 		implements XServiceInfo, XChangesNotifier, XComponent, XInitialization,
-		//FIXME: remoce this interface, and change the behaviour accordingly.
 		//with this implementation there is a chance that with more than one SSCD on line the system will fail !
+		//but in the Italian implementation only a single family (e.g. a single SSCD producer) can be used at a time
+		//due to the fact that we need a proprietary library to access it.
 		XOX_CertificatePKCS11Attributes, //added for convenience
 										//so we use this UNO component to pass
 										//certificate information when adding a certificate
@@ -133,10 +128,10 @@ public class AvailableSSCDs_IT extends ComponentBase
 	private OptionsParametersAccess m_xOptionsConfigAccess;
 
 	/**
+	 * Called by UNO API when the object is instantiated.
+	 * Should never be called directly.
 	 * 
-	 * 
-	 * @param _ctx
-	 *            the UNO context
+	 * @param _ctx the UNO context
 	 */
 	public AvailableSSCDs_IT(XComponentContext _ctx) {
 		m_aLogger = new DynamicLoggerDialog(this, _ctx);
@@ -315,7 +310,7 @@ public class AvailableSSCDs_IT extends ComponentBase
 	 * @see com.yacme.ext.oxsit.security.XOX_AvailableSscdDevices#scanDevices()
 	 * called to initiated a scan of the devices available on system.
 	 */
-	/* (non-Javadoc)
+	/** 
 	 * @see com.yacme.ext.oxsit.security.XOX_SSCDManagement#scanDevices(com.sun.star.frame.XFrame, com.sun.star.lang.XComponent)
 	 */
 	@Override
@@ -424,8 +419,6 @@ public class AvailableSSCDs_IT extends ComponentBase
 								oAnSSCD = m_xMCF.createInstanceWithContext(ConstantCustomIT.m_sSSCD_SERVICE, m_xCC);
 								xSSCDevice = (XOX_SSCDevice) UnoRuntime.queryInterface(XOX_SSCDevice.class, oAnSSCD);
 
-//								xSSCDevice.setDescription(cardInfo.m_sDescription);
-//								xSSCDevice.setManufacturer(cardInfo.m_sManufacturer);
 								xSSCDevice.setATRcode(cardInfo.getATRCode());
 								m_aLogger.debug("ATR code: " + cardInfo.getATRCode());
 								String sLibs = cardInfo.getDefaultLib() + " ("

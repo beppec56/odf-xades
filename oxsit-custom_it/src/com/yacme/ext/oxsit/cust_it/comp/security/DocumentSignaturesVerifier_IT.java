@@ -109,8 +109,10 @@ import com.yacme.ext.oxsit.security.XOX_SignatureState;
 import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 import com.yacme.ext.oxsit.security.cert.XOX_X509CertificateDisplay;
 
-/** Verify a document signatures and the document
- * @author beppe
+/** Verify a document signatures and the document.
+ * It implements interface XOX_DocumentSignaturesState as declared in oxsit-uno_types project.
+ * 
+ * @author beppec56
  *
  */
 public class DocumentSignaturesVerifier_IT extends ComponentBase //help class, implements XTypeProvider, XInterface, XWeak
@@ -129,8 +131,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 //	protected Vector<XOX_X509Certificate>	m_xQualCertList;
 
 	//The signatures in this document
-//	protected Vector<XOX_SignatureState>	m_xSignatures;
-	
 	protected HashMap<String, XOX_SignatureState> m_hSignatures;
 
 	// the name of the class implementing this object
@@ -207,12 +207,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 			for(int i= 0; i < sUUIDs.length; i++) {
 				//the signature states and the corresponding certificates are taken care of in the GUI side
 				//which deallocate them when GUI is shut down.
-//				XOX_SignatureState xQC = m_hSignatures.get(sUUIDs[i]);
-//				if (xQC != null) {
-//					XComponent xComp = (XComponent)UnoRuntime.queryInterface(XComponent.class, xQC);
-//					if(xComp != null)
-//						xComp.dispose();					
-//				}
 				m_hSignatures.remove(sUUIDs[i]);
 			}
 		}
@@ -643,8 +637,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	 */
 	@Override
 	public void changesOccurred(ChangesEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -652,8 +644,6 @@ implements XServiceInfo, XComponent, XInitialization, XOX_DocumentSignaturesVeri
 	 */
 	@Override
 	public void disposing(EventObject arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/* (non-Javadoc)

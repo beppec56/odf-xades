@@ -61,15 +61,10 @@ import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesState;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 
 /**
- * This is a specification, it may change!
- * This service implements the X509Certificate service.
+ * This service implements the ?? service.<br>
  * receives the doc information from the task  
  *  
  * This objects has properties, they are set by the calling UNO objects.
- * 
- * The service is initialized with URL and XStorage of the document under test
- * Information about the certificates, number of certificates, status of every signature
- * ca be retrieved through properties 
  * 
  * @author beppec56
  *

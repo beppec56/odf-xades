@@ -67,11 +67,16 @@ This target will carry out the step 6) above.
 The step 7) will be carried out by the main build implementation.
 
 A good help in writing UNOIDL specification file could be the IDL editor embedded in
-the Eclipse plug-in, see:
+the Eclipse plug-in, the OOEclipse plugin can be installed directly from:
+
+http://people.freedesktop.org/~cbosdo/ooeclipse
+
+see:
 
 http://wiki.services.openoffice.org/wiki/JavaEclipseTuto
 
-for details.
+for details on how it works.
+
 
 Please refer to the OOo SDK installation instruction for details on how to install it.
 ======================================================================================
