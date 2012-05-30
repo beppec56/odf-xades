@@ -69,14 +69,7 @@ build-extension
 	<echo message="${project_name}: platform specific file is: build.${os.name}-${os.arch}.properties."/>
 	<available file="build.${os.name}-${os.arch}.properties" type="file" property="properties_file.available" value="false" />
 	<property file="build.${os.name}-${os.arch}.properties" />
-
 	
-	<echo message="Fetching last svn revision..."/>
-	<exec dir="." executable="${svn_revision_script}"
-   		outputproperty="svn.trunk.revision.number">
-   	</exec>
-	
-
 	<!-- minimum OOo version -->
 	<property name="ooominversion" value="3.0" />
 
@@ -219,6 +212,14 @@ build-extension
 	</target>
 
 	<target name="prepare-extension" depends="build-jar" description="copy the jar to the extension and builds the extension package">
+
+		<echo message="======== *** ========="/>
+		<echo message="Fetching last svn revision..."/>
+		<exec dir="." executable="${svn_revision_script}"
+	   		outputproperty="svn.trunk.revision.number">
+	   	</exec>
+
+		
 		<!-- prepare first component jar -->
 		<!--- begin subtask -->	
 
@@ -713,6 +714,74 @@ build-extension
 		<delete file="${tar_dest}/${project_name}-${version}.tar" />
 
 		<delete dir="${archr}" />
+	</target>
+	
+	<target name="generate-javadoc" description="prepare the javadoc of all the projects but oxsit-uno_types">
+
+		<!-- 
+		add a new html-no-svn directory
+		
+		then it builds, using javadoc the documentation
+		
+		made for Linux only, -->
+		<echo message="${cust_it_uno}/src" />
+		
+	    <javadoc
+	        excludepackagenames="org.test.supercsv.mock"
+	          access="public"
+	           destdir="html-no-svn"
+	           author="true"
+	           version="true"
+	           use="true"
+	           windowtitle="XAdES signature for Apache OpenOffice"
+	       >
+
+	        <fileset dir="${basedir}/../${cust_it_uno}/src" defaultexcludes="yes" >
+	            <include name="**/*.java"/>
+	            <exclude name="org/test/**/*.java" />
+	        </fileset>
+	        <fileset dir="${basedir}/../${sig_options_comp}/src" defaultexcludes="yes" >
+	            <include name="**/*.java"/>
+	            <exclude name="org/test/**/*.java" />
+	        </fileset>
+	        <fileset dir="${basedir}/../${sig_comp}/src" defaultexcludes="yes" >
+	            <include name="**/*.java"/>
+	            <exclude name="org/test/**/*.java" />
+	        </fileset>
+	        <fileset dir="${basedir}/../${sing_comp}/src" defaultexcludes="yes" >
+	            <include name="**/*.java"/>
+	            <exclude name="org/test/**/*.java" />
+	        </fileset>
+	        <fileset dir="${basedir}/../${job_comp}/src" defaultexcludes="yes" >
+	            <include name="**/*.java"/>
+	            <exclude name="org/test/**/*.java" />
+	        </fileset>
+
+	    	<!-- link href="http://java.sun.com/j2se/1.6.0/docs/api/"/ -->
+	    	
+	    	<!--
+	    		the following link can be used in Ubuntu 10.04 when opnejdk-6-jdk packet is installed
+	    		it will be there if the jdk is installed 
+	    	-->
+	    	<link href="/usr/share/doc/openjdk-6-jdk/api/"/>
+	    	
+	    	<!-- DOES NOT WORK ! 
+	    	link href="${ooosdk}/docs/common/ref/" / 
+	    	
+	    	the AOO odk doc is different.
+	    	 
+	    	-->
+	    	
+	    	<!--
+		    	this link is there if you ave the AOO 3.4.0 sdk installed.
+	    	 -->
+	    	<link href="${ooosdk}/docs/java/ref/" />
+
+	        <tag name="preconditions" scope="all" description="Precondition:"/>
+	        <tag name="postconditions" scope="all" description="Postcondition:"/>
+	        <tag name="invariants" scope="all" description="Invariant:"/>
+	        <!-- tag name="copyright" scope="all" description="Copyright:"/ -->
+	    </javadoc>
 	</target>
 
 	<!-- target name="build-arch" depends="build-arch-sub"  description="build the tar.bz2 archive of the project, only versioning">
