@@ -170,7 +170,7 @@ public class UnsignedProperties implements Serializable {
     
     /**
      * Mutator for notary attribute
-     * @param str new value for notary attribute
+     * @param not new value for notary attribute
      * @throws SignedDocException for validation errors
      */    
     public void setNotary(Notary not) 
