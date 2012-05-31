@@ -100,9 +100,7 @@ public class OCFPCSC1 {
   }
 
   /* load the Wrapper-DLL */
-  static public boolean loadLib(String aPath) {
-//	  String aPath = PCSCHelper.m_sLibPath;
-	  boolean ret = false;
+  static public void loadLib(String aPath) {
     try {
       //netscape.security.PrivilegeManager.enablePrivilege("UniversalLinkAccess");
       
@@ -110,11 +108,9 @@ public class OCFPCSC1 {
       //opencard.core.util.SystemAccess.getSystemAccess().loadLibrary()
     	if(aPath == null || aPath.length() == 0) {
     		System.loadLibrary(GlobConstant.m_sPCSC_WRAPPER_NATIVE);
-    		ret = true;
     	}
     	else {
     		System.load(aPath);
-    		ret = true;
     	}
 
       //ROB: commented to avoid dependencies from core ocf packages
@@ -123,7 +119,6 @@ public class OCFPCSC1 {
     } catch (NullPointerException e) {
           throw(e);
     }
-    return ret;
   }
 
   /**************************************************************/
