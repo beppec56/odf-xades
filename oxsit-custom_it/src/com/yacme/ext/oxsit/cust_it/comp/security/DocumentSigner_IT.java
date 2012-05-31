@@ -501,8 +501,10 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		}		
 	}
 
-	private void generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc)
+	private boolean generateNewSignature(XFrame xFrame, XStorage xDocumentStorage, XOX_X509Certificate[] _aCertArray, ODFSignedDoc sdoc)
 			throws CertificateException, Exception, SignedDocException {
+		
+		boolean retVal = false;
 		//start 'real signing
 		XOX_X509Certificate aCert = _aCertArray[0];
 		X509Certificate certChild =  Helpers.getCertificate(aCert);
@@ -536,7 +538,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 //			            m_aLogger.debug("returned: "+aret);
 			            if(aret == 0) {
 			            	//cancel, abort the signing process, all is left as is
-			            	return;
+			            	return retVal;
 			            }
 			            else if (aret == 2) {
 			            	//yes, if yes, remove the one we are on and continue to search
@@ -549,7 +551,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			            	continue;
 			            }
 			            else {
-			            	return;
+			            	return  retVal;
 			            }
 					}
 				}
@@ -747,7 +749,8 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					}
 					m_aHelperPkcs11.closeSession();
 					m_aLogger.debug("Closing session, all ok.");
-					finalizePKCS11();					
+					finalizePKCS11();
+					retVal = true;
 				} else {
 					//0x000000E0 = CKR_TOKEN_NOT_PRESENT
 					//see iaik/pkcs/pkcs11/wrapper/ExceptionMessages.properties
@@ -848,6 +851,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 			//            
 			//
 		}
+		return retVal;
 	}
 
 	/**
@@ -891,6 +895,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 	 */
 	private boolean signAsFile(XFrame xFrame, XModel _xDocumentModel, XOX_X509Certificate[] _aCertArray) {
 		ODFSignedDoc sdoc = null;
+		boolean retVal = false;
 
 		ConfigManager.init("jar://ODFDocSigning.cfg");
 
@@ -961,7 +966,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 					sdoc.addODFData();
 				}
 			//do the 'real' signing stuff
-				generateNewSignature(m_xFrame, xDocumentStorage, _aCertArray, sdoc);
+				retVal = generateNewSignature(m_xFrame, xDocumentStorage, _aCertArray, sdoc);
 			}
 			//drop out the else if something was seriously wrong and this should NEVER happen
 			//FIXME: how to alert the user ?
@@ -981,7 +986,7 @@ public class DocumentSigner_IT extends ComponentBase //help class, implements XT
 		} catch (Throwable ex) {
 			m_aLogger.log(ex, true);
 		}
-		return false;
+		return retVal;
 	}
 
 	private boolean signAsCMSFile(XFrame xFrame, XModel _documentModel, XOX_X509Certificate[] _aCertArray)
