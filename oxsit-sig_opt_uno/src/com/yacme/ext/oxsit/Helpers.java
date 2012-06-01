@@ -30,9 +30,12 @@ import com.yacme.ext.oxsit.security.cert.XOX_X509Certificate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.security.CodeSource;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -123,6 +126,37 @@ public class Helpers {
 			xDocumentSignatures.setAggregatedDocumentSignatureStates(newState);
 		}
 	}
+
+	//checks for connection to the internet through dummy request
+    public static boolean isInternetReachable()
+    {
+            try {
+                    //make a URL to a known source
+                    URL url = new URL("http://www.google.com");
+
+                    
+                    //open a connection to that source
+                    
+                    HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+
+                    urlConnect.setConnectTimeout(20000);
+                    //trying to retrieve data from the source. If there
+                    //is no connection, this line will fail
+                    @SuppressWarnings("unused")
+					Object objData = urlConnect.getContent();
+
+            } catch (UnknownHostException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return false;
+            }
+            catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return false;
+            }
+            return true;
+    }
 
 	public static String date2string(Date _aDate) {
 		final String m_dateFormatXAdES = "yyyy-MM-dd'T'HH:mm:ss'Z'";
