@@ -321,7 +321,7 @@ public class CertificateCompliance_IT extends ComponentBase //help class, implem
 			//check issuer field for conformance
 			TBSCertificateStructure xTBSCert = x509Str.getTBSCertificate();
 
-			//check if either one of IssuerUniqueID or SubjectUniqueID is present
+			//check if both IssuerUniqueID and SubjectUniqueID are present
 			//ETSI 102 280 5.3
 			if(!isOKUniqueIds(xTBSCert)) {
 				setCertificateStateHelper(CertificateState.CORE_CERTIFICATE_ELEMENT_INVALID);
