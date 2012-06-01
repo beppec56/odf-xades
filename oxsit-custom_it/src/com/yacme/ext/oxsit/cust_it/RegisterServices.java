@@ -61,7 +61,7 @@ public class RegisterServices {
 	 * <p>
 	 * @return Returns a <code>XSingleServiceFactory</code> for creating the
 	 * component.
-	 * @see com.sun.star.comp.loader.JavaLoader#
+	 * @see com.sun.star.comp.loader.JavaLoader
 	 * @param stringImplementationName The implementation name of the component.
 	 * @param xmultiservicefactory The service manager, who gives access to every
 	 * known service.
@@ -127,8 +127,8 @@ public class RegisterServices {
 	/** Writes the service information into the given registry key.
 	 * This method is called by the <code>JavaLoader</code>.
 	 * @return returns true if the operation succeeded
-	 * @see com.sun.star.comp.loader.JavaLoader#
-	 * @see com.sun.star.lib.uno.helper.Factory#
+	 * @see com.sun.star.comp.loader.JavaLoader
+	 * @see com.sun.star.lib.uno.helper.Factory
 	 * @param xregistrykey Makes structural information (except regarding tree
 	 * structures) of a single
 	 * registry key accessible.

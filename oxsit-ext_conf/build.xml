@@ -728,55 +728,69 @@ build-extension
 		
 	    <javadoc
 	        excludepackagenames="org.test.supercsv.mock"
-	          access="public"
-	           destdir="html-no-svn"
-	           author="true"
-	           version="true"
-	           use="true"
-	           windowtitle="XAdES signature for Apache OpenOffice"
+	          	access="public"
+	           	destdir="html-no-svn"
+	           	author="true"
+	           	version="true"
+	           	use="true"
+	    		linksource="true"
+	           	windowtitle="XAdES signature for Apache OpenOffice"
 	       >
 
 	        <fileset dir="${basedir}/../${cust_it_uno}/src" defaultexcludes="yes" >
 	            <include name="**/*.java"/>
-	            <exclude name="org/test/**/*.java" />
 	        </fileset>
 	        <fileset dir="${basedir}/../${sig_options_comp}/src" defaultexcludes="yes" >
 	            <include name="**/*.java"/>
-	            <exclude name="org/test/**/*.java" />
+	            <!-- exclude name="org/test/**/*.java" / -->
 	        </fileset>
 	        <fileset dir="${basedir}/../${sig_comp}/src" defaultexcludes="yes" >
 	            <include name="**/*.java"/>
-	            <exclude name="org/test/**/*.java" />
 	        </fileset>
 	        <fileset dir="${basedir}/../${sing_comp}/src" defaultexcludes="yes" >
 	            <include name="**/*.java"/>
-	            <exclude name="org/test/**/*.java" />
 	        </fileset>
 	        <fileset dir="${basedir}/../${job_comp}/src" defaultexcludes="yes" >
 	            <include name="**/*.java"/>
-	            <exclude name="org/test/**/*.java" />
 	        </fileset>
+	    	
+			<!-- just a test: point to a live AOO compiled source tree
+				enabling this will merged in part of the AOO Java API documentation -->	    	
+	        <!-- fileset dir="/home/beppe/aoo-b/aoo-git-svn/main/odk/unxlngx6.pro/misc/java_src" defaultexcludes="yes" -->
+	            <!-- include name="**/*.java"/ -->
+	        <!-- /fileset -->
 
-	    	<!-- link href="http://java.sun.com/j2se/1.6.0/docs/api/"/ -->
+	    	<!-- if you don't have the openjdk 6 installed, enable this link for Java runtime API documentation -->
+	    	<!-- link href="http://docs.oracle.com/javase/6/docs/api/"/ -->
 	    	
 	    	<!--
 	    		the following link can be used in Ubuntu 10.04 when opnejdk-6-jdk packet is installed
 	    		it will be there if the jdk is installed 
 	    	-->
 	    	<link href="/usr/share/doc/openjdk-6-jdk/api/"/>
+
+	    	<!-- classes used in aoo interface -->
+	    	<classpath>
+		        <fileset dir="${ooo_ure_classes_path}">
+		            <include name="*.jar"/>
+		        </fileset>
+    	        <fileset dir="${ooo_classes_path}">
+    	            <include name="*.jar"/>
+    	        </fileset>
+    	    </classpath>
 	    	
 	    	<!-- DOES NOT WORK ! 
 	    	link href="${ooosdk}/docs/common/ref/" / 
 	    	
-	    	the AOO odk doc is different.
-	    	 
+	    	the AOO odk doc is differently packaged.
+
 	    	-->
 	    	
 	    	<!--
 		    	this link is there if you ave the AOO 3.4.0 sdk installed.
 	    	 -->
 	    	<link href="${ooosdk}/docs/java/ref/" />
-
+	    	
 	        <tag name="preconditions" scope="all" description="Precondition:"/>
 	        <tag name="postconditions" scope="all" description="Postcondition:"/>
 	        <tag name="invariants" scope="all" description="Invariant:"/>

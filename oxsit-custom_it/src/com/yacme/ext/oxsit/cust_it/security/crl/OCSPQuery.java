@@ -163,8 +163,6 @@ public class OCSPQuery {
 		return rt;
 	}
 
-	
-	
 	/**
 	 * Note that this will accept only one certificate at a time.
 	 * Add certificate to query
