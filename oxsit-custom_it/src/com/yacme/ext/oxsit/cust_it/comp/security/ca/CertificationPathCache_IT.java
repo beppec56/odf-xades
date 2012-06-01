@@ -144,7 +144,7 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 		m_xMCF = m_xCC.getServiceManager();
 		m_aLogger = new DynamicLogger(this, _ctx);
 		//		m_aLogger = new DynamicLazyLogger();
-		m_aLogger.enableLogging();
+//		m_aLogger.enableLogging();
 		m_aLogger.ctor();
 		m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
 		m_aCertificateStateConditions = CertificateStateConditions.REVOCATION_NOT_YET_CONTROLLED;
@@ -523,12 +523,12 @@ public class CertificationPathCache_IT extends ComponentBase //help class, imple
 	public CertificateState verifyCertificateRevocationState(XFrame _aFrame, Object arg1) throws IllegalArgumentException,
 			Exception {
 		
-		m_aLogger.info("verifyCertificateRevocationState", "checking Internet...");
-		if(!Helpers.isInternetReachable()) {
-			m_aLogger.severe("verifyCertificateRevocationState", "NO Internet !");
-		}
-		else
-			m_aLogger.info("verifyCertificateRevocationState", "Internet OK");
+//		m_aLogger.info("verifyCertificateRevocationState", "checking Internet...");
+//		if(!Helpers.isInternetReachable()) {
+//			m_aLogger.severe("verifyCertificateRevocationState", "NO Internet !");
+//		}
+//		else
+//			m_aLogger.info("verifyCertificateRevocationState", "Internet OK");
 
 		m_aLogger.debug("verifyCertificateRevocationState");
 		m_aCertificateState = CertificateState.NOT_YET_VERIFIED;
