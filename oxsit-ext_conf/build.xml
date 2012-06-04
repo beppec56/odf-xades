@@ -218,6 +218,8 @@ build-extension
 		<exec dir="." executable="${svn_revision_script}"
 	   		outputproperty="svn.trunk.revision.number">
 	   	</exec>
+		
+		<echo>The current release is ${svn.trunk.revision.number}</echo>
 
 		
 		<!-- prepare first component jar -->
