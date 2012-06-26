@@ -64,9 +64,14 @@ import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
 
 /**
- * implements the interceptor for the dispatches that need to be 'tweaked'
- * 
- * @author beppe
+ * Implements the interceptor for the dispatches that need to be 'tweaked'.<p>
+ * A UNO component formed by this class is instantiated in
+ * com.yacme.ext.oxsit.comp.{@link  com.yacme.ext.oxsit.comp.SyncJob#executeOnViewCreated}.<p>
+ * This class is the real handler of the signature command.<br>
+ * The dispatch is processed by a class instantiated in method {@link com.yacme.ext.oxsit.comp.DispatchIntercept#queryDispatch}
+ * @see <a href="http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/OfficeDev/Dispatch_Interception" target="frame">'Dispatch Interception' in the OpenOffice.org Developer's Guide</a> for 
+ * details on how the mechanism works.<p>
+ * @author Giuseppe Castagno
  * 
  */
 // FIXME the frameAction may need adjustment (in case of context changing)
@@ -254,9 +259,13 @@ public class DispatchIntercept extends ComponentBase
 	 * @see com.sun.star.frame.XDispatchProvider#queryDispatch(com.sun.star.util.URL,
 	 *      java.lang.String, int)
 	 */
+
+	/**
+	 * This method analyzes the dispatch URL and determines the action to be taken. 
+	 */
 	public XDispatch queryDispatch(/* IN */com.sun.star.util.URL aURL,/* IN */
 									String sTarget,	/* IN */int nSearchFlags) {
-//		m_aLoggerDialog.info("queryDispatch:", aURL.Complete);
+//DEBUG		m_aLogger.debug("queryDispatch:", aURL.Complete);
 		try {
 			synchronized (m_aMutex) {
 				if (m_bDead)
@@ -281,7 +290,7 @@ public class DispatchIntercept extends ComponentBase
 
 			// intercept .uno:Save
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sUNO_SAVE_URL_COMPLETE ) == true) {
-//				m_aLoggerDialog.info("queryDispatch", aURL.Complete);
+//DEBUG				m_aLogger.debug("queryDispatch", aURL.Complete);
 				synchronized (this) {
 					/*
 					 * http://www.mail-archive.com/dev@api.openoffice.org/msg03786.html ()
@@ -323,12 +332,14 @@ public class DispatchIntercept extends ComponentBase
 				}
 			}*/
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_TB_COMPLETE ) == true) {
+//DEBUG				m_aLogger.debug("queryDispatch:", aURL.Complete);
 				if (m_aImplXAdESSignatureDispatchTB == null)
 					m_aImplXAdESSignatureDispatchTB = new ImplXAdESSignatureDispatchTB(
 							m_xFrame, m_xCC, m_axMCF, null );
 				return this;
 			}
 			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sSIGN_DIALOG_PATH_COMPLETE ) == true) {
+//DEBUG				m_aLogger.debug("queryDispatch", aURL.Complete);
 				if (m_aImplXAdESSignatureDispatch == null)
 					m_aImplXAdESSignatureDispatch = new ImplXAdESSignatureDispatch(
 							m_xFrame, m_xCC, m_axMCF, null );

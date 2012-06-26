@@ -65,9 +65,11 @@ import com.yacme.ext.oxsit.ooo.GlobConstant;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplOnHelpDispatch;
 
 /**
- * This class represents the UNO objects that implements the signature engine
+ * This class implements the dispatch handler that should be called when the signature is requested.<p>
+ * Actually it only displays some information about the extension, the real work is carried
+ * out by the class {@link com.yacme.ext.oxsit.comp.DispatchIntercept}.
  * 
- * @author beppe
+ * @author Giuseppe Castagno
  * 
  */
 public class SignatureHandler extends ComponentBase
@@ -118,7 +120,8 @@ public class SignatureHandler extends ComponentBase
 	 */
 	public SignatureHandler(XComponentContext context) {
 		m_aLogger = new DynamicLogger(this,context);
-//FIXME DEBUG	m_aLoggerDialog.enableLogging();
+//FIXME DEBUG
+		m_aLogger.enableLogging();
 		m_aLogger.ctor();
 		m_xComponentContext = context;
 		try {
