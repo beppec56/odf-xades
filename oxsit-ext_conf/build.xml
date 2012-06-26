@@ -730,7 +730,6 @@ build-extension
 		
 	    <javadoc
 	        excludepackagenames="org.test.supercsv.mock"
-	          	access="public"
 	           	destdir="html-no-svn"
 	           	author="true"
 	           	version="true"
