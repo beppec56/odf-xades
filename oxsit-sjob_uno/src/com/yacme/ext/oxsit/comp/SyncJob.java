@@ -77,7 +77,10 @@ import com.yacme.ext.oxsit.security.XOX_DocumentSignaturesVerifier;
 import com.yacme.ext.oxsit.security.XOX_SignatureState;
 
 /**
- * this class is the class to be registered when installing the extension
+ * This class implements a Job worker.<p>
+ * @see <a href="http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/WritingUNO/Jobs/Jobs" target="frame">'Jobs' in the OpenOffice.org Developer's Guide</a> for
+ * details.<p>
+ * This class is the class to be registered when installing the extension.
  * 
  * @author beppe
  * 
@@ -217,13 +220,16 @@ public class SyncJob extends ComponentBase
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * implements the execute method of synch Job handler single method for XJob
+	 * Implements the execute method of synch Job handler single method for XJob
 	 * 
-	 * @return the result of the job. The concrete semantics is
-	 *         service-dependent. But it should be possible to - deregister the
-	 *         job - let him registered although execution was successfully(!) -
-	 *         make some job specific data persistent inside the job
+	 * @return the result of the job.<p>
+	 * 		The concrete semantics is service-dependent, but it should be possible to:
+	 *         <ul>
+	 *         <li>deregister the job
+	 *         <li>let him registered although execution was successfully(!)
+	 *         <li>make some job specific data persistent inside the job
 	 *         configuration which is provided by the executor.
+	 *         </ul>
 	 * 
 	 * 
 	 * as a test, implement once, when the OOo starts at the very beginning to
@@ -454,6 +460,10 @@ public class SyncJob extends ComponentBase
 		}
 	}
 
+	/**
+	 * Called when document saving is finished.<p>
+	 * Updates extension internal data. 
+	 */
 	protected void executeOnSaveAsDone() {
 		//a new document, see if already there, init signature states if necessary
 		if (m_axFrame != null) {
@@ -475,6 +485,12 @@ public class SyncJob extends ComponentBase
 		}
 	}
 
+	/**
+	 * This method is called when the document loading is finished.<p>
+	 * It checks the document for signatures and set the toolbar status accordingly.
+	 * @throws IOException
+	 * @throws Exception
+	 */
 	protected void executeOnLoad() throws IOException, Exception {
 		final String __FUNCTION__ = "executeOnLoad: ";
 		/**
@@ -543,7 +559,7 @@ public class SyncJob extends ComponentBase
 									m_aLogger.debug(__FUNCTION__+"signature state added");									
 								}
 							}
-//							else status alread set to m_nSIGNATURESTATE_NOSIGNATURES
+//							else status already set to m_nSIGNATURESTATE_NOSIGNATURES
 					        // now clean up the verifier
 					        ((XComponent) UnoRuntime.queryInterface(XComponent.class, aDocVerService)).dispose();
 						}
@@ -558,18 +574,17 @@ public class SyncJob extends ComponentBase
 	}
 
 	///////////////////// OnViewCreated //////////////////////////7
+	/**
+	 * This event is fired at the end of the method sal_Bool
+	 * SfxTopFrame::InsertDocument( SfxObjectShell* pDoc ) in
+	 * file sfx2/source/view/topfrm.cxx, when the view has been
+	 * created and the model, frame and controller are all
+	 * connected.<p>
+	 * Try to get the frame, then attach at the frame our
+	 * interceptor, implemented by the class {@link  com.yacme.ext.oxsit.comp.DispatchIntercept}.
+	 * 
+	 */
 	protected void executeOnViewCreated() throws Exception {
-		/**
-		 * this event is fired at the end of the method sal_Bool
-		 * SfxTopFrame::InsertDocument( SfxObjectShell* pDoc ) in
-		 * file sfx2/source/view/topfrm.cxx When the view has been
-		 * created and the model, frame, controller are all
-		 * connected
-		 * 
-		 * try to get the frame, then activate at the frame our
-		 * interceptor
-		 * 
-		 */
 		if (m_axFrame != null) {
 			if (canBeSigned(m_axFrame)) {
 				try {
@@ -585,7 +600,7 @@ public class SyncJob extends ComponentBase
 	}
 
 	/**
-	 * executed when application is closed, stops the logger
+	 * Method executed when application is closed, stops the logger
 	 * close all the log files
 	 */
 	protected void executeOnCloseApp() {
