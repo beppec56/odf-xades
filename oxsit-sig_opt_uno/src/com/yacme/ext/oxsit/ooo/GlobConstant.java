@@ -72,6 +72,10 @@ public class GlobConstant {
 	// specific object for extended toolbar
 	public static final String	m_sSIGN_DIALOG_PATH_TB					= "SignDialogTB";
 	public static final String	m_sSIGN_DIALOG_PATH_TB_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sSIGN_DIALOG_PATH_TB;
+	//object to sign for menu item
+	public static final String	m_sDISPLAY_SIGNED_FILE_PATH						= "DisplaySign";
+	public static final String	m_sDISPLAY_SIGNED_FILE_PATH_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sDISPLAY_SIGNED_FILE_PATH;
+//	object for help
 	public static final String	m_sON_HELP_ABOUT_PATH					= "HelpAbout";
 	public static final String	m_sON_HELP_ABOUT_PATH_COMPLETE			= m_sSIGN_PROTOCOL_BASE_URL+m_sON_HELP_ABOUT_PATH;
 

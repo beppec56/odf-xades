@@ -59,6 +59,7 @@ import com.yacme.ext.oxsit.XOX_DispatchInterceptor;
 import com.yacme.ext.oxsit.dispatchers.IDispatchBaseObject;
 import com.yacme.ext.oxsit.logging.DynamicLogger;
 import com.yacme.ext.oxsit.ooo.GlobConstant;
+import com.yacme.ext.oxsit.signature.dispatchers.ImplDisplaySignedFileDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplInterceptSaveDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatch;
 import com.yacme.ext.oxsit.signature.dispatchers.ImplXAdESSignatureDispatchTB;
@@ -122,6 +123,7 @@ public class DispatchIntercept extends ComponentBase
 	
 	private IDispatchBaseObject						m_aImplXAdESSignatureDispatchTB	= null;	
 	private IDispatchBaseObject						m_aImplXAdESSignatureDispatch = null;
+	private IDispatchBaseObject						m_aImplDisplaySigneFileDispatch = null;
 	private Object									m_aMutex						= new Object();
 
 	private boolean									m_bDead;
@@ -345,6 +347,14 @@ public class DispatchIntercept extends ComponentBase
 							m_xFrame, m_xCC, m_axMCF, null );
 				return this;//m_aImplXAdESSignatureDispatch;
 			}
+
+			if (aURL.Complete.equalsIgnoreCase( GlobConstant.m_sDISPLAY_SIGNED_FILE_PATH_COMPLETE ) == true) {
+//DEBUG				m_aLogger.debug("queryDispatch:", aURL.Complete);
+								if (m_aImplDisplaySigneFileDispatch == null)
+									m_aImplDisplaySigneFileDispatch = new ImplDisplaySignedFileDispatch(
+											m_xFrame, m_xCC, m_axMCF, null );
+								return this;
+							}
 
 			synchronized (this) {
 				if (m_xSlave != null)// if a slave exist pass the request

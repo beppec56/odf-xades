@@ -116,6 +116,26 @@
 								<value>_self</value>
 							</prop>
 						</node>
+						<node oor:name="m2" oor:op="replace">
+							<!-- comando standard OOo, presente in tutti i contesti  -->
+							<prop oor:name="Context" oor:type="xs:string">
+								<value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.drawing.DrawingDocument,com.sun.star.presentation.PresentationDocument</value>
+							</prop>
+							<prop oor:name="ImageIdentifier" oor:type="xs:string">
+								<value/>
+							</prop>
+							<prop oor:name="URL" oor:type="xs:string">
+								<value>com.yacme.ext.oxsit.comp.SignatureHandler:DisplaySign</value>
+							</prop>
+							<prop oor:name="Title" oor:type="xs:string"  oor:localized="true">
+								<value>Display signed file signatures</value>
+								<value xml:lang="en">Display copy of signed file with signatures</value>
+								<value xml:lang="it">Mostra copia del file con le firme</value>
+							</prop>
+							<prop oor:name="Target" oor:type="xs:string">
+								<value>_self</value>
+							</prop>
+						</node>
 					</node>
 				</node>
 			</node>
