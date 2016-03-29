@@ -25,6 +25,7 @@ package com.yacme.ext.oxsit.ooo.ui;
 
 import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import com.sun.star.awt.MessageBoxButtons;
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
@@ -66,6 +67,6 @@ public class MessageSSCDPINError extends DialogGeneralMessage {
 
 		return super.executeDialog(sTitle,
 				String.format(sPINErr, sPinErrDescr),
-				MessageBoxButtons.BUTTONS_RETRY_CANCEL , MessageBoxButtons.DEFAULT_BUTTON_RETRY, "errorbox");
+				MessageBoxButtons.BUTTONS_RETRY_CANCEL , MessageBoxButtons.DEFAULT_BUTTON_RETRY, MessageBoxType.ERRORBOX);
 	}
 }

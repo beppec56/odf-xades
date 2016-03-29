@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -54,7 +55,6 @@ import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
 import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.i18n.filter.TrustedInput;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.XComponentContext;
 import com.yacme.ext.oxsit.Helpers;

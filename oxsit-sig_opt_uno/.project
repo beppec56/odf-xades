@@ -3,6 +3,7 @@
 	<name>oxsit-sig_opt_uno</name>
 	<comment></comment>
 	<projects>
+		<project>oxsit-custom_it</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

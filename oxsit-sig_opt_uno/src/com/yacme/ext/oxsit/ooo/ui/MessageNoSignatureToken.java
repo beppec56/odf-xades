@@ -25,6 +25,7 @@ package com.yacme.ext.oxsit.ooo.ui;
 
 import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import com.sun.star.awt.MessageBoxButtons;
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
@@ -69,6 +70,6 @@ public class MessageNoSignatureToken extends DialogGeneralMessage {
 				_SSCDSerialNumber,
 				sErrortext,
 				_CKR_error_found),
-				MessageBoxButtons.BUTTONS_ABORT_IGNORE_RETRY, MessageBoxButtons.DEFAULT_BUTTON_RETRY, "errorbox");
+				MessageBoxButtons.BUTTONS_ABORT_IGNORE_RETRY, MessageBoxButtons.DEFAULT_BUTTON_RETRY, MessageBoxType.ERRORBOX);
 	}
 }

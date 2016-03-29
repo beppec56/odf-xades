@@ -23,6 +23,7 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.XMessageBox;
 import com.sun.star.awt.XMessageBoxFactory;
@@ -84,7 +85,7 @@ public class DialogGeneralMessage {
 	 * @return 	3: NO
 	 * 			2: Yes
 	 */
-	public short executeDialog(String _sTitle, String _sMessage, int _nType, int _nDefault, String _dialogType){
+	public short executeDialog(String _sTitle, String _sMessage, int _nType, int _nDefault, MessageBoxType eMexBxType){
 		XComponent xComponent = null; 
 		short nResult = 0;		  
 		try {
@@ -109,7 +110,7 @@ public class DialogGeneralMessage {
 			if(xWPeer != null) {
 				// rectangle may be empty if position is in the center of the parent peer
 				Rectangle aRectangle = new Rectangle();
-				XMessageBox xMessageBox = xMessageBoxFactory.createMessageBox(xWPeer, aRectangle, _dialogType,
+				XMessageBox xMessageBox = xMessageBoxFactory.createMessageBox(xWPeer, eMexBxType,
 						_nType | _nDefault, _sTitle, _sMessage);
 				xComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, xMessageBox);
 				if (xMessageBox != null) {

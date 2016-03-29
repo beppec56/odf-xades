@@ -9,5 +9,12 @@
 	<classpathentry kind="lib" path="/oxsit-uno_types/dist/lib/oxsit-uno_types.uno.jar"/>
 	<classpathentry kind="lib" path="lib/bcmail-jdk16-146.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk16-146.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/serializer-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/xalan-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.3.03.jar"/>
+	<classpathentry kind="lib" path="lib/xmlsec-1.4.4.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

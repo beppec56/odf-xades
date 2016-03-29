@@ -4,6 +4,7 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 import com.sun.star.awt.MessageBoxButtons;
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
@@ -41,6 +42,6 @@ public class MessageASimilarCertExists extends DialogGeneralMessage {
 
 		return super.executeDialog(sTitle, 
 				String.format(sFormatErr, _signatureDate),
-				MessageBoxButtons.BUTTONS_YES_NO_CANCEL , MessageBoxButtons.DEFAULT_BUTTON_CANCEL, "errorbox");
+				MessageBoxButtons.BUTTONS_YES_NO_CANCEL , MessageBoxButtons.DEFAULT_BUTTON_CANCEL, MessageBoxType.ERRORBOX);
 	}
 }

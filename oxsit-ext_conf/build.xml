@@ -71,7 +71,7 @@ build-extension
 	<property file="build.${os.name}-${os.arch}.properties" />
 	
 	<!-- minimum OOo version -->
-	<property name="ooominversion" value="3.0" />
+	<property name="ooominversion" value="4.0" />
 
 	<!-- base name of the extension file -->
 	<property name="ext_name" value="${project_friendly_name}" />

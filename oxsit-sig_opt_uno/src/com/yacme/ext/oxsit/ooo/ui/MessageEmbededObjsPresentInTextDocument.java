@@ -4,6 +4,7 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 import com.sun.star.awt.MessageBoxButtons;
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
@@ -37,7 +38,7 @@ public class MessageEmbededObjsPresentInTextDocument extends DialogGeneralMessag
 
 		return super.executeDialog(sTitle, 
 				String.format(sFormatErr, _nDrawObject, _nImpressObject, _nCalcObject, _nMathObject, _nLinkedObject),
-				MessageBoxButtons.BUTTONS_OK , MessageBoxButtons.DEFAULT_BUTTON_OK, "errorbox");
+				MessageBoxButtons.BUTTONS_OK , MessageBoxButtons.DEFAULT_BUTTON_OK, MessageBoxType.ERRORBOX);
 	}
 
 }

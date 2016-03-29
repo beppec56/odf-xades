@@ -4,6 +4,7 @@
 package com.yacme.ext.oxsit.ooo.ui;
 
 import com.sun.star.awt.MessageBoxButtons;
+import com.sun.star.awt.MessageBoxType;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.Exception;
@@ -40,6 +41,6 @@ public class MessageAskForSignatureRemoval extends DialogGeneralMessage {
 
 		return super.executeDialog(sTitle, 
 				String.format(sFormatErr, _signer, _signatureDate),
-				MessageBoxButtons.BUTTONS_YES_NO , MessageBoxButtons.DEFAULT_BUTTON_NO, "errorbox");
+				MessageBoxButtons.BUTTONS_YES_NO , MessageBoxButtons.DEFAULT_BUTTON_NO, MessageBoxType.ERRORBOX);
 	}
 }
